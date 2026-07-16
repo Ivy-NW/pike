@@ -1,0 +1,27 @@
+{
+  "name": "pike",
+  "private": true,
+  "version": "0.1.0",
+  "workspaces": [
+    "packages/*",
+    "apps/api",
+    "apps/webar",
+    "apps/dashboard",
+    "apps/admin",
+    "apps/app"
+  ],
+  "scripts": {
+    "dev:api": "npm run start:dev --workspace apps/api",
+    "dev:webar": "npm run dev --workspace apps/webar",
+    "dev:dashboard": "npm run dev --workspace apps/dashboard",
+    "dev:admin": "npm run dev --workspace apps/admin",
+    "dev:app": "npm run start --workspace apps/app",
+    "build:shared-types": "npm run build --workspace packages/shared-types"
+  },
+  "devDependencies": {
+    "typescript": "^5.5.4"
+  },
+  "allowScripts": {
+    "sharp@0.33.5": true
+  }
+}

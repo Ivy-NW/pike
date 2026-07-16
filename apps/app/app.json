@@ -1,0 +1,20 @@
+{
+  "expo": {
+    "name": "PIKE",
+    "slug": "pike-app",
+    "scheme": "pike",
+    "version": "0.1.0",
+    "orientation": "portrait",
+    "userInterfaceStyle": "automatic",
+    "plugins": ["expo-router"],
+    "ios": {
+      "supportsTablet": false,
+      "infoPlist": {
+        "NSCameraUsageDescription": "PIKE uses your camera to recognize quest markers at venues."
+      }
+    },
+    "android": {
+      "permissions": ["CAMERA"]
+    }
+  }
+}

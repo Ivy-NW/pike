@@ -1,0 +1,80 @@
+/* PIKE UI design doc — sections 2-4: color palette, typography, spacing/radius tokens. */
+:root {
+  --pike-blue: #2563eb;
+  --pike-gold: #f59e0b;
+  --deep-slate: #111827;
+  --light-gray: #f8fafc;
+  --success: #10b981;
+  --danger: #ef4444;
+  --purple-accent: #7c3aed;
+
+  --radius: 20px;
+  --card-padding: 16px;
+  --section-gap: 20px;
+
+  --font-heading: "Space Grotesk", "Sora", sans-serif;
+  --font-body: "Inter", sans-serif;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body,
+#root {
+  height: 100%;
+  margin: 0;
+}
+
+body {
+  font-family: var(--font-body);
+  background: var(--light-gray);
+  color: var(--deep-slate);
+  -webkit-font-smoothing: antialiased;
+}
+
+h1,
+h2,
+h3 {
+  font-family: var(--font-heading);
+  margin: 0;
+}
+
+/* Gold is reserved for the reward moment only — see PIKE_UI_Design_Doc section 2. */
+.reward-accent {
+  color: var(--pike-gold);
+}
+
+.btn-primary {
+  background: var(--pike-blue);
+  color: white;
+  border: none;
+  border-radius: var(--radius);
+  padding: 16px 24px;
+  font-family: var(--font-body);
+  font-weight: 600;
+  font-size: 16px;
+  width: 100%;
+  cursor: pointer;
+}
+
+.btn-primary:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.btn-text {
+  background: transparent;
+  border: none;
+  color: var(--pike-blue);
+  font-family: var(--font-body);
+  font-weight: 500;
+  cursor: pointer;
+  padding: 8px;
+}
+
+.card {
+  border-radius: var(--radius);
+  padding: var(--card-padding);
+}

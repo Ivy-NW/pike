@@ -1,0 +1,179 @@
+// PIKE — Postgres schema (Neon). One database backs WebAR, App, Dashboard, and Admin.
+// Migrations live in prisma/migrations — generated via `npx prisma migrate dev`, never hand-written SQL.
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum PaymentStatus {
+  unverified
+  verified
+}
+
+enum QuestStatus {
+  draft
+  live
+  paused
+}
+
+enum RewardTier {
+  low_stakes
+  high_value
+}
+
+enum RewardType {
+  discount
+  merch
+  vip_pass
+  free_item
+}
+
+enum ClaimMethod {
+  phone
+  social
+}
+
+enum RedemptionStatus {
+  claimed
+  flagged
+  rejected
+}
+
+enum MarkerStatus {
+  pending_compile
+  ready
+  failed
+}
+
+model Business {
+  id                    String        @id @default(uuid())
+  name                  String
+  email                 String        @unique
+  passwordHash          String?
+  emailVerificationToken String?      @unique
+  paymentStatus         PaymentStatus @default(unverified)
+  stripeCustomerId      String?
+  stripePaymentMethodId String?
+  createdByAdmin        Boolean       @default(false)
+  emailVerified         Boolean       @default(false)
+  suspended             Boolean       @default(false)
+  createdAt             DateTime      @default(now())
+  updatedAt             DateTime      @updatedAt
+
+  venues Venue[]
+
+  @@map("businesses")
+}
+
+model Venue {
+  id         String   @id @default(uuid())
+  businessId String
+  business   Business @relation(fields: [businessId], references: [id], onDelete: Cascade)
+  name       String
+  venueType  String
+  address    String?
+  createdAt  DateTime @default(now())
+
+  quests  Quest[]
+  markers Marker[]
+
+  @@index([businessId])
+  @@map("venues")
+}
+
+model Quest {
+  id                    String      @id @default(uuid())
+  venueId               String
+  venue                 Venue       @relation(fields: [venueId], references: [id], onDelete: Cascade)
+  name                  String
+  theme                 String
+  rewardType            RewardType
+  rewardTier            RewardTier  @default(low_stakes)
+  rewardDescription     String
+  maxRedemptionsPerDay  Int         @default(50)
+  expiresAt             DateTime?
+  status                QuestStatus @default(draft)
+  createdAt             DateTime    @default(now())
+  updatedAt             DateTime    @updatedAt
+
+  markers     Marker[]
+  redemptions Redemption[]
+
+  @@index([venueId])
+  @@map("quests")
+}
+
+/// FR-11: each marker ties to exactly one venue + one quest.
+model Marker {
+  id                String       @id @default(uuid())
+  questId           String
+  quest             Quest        @relation(fields: [questId], references: [id], onDelete: Cascade)
+  venueId           String
+  venue             Venue        @relation(fields: [venueId], references: [id], onDelete: Cascade)
+  sourceImageUrl    String
+  compiledTargetUrl String?
+  /// The XR8.XrController.configure({imageTargetData}) entry for this marker — {imagePath, type, properties, metadata}.
+  imageTargetData   Json?
+  printAssetUrl     String?
+  qrFallbackUrl     String
+  status            MarkerStatus @default(pending_compile)
+  createdAt         DateTime     @default(now())
+
+  redemptions Redemption[]
+
+  @@index([questId])
+  @@index([venueId])
+  @@map("markers")
+}
+
+/// FR-13: device/session signal logged on every completion, even before an account exists.
+model Redemption {
+  id           String            @id @default(uuid())
+  markerId     String
+  marker       Marker            @relation(fields: [markerId], references: [id], onDelete: Cascade)
+  questId      String
+  quest        Quest             @relation(fields: [questId], references: [id], onDelete: Cascade)
+  venueId      String
+  userId       String?
+  user         User?             @relation(fields: [userId], references: [id])
+  claimMethod  ClaimMethod?
+  status       RedemptionStatus  @default(claimed)
+  sessionId    String
+  userAgent    String
+  ipHash       String
+  flagReason   String?
+  createdAt    DateTime          @default(now())
+
+  @@index([questId, createdAt])
+  @@index([venueId, questId, createdAt])
+  @@index([sessionId])
+  @@map("redemptions")
+}
+
+/// Consumer accounts, keyed by Firebase UID. FR-1: same credential across WebAR claim and app install.
+model User {
+  id           String   @id @default(uuid())
+  firebaseUid  String   @unique
+  phone        String?  @unique
+  email        String?  @unique
+  displayName  String?
+  createdAt    DateTime @default(now())
+
+  redemptions Redemption[]
+
+  @@map("users")
+}
+
+model Admin {
+  id           String   @id @default(uuid())
+  email        String   @unique
+  passwordHash String
+  createdAt    DateTime @default(now())
+
+  @@map("admins")
+}
