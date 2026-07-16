@@ -4,7 +4,6 @@ import { AuthController } from "./auth.controller";
 import { AuthService } from "./auth.service";
 import { PasswordService } from "./password.service";
 import { TokenService } from "./token.service";
-import { FirebaseAdminService } from "./firebase-admin.service";
 import { BusinessAuthGuard } from "./guards/business-auth.guard";
 import { AdminAuthGuard } from "./guards/admin-auth.guard";
 import { ConsumerAuthGuard } from "./guards/consumer-auth.guard";
@@ -17,23 +16,7 @@ import { ConsumerAuthGuard } from "./guards/consumer-auth.guard";
 @Module({
   imports: [JwtModule.register({})],
   controllers: [AuthController],
-  providers: [
-    AuthService,
-    PasswordService,
-    TokenService,
-    FirebaseAdminService,
-    BusinessAuthGuard,
-    AdminAuthGuard,
-    ConsumerAuthGuard,
-  ],
-  exports: [
-    AuthService,
-    PasswordService,
-    TokenService,
-    FirebaseAdminService,
-    BusinessAuthGuard,
-    AdminAuthGuard,
-    ConsumerAuthGuard,
-  ],
+  providers: [AuthService, PasswordService, TokenService, BusinessAuthGuard, AdminAuthGuard, ConsumerAuthGuard],
+  exports: [AuthService, PasswordService, TokenService, BusinessAuthGuard, AdminAuthGuard, ConsumerAuthGuard],
 })
 export class AuthModule {}

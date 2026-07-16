@@ -31,13 +31,8 @@ export interface CreateRedemptionResponse {
   capRemaining: number;
 }
 
-export type ClaimIdentity =
-  | { method: "phone"; firebaseIdToken: string }
-  | { method: "social"; firebaseIdToken: string };
-
-/** POST /redemptions/:id/claim */
+/** POST /redemptions/:id/claim — requires a signed-in PIKE account (Authorization: Bearer <consumer token>). */
 export interface ClaimRewardRequest {
-  identity: ClaimIdentity;
   /** FR-12: high_value reward tiers can only be claimed via "app", never the unauthenticated "webar" flow. */
   channel: "webar" | "app";
 }
@@ -45,6 +40,32 @@ export interface ClaimRewardRequest {
 export interface ClaimRewardResponse {
   redemption: Redemption;
   user: User;
+  /** Phase 2 — FR-2: XP/badges awarded by this specific claim, for a "+50 XP" style moment. */
+  award: {
+    xpAwarded: number;
+    newBadges: { key: string; name: string; description: string }[];
+  };
+}
+
+/** POST /auth/consumer/signup */
+export interface SignupConsumerRequest {
+  phone: string;
+  username: string;
+  name: string;
+  email: string;
+  password: string;
+}
+
+/** POST /auth/consumer/signin */
+export interface SigninConsumerRequest {
+  /** Username or email. */
+  identifier: string;
+  password: string;
+}
+
+export interface ConsumerAuthResponse {
+  user: User;
+  token: string;
 }
 
 /** POST /businesses (self-registration) */

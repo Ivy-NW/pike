@@ -23,12 +23,11 @@
     "bcryptjs": "^2.4.3",
     "class-transformer": "^0.5.1",
     "class-validator": "^0.14.1",
-    "firebase-admin": "^12.4.0",
     "ioredis": "^5.4.1",
     "qrcode": "^1.5.4",
     "reflect-metadata": "^0.2.2",
-    "sharp": "^0.33.5",
     "rxjs": "^7.8.1",
+    "sharp": "^0.33.5",
     "stripe": "^16.9.0"
   },
   "devDependencies": {

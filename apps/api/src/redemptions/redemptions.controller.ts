@@ -1,7 +1,8 @@
-import { Body, Controller, Get, Ip, Param, Post, Headers } from "@nestjs/common";
+import { Body, Controller, Get, Ip, Param, Post, Headers, Req, UseGuards } from "@nestjs/common";
 import { RedemptionsService } from "./redemptions.service";
 import { CreateRedemptionDto } from "./dto/create-redemption.dto";
 import { ClaimRewardDto } from "./dto/claim-reward.dto";
+import { ConsumerAuthGuard } from "../auth/guards/consumer-auth.guard";
 
 @Controller("redemptions")
 export class RedemptionsController {
@@ -23,9 +24,10 @@ export class RedemptionsController {
     return this.redemptions.create(dto.markerId, dto.sessionId, userAgent ?? "unknown", ip);
   }
 
-  /** Claiming only ever asks for phone/social (FR-12) — never a full account at this step. */
+  /** Claim requires a signed-in PIKE account (FR-12) — sign up/in first, then claim with that token. */
   @Post(":id/claim")
-  claim(@Param("id") id: string, @Body() dto: ClaimRewardDto) {
-    return this.redemptions.claim(id, dto);
+  @UseGuards(ConsumerAuthGuard)
+  claim(@Param("id") id: string, @Body() dto: ClaimRewardDto, @Req() req: any) {
+    return this.redemptions.claim(id, req.userId, dto.channel);
   }
 }

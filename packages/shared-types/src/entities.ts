@@ -13,7 +13,8 @@ export type RewardTier = "low_stakes" | "high_value";
 
 export type RewardType = "discount" | "merch" | "vip_pass" | "free_item";
 
-export type ClaimMethod = "phone" | "social";
+/** FR-12: which surface the reward was claimed from. */
+export type ClaimMethod = "webar" | "app";
 
 export type RedemptionStatus = "claimed" | "flagged" | "rejected";
 
@@ -113,11 +114,39 @@ export interface DeviceSignal {
 
 export interface User {
   id: string;
-  firebaseUid: string;
-  phone: string | null;
-  email: string | null;
-  displayName: string | null;
+  username: string;
+  name: string;
+  phone: string;
+  email: string;
+  /** Phase 2 — FR-2: XP, level (derived from xp), streak counter. */
+  xp: number;
+  currentStreak: number;
+  longestStreak: number;
   createdAt: string;
+}
+
+/** Phase 2 — FR-2 profile view: identity + derived level/streak/badge grid. */
+export interface UserProfile {
+  id: string;
+  username: string;
+  name: string;
+  phone: string;
+  email: string;
+  xp: number;
+  level: number;
+  xpIntoLevel: number;
+  xpForNextLevel: number;
+  currentStreak: number;
+  longestStreak: number;
+  badges: Badge[];
+}
+
+/** A badge is always present in the grid; `earnedAt` is null until the user unlocks it. */
+export interface Badge {
+  key: string;
+  name: string;
+  description: string;
+  earnedAt: string | null;
 }
 
 export interface Admin {

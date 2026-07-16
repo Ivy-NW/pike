@@ -1,18 +1,27 @@
 import { CanActivate, ExecutionContext, Injectable, UnauthorizedException } from "@nestjs/common";
-import { FirebaseAdminService } from "../firebase-admin.service";
+import { TokenService } from "../token.service";
 
-/** Verifies the Firebase ID token presented at claim time — this IS the consumer identity (FR-1). */
+export interface ConsumerRequest extends Request {
+  userId: string;
+}
+
+/** Verifies our own consumer JWT (issued at signup/signin) — this IS the consumer identity (FR-1). */
 @Injectable()
 export class ConsumerAuthGuard implements CanActivate {
-  constructor(private readonly firebase: FirebaseAdminService) {}
+  constructor(private readonly tokens: TokenService) {}
 
-  async canActivate(context: ExecutionContext): Promise<boolean> {
+  canActivate(context: ExecutionContext): boolean {
     const req = context.switchToHttp().getRequest();
     const header: string | undefined = req.headers.authorization;
     if (!header?.startsWith("Bearer ")) {
       throw new UnauthorizedException("Missing identity token");
     }
-    req.consumer = await this.firebase.verifyIdToken(header.slice("Bearer ".length));
-    return true;
+    try {
+      const payload = this.tokens.verifyConsumerToken(header.slice("Bearer ".length));
+      req.userId = payload.userId;
+      return true;
+    } catch {
+      throw new UnauthorizedException("Invalid or expired identity token");
+    }
   }
 }

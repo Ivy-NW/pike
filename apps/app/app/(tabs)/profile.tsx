@@ -1,13 +1,14 @@
 import { useEffect, useState } from "react";
-import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
+import { View, Text, StyleSheet, TouchableOpacity, FlatList } from "react-native";
 import { router } from "expo-router";
+import type { UserProfile } from "@pike/shared-types";
 import { api } from "@/lib/api";
 import { clearIdentityToken } from "@/lib/auth";
 import { colors, radius } from "@/theme";
 
 /** UI doc 7.5 — identity, history, and settings. */
 export default function ProfileScreen() {
-  const [me, setMe] = useState<any>(null);
+  const [me, setMe] = useState<UserProfile | null>(null);
   const [questsCompleted, setQuestsCompleted] = useState<number | null>(null);
   const [rewardsClaimed, setRewardsClaimed] = useState<number | null>(null);
 
@@ -27,8 +28,13 @@ export default function ProfileScreen() {
       <Text style={styles.header}>Profile</Text>
 
       <View style={styles.card}>
-        <Text style={styles.name}>{me?.displayName ?? me?.phone ?? me?.email ?? "PIKE explorer"}</Text>
-        {/* TODO(phase-2): level, total XP, streak history render here. */}
+        <Text style={styles.name}>{me?.name ?? me?.username ?? "PIKE explorer"}</Text>
+        {me && (
+          <Text style={styles.levelLine}>
+            Level {me.level} · {me.xp} XP total
+            {me.longestStreak > 0 ? ` · longest streak ${me.longestStreak}d` : ""}
+          </Text>
+        )}
       </View>
 
       <View style={styles.statsRow}>
@@ -42,7 +48,31 @@ export default function ProfileScreen() {
         </View>
       </View>
 
-      {/* TODO(phase-2): badge grid (earned + locked states) renders here. */}
+      {me && (
+        <View style={styles.card}>
+          <Text style={styles.cardTitle}>Badges</Text>
+          <FlatList
+            data={me.badges}
+            numColumns={3}
+            scrollEnabled={false}
+            keyExtractor={(b) => b.key}
+            renderItem={({ item }) => {
+              const earned = !!item.earnedAt;
+              return (
+                <View style={styles.badgeSlot}>
+                  <View style={[styles.badgeIcon, !earned && styles.badgeIconLocked]}>
+                    <Text style={{ fontSize: 22, opacity: earned ? 1 : 0.35 }}>🏅</Text>
+                  </View>
+                  <Text style={[styles.badgeName, !earned && styles.badgeNameLocked]} numberOfLines={2}>
+                    {item.name}
+                  </Text>
+                </View>
+              );
+            }}
+          />
+        </View>
+      )}
+
       {/* TODO(phase-3): favorited venues list (drives push notification triggers) renders here. */}
 
       <TouchableOpacity style={styles.dangerButton} onPress={logOut}>
@@ -65,11 +95,26 @@ const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: colors.lightGray, padding: 20, paddingTop: 60 },
   header: { fontSize: 28, fontWeight: "700", color: colors.deepSlate, marginBottom: 20 },
   card: { backgroundColor: "white", borderRadius: radius, padding: 16, marginBottom: 16 },
+  cardTitle: { fontSize: 16, fontWeight: "600", color: colors.deepSlate, marginBottom: 12 },
   name: { fontSize: 18, fontWeight: "600", color: colors.deepSlate },
+  levelLine: { color: "#64748b", fontSize: 13, marginTop: 4 },
   statsRow: { flexDirection: "row", gap: 12, marginBottom: 16 },
   statCard: { flex: 1, backgroundColor: "white", borderRadius: radius, padding: 16, alignItems: "center" },
   statNumber: { fontSize: 24, fontWeight: "700", color: colors.pikeBlue },
   statLabel: { color: "#64748b", fontSize: 12, marginTop: 4, textAlign: "center" },
+  badgeSlot: { flex: 1 / 3, alignItems: "center", marginBottom: 14 },
+  badgeIcon: {
+    width: 52,
+    height: 52,
+    borderRadius: 26,
+    backgroundColor: "#fef3c7",
+    alignItems: "center",
+    justifyContent: "center",
+    marginBottom: 6,
+  },
+  badgeIconLocked: { backgroundColor: "#f1f5f9" },
+  badgeName: { fontSize: 11, color: colors.deepSlate, textAlign: "center" },
+  badgeNameLocked: { color: "#94a3b8" },
   dangerButton: { backgroundColor: "white", borderRadius: radius, padding: 14, alignItems: "center", borderWidth: 1, borderColor: colors.danger, marginTop: 20 },
   dangerButtonText: { color: colors.danger, fontWeight: "600" },
   linkButton: { padding: 14, alignItems: "center" },

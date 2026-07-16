@@ -33,9 +33,10 @@ enum RewardType {
   free_item
 }
 
+/// FR-12: which surface the reward was claimed from — webar (guest web claim) or app (authenticated in-app).
 enum ClaimMethod {
-  phone
-  social
+  webar
+  app
 }
 
 enum RedemptionStatus {
@@ -155,18 +156,40 @@ model Redemption {
   @@map("redemptions")
 }
 
-/// Consumer accounts, keyed by Firebase UID. FR-1: same credential across WebAR claim and app install.
+/// Consumer accounts. FR-1: same credential across WebAR claim and app install — our own
+/// username/email/password auth, not a third-party identity provider.
 model User {
-  id           String   @id @default(uuid())
-  firebaseUid  String   @unique
-  phone        String?  @unique
-  email        String?  @unique
-  displayName  String?
-  createdAt    DateTime @default(now())
+  id                   String    @id @default(uuid())
+  username             String    @unique
+  name                 String
+  email                String    @unique
+  phone                String    @unique
+  passwordHash         String
+  /// Phase 2 — FR-2: XP, level (derived), streak counter, badges.
+  xp                   Int       @default(0)
+  currentStreak        Int       @default(0)
+  longestStreak        Int       @default(0)
+  /// Date (not timestamp) of the last claimed redemption, used to compute streak continuation.
+  lastQuestCompletedAt DateTime?
+  createdAt            DateTime  @default(now())
 
   redemptions Redemption[]
+  badges      UserBadge[]
 
   @@map("users")
+}
+
+/// Phase 2 — FR-2 earned badges. Badge definitions (criteria, name, description) live in code
+/// (GamificationService), not the DB — this table just records which key a user has unlocked.
+model UserBadge {
+  id       String   @id @default(uuid())
+  userId   String
+  user     User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  badgeKey String
+  earnedAt DateTime @default(now())
+
+  @@unique([userId, badgeKey])
+  @@map("user_badges")
 }
 
 model Admin {

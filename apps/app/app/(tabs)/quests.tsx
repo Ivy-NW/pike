@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
-import { View, Text, FlatList, StyleSheet } from "react-native";
+import { View, Text, FlatList, StyleSheet, TouchableOpacity } from "react-native";
+import { router } from "expo-router";
 import { api } from "@/lib/api";
 import { colors, radius } from "@/theme";
 
@@ -9,6 +10,7 @@ interface QuestListItem {
   venueName: string;
   rewardDescription: string;
   completed: boolean;
+  markerId: string | null;
 }
 
 /** "Quest list: shows available quests (across venues), and which ones this user has completed." */
@@ -33,6 +35,15 @@ export default function QuestsScreen() {
             <Text style={styles.venue}>{item.venueName}</Text>
             <Text style={styles.reward}>{item.rewardDescription}</Text>
             {item.completed && <Text style={styles.completed}>Completed</Text>}
+            {/* Phase 2 — FR-4: authenticated in-app scan, same WebAR flow via WebView. */}
+            {item.markerId && (
+              <TouchableOpacity
+                style={styles.scanButton}
+                onPress={() => router.push(`/scan/${item.markerId}`)}
+              >
+                <Text style={styles.scanButtonText}>Scan marker</Text>
+              </TouchableOpacity>
+            )}
           </View>
         )}
       />
@@ -48,4 +59,6 @@ const styles = StyleSheet.create({
   venue: { color: "#64748b", marginTop: 2 },
   reward: { color: colors.deepSlate, marginTop: 8 },
   completed: { color: colors.success, fontWeight: "600", marginTop: 8 },
+  scanButton: { backgroundColor: colors.pikeBlue, borderRadius: radius, padding: 12, alignItems: "center", marginTop: 12 },
+  scanButtonText: { color: "white", fontWeight: "600" },
 });

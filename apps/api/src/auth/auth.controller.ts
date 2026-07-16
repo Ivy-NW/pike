@@ -4,6 +4,8 @@ import { RegisterBusinessDto } from "./dto/register-business.dto";
 import { LoginBusinessDto } from "./dto/login-business.dto";
 import { LoginAdminDto } from "./dto/login-admin.dto";
 import { VerifyEmailDto } from "./dto/verify-email.dto";
+import { SignupConsumerDto } from "./dto/signup-consumer.dto";
+import { SigninConsumerDto } from "./dto/signin-consumer.dto";
 
 @Controller("auth")
 export class AuthController {
@@ -33,5 +35,18 @@ export class AuthController {
   async loginAdmin(@Body() dto: LoginAdminDto) {
     const { admin, token } = await this.auth.loginAdmin(dto.email, dto.password);
     return { admin, token };
+  }
+
+  /** Consumer accounts (WebAR claim + app) — our own auth, not a third-party identity provider. */
+  @Post("consumer/signup")
+  async signupConsumer(@Body() dto: SignupConsumerDto) {
+    const { user, token } = await this.auth.signupConsumer(dto.phone, dto.username, dto.name, dto.email, dto.password);
+    return { user, token };
+  }
+
+  @Post("consumer/signin")
+  async signinConsumer(@Body() dto: SigninConsumerDto) {
+    const { user, token } = await this.auth.signinConsumer(dto.identifier, dto.password);
+    return { user, token };
   }
 }

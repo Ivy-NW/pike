@@ -11,6 +11,7 @@ import { RedemptionsModule } from "./redemptions/redemptions.module";
 import { UsersModule } from "./users/users.module";
 import { AdminModule } from "./admin/admin.module";
 import { PaymentsModule } from "./payments/payments.module";
+import { GamificationModule } from "./gamification/gamification.module";
 
 @Module({
   imports: [
@@ -26,6 +27,7 @@ import { PaymentsModule } from "./payments/payments.module";
     UsersModule,
     AdminModule,
     PaymentsModule,
+    GamificationModule,
   ],
 })
 export class AppModule {}

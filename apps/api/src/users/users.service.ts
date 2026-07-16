@@ -1,32 +1,34 @@
 import { Injectable } from "@nestjs/common";
 import { PrismaService } from "../prisma/prisma.service";
-import type { DecodedConsumerToken } from "../auth/firebase-admin.service";
+import { GamificationService } from "../gamification/gamification.service";
 
 @Injectable()
 export class UsersService {
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(
+    private readonly prisma: PrismaService,
+    private readonly gamification: GamificationService,
+  ) {}
 
-  /**
-   * FR-1: identity persists across the WebAR claim and the app install — same phone/social
-   * credential maps to the same firebaseUid on both surfaces, so this is a straight upsert,
-   * never a fresh row per surface.
-   */
-  async findOrCreateByFirebase(decoded: DecodedConsumerToken) {
-    const existing = await this.prisma.user.findUnique({ where: { firebaseUid: decoded.firebaseUid } });
-    if (existing) return existing;
+  /** Profile screen: identity + FR-2's XP/level/streak/badges (Phase 2). */
+  async profile(userId: string) {
+    const user = await this.prisma.user.findUniqueOrThrow({ where: { id: userId } });
+    const { level, xpIntoLevel, xpForNextLevel } = this.gamification.levelInfo(user.xp);
+    const badges = await this.gamification.badgeGrid(userId);
 
-    return this.prisma.user.create({
-      data: {
-        firebaseUid: decoded.firebaseUid,
-        phone: decoded.phone,
-        email: decoded.email,
-        displayName: decoded.displayName,
-      },
-    });
-  }
-
-  findByFirebaseUid(firebaseUid: string) {
-    return this.prisma.user.findUnique({ where: { firebaseUid } });
+    return {
+      id: user.id,
+      username: user.username,
+      phone: user.phone,
+      email: user.email,
+      name: user.name,
+      xp: user.xp,
+      level,
+      xpIntoLevel,
+      xpForNextLevel,
+      currentStreak: user.currentStreak,
+      longestStreak: user.longestStreak,
+      badges,
+    };
   }
 
   /** FR-3: every claimed reward across every WebAR quest this user has participated in. */
@@ -51,7 +53,10 @@ export class UsersService {
   /** Available quests platform-wide, flagged with whether this user already completed them. */
   async questList(userId: string) {
     const [liveQuests, myRedemptions] = await Promise.all([
-      this.prisma.quest.findMany({ where: { status: "live" }, include: { venue: true } }),
+      this.prisma.quest.findMany({
+        where: { status: "live" },
+        include: { venue: true, markers: { where: { status: "ready" }, take: 1 } },
+      }),
       this.prisma.redemption.findMany({ where: { userId }, select: { questId: true } }),
     ]);
     const completedQuestIds = new Set(myRedemptions.map((r) => r.questId));
@@ -63,6 +68,8 @@ export class UsersService {
       venueName: q.venue.name,
       rewardDescription: q.rewardDescription,
       completed: completedQuestIds.has(q.id),
+      // Phase 2 — FR-4: lets the app open the authenticated in-app scan (WebAR via WebView).
+      markerId: q.markers[0]?.id ?? null,
     }));
   }
 }

@@ -1,8 +1,8 @@
 import { useEffect, useState } from "react";
-import { useNavigate, useParams } from "react-router-dom";
+import { useLocation, useNavigate, useParams } from "react-router-dom";
 import type { PlanarImageTargetData } from "@pike/shared-types";
 import { api, ApiError } from "../lib/api";
-import { sessionId } from "../lib/firebase";
+import { sessionId } from "../lib/session";
 import { ArScanView } from "../components/ArScanView";
 
 interface ResolvedMarker {
@@ -14,6 +14,7 @@ interface ResolvedMarker {
 export function ScanPage() {
   const { markerId } = useParams<{ markerId: string }>();
   const navigate = useNavigate();
+  const location = useLocation();
   const [resolved, setResolved] = useState<ResolvedMarker | null>(null);
   const [error, setError] = useState<string | null>(null);
 
@@ -29,7 +30,9 @@ export function ScanPage() {
     if (!markerId) return;
     try {
       const redemption = await api.createRedemption(markerId, sessionId());
-      navigate(`/reward/${(redemption as any).id}`);
+      // Carry ?channel=app&appToken=... through so the reward screen knows this is the
+      // authenticated in-app scan (Phase 2 — FR-4) and can auto-claim instead of asking again.
+      navigate(`/reward/${(redemption as any).id}${location.search}`);
     } catch (err) {
       setError(err instanceof ApiError ? err.message : "Something went wrong recording your visit");
     }

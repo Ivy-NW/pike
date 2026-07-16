@@ -4,6 +4,11 @@ import { PrismaService } from "../prisma/prisma.service";
 import { PasswordService } from "./password.service";
 import { TokenService } from "./token.service";
 
+function omitPasswordHash<T extends { passwordHash: string | null }>(entity: T): Omit<T, "passwordHash"> {
+  const { passwordHash: _passwordHash, ...rest } = entity;
+  return rest;
+}
+
 @Injectable()
 export class AuthService {
   private readonly logger = new Logger(AuthService.name);
@@ -30,7 +35,7 @@ export class AuthService {
       `Email verification link for ${email}: /verify-email?token=${emailVerificationToken}`,
     );
 
-    return business;
+    return omitPasswordHash(business);
   }
 
   async verifyBusinessEmail(token: string) {
@@ -39,10 +44,11 @@ export class AuthService {
     });
     if (!business) throw new UnauthorizedException("Invalid or expired verification link");
 
-    return this.prisma.business.update({
+    const updated = await this.prisma.business.update({
       where: { id: business.id },
       data: { emailVerified: true, emailVerificationToken: null },
     });
+    return omitPasswordHash(updated);
   }
 
   async loginBusiness(email: string, password: string) {
@@ -55,7 +61,7 @@ export class AuthService {
       throw new UnauthorizedException("Please verify your email before logging in");
     }
 
-    return { business, token: this.tokens.signBusinessToken(business.id) };
+    return { business: omitPasswordHash(business), token: this.tokens.signBusinessToken(business.id) };
   }
 
   async loginAdmin(email: string, password: string) {
@@ -63,6 +69,33 @@ export class AuthService {
     if (!admin || !(await this.passwords.compare(password, admin.passwordHash))) {
       throw new UnauthorizedException("Invalid email or password");
     }
-    return { admin, token: this.tokens.signAdminToken(admin.id) };
+    return { admin: omitPasswordHash(admin), token: this.tokens.signAdminToken(admin.id) };
+  }
+
+  async signupConsumer(phone: string, username: string, name: string, email: string, password: string) {
+    const existing = await this.prisma.user.findFirst({
+      where: { OR: [{ phone }, { username }, { email }] },
+    });
+    if (existing) {
+      throw new ConflictException("An account with this phone number, username, or email already exists");
+    }
+
+    const passwordHash = await this.passwords.hash(password);
+    const user = await this.prisma.user.create({
+      data: { phone, username, name, email, passwordHash },
+    });
+
+    return { user: omitPasswordHash(user), token: this.tokens.signConsumerToken(user.id) };
+  }
+
+  async signinConsumer(identifier: string, password: string) {
+    const user = await this.prisma.user.findFirst({
+      where: { OR: [{ username: identifier }, { email: identifier }] },
+    });
+    if (!user || !(await this.passwords.compare(password, user.passwordHash))) {
+      throw new UnauthorizedException("Invalid username/email or password");
+    }
+
+    return { user: omitPasswordHash(user), token: this.tokens.signConsumerToken(user.id) };
   }
 }

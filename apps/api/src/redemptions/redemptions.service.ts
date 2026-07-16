@@ -3,9 +3,7 @@ import { ForbiddenException, Injectable, NotFoundException } from "@nestjs/commo
 import { PrismaService } from "../prisma/prisma.service";
 import { RedemptionCapService } from "../redis/redemption-cap.service";
 import { MarkersService } from "../markers/markers.service";
-import { UsersService } from "../users/users.service";
-import { FirebaseAdminService } from "../auth/firebase-admin.service";
-import { ClaimRewardDto } from "./dto/claim-reward.dto";
+import { GamificationService } from "../gamification/gamification.service";
 
 const REPEAT_SCAN_WINDOW_MS = 5 * 60 * 1000;
 
@@ -15,8 +13,7 @@ export class RedemptionsService {
     private readonly prisma: PrismaService,
     private readonly caps: RedemptionCapService,
     private readonly markers: MarkersService,
-    private readonly users: UsersService,
-    private readonly firebase: FirebaseAdminService,
+    private readonly gamification: GamificationService,
   ) {}
 
   private hashIp(ip: string): string {
@@ -105,7 +102,7 @@ export class RedemptionsService {
     return redemption;
   }
 
-  async claim(redemptionId: string, dto: ClaimRewardDto) {
+  async claim(redemptionId: string, userId: string, channel: "webar" | "app") {
     const redemption = await this.prisma.redemption.findUnique({
       where: { id: redemptionId },
       include: { quest: true },
@@ -116,18 +113,19 @@ export class RedemptionsService {
     }
 
     // FR-12: high-value rewards require the authenticated in-app flow, never the guest web claim.
-    if (redemption.quest.rewardTier === "high_value" && dto.channel === "webar") {
+    if (redemption.quest.rewardTier === "high_value" && channel === "webar") {
       throw new ForbiddenException("This reward requires the PIKE app to claim");
     }
 
-    const decoded = await this.firebase.verifyIdToken(dto.identity.firebaseIdToken);
-    const user = await this.users.findOrCreateByFirebase(decoded);
-
     const updated = await this.prisma.redemption.update({
       where: { id: redemptionId },
-      data: { userId: user.id, claimMethod: dto.identity.method },
+      data: { userId, claimMethod: channel },
     });
 
-    return { redemption: updated, user };
+    // Phase 2 — FR-2: XP/streak/badges awarded the moment a real account claims a completion.
+    // award.user is the post-award row — always more current than what we already have.
+    const { user: awardedUser, ...award } = await this.gamification.awardForClaim(userId);
+
+    return { redemption: updated, user: awardedUser, award };
   }
 }

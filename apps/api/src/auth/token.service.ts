@@ -12,7 +12,12 @@ export interface AdminTokenPayload {
   role: "admin";
 }
 
-/** Business and admin sessions are deliberately separate JWTs, secrets, and payload shapes — never interchangeable. */
+export interface ConsumerTokenPayload {
+  userId: string;
+  role: "consumer";
+}
+
+/** Business, admin, and consumer sessions are deliberately separate JWTs, secrets, and payload shapes — never interchangeable. */
 @Injectable()
 export class TokenService {
   constructor(
@@ -45,6 +50,20 @@ export class TokenService {
   verifyAdminToken(token: string): AdminTokenPayload {
     return this.jwt.verify<AdminTokenPayload>(token, {
       secret: this.config.get<string>("ADMIN_JWT_SECRET"),
+    });
+  }
+
+  signConsumerToken(userId: string): string {
+    const payload: ConsumerTokenPayload = { userId, role: "consumer" };
+    return this.jwt.sign(payload, {
+      secret: this.config.get<string>("CONSUMER_JWT_SECRET"),
+      expiresIn: "30d",
+    });
+  }
+
+  verifyConsumerToken(token: string): ConsumerTokenPayload {
+    return this.jwt.verify<ConsumerTokenPayload>(token, {
+      secret: this.config.get<string>("CONSUMER_JWT_SECRET"),
     });
   }
 }
