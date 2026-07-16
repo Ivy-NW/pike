@@ -4,6 +4,7 @@ import { BusinessesService } from "../businesses/businesses.service";
 import { VenuesService } from "../venues/venues.service";
 import { QuestsService } from "../quests/quests.service";
 import { PrismaService } from "../prisma/prisma.service";
+import { AdminGateService } from "../admin-gate/admin-gate.service";
 import { AdminCreateBusinessDto } from "./dto/admin-create-business.dto";
 import { SuspendBusinessDto } from "./dto/suspend-business.dto";
 
@@ -16,6 +17,7 @@ export class AdminController {
     private readonly venues: VenuesService,
     private readonly quests: QuestsService,
     private readonly prisma: PrismaService,
+    private readonly adminGate: AdminGateService,
   ) {}
 
   /** Sales-assisted onboarding — secondary path alongside business self-registration. */
@@ -59,5 +61,11 @@ export class AdminController {
       orderBy: { createdAt: "desc" },
       take: 500,
     });
+  }
+
+  /** Landing-page admin code gate attempts (?success=false to see just the failures). */
+  @Get("admin-gate-attempts")
+  listAdminGateAttempts(@Query("success") success?: "true" | "false") {
+    return this.adminGate.listAttempts(success === undefined ? undefined : success === "true");
   }
 }
