@@ -3,7 +3,8 @@ import { View, Text, TextInput, TouchableOpacity, StyleSheet, ScrollView } from 
 import { router } from "expo-router";
 import { setIdentityToken } from "@/lib/auth";
 import { api } from "@/lib/api";
-import { colors, radius } from "@/theme";
+import { useTheme } from "@/theme";
+import { Logo } from "@/components/Logo";
 
 type Mode = "signin" | "signup";
 
@@ -12,9 +13,12 @@ type Mode = "signin" | "signup";
  * signup. Hitting /users/me right after sign-in both confirms the account and pulls back
  * any rewards already claimed under it.
  *
- * PIKE's own auth (username/email + password) — no third-party identity provider.
+ * PIKE's own auth (username/email + password) — no third-party identity provider, so this
+ * doesn't need the social-login buttons shown in docs/ui designs/business_login.html (that
+ * mockup's Google/Phone buttons don't correspond to anything the API implements).
  */
 export default function LoginScreen() {
+  const theme = useTheme();
   const [mode, setMode] = useState<Mode>("signin");
   const [identifier, setIdentifier] = useState("");
   const [phone, setPhone] = useState("");
@@ -58,9 +62,34 @@ export default function LoginScreen() {
     }
   };
 
+  const c = theme.colors;
+  const styles = StyleSheet.create({
+    container: { flexGrow: 1, backgroundColor: c.surface, justifyContent: "center", padding: 24 },
+    logoRow: { flexDirection: "row", alignItems: "center", gap: 12, marginBottom: 8 },
+    title: { ...theme.font(theme.type.displayXl), color: c.onSurface },
+    subtitle: { ...theme.font(theme.type.bodyMd), color: c.onSurfaceVariant, marginBottom: 24, marginTop: 8 },
+    input: {
+      backgroundColor: c.surfaceContainerLow,
+      borderRadius: theme.radius.card,
+      padding: 16,
+      marginBottom: 12,
+      borderWidth: 1,
+      borderColor: c.borderStrong,
+      color: c.onSurface,
+      ...theme.font(theme.type.bodyMd),
+    },
+    primaryButton: { backgroundColor: c.primaryContainer, borderRadius: theme.radius.card, padding: 16, alignItems: "center" },
+    primaryButtonText: { ...theme.font(theme.type.headlineSm), color: c.onPrimaryContainer },
+    link: { ...theme.font(theme.type.bodyMd), color: c.primary, textAlign: "center", marginTop: 16 },
+    error: { color: c.error, marginTop: 12 },
+  });
+
   return (
     <ScrollView contentContainerStyle={styles.container}>
-      <Text style={styles.title}>PIKE</Text>
+      <View style={styles.logoRow}>
+        <Logo size={36} />
+        <Text style={styles.title}>PIKE</Text>
+      </View>
       <Text style={styles.subtitle}>
         {mode === "signin" ? "Sign in to your PIKE account." : "Create your PIKE account — same one used to claim rewards."}
       </Text>
@@ -70,6 +99,7 @@ export default function LoginScreen() {
           <TextInput
             style={styles.input}
             placeholder="Username or email"
+            placeholderTextColor={c.onSurfaceVariant}
             value={identifier}
             onChangeText={setIdentifier}
             autoCapitalize="none"
@@ -77,13 +107,14 @@ export default function LoginScreen() {
           <TextInput
             style={styles.input}
             placeholder="Password"
+            placeholderTextColor={c.onSurfaceVariant}
             value={password}
             onChangeText={setPassword}
             secureTextEntry
           />
 
           <TouchableOpacity
-            style={styles.primaryButton}
+            style={[styles.primaryButton, (loading || !identifier || !password) && { opacity: 0.6 }]}
             disabled={loading || !identifier || !password}
             onPress={handleSignin}
           >
@@ -99,15 +130,17 @@ export default function LoginScreen() {
           <TextInput
             style={styles.input}
             placeholder="Phone number (e.g. +15551234567)"
+            placeholderTextColor={c.onSurfaceVariant}
             value={phone}
             onChangeText={setPhone}
             keyboardType="phone-pad"
           />
-          <TextInput style={styles.input} placeholder="Username" value={username} onChangeText={setUsername} autoCapitalize="none" />
-          <TextInput style={styles.input} placeholder="Full name" value={name} onChangeText={setName} />
+          <TextInput style={styles.input} placeholder="Username" placeholderTextColor={c.onSurfaceVariant} value={username} onChangeText={setUsername} autoCapitalize="none" />
+          <TextInput style={styles.input} placeholder="Full name" placeholderTextColor={c.onSurfaceVariant} value={name} onChangeText={setName} />
           <TextInput
             style={styles.input}
             placeholder="Email"
+            placeholderTextColor={c.onSurfaceVariant}
             value={email}
             onChangeText={setEmail}
             keyboardType="email-address"
@@ -116,13 +149,14 @@ export default function LoginScreen() {
           <TextInput
             style={styles.input}
             placeholder="Password (min 8 characters)"
+            placeholderTextColor={c.onSurfaceVariant}
             value={password}
             onChangeText={setPassword}
             secureTextEntry
           />
 
           <TouchableOpacity
-            style={styles.primaryButton}
+            style={[styles.primaryButton, (loading || !phone || !username || !name || !email || password.length < 8) && { opacity: 0.6 }]}
             disabled={loading || !phone || !username || !name || !email || password.length < 8}
             onPress={handleSignup}
           >
@@ -135,17 +169,7 @@ export default function LoginScreen() {
         </>
       )}
 
-      {error && <Text style={{ color: colors.danger, marginTop: 12 }}>{error}</Text>}
+      {error && <Text style={styles.error}>{error}</Text>}
     </ScrollView>
   );
 }
-
-const styles = StyleSheet.create({
-  container: { flexGrow: 1, backgroundColor: colors.lightGray, justifyContent: "center", padding: 24 },
-  title: { fontSize: 32, fontWeight: "700", color: colors.deepSlate, marginBottom: 8 },
-  subtitle: { color: "#64748b", marginBottom: 24 },
-  input: { backgroundColor: "white", borderRadius: radius, padding: 16, marginBottom: 12, borderWidth: 1, borderColor: "#e2e8f0" },
-  primaryButton: { backgroundColor: colors.pikeBlue, borderRadius: radius, padding: 16, alignItems: "center" },
-  primaryButtonText: { color: "white", fontWeight: "600", fontSize: 16 },
-  link: { color: colors.pikeBlue, textAlign: "center", marginTop: 16 },
-});

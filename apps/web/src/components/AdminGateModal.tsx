@@ -46,7 +46,7 @@ export function AdminGateModal({ onClose }: { onClose: () => void }) {
       <div
         onClick={(e) => e.stopPropagation()}
         className="card"
-        style={{ width: 320, background: "#fff" }}
+        style={{ width: 320 }}
       >
         <form onSubmit={submit} style={{ display: "flex", flexDirection: "column", gap: 12 }}>
           <input
@@ -58,7 +58,9 @@ export function AdminGateModal({ onClose }: { onClose: () => void }) {
             style={{
               padding: "12px 14px",
               borderRadius: "var(--radius)",
-              border: "1px solid #cbd5e1",
+              border: "1px solid var(--border-strong)",
+              background: "var(--surface-container-lowest)",
+              color: "var(--on-surface)",
               fontSize: 15,
             }}
           />
@@ -66,10 +68,10 @@ export function AdminGateModal({ onClose }: { onClose: () => void }) {
             {status === "loading" ? "Checking..." : "Continue"}
           </button>
           {status === "error" && (
-            <p style={{ color: "var(--danger)", fontSize: 13, margin: 0 }}>Invalid code.</p>
+            <p style={{ color: "var(--error)", fontSize: 13, margin: 0 }}>Invalid code.</p>
           )}
           {status === "limited" && (
-            <p style={{ color: "var(--danger)", fontSize: 13, margin: 0 }}>
+            <p style={{ color: "var(--error)", fontSize: 13, margin: 0 }}>
               Too many attempts. Try again later.
             </p>
           )}

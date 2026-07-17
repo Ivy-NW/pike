@@ -3,10 +3,12 @@ import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
 import { router } from "expo-router";
 import type { UserProfile } from "@pike/shared-types";
 import { api } from "@/lib/api";
-import { colors, radius } from "@/theme";
+import { useTheme } from "@/theme";
+import { Logo } from "@/components/Logo";
 
 /** UI doc 7.1 — daily-open identity dashboard: streak (flame, gold) + XP bar (Pike Blue fill). */
 export default function HomeScreen() {
+  const theme = useTheme();
   const [me, setMe] = useState<UserProfile | null>(null);
   const [walletCount, setWalletCount] = useState<number | null>(null);
   const [questCount, setQuestCount] = useState<number | null>(null);
@@ -18,11 +20,41 @@ export default function HomeScreen() {
   }, []);
 
   const xpProgress = me ? me.xpIntoLevel / me.xpForNextLevel : 0;
+  const c = theme.colors;
+
+  const styles = StyleSheet.create({
+    container: { flex: 1, backgroundColor: c.surface, padding: theme.spacing.containerPadding, paddingTop: 60 },
+    headerRow: { flexDirection: "row", alignItems: "center", justifyContent: "space-between", marginBottom: theme.spacing.sectionMargin },
+    headerLeft: { flexDirection: "row", alignItems: "center", gap: 10 },
+    header: { ...theme.font(theme.type.headlineLgMobile), color: c.primary },
+    streak: { flexDirection: "row", alignItems: "center", gap: 4 },
+    streakFlame: { fontSize: 18 },
+    streakCount: { ...theme.font(theme.type.headlineSm), color: c.secondary },
+    card: {
+      backgroundColor: theme.mode === "dark" ? "rgba(30,41,59,0.7)" : c.surfaceContainerLowest,
+      borderWidth: 1,
+      borderColor: theme.mode === "dark" ? "rgba(255,255,255,0.05)" : c.borderSubtle,
+      borderRadius: theme.radius.card,
+      padding: theme.spacing.stackMd,
+      marginBottom: theme.spacing.stackMd,
+    },
+    xpHeaderRow: { flexDirection: "row", justifyContent: "space-between", alignItems: "baseline", marginBottom: 12 },
+    cardTitle: { ...theme.font(theme.type.headlineSm), color: c.onSurface },
+    xpLabel: { ...theme.font(theme.type.labelSm), color: c.onSurfaceVariant },
+    xpTrack: { height: 8, borderRadius: 4, backgroundColor: c.surfaceContainerHighest, overflow: "hidden" },
+    xpFill: { height: "100%", backgroundColor: c.primaryContainer, borderRadius: 4 },
+    cardBody: { ...theme.font(theme.type.bodyMd), color: c.onSurfaceVariant, marginBottom: 12 },
+    primaryButton: { backgroundColor: c.primaryContainer, borderRadius: theme.radius.card, padding: 14, alignItems: "center" },
+    primaryButtonText: { ...theme.font(theme.type.labelCaps), color: c.onPrimaryContainer },
+  });
 
   return (
     <View style={styles.container}>
       <View style={styles.headerRow}>
-        <Text style={styles.header}>PIKE</Text>
+        <View style={styles.headerLeft}>
+          <Logo size={28} />
+          <Text style={styles.header}>PIKE</Text>
+        </View>
         {me && me.currentStreak > 0 && (
           <View style={styles.streak}>
             <Text style={styles.streakFlame}>🔥</Text>
@@ -58,25 +90,7 @@ export default function HomeScreen() {
         </TouchableOpacity>
       </View>
 
-      {/* TODO(phase-3): "Nearby venues" 2-up card row + macro-quest progress render here. */}
+      {/* TODO(phase-3): macro-quest progress renders here. */}
     </View>
   );
 }
-
-const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: colors.lightGray, padding: 20, paddingTop: 60 },
-  headerRow: { flexDirection: "row", alignItems: "center", justifyContent: "space-between", marginBottom: 20 },
-  header: { fontSize: 28, fontWeight: "700", color: colors.deepSlate },
-  streak: { flexDirection: "row", alignItems: "center", gap: 4 },
-  streakFlame: { fontSize: 18 },
-  streakCount: { fontSize: 18, fontWeight: "700", color: colors.pikeGold },
-  card: { backgroundColor: "white", borderRadius: radius, padding: 16, marginBottom: 16 },
-  cardTitle: { fontSize: 16, fontWeight: "600", color: colors.deepSlate, marginBottom: 4 },
-  cardBody: { color: "#64748b", marginBottom: 12 },
-  xpHeaderRow: { flexDirection: "row", justifyContent: "space-between", alignItems: "baseline", marginBottom: 10 },
-  xpLabel: { fontSize: 12, color: "#64748b" },
-  xpTrack: { height: 8, borderRadius: 4, backgroundColor: "#e2e8f0", overflow: "hidden" },
-  xpFill: { height: "100%", backgroundColor: colors.pikeBlue, borderRadius: 4 },
-  primaryButton: { backgroundColor: colors.pikeBlue, borderRadius: radius, padding: 14, alignItems: "center" },
-  primaryButtonText: { color: "white", fontWeight: "600" },
-});

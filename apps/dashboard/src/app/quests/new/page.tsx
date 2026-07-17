@@ -2,6 +2,7 @@
 import { Suspense, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { api, ApiError } from "@/lib/api";
+import { NavHeader } from "@/components/NavHeader";
 
 function fileToBase64(file: File): Promise<string> {
   return new Promise((resolve, reject) => {
@@ -84,10 +85,12 @@ function NewQuestForm() {
   };
 
   return (
+    <>
+    <NavHeader />
     <div style={{ maxWidth: 520, margin: "60px auto" }} className="card">
       {step === "template" && (
         <>
-          <h2 style={{ marginTop: 0 }}>Create a quest</h2>
+          <h2 style={{ marginTop: 0, fontFamily: "var(--font-heading)" }}>Create a quest</h2>
           <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
             <input placeholder="Quest name" value={name} onChange={(e) => setName(e.target.value)} />
             <input placeholder="Theme (e.g. pirate, cyberpunk, safari)" value={theme} onChange={(e) => setTheme(e.target.value)} />
@@ -102,7 +105,7 @@ function NewQuestForm() {
               <option value="high_value">High-value (app-only claim — FR-12)</option>
             </select>
             <input placeholder="Reward description (e.g. 15% off your bill)" value={rewardDescription} onChange={(e) => setRewardDescription(e.target.value)} />
-            <label style={{ fontSize: 13, color: "#64748b" }}>Max redemptions / day</label>
+            <label style={{ fontSize: 13, color: "var(--on-surface-variant)" }}>Max redemptions / day</label>
             <input type="number" min={1} value={maxRedemptionsPerDay} onChange={(e) => setMaxRedemptionsPerDay(Number(e.target.value))} />
             <button className="secondary" onClick={() => setStep("upload")} disabled={!name || !theme || !rewardDescription}>
               Next: upload marker image
@@ -114,7 +117,7 @@ function NewQuestForm() {
       {step === "upload" && (
         <>
           <h2 style={{ marginTop: 0 }}>Upload a marker image</h2>
-          <p style={{ color: "#64748b", fontSize: 14 }}>
+          <p style={{ color: "var(--on-surface-variant)", fontSize: 14 }}>
             A photo or logo — this gets sent to the marker-compiling service and returns a print-ready marker plus fallback QR (FR-10).
           </p>
           <input type="file" accept="image/*" onChange={(e) => setImageFile(e.target.files?.[0] ?? null)} />
@@ -124,14 +127,14 @@ function NewQuestForm() {
               {loading ? "Creating..." : "Create & publish"}
             </button>
           </div>
-          {error && <p style={{ color: "var(--danger)" }}>{error}</p>}
+          {error && <p style={{ color: "var(--error)" }}>{error}</p>}
         </>
       )}
 
       {step === "payment" && (
         <>
           <h2 style={{ marginTop: 0 }}>Add a payment method to activate this quest</h2>
-          <p style={{ color: "#64748b", fontSize: 14 }}>
+          <p style={{ color: "var(--on-surface-variant)", fontSize: 14 }}>
             Your quest is saved as a draft — nothing is lost. Add a payment method now to publish it immediately.
           </p>
           <input
@@ -142,7 +145,7 @@ function NewQuestForm() {
           <button className="primary" style={{ marginTop: 12 }} onClick={submitPayment} disabled={loading}>
             {loading ? "Verifying..." : "Add payment method & publish"}
           </button>
-          {error && <p style={{ color: "var(--danger)" }}>{error}</p>}
+          {error && <p style={{ color: "var(--error)" }}>{error}</p>}
         </>
       )}
 
@@ -154,6 +157,7 @@ function NewQuestForm() {
         </>
       )}
     </div>
+    </>
   );
 }
 

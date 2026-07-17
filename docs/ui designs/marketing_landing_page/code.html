@@ -1,0 +1,354 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>PIKE | Turn Every Visit Into a Quest</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&amp;family=Geist:wght@400;500;600;700;800&amp;family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@100..900&amp;family=Space+Mono:wght@100..900&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "surface": "#f8f9ff",
+                        "secondary": "#855300",
+                        "on-primary-fixed-variant": "#003ea8",
+                        "secondary-container": "#fea619",
+                        "on-tertiary-fixed-variant": "#3f465c",
+                        "on-background": "#0b1c30",
+                        "on-surface": "#0b1c30",
+                        "surface-variant": "#d3e4fe",
+                        "outline": "#737686",
+                        "on-tertiary-container": "#eef0ff",
+                        "on-secondary-fixed-variant": "#653e00",
+                        "inverse-surface": "#213145",
+                        "error-container": "#ffdad6",
+                        "on-tertiary-fixed": "#131b2e",
+                        "surface-dim": "#cbdbf5",
+                        "secondary-fixed": "#ffddb8",
+                        "tertiary-fixed": "#dae2fd",
+                        "secondary-fixed-dim": "#ffb95f",
+                        "on-secondary-fixed": "#2a1700",
+                        "tertiary-container": "#656d84",
+                        "on-error-container": "#93000a",
+                        "tertiary": "#4d556b",
+                        "on-primary-fixed": "#00174b",
+                        "on-error": "#ffffff",
+                        "on-primary-container": "#eeefff",
+                        "primary-container": "#2563eb",
+                        "error": "#ba1a1a",
+                        "primary": "#004ac6",
+                        "surface-tint": "#0053db",
+                        "outline-variant": "#c3c6d7",
+                        "surface-container": "#e5eeff",
+                        "tertiary-fixed-dim": "#bec6e0",
+                        "primary-fixed-dim": "#b4c5ff",
+                        "inverse-on-surface": "#eaf1ff",
+                        "surface-container-highest": "#d3e4fe",
+                        "background": "#f8f9ff",
+                        "surface-container-high": "#dce9ff",
+                        "surface-bright": "#f8f9ff",
+                        "primary-fixed": "#dbe1ff",
+                        "on-tertiary": "#ffffff",
+                        "surface-container-lowest": "#ffffff",
+                        "inverse-primary": "#b4c5ff",
+                        "on-secondary-container": "#684000",
+                        "on-secondary": "#ffffff",
+                        "on-primary": "#ffffff",
+                        "on-surface-variant": "#434655"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.125rem",
+                        "lg": "0.25rem",
+                        "xl": "0.5rem",
+                        "full": "0.75rem"
+                    },
+                    "spacing": {
+                        "margin-mobile": "16px",
+                        "margin-desktop": "40px",
+                        "gutter": "24px",
+                        "unit": "4px",
+                        "container-max": "1440px"
+                    },
+                    "fontFamily": {
+                        "label-sm": ["Space Mono"],
+                        "body-lg": ["Geist"],
+                        "label-md": ["Space Mono"],
+                        "headline-lg-mobile": ["Geist"],
+                        "headline-md": ["Geist"],
+                        "headline-lg": ["Geist"],
+                        "body-md": ["Geist"],
+                        "headline-xl": ["Geist"]
+                    },
+                    "fontSize": {
+                        "label-sm": ["12px", {"lineHeight": "1.0", "letterSpacing": "0.05em", "fontWeight": "500"}],
+                        "body-lg": ["18px", {"lineHeight": "1.6", "fontWeight": "400"}],
+                        "label-md": ["14px", {"lineHeight": "1.0", "letterSpacing": "0.05em", "fontWeight": "500"}],
+                        "headline-lg-mobile": ["24px", {"lineHeight": "1.2", "fontWeight": "600"}],
+                        "headline-md": ["20px", {"lineHeight": "1.4", "fontWeight": "600"}],
+                        "headline-lg": ["32px", {"lineHeight": "1.2", "letterSpacing": "-0.01em", "fontWeight": "600"}],
+                        "body-md": ["16px", {"lineHeight": "1.6", "fontWeight": "400"}],
+                        "headline-xl": ["48px", {"lineHeight": "1.1", "letterSpacing": "-0.02em", "fontWeight": "700"}]
+                    }
+                },
+            },
+        }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+            display: inline-block;
+            vertical-align: middle;
+        }
+        .glass-header {
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+        }
+        .hero-gradient {
+            background: radial-gradient(circle at 50% 50%, rgba(37, 99, 235, 0.05) 0%, transparent 70%);
+        }
+        .technical-grid {
+            background-image: linear-gradient(to right, rgba(203, 213, 225, 0.2) 1px, transparent 1px),
+                              linear-gradient(to bottom, rgba(203, 213, 225, 0.2) 1px, transparent 1px);
+            background-size: 40px 40px;
+        }
+    </style>
+</head>
+<body class="bg-surface text-on-surface font-body-md selection:bg-primary-container selection:text-white">
+<!-- Top Navigation Bar -->
+<header class="sticky top-0 z-50 flex justify-between items-center px-margin-desktop w-full max-w-container-max mx-auto h-16 bg-surface/80 backdrop-blur-xl border-b border-outline-variant">
+<div class="flex items-center gap-8">
+<span class="font-headline-md text-headline-md font-bold text-primary tracking-tight">PIKE</span>
+<nav class="hidden md:flex gap-6">
+<a class="font-body-md text-body-md text-primary font-bold border-b-2 border-primary transition-colors duration-200" href="#">Solutions</a>
+<a class="font-body-md text-body-md text-on-surface-variant hover:text-primary transition-colors duration-200" href="#">Pricing</a>
+<a class="font-body-md text-body-md text-on-surface-variant hover:text-primary transition-colors duration-200" href="#">About</a>
+</nav>
+</div>
+<div class="flex items-center gap-4">
+<button class="hidden md:block font-label-md text-label-md px-4 py-2 text-on-surface hover:text-primary transition-all">Login</button>
+<button class="bg-primary text-on-primary font-label-md text-label-md px-6 py-3 uppercase tracking-wider hover:bg-on-primary-fixed-variant active:scale-95 transition-all">Get Started</button>
+</div>
+</header>
+<main class="relative">
+<!-- Hero Section -->
+<section class="relative overflow-hidden pt-20 pb-32 technical-grid">
+<div class="absolute inset-0 hero-gradient pointer-events-none"></div>
+<div class="max-w-container-max mx-auto px-margin-desktop grid grid-cols-1 lg:grid-cols-12 gap-gutter items-center relative z-10">
+<div class="lg:col-span-7">
+<div class="inline-flex items-center gap-2 px-3 py-1 bg-surface-container-high border border-outline-variant rounded-full mb-6">
+<span class="w-2 h-2 rounded-full bg-primary animate-pulse"></span>
+<span class="font-label-sm text-label-sm uppercase tracking-widest text-primary">WebAR Verification Protocol v2.0</span>
+</div>
+<h1 class="font-headline-xl text-headline-xl text-on-background mb-6 leading-none">
+                        Turn Every Visit <br/>Into a <span class="text-primary italic">Quest.</span>
+</h1>
+<p class="font-body-lg text-body-lg text-on-surface-variant max-w-xl mb-10">
+                        Increase foot traffic and engagement with WebAR-based rewards that are impossible to spoof. Precision-engineered for technical performance and high-conversion marketing.
+                    </p>
+<div class="flex flex-col sm:flex-row gap-4">
+<button class="bg-primary text-on-primary font-label-md text-label-md px-8 py-4 uppercase tracking-widest flex items-center justify-center gap-2 hover:bg-on-primary-fixed-variant transition-all group">
+                            Launch Your First Quest
+                            <span class="material-symbols-outlined text-sm transition-transform group-hover:translate-x-1">arrow_forward</span>
+</button>
+<button class="bg-white border border-outline-variant text-on-background font-label-md text-label-md px-8 py-4 uppercase tracking-widest flex items-center justify-center gap-2 hover:border-primary transition-all">
+                            View Live Demo
+                        </button>
+</div>
+</div>
+<div class="lg:col-span-5 relative mt-16 lg:mt-0">
+<div class="relative z-20">
+<!-- Phone Mockup -->
+<div class="absolute -left-12 -bottom-12 w-64 h-[500px] bg-white border border-outline rounded-[40px] p-3 shadow-xl hidden md:block">
+<div class="w-full h-full bg-surface-container rounded-[30px] overflow-hidden relative">
+<div class="w-full h-full bg-cover bg-center" data-alt="A high-resolution mobile app screen showing a futuristic augmented reality interface. The screen displays a 3D golden token floating over a real-world sidewalk viewed through a camera lens. The UI is clean, with Pike Blue mission parameters and tactical targeting reticles, emphasizing a precise and laboratory-grade laboratory aesthetic." style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuBAPEoMVf53EV-tJdZEQf1gB_dnVyeojY9pHkD48OWgFyCDYeXfuK0bVq6krW1pd1QFvCP9XjErbFA2L-jkWV8MkAHRR4HwylEAcXPRhghT36N3zjT1nEmCO-pmVXyt-d8Km2Vv8eG7aPOkjJheMGP5CdPaBHveA3NPbQjekie0KWl0GwBK8qTBow70hU00e78-yjtRt4bjoA2Z0YOjU1ld60DwHSyCcHUnf9sbxy6AR1j1IOTW14Jo-3Y7qe4sLg9_r0VWQxfS4uM')"></div>
+</div>
+</div>
+<!-- Dashboard Mockup -->
+<div class="w-full h-80 lg:h-96 bg-white border border-outline-variant rounded-lg p-2 shadow-2xl overflow-hidden">
+<div class="w-full h-full bg-surface-container-low border border-outline-variant rounded flex flex-col">
+<div class="h-8 border-b border-outline-variant flex items-center px-4 gap-2">
+<div class="w-2 h-2 rounded-full bg-error"></div>
+<div class="w-2 h-2 rounded-full bg-secondary-container"></div>
+<div class="w-2 h-2 rounded-full bg-primary-container"></div>
+</div>
+<div class="p-4 grid grid-cols-3 gap-4 h-full">
+<div class="col-span-1 border-r border-outline-variant space-y-4">
+<div class="h-4 w-3/4 bg-surface-container-highest rounded"></div>
+<div class="h-4 w-1/2 bg-surface-container-highest rounded"></div>
+<div class="h-4 w-2/3 bg-surface-container-highest rounded"></div>
+</div>
+<div class="col-span-2 space-y-4">
+<div class="h-32 bg-primary/5 rounded border border-primary/20 flex items-center justify-center">
+<span class="material-symbols-outlined text-primary text-4xl">monitoring</span>
+</div>
+<div class="grid grid-cols-2 gap-4">
+<div class="h-16 bg-surface-container-highest rounded"></div>
+<div class="h-16 bg-surface-container-highest rounded"></div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- Social Proof Section -->
+<section class="py-12 border-y border-outline-variant bg-surface-container-lowest">
+<div class="max-w-container-max mx-auto px-margin-desktop">
+<p class="font-label-sm text-label-sm text-center uppercase tracking-widest text-outline mb-10">Powering high-performance venues globally</p>
+<div class="flex flex-wrap justify-center items-center gap-12 grayscale opacity-60">
+<span class="font-headline-md font-extrabold">VENUE_ONE</span>
+<span class="font-headline-md font-extrabold">METRO_HUB</span>
+<span class="font-headline-md font-extrabold">URBAN_X</span>
+<span class="font-headline-md font-extrabold">APEX_RETAIL</span>
+<span class="font-headline-md font-extrabold">CORE_SPACE</span>
+</div>
+</div>
+</section>
+<!-- Features Bento Grid -->
+<section class="py-24 max-w-container-max mx-auto px-margin-desktop">
+<div class="text-center mb-16">
+<h2 class="font-headline-lg text-headline-lg text-on-background mb-4 uppercase tracking-tight">The Technical Advantage</h2>
+<p class="font-body-md text-body-md text-on-surface-variant max-w-2xl mx-auto">PIKE leverages laboratory-grade verification to ensure every visit is authentic and every reward is earned.</p>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-3 gap-gutter">
+<!-- Feature 1: Marker-based Verification -->
+<div class="md:col-span-2 p-8 border border-outline-variant bg-white flex flex-col md:flex-row gap-8 items-center group hover:border-primary transition-all">
+<div class="flex-1">
+<div class="w-12 h-12 bg-primary/10 flex items-center justify-center mb-6">
+<span class="material-symbols-outlined text-primary" data-weight="fill">verified</span>
+</div>
+<h3 class="font-headline-md text-headline-md text-on-background mb-3 uppercase">Marker-based Verification</h3>
+<p class="font-body-md text-body-md text-on-surface-variant">
+                            Forget GPS spoofing. PIKE uses physical AR markers at your location to verify presence with 100% certainty before unlocking rewards.
+                        </p>
+</div>
+<div class="w-full md:w-64 h-48 bg-surface-container-low border border-outline-variant rounded overflow-hidden relative">
+<div class="w-full h-full bg-cover bg-center" data-alt="A close-up photograph of a minimalist physical metallic coaster with a complex geometric laser-etched pattern. The scene is lit with clinical, cool-white laboratory lighting. A hand holds a smartphone over the coaster, with the screen showing a digital scanning overlay in Pike Blue, emphasizing precision engineering and anti-spoofing technology." style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuCsRU2cmG-D5gakXarR7IjkcCGfdOlzL981_VgykcuDwhITs_njLs1MeEDY0oEP5c8aYl8Gk98jcy23RDXZpB8VUs1IMw95rIJNrjPY0g2trGmlLiVChN45RVxUfco6X6v1jbefGkyaXoEMNPQ1byZ2wYWb6u7WHLlIRNqPngHpCHqttd5giQRSWs94qnFds9rxMWrLsh57y1OOAj6aH6cAcK2Zu35Yc7CMUp28v1dDdt45QQF4W279K0SsnXC3u_ipagFcQixfZGc')"></div>
+</div>
+</div>
+<!-- Feature 2: Analytics -->
+<div class="p-8 border border-outline-variant bg-white hover:border-primary transition-all">
+<div class="w-12 h-12 bg-primary/10 flex items-center justify-center mb-6">
+<span class="material-symbols-outlined text-primary" data-weight="fill">analytics</span>
+</div>
+<h3 class="font-headline-md text-headline-md text-on-background mb-3 uppercase">Venue Analytics</h3>
+<p class="font-body-md text-body-md text-on-surface-variant mb-6">
+                        Real-time heatmaps and conversion data. See exactly how quests are driving foot traffic.
+                    </p>
+<div class="h-24 bg-surface-container flex items-end gap-1 px-4 pb-2">
+<div class="w-full bg-primary/20 h-[40%] rounded-t-sm"></div>
+<div class="w-full bg-primary/40 h-[60%] rounded-t-sm"></div>
+<div class="w-full bg-primary/30 h-[50%] rounded-t-sm"></div>
+<div class="w-full bg-primary h-[90%] rounded-t-sm"></div>
+<div class="w-full bg-primary/60 h-[70%] rounded-t-sm"></div>
+</div>
+</div>
+<!-- Feature 3: Zero-install -->
+<div class="p-8 border border-outline-variant bg-white hover:border-primary transition-all">
+<div class="w-12 h-12 bg-primary/10 flex items-center justify-center mb-6">
+<span class="material-symbols-outlined text-primary" data-weight="fill">bolt</span>
+</div>
+<h3 class="font-headline-md text-headline-md text-on-background mb-3 uppercase">Zero-Install WebAR</h3>
+<p class="font-body-md text-body-md text-on-surface-variant">
+                        No app store friction. Users scan a QR code and immediately enter the WebAR quest funnel.
+                    </p>
+</div>
+<!-- Feature 4: Spoof-proof -->
+<div class="md:col-span-2 p-8 border border-outline-variant bg-white flex flex-col md:flex-row-reverse gap-8 items-center group hover:border-primary transition-all">
+<div class="flex-1">
+<div class="w-12 h-12 bg-primary/10 flex items-center justify-center mb-6">
+<span class="material-symbols-outlined text-primary" data-weight="fill">security</span>
+</div>
+<h3 class="font-headline-md text-headline-md text-on-background mb-3 uppercase">Immutable Proof of Presence</h3>
+<p class="font-body-md text-body-md text-on-surface-variant">
+                            Our systematic approach creates a mission-critical security layer for your loyalty programs, ensuring every reward is legitimate.
+                        </p>
+</div>
+<div class="w-full md:w-64 h-48 bg-primary-container/10 flex items-center justify-center">
+
+</div>
+</div>
+</div>
+</section>
+<!-- Final CTA Section -->
+<section class="py-24 bg-on-background text-white relative overflow-hidden">
+<div class="absolute inset-0 opacity-10 technical-grid pointer-events-none"></div>
+<div class="max-w-container-max mx-auto px-margin-desktop text-center relative z-10">
+<h2 class="font-headline-xl text-headline-xl mb-8 leading-tight">Ready to Engineer Your <br/><span class="text-primary-fixed">Venue Experience?</span></h2>
+<p class="font-body-lg text-body-lg text-surface-variant/80 max-w-2xl mx-auto mb-12">
+                    Join 200+ forward-leaning venues using PIKE to bridge the gap between physical space and digital rewards.
+                </p>
+<div class="flex flex-col sm:flex-row justify-center gap-6">
+<button class="bg-primary text-on-primary font-label-md text-label-md px-10 py-5 uppercase tracking-widest hover:bg-on-primary-fixed-variant transition-all">
+                        Create Your Business Account
+                    </button>
+<button class="bg-transparent border border-outline text-white font-label-md text-label-md px-10 py-5 uppercase tracking-widest hover:bg-white/10 transition-all">
+                        Talk to an Expert
+                    </button>
+</div>
+<div class="mt-16 flex justify-center gap-10">
+<div class="text-center">
+<p class="font-headline-lg text-primary-fixed">1.2M+</p>
+<p class="font-label-sm text-outline uppercase tracking-widest">Quests Completed</p>
+</div>
+<div class="text-center">
+<p class="font-headline-lg text-primary-fixed">98%</p>
+<p class="font-label-sm text-outline uppercase tracking-widest">Fraud Prevention</p>
+</div>
+<div class="text-center">
+<p class="font-headline-lg text-primary-fixed">4.5x</p>
+<p class="font-label-sm text-outline uppercase tracking-widest">Avg ROI</p>
+</div>
+</div>
+</div>
+</section>
+</main>
+<!-- Footer -->
+<footer class="w-full py-12 px-margin-desktop flex flex-col md:flex-row justify-between items-center gap-gutter border-t border-outline-variant bg-surface-container-lowest">
+<div class="flex flex-col items-center md:items-start gap-2">
+<span class="font-label-md text-label-md font-bold text-on-surface">PIKE</span>
+<p class="font-label-sm text-label-sm text-on-surface-variant">© 2024 PIKE Urban Exploration. All rights reserved.</p>
+</div>
+<nav class="flex gap-8">
+<a class="font-label-sm text-label-sm text-on-surface-variant hover:text-primary transition-colors" href="#">Terms</a>
+<a class="font-label-sm text-label-sm text-on-surface-variant hover:text-primary transition-colors" href="#">Privacy</a>
+<a class="font-label-sm text-label-sm text-on-surface-variant hover:text-primary transition-colors" href="#">Contact</a>
+<a class="font-label-sm text-label-sm text-on-surface-variant hover:text-primary transition-colors" href="#">Developer API</a>
+</nav>
+<div class="flex gap-4">
+<span class="material-symbols-outlined text-on-surface-variant cursor-pointer hover:text-primary transition-colors">terminal</span>
+<span class="material-symbols-outlined text-on-surface-variant cursor-pointer hover:text-primary transition-colors">language</span>
+</div>
+</footer>
+<script>
+        // Micro-interactions for buttons
+        document.querySelectorAll('button').forEach(button => {
+            button.addEventListener('mousedown', () => {
+                button.classList.add('scale-95');
+            });
+            button.addEventListener('mouseup', () => {
+                button.classList.remove('scale-95');
+            });
+            button.addEventListener('mouseleave', () => {
+                button.classList.remove('scale-95');
+            });
+        });
+
+        // Sticky header background shift on scroll
+        window.addEventListener('scroll', () => {
+            const header = document.querySelector('header');
+            if (window.scrollY > 20) {
+                header.classList.add('shadow-sm');
+            } else {
+                header.classList.remove('shadow-sm');
+            }
+        });
+    </script>
+</body></html>

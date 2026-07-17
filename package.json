@@ -18,7 +18,8 @@
     "dev:dashboard": "npm run dev --workspace apps/dashboard",
     "dev:admin": "npm run dev --workspace apps/admin",
     "dev:app": "npm run start --workspace apps/app",
-    "build:shared-types": "npm run build --workspace packages/shared-types"
+    "build:shared-types": "npm run build --workspace packages/shared-types",
+    "build:design-tokens": "npm run build --workspace packages/design-tokens"
   },
   "devDependencies": {
     "typescript": "^5.5.4"

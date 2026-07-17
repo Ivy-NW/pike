@@ -1,0 +1,482 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>PIKE Admin Dashboard | Platform Management</title>
+<!-- Fonts -->
+<link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&amp;family=Geist:wght@300;400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<!-- Material Symbols -->
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<!-- Tailwind CSS -->
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "surface": "#f8f9ff",
+                    "secondary": "#855300",
+                    "on-primary-fixed-variant": "#003ea8",
+                    "secondary-container": "#fea619",
+                    "on-tertiary-fixed-variant": "#3f465c",
+                    "on-background": "#0b1c30",
+                    "on-surface": "#0b1c30",
+                    "surface-variant": "#d3e4fe",
+                    "outline": "#737686",
+                    "on-tertiary-container": "#eef0ff",
+                    "on-secondary-fixed-variant": "#653e00",
+                    "inverse-surface": "#213145",
+                    "error-container": "#ffdad6",
+                    "on-tertiary-fixed": "#131b2e",
+                    "surface-dim": "#cbdbf5",
+                    "secondary-fixed": "#ffddb8",
+                    "tertiary-fixed": "#dae2fd",
+                    "secondary-fixed-dim": "#ffb95f",
+                    "on-secondary-fixed": "#2a1700",
+                    "tertiary-container": "#656d84",
+                    "on-error-container": "#93000a",
+                    "tertiary": "#4d556b",
+                    "on-primary-fixed": "#00174b",
+                    "on-error": "#ffffff",
+                    "on-primary-container": "#eeefff",
+                    "primary-container": "#2563eb",
+                    "error": "#ba1a1a",
+                    "primary": "#004ac6",
+                    "surface-tint": "#0053db",
+                    "outline-variant": "#c3c6d7",
+                    "surface-container": "#e5eeff",
+                    "tertiary-fixed-dim": "#bec6e0",
+                    "primary-fixed-dim": "#b4c5ff",
+                    "inverse-on-surface": "#eaf1ff",
+                    "surface-container-highest": "#d3e4fe",
+                    "background": "#f8f9ff",
+                    "surface-container-high": "#dce9ff",
+                    "surface-bright": "#f8f9ff",
+                    "primary-fixed": "#dbe1ff",
+                    "on-tertiary": "#ffffff",
+                    "surface-container-lowest": "#ffffff",
+                    "inverse-primary": "#b4c5ff",
+                    "surface-container-low": "#eff4ff",
+                    "on-secondary-container": "#684000",
+                    "on-secondary": "#ffffff",
+                    "on-primary": "#ffffff",
+                    "on-surface-variant": "#434655"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.125rem",
+                    "lg": "0.25rem",
+                    "xl": "0.5rem",
+                    "full": "0.75rem"
+            },
+            "spacing": {
+                    "margin-mobile": "16px",
+                    "margin-desktop": "40px",
+                    "gutter": "24px",
+                    "unit": "4px",
+                    "container-max": "1440px"
+            },
+            "fontFamily": {
+                    "label-sm": ["Space Mono"],
+                    "body-lg": ["Geist"],
+                    "label-md": ["Space Mono"],
+                    "headline-lg-mobile": ["Geist"],
+                    "headline-md": ["Geist"],
+                    "headline-lg": ["Geist"],
+                    "body-md": ["Geist"],
+                    "headline-xl": ["Geist"]
+            },
+            "fontSize": {
+                    "label-sm": ["12px", {"lineHeight": "1.0", "letterSpacing": "0.05em", "fontWeight": "500"}],
+                    "body-lg": ["18px", {"lineHeight": "1.6", "fontWeight": "400"}],
+                    "label-md": ["14px", {"lineHeight": "1.0", "letterSpacing": "0.05em", "fontWeight": "500"}],
+                    "headline-lg-mobile": ["24px", {"lineHeight": "1.2", "fontWeight": "600"}],
+                    "headline-md": ["20px", {"lineHeight": "1.4", "fontWeight": "600"}],
+                    "headline-lg": ["32px", {"lineHeight": "1.2", "letterSpacing": "-0.01em", "fontWeight": "600"}],
+                    "body-md": ["16px", {"lineHeight": "1.6", "fontWeight": "400"}],
+                    "headline-xl": ["48px", {"lineHeight": "1.1", "letterSpacing": "-0.02em", "fontWeight": "700"}]
+            }
+          },
+        },
+      }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: #f1f5f9; }
+        ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
+        ::-webkit-scrollbar-thumb:hover { background: #004ac6; }
+        .bento-grid {
+            display: grid;
+            grid-template-columns: repeat(12, 1fr);
+            gap: 24px;
+        }
+    </style>
+</head>
+<body class="bg-surface text-on-surface font-body-md overflow-x-hidden">
+<!-- Sidebar Navigation Shell -->
+<aside class="h-screen w-64 fixed left-0 top-0 bg-surface-container-low border-r border-outline-variant z-50 flex flex-col py-6 px-4">
+<div class="mb-10 px-2">
+<h1 class="font-headline-sm text-headline-sm font-black text-primary uppercase tracking-widest">PIKE Business</h1>
+<p class="text-[10px] font-label-sm text-outline uppercase tracking-tighter">Venue Management</p>
+</div>
+<nav class="flex-1 space-y-1">
+<!-- Navigation Items Mapping from JSON -->
+<a class="flex items-center gap-3 px-3 py-3 text-primary bg-primary-container/10 border-r-4 border-primary font-bold transition-all" href="#">
+<span class="material-symbols-outlined" data-icon="dashboard">dashboard</span>
+<span class="font-label-md text-label-md uppercase">Dashboard</span>
+</a>
+<a class="flex items-center gap-3 px-3 py-3 text-tertiary hover:bg-surface-container-high transition-all translate-x-1 duration-150" href="#">
+<span class="material-symbols-outlined" data-icon="explore">explore</span>
+<span class="font-label-md text-label-md uppercase">Quests</span>
+</a>
+<a class="flex items-center gap-3 px-3 py-3 text-tertiary hover:bg-surface-container-high transition-all translate-x-1 duration-150" href="#">
+<span class="material-symbols-outlined" data-icon="military_tech">military_tech</span>
+<span class="font-label-md text-label-md uppercase">Rewards</span>
+</a>
+<a class="flex items-center gap-3 px-3 py-3 text-tertiary hover:bg-surface-container-high transition-all translate-x-1 duration-150" href="#">
+<span class="material-symbols-outlined" data-icon="monitoring">monitoring</span>
+<span class="font-label-md text-label-md uppercase">Analytics</span>
+</a>
+<a class="flex items-center gap-3 px-3 py-3 text-tertiary hover:bg-surface-container-high transition-all translate-x-1 duration-150" href="#">
+<span class="material-symbols-outlined" data-icon="settings">settings</span>
+<span class="font-label-md text-label-md uppercase">Settings</span>
+</a>
+</nav>
+<div class="mt-auto space-y-1 border-t border-outline-variant pt-4">
+<button class="w-full flex items-center gap-3 px-3 py-3 text-tertiary hover:bg-surface-container-high transition-all">
+<span class="material-symbols-outlined" data-icon="help_center">help_center</span>
+<span class="font-label-md text-label-md uppercase">Help Center</span>
+</button>
+<button class="w-full flex items-center gap-3 px-3 py-3 text-error hover:bg-error-container/20 transition-all">
+<span class="material-symbols-outlined" data-icon="logout">logout</span>
+<span class="font-label-md text-label-md uppercase">Sign Out</span>
+</button>
+</div>
+</aside>
+<!-- Main Content Canvas -->
+<main class="ml-64 min-h-screen">
+<!-- Header -->
+<header class="sticky top-0 z-40 bg-surface/80 backdrop-blur-xl border-b border-outline-variant px-margin-desktop h-16 flex items-center justify-between">
+<div class="flex items-center gap-4">
+<h2 class="font-headline-md text-headline-md font-bold text-primary tracking-tight">PIKE</h2>
+<div class="h-4 w-[1px] bg-outline-variant"></div>
+<span class="font-label-sm text-label-sm text-outline uppercase">Global Admin Portal</span>
+</div>
+<div class="flex items-center gap-6">
+<div class="relative group">
+<input class="bg-surface-container border border-outline-variant px-4 py-2 pl-10 text-label-md focus:ring-2 focus:ring-primary focus:border-primary outline-none transition-all w-64" placeholder="Search operatives..." type="text"/>
+<span class="material-symbols-outlined absolute left-3 top-2.5 text-outline text-[18px]">search</span>
+</div>
+<button class="bg-primary text-on-primary px-6 h-10 font-label-md uppercase hover:scale-95 transition-transform flex items-center gap-2">
+<span class="material-symbols-outlined text-[18px]">add</span>
+                    Create Quest
+                </button>
+</div>
+</header>
+<div class="p-margin-desktop space-y-gutter max-w-container-max mx-auto">
+<!-- Dashboard Headline & Filter -->
+<section class="flex justify-between items-end">
+<div>
+<h3 class="font-headline-lg text-headline-lg text-on-surface tracking-tight">System Status Overview</h3>
+<p class="text-tertiary mt-1">Real-time performance metrics and tactical monitoring.</p>
+</div>
+<div class="flex gap-2 bg-surface-container-low p-1 border border-outline-variant">
+<button class="px-4 py-1.5 bg-primary text-on-primary font-label-sm uppercase">Real-Time</button>
+<button class="px-4 py-1.5 text-on-surface-variant font-label-sm uppercase hover:bg-surface-container-high">24H</button>
+<button class="px-4 py-1.5 text-on-surface-variant font-label-sm uppercase hover:bg-surface-container-high">7D</button>
+</div>
+</section>
+<!-- Metrics Bento Grid -->
+<section class="bento-grid">
+<!-- Metric 1: Global Active Quests -->
+<div class="col-span-12 md:col-span-3 bg-surface-container-lowest border border-outline-variant p-6 group hover:border-primary transition-colors">
+<div class="flex justify-between items-start mb-4">
+<span class="material-symbols-outlined text-primary" data-icon="explore">explore</span>
+<span class="text-on-primary-fixed-variant bg-primary-container/10 px-2 py-0.5 font-label-sm">+12.5%</span>
+</div>
+<div class="text-on-surface-variant font-label-sm uppercase mb-1">Global Active Quests</div>
+<div class="font-headline-xl text-headline-xl text-primary leading-none">1,482</div>
+<div class="mt-4 h-1 bg-surface-container overflow-hidden">
+<div class="bg-primary h-full w-[70%]"></div>
+</div>
+</div>
+<!-- Metric 2: Total Operatives -->
+<div class="col-span-12 md:col-span-3 bg-surface-container-lowest border border-outline-variant p-6 group hover:border-primary transition-colors">
+<div class="flex justify-between items-start mb-4">
+<span class="material-symbols-outlined text-on-secondary-container" data-icon="groups">groups</span>
+<span class="text-secondary bg-secondary-container/10 px-2 py-0.5 font-label-sm">+4.2%</span>
+</div>
+<div class="text-on-surface-variant font-label-sm uppercase mb-1">Total Operatives</div>
+<div class="font-headline-xl text-headline-xl text-on-surface leading-none">52,901</div>
+<div class="mt-4 h-1 bg-surface-container overflow-hidden">
+<div class="bg-secondary-container h-full w-[85%]"></div>
+</div>
+</div>
+<!-- Metric 3: Verified Redemptions -->
+<div class="col-span-12 md:col-span-3 bg-surface-container-lowest border border-outline-variant p-6 group hover:border-primary transition-colors">
+<div class="flex justify-between items-start mb-4">
+<span class="material-symbols-outlined text-tertiary" data-icon="verified">verified</span>
+<span class="text-tertiary bg-tertiary-container/10 px-2 py-0.5 font-label-sm">98.2%</span>
+</div>
+<div class="text-on-surface-variant font-label-sm uppercase mb-1">Verified Redemptions</div>
+<div class="font-headline-xl text-headline-xl text-tertiary leading-none">12.4K</div>
+<div class="mt-4 h-1 bg-surface-container overflow-hidden">
+<div class="bg-tertiary h-full w-[98%]"></div>
+</div>
+</div>
+<!-- Metric 4: Revenue -->
+<div class="col-span-12 md:col-span-3 bg-surface-container-lowest border border-outline-variant p-6 group hover:border-primary transition-colors">
+<div class="flex justify-between items-start mb-4">
+<span class="material-symbols-outlined text-primary" data-icon="payments">payments</span>
+<span class="text-primary bg-primary-container/10 px-2 py-0.5 font-label-sm">Peak</span>
+</div>
+<div class="text-on-surface-variant font-label-sm uppercase mb-1">Revenue (MTD)</div>
+<div class="font-headline-xl text-headline-xl text-primary leading-none">$241k</div>
+<div class="mt-4 flex gap-1">
+<div class="bg-primary/20 h-4 flex-1"></div>
+<div class="bg-primary/40 h-4 flex-1"></div>
+<div class="bg-primary/60 h-4 flex-1"></div>
+<div class="bg-primary h-4 flex-1"></div>
+</div>
+</div>
+<!-- Flagged Completions Table (Main Task) -->
+<div class="col-span-12 lg:col-span-8 bg-surface-container-lowest border border-outline-variant overflow-hidden">
+<div class="px-6 py-4 border-b border-outline-variant flex justify-between items-center bg-surface-container-low">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-error" data-icon="flag">flag</span>
+<h4 class="font-label-md text-label-md uppercase font-bold tracking-wider">Flagged Completions (Fraud Review)</h4>
+</div>
+<button class="text-primary font-label-sm uppercase hover:underline">View All Queue</button>
+</div>
+<div class="overflow-x-auto">
+<table class="w-full text-left border-collapse">
+<thead class="bg-surface text-outline font-label-sm uppercase text-[11px] border-b border-outline-variant">
+<tr>
+<th class="px-6 py-3 font-medium">Operative ID</th>
+<th class="px-6 py-3 font-medium">Quest Entity</th>
+<th class="px-6 py-3 font-medium">Flag Reason</th>
+<th class="px-6 py-3 font-medium">Timestamp</th>
+<th class="px-6 py-3 font-medium text-right">Actions</th>
+</tr>
+</thead>
+<tbody class="divide-y divide-outline-variant/50">
+<tr class="hover:bg-surface-container transition-colors">
+<td class="px-6 py-4">
+<div class="flex items-center gap-2">
+<div class="w-8 h-8 bg-primary/10 flex items-center justify-center font-label-sm text-primary">OP-01</div>
+<span class="font-label-md text-on-surface">Vector_Alpha</span>
+</div>
+</td>
+<td class="px-6 py-4 font-body-md text-on-surface-variant">Neo-Tokyo Skydeck</td>
+<td class="px-6 py-4">
+<span class="px-2 py-1 bg-error-container text-on-error-container font-label-sm text-[10px] uppercase">GPS Mismatch</span>
+</td>
+<td class="px-6 py-4 font-label-sm text-outline">14:22:10 UTC</td>
+<td class="px-6 py-4 text-right">
+<div class="flex justify-end gap-2">
+<button class="w-8 h-8 border border-outline-variant flex items-center justify-center hover:bg-error hover:text-on-error transition-colors"><span class="material-symbols-outlined text-[18px]" data-icon="close">close</span></button>
+<button class="w-8 h-8 border border-outline-variant flex items-center justify-center hover:bg-primary hover:text-on-white transition-colors"><span class="material-symbols-outlined text-[18px]" data-icon="check">check</span></button>
+</div>
+</td>
+</tr>
+<tr class="hover:bg-surface-container transition-colors">
+<td class="px-6 py-4">
+<div class="flex items-center gap-2">
+<div class="w-8 h-8 bg-primary/10 flex items-center justify-center font-label-sm text-primary">OP-44</div>
+<span class="font-label-md text-on-surface">Glitch_Finder</span>
+</div>
+</td>
+<td class="px-6 py-4 font-body-md text-on-surface-variant">Cybernetic Oasis</td>
+<td class="px-6 py-4">
+<span class="px-2 py-1 bg-secondary-container/20 text-on-secondary-container font-label-sm text-[10px] uppercase">Rapid Velocity</span>
+</td>
+<td class="px-6 py-4 font-label-sm text-outline">14:18:55 UTC</td>
+<td class="px-6 py-4 text-right">
+<div class="flex justify-end gap-2">
+<button class="w-8 h-8 border border-outline-variant flex items-center justify-center hover:bg-error transition-colors"><span class="material-symbols-outlined text-[18px]" data-icon="close">close</span></button>
+<button class="w-8 h-8 border border-outline-variant flex items-center justify-center hover:bg-primary transition-colors"><span class="material-symbols-outlined text-[18px]" data-icon="check">check</span></button>
+</div>
+</td>
+</tr>
+<tr class="hover:bg-surface-container transition-colors">
+<td class="px-6 py-4">
+<div class="flex items-center gap-2">
+<div class="w-8 h-8 bg-primary/10 flex items-center justify-center font-label-sm text-primary">OP-89</div>
+<span class="font-label-md text-on-surface">Neon_Nomad</span>
+</div>
+</td>
+<td class="px-6 py-4 font-body-md text-on-surface-variant">The Void Lounge</td>
+<td class="px-6 py-4">
+<span class="px-2 py-1 bg-error-container text-on-error-container font-label-sm text-[10px] uppercase">Photo AI Match</span>
+</td>
+<td class="px-6 py-4 font-label-sm text-outline">14:10:02 UTC</td>
+<td class="px-6 py-4 text-right">
+<div class="flex justify-end gap-2">
+<button class="w-8 h-8 border border-outline-variant flex items-center justify-center hover:bg-error transition-colors"><span class="material-symbols-outlined text-[18px]" data-icon="close">close</span></button>
+<button class="w-8 h-8 border border-outline-variant flex items-center justify-center hover:bg-primary transition-colors"><span class="material-symbols-outlined text-[18px]" data-icon="check">check</span></button>
+</div>
+</td>
+</tr>
+<tr class="hover:bg-surface-container transition-colors">
+<td class="px-6 py-4">
+<div class="flex items-center gap-2">
+<div class="w-8 h-8 bg-primary/10 flex items-center justify-center font-label-sm text-primary">OP-12</div>
+<span class="font-label-md text-on-surface">Cipher_00</span>
+</div>
+</td>
+<td class="px-6 py-4 font-body-md text-on-surface-variant">Subterranean Vault</td>
+<td class="px-6 py-4">
+<span class="px-2 py-1 bg-error-container text-on-error-container font-label-sm text-[10px] uppercase">MAC Duplication</span>
+</td>
+<td class="px-6 py-4 font-label-sm text-outline">13:58:30 UTC</td>
+<td class="px-6 py-4 text-right">
+<div class="flex justify-end gap-2">
+<button class="w-8 h-8 border border-outline-variant flex items-center justify-center hover:bg-error transition-colors"><span class="material-symbols-outlined text-[18px]" data-icon="close">close</span></button>
+<button class="w-8 h-8 border border-outline-variant flex items-center justify-center hover:bg-primary transition-colors"><span class="material-symbols-outlined text-[18px]" data-icon="check">check</span></button>
+</div>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<!-- Pending Venues List -->
+<div class="col-span-12 lg:col-span-4 flex flex-col gap-gutter">
+<div class="bg-surface-container-lowest border border-outline-variant flex flex-col flex-1">
+<div class="px-6 py-4 border-b border-outline-variant bg-surface-container-low flex justify-between items-center">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-primary" data-icon="store">store</span>
+<h4 class="font-label-md text-label-md uppercase font-bold tracking-wider">Pending Venues</h4>
+</div>
+<span class="w-6 h-6 rounded-full bg-primary text-on-primary text-[10px] flex items-center justify-center font-bold">08</span>
+</div>
+<div class="flex-1 overflow-y-auto max-h-[440px]">
+<div class="divide-y divide-outline-variant/50">
+<!-- Venue Item 1 -->
+<div class="p-4 hover:bg-surface-container transition-colors group">
+<div class="flex gap-4">
+<div class="w-12 h-12 bg-surface-container overflow-hidden border border-outline-variant">
+<img class="w-full h-full object-cover" data-alt="High-resolution architectural photography of a sleek, modern commercial entrance with minimalist signage and glass facade, in a bright corporate modern style." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBVk13eHUwmD_yljLraZpodO7FMtu69mqPEYh9vuWRx77kwYOz8BpFdIN0EohBsThNTgICjeFFW4HKgudu1C-IHGpVF3b3Tvs4arVBxSSUMcEw-FseSmL3ZmQ_u6RGinobPaNhhqaWAY3Vjuig2cCmc4VFzeF3RICN2M6IlYqnyS7XT1EMa5go3ls1MgRMACWdGzmKh3xtjRdRkc0Q1MvxFBzAuC11SQOGBsZNYpk_bYdbZwlzvhlVjn5UdsLPDAmH_qworOUAOooA"/>
+</div>
+<div class="flex-1">
+<div class="font-label-md text-on-surface uppercase font-bold">Orbital Coffee Co.</div>
+<div class="text-on-surface-variant font-body-md text-sm">Downtown Sector 4, London</div>
+<div class="mt-2 flex gap-2">
+<button class="flex-1 h-8 bg-primary text-on-primary font-label-sm uppercase text-[10px] hover:scale-95 transition-transform">Approve</button>
+<button class="px-3 h-8 border border-outline-variant text-outline hover:text-error hover:border-error transition-colors"><span class="material-symbols-outlined text-[16px]" data-icon="info">info</span></button>
+</div>
+</div>
+</div>
+</div>
+<!-- Venue Item 2 -->
+<div class="p-4 hover:bg-surface-container transition-colors group">
+<div class="flex gap-4">
+<div class="w-12 h-12 bg-surface-container overflow-hidden border border-outline-variant">
+<img class="w-full h-full object-cover" data-alt="A photograph of a high-tech gaming lounge interior with neon accents, ultra-modern furniture, and clean lines, shot in a bright light-mode aesthetic with soft diffused lighting." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCMl5Amc7RY7sC_TY5o_MqbDVlMttJjhTL5RBzhP-rHhH_onTnt3RSDjmvUHlm4dkraw5dojh6V8aBaJrNf3zspCiHpzoJRih1TJhoplR3G_VwDXEvMJTPG0jVKm2_c-0IeGhjlhMKf-MsdwJOMwFVS--meNkcy1lsWbGeuNNwODLlCtKK3w8mOCZ_S7Nz3HwTn2ZSG_qjRsyOWkr-lhMkVeZXwgYtMmB83xhV0ShbY7ExDUNiFKsTmfJGDyvHQQ03I9C9C74uQJRg"/>
+</div>
+<div class="flex-1">
+<div class="font-label-md text-on-surface uppercase font-bold">Level 99 Arena</div>
+<div class="text-on-surface-variant font-body-md text-sm">Industrial District, Berlin</div>
+<div class="mt-2 flex gap-2">
+<button class="flex-1 h-8 bg-primary text-on-primary font-label-sm uppercase text-[10px] hover:scale-95 transition-transform">Approve</button>
+<button class="px-3 h-8 border border-outline-variant text-outline hover:text-error hover:border-error transition-colors"><span class="material-symbols-outlined text-[16px]" data-icon="info">info</span></button>
+</div>
+</div>
+</div>
+</div>
+<!-- Venue Item 3 -->
+<div class="p-4 hover:bg-surface-container transition-colors group">
+<div class="flex gap-4">
+<div class="w-12 h-12 bg-surface-container overflow-hidden border border-outline-variant">
+<img class="w-full h-full object-cover" data-alt="Minimalist design boutique storefront in a cosmopolitan city with polished concrete surfaces and large glass windows, captured in a crisp high-contrast professional style." src="https://lh3.googleusercontent.com/aida-public/AB6AXuA9PXI1VOaFxt4GNx6rDwOg2NljA3mppH_DR3l7kxmTGtaXQd-3pmxtkv9Xx5HgmLH4SAtVMC-e3bQuSbdJtDtMgNaisQP0dDmEIURcAjO18IO50PGFpH3V08D7U1dlvmzkv_i9op5lU2ZSTZgzYqDakqz4SwzZjiYNmtiG2VaVqPPhKCPKk1MbwK0U3Gfe_9nxDf9WSG7w9tpMouVGq04-IfXP5heHuDmcNO2qohjoC5pafOhyld52gHEaP0FGQVSZYGOWjVT7Ljk"/>
+</div>
+<div class="flex-1">
+<div class="font-label-md text-on-surface uppercase font-bold">Prism Retail</div>
+<div class="text-on-surface-variant font-body-md text-sm">SoHo District, NYC</div>
+<div class="mt-2 flex gap-2">
+<button class="flex-1 h-8 bg-primary text-on-primary font-label-sm uppercase text-[10px] hover:scale-95 transition-transform">Approve</button>
+<button class="px-3 h-8 border border-outline-variant text-outline hover:text-error hover:border-error transition-colors"><span class="material-symbols-outlined text-[16px]" data-icon="info">info</span></button>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="p-4 bg-surface-container-low border-t border-outline-variant">
+<button class="w-full h-10 border border-outline font-label-sm uppercase hover:bg-surface transition-colors">Review Documentation</button>
+</div>
+</div>
+</div>
+<!-- Global Activity Map Placeholder (Stylized) -->
+<div class="col-span-12 h-96 relative bg-surface-container border border-outline-variant overflow-hidden">
+<div class="absolute inset-0 z-0">
+<img class="w-full h-full object-cover opacity-60" data-alt="A stylized, clean digital map of a city grid in a light-mode palette of soft greys and Pike Blue accents. The map shows glowing data points representing active quests, rendered with a professional, mission-control aesthetic." data-location="Tokyo" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAObmNAPAJjlC55A7jmw0n1Dz-JwrnRgmZ00KZTp8_DZviDGQmejMDLYnw3IU1litq_0rH8YCoP5p7aT1OHaIEU_e1z72UOzx_JfzGXrW3UeIuaCRcd5ZI1PVOzKthNhugj3wW7Dhvolzliv-WGN4Q3IxYA_RO4R996ViPNqO02aIUHeoxC5DPvAbf7zOIO_UweBO-NY24e2v-E44yWjzJpLOmtQ-xzq903PXoA4dVmhyQXwik8HtPEwsNyTq7wDDs3ae2lfXLKX9c"/>
+</div>
+<div class="absolute top-6 left-6 z-10 bg-surface/90 backdrop-blur-md p-4 border border-outline-variant">
+<h5 class="font-label-md uppercase font-bold mb-2">Live Heatmap</h5>
+<div class="space-y-2">
+<div class="flex items-center gap-2">
+<div class="w-3 h-3 rounded-full bg-primary"></div>
+<span class="text-[10px] font-label-sm uppercase text-on-surface-variant">High Traffic</span>
+</div>
+<div class="flex items-center gap-2">
+<div class="w-3 h-3 rounded-full bg-primary/40"></div>
+<span class="text-[10px] font-label-sm uppercase text-on-surface-variant">Operational</span>
+</div>
+</div>
+</div>
+<div class="absolute bottom-6 right-6 z-10">
+<button class="bg-primary text-on-primary px-4 h-10 flex items-center gap-2 font-label-sm uppercase group">
+                            Full Terminal View
+                            <span class="material-symbols-outlined group-hover:translate-x-1 transition-transform" data-icon="arrow_forward">arrow_forward</span>
+</button>
+</div>
+<!-- Technical Grid Overlay -->
+<div class="absolute inset-0 pointer-events-none" style="background-image: linear-gradient(rgba(0, 74, 198, 0.03) 1px, transparent 1px), linear-gradient(90deg, rgba(0, 74, 198, 0.03) 1px, transparent 1px); background-size: 20px 20px;"></div>
+</div>
+</section>
+</div>
+<!-- Footer -->
+<footer class="w-full py-12 px-margin-desktop flex flex-col md:flex-row justify-between items-center gap-gutter bg-surface-container-lowest border-t border-outline-variant">
+<div class="flex items-center gap-4">
+<span class="font-label-md text-label-md font-bold text-on-surface">PIKE</span>
+<span class="text-secondary font-label-sm text-label-sm">© 2024 PIKE Urban Exploration. All rights reserved.</span>
+</div>
+<div class="flex gap-8">
+<a class="text-on-surface-variant font-label-sm text-label-sm hover:text-primary transition-colors" href="#">Terms</a>
+<a class="text-on-surface-variant font-label-sm text-label-sm hover:text-primary transition-colors" href="#">Privacy</a>
+<a class="text-on-surface-variant font-label-sm text-label-sm hover:text-primary transition-colors" href="#">Contact</a>
+<a class="text-on-surface-variant font-label-sm text-label-sm hover:text-primary transition-colors" href="#">Developer API</a>
+</div>
+</footer>
+</main>
+<!-- Micro-interaction Script -->
+<script>
+        document.addEventListener('DOMContentLoaded', () => {
+            // Tab active state management
+            const navItems = document.querySelectorAll('aside nav a');
+            navItems.forEach(item => {
+                item.addEventListener('click', (e) => {
+                    navItems.forEach(i => {
+                        i.classList.remove('text-primary', 'bg-primary-container/10', 'border-r-4', 'border-primary', 'font-bold');
+                        i.classList.add('text-tertiary');
+                    });
+                    item.classList.add('text-primary', 'bg-primary-container/10', 'border-r-4', 'border-primary', 'font-bold');
+                    item.classList.remove('text-tertiary');
+                });
+            });
+
+            // Button active state logic
+            const metricBtns = document.querySelectorAll('.bento-grid button');
+            metricBtns.forEach(btn => {
+                btn.addEventListener('mousedown', () => btn.classList.add('scale-95'));
+                btn.addEventListener('mouseup', () => btn.classList.remove('scale-95'));
+            });
+        });
+    </script>
+</body></html>

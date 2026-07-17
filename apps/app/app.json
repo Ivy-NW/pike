@@ -6,6 +6,16 @@
     "version": "0.1.0",
     "orientation": "portrait",
     "userInterfaceStyle": "automatic",
+    "icon": "./assets/logo.png",
+    "splash": {
+      "image": "./assets/logo.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#F8FAFC",
+      "dark": {
+        "image": "./assets/logo.png",
+        "backgroundColor": "#0F172A"
+      }
+    },
     "plugins": ["expo-router"],
     "ios": {
       "supportsTablet": false,
@@ -14,7 +24,11 @@
       }
     },
     "android": {
-      "permissions": ["CAMERA"]
+      "permissions": ["CAMERA"],
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/logo.png",
+        "backgroundColor": "#0F172A"
+      }
     }
   }
 }

@@ -1,0 +1,395 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Space+Mono:ital,wght@0,400;0,700;1,400;1,700&amp;family=Geist:wght@100..900&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+            vertical-align: middle;
+        }
+        .progress-ring__circle {
+            transition: stroke-dashoffset 0.35s;
+            transform: rotate(-90deg);
+            transform-origin: 50% 50%;
+        }
+        .no-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+        .no-scrollbar {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+    </style>
+<script id="tailwind-config">
+        tailwind.config = {
+          darkMode: "class",
+          theme: {
+            extend: {
+              "colors": {
+                      "surface": "#f8f9ff",
+                      "outline-variant": "#c3c6d7",
+                      "on-primary-fixed-variant": "#003ea8",
+                      "on-secondary-fixed-variant": "#653e00",
+                      "primary-container": "#2563eb",
+                      "on-error-container": "#93000a",
+                      "tertiary": "#4d556b",
+                      "primary": "#004ac6",
+                      "on-surface-variant": "#434655",
+                      "on-background": "#0b1c30",
+                      "surface-dim": "#cbdbf5",
+                      "outline": "#737686",
+                      "surface-container-lowest": "#ffffff",
+                      "surface-container-highest": "#d3e4fe",
+                      "tertiary-fixed": "#dae2fd",
+                      "on-secondary": "#ffffff",
+                      "tertiary-fixed-dim": "#bec6e0",
+                      "inverse-surface": "#213145",
+                      "surface-container": "#e5eeff",
+                      "surface-tint": "#0053db",
+                      "primary-fixed-dim": "#b4c5ff",
+                      "on-tertiary-container": "#eef0ff",
+                      "inverse-primary": "#b4c5ff",
+                      "surface-container-high": "#dce9ff",
+                      "error": "#ba1a1a",
+                      "on-tertiary-fixed": "#131b2e",
+                      "surface-container-low": "#eff4ff",
+                      "surface-bright": "#f8f9ff",
+                      "secondary-fixed": "#ffddb8",
+                      "secondary": "#855300",
+                      "on-error": "#ffffff",
+                      "on-secondary-fixed": "#2a1700",
+                      "secondary-container": "#fea619",
+                      "on-surface": "#0b1c30",
+                      "tertiary-container": "#656d84",
+                      "on-tertiary": "#ffffff",
+                      "on-primary-container": "#eeefff",
+                      "inverse-on-surface": "#eaf1ff",
+                      "error-container": "#ffdad6",
+                      "on-secondary-container": "#684000",
+                      "on-tertiary-fixed-variant": "#3f465c",
+                      "secondary-fixed-dim": "#ffb95f",
+                      "on-primary": "#ffffff",
+                      "primary-fixed": "#dbe1ff",
+                      "on-primary-fixed": "#00174b",
+                      "background": "#f8f9ff",
+                      "surface-variant": "#d3e4fe"
+              },
+              "borderRadius": {
+                      "DEFAULT": "0.125rem",
+                      "lg": "0.25rem",
+                      "xl": "0.5rem",
+                      "full": "0.75rem"
+              },
+              "spacing": {
+                      "margin-desktop": "40px",
+                      "container-max": "1440px",
+                      "margin-mobile": "16px",
+                      "gutter": "24px",
+                      "unit": "4px"
+              },
+              "fontFamily": {
+                      "headline-lg": ["Geist"],
+                      "label-sm": ["Space Mono"],
+                      "label-md": ["Space Mono"],
+                      "body-lg": ["Geist"],
+                      "headline-lg-mobile": ["Geist"],
+                      "headline-xl": ["Geist"],
+                      "headline-md": ["Geist"],
+                      "body-md": ["Geist"]
+              },
+              "fontSize": {
+                      "headline-lg": ["32px", {"lineHeight": "1.2", "letterSpacing": "-0.01em", "fontWeight": "600"}],
+                      "label-sm": ["12px", {"lineHeight": "1.0", "letterSpacing": "0.05em", "fontWeight": "500"}],
+                      "label-md": ["14px", {"lineHeight": "1.0", "letterSpacing": "0.05em", "fontWeight": "500"}],
+                      "body-lg": ["18px", {"lineHeight": "1.6", "fontWeight": "400"}],
+                      "headline-lg-mobile": ["24px", {"lineHeight": "1.2", "fontWeight": "600"}],
+                      "headline-xl": ["48px", {"lineHeight": "1.1", "letterSpacing": "-0.02em", "fontWeight": "700"}],
+                      "headline-md": ["20px", {"lineHeight": "1.4", "fontWeight": "600"}],
+                      "body-md": ["16px", {"lineHeight": "1.6", "fontWeight": "400"}]
+              }
+            },
+          },
+        }
+    </script>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background text-on-surface font-body-md selection:bg-primary/20">
+<!-- Top Navigation Bar -->
+<header class="fixed top-0 w-full z-50 backdrop-blur-md bg-white/80 border-b border-outline-variant shadow-sm flex items-center justify-between px-margin-mobile md:px-margin-desktop h-16">
+<div class="flex items-center gap-4">
+<span class="font-headline-md text-headline-md font-bold text-primary tracking-tight">PIKE</span>
+</div>
+<div class="flex items-center gap-6">
+<div class="hidden md:flex items-center gap-8">
+<a class="font-label-md text-label-md text-on-surface-variant hover:text-primary transition-colors" href="#">Home</a>
+<a class="font-label-md text-label-md text-on-surface-variant hover:text-primary transition-colors" href="#">Explore</a>
+<a class="font-label-md text-label-md text-on-surface-variant hover:text-primary transition-colors" href="#">Quests</a>
+<a class="font-label-md text-label-md text-primary font-bold" href="#">Profile</a>
+</div>
+<button class="material-symbols-outlined text-primary active:scale-95 duration-150 p-2 rounded-full hover:bg-surface-container" data-icon="notifications">notifications</button>
+</div>
+</header>
+<main class="pt-24 pb-32 max-w-container-max mx-auto px-margin-mobile md:px-margin-desktop">
+<!-- Profile Header Section -->
+<section class="flex flex-col md:flex-row items-center md:items-start gap-8 mb-12">
+<!-- Level Circle -->
+<div class="relative w-40 h-40 flex items-center justify-center">
+<svg class="absolute w-full h-full" viewbox="0 0 100 100">
+<circle class="text-surface-container stroke-current" cx="50" cy="50" fill="transparent" r="44" stroke-width="6"></circle>
+<circle class="progress-ring__circle text-primary stroke-current" cx="50" cy="50" fill="transparent" r="44" stroke-linecap="round" stroke-width="6" style="stroke-dasharray: 276.46; stroke-dashoffset: 82.93;"></circle>
+</svg>
+<div class="relative w-32 h-32 rounded-full overflow-hidden border-4 border-white shadow-lg bg-surface-container">
+<img class="w-full h-full object-cover" data-alt="A professional high-key studio portrait of Alex Kariuki, a charismatic person with a friendly expression. The lighting is bright and clean, characteristic of a high-tech laboratory or corporate environment. The background is a soft, out-of-focus Pike Blue gradient. The overall aesthetic is sharp, precise, and authoritative, matching a mission-critical professional persona." src="https://lh3.googleusercontent.com/aida-public/AB6AXuA7iy0kelRsJQVepo0zCHgvtRZXnE0EbwGLAWL6ZkFNG2Wre_wgK65reai7Fck5ViGwxfXo7a1DfWc_xX8Sh9NppWdBLtRP6BNf1PG-xiptrrm_npH1W4QdU9eOIkt_R5hOmkxNQiv3somx9r--eUix8iDE9Zy2LsuVNEJk6uCuXUA0W7-xD_8n-hFoMWuZBqaEzyiKQylzUimTErdjEjyaqWkuEdJzag7N7yxD3ng5UxCuauJ-f4eMuEciV1McGjMGM1hE30tuf0w"/>
+</div>
+<div class="absolute -bottom-2 bg-primary text-white font-label-md text-label-md px-4 py-1 rounded-full shadow-md z-10">
+                    LVL 14
+                </div>
+</div>
+<!-- User Info -->
+<div class="flex-1 text-center md:text-left mt-4 md:mt-0">
+<div class="flex flex-col md:flex-row md:items-end gap-2 md:gap-4 mb-2">
+<h1 class="font-headline-lg text-headline-lg-mobile md:text-headline-lg text-on-surface">Alex Kariuki</h1>
+<span class="font-label-md text-label-md text-primary uppercase tracking-widest mb-1">Pike Vanguard</span>
+</div>
+<p class="font-body-md text-body-md text-on-surface-variant max-w-xl">Optimizing operational efficiency through systematic exploration. Focus: Urban Infrastructure and Network Stability.</p>
+<div class="mt-6 flex flex-wrap justify-center md:justify-start gap-3">
+<button class="bg-primary text-white font-label-md text-label-md px-6 py-3 rounded hover:opacity-90 active:scale-95 transition-all uppercase">Edit Profile</button>
+<button class="bg-white border border-outline text-on-surface font-label-md text-label-md px-6 py-3 rounded hover:bg-surface-container-low active:scale-95 transition-all uppercase">Share Stats</button>
+</div>
+</div>
+</section>
+<!-- Stats Grid -->
+<section class="grid grid-cols-2 md:grid-cols-4 gap-gutter mb-12">
+<div class="bg-white p-6 border border-outline-variant rounded-xl hover:border-primary transition-colors group">
+<div class="flex items-center gap-3 mb-4">
+<span class="material-symbols-outlined text-primary group-hover:scale-110 transition-transform" data-icon="assignment">assignment</span>
+<span class="font-label-sm text-label-sm text-on-surface-variant uppercase">Quests</span>
+</div>
+<div class="font-headline-md text-headline-md text-on-surface">142</div>
+<div class="mt-2 text-[12px] font-label-sm text-primary">+12 this week</div>
+</div>
+<div class="bg-white p-6 border border-outline-variant rounded-xl hover:border-primary transition-colors group">
+<div class="flex items-center gap-3 mb-4">
+<span class="material-symbols-outlined text-primary group-hover:scale-110 transition-transform" data-icon="location_on">location_on</span>
+<span class="font-label-sm text-label-sm text-on-surface-variant uppercase">Venues</span>
+</div>
+<div class="font-headline-md text-headline-md text-on-surface">89</div>
+<div class="mt-2 text-[12px] font-label-sm text-on-surface-variant">42 Unique districts</div>
+</div>
+<div class="bg-white p-6 border border-outline-variant rounded-xl hover:border-primary transition-colors group">
+<div class="flex items-center gap-3 mb-4">
+<span class="material-symbols-outlined text-secondary group-hover:scale-110 transition-transform" data-icon="local_fire_department" style="font-variation-settings: 'FILL' 1;">local_fire_department</span>
+<span class="font-label-sm text-label-sm text-on-surface-variant uppercase">Streak</span>
+</div>
+<div class="font-headline-md text-headline-md text-on-surface">24 Days</div>
+<div class="mt-2 text-[12px] font-label-sm text-secondary">Personal Best</div>
+</div>
+<div class="bg-white p-6 border border-outline-variant rounded-xl hover:border-primary transition-colors group">
+<div class="flex items-center gap-3 mb-4">
+<span class="material-symbols-outlined text-primary group-hover:scale-110 transition-transform" data-icon="leaderboard">leaderboard</span>
+<span class="font-label-sm text-label-sm text-on-surface-variant uppercase">Rank</span>
+</div>
+<div class="font-headline-md text-headline-md text-on-surface">#4,201</div>
+<div class="mt-2 text-[12px] font-label-sm text-primary">Top 5% Global</div>
+</div>
+</section>
+<!-- Earned Badges Grid -->
+<section class="mb-12">
+<div class="flex items-center justify-between mb-6">
+<h2 class="font-headline-md text-headline-md text-on-surface">Earned Badges</h2>
+<button class="text-primary font-label-md text-label-md uppercase hover:underline">View All</button>
+</div>
+<div class="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-6 lg:grid-cols-8 gap-4">
+<!-- Badge Items -->
+<div class="aspect-square bg-surface-container flex flex-col items-center justify-center gap-2 p-2 rounded-xl border border-transparent hover:border-primary/30 transition-all cursor-pointer hover:bg-white hover:shadow-sm">
+<div class="w-12 h-12 bg-primary-container/20 rounded-full flex items-center justify-center">
+<span class="material-symbols-outlined text-primary" data-icon="explore" style="font-variation-settings: 'FILL' 1;">explore</span>
+</div>
+<span class="text-[10px] font-label-sm text-center uppercase leading-tight">First Path</span>
+</div>
+<div class="aspect-square bg-surface-container flex flex-col items-center justify-center gap-2 p-2 rounded-xl border border-transparent hover:border-primary/30 transition-all cursor-pointer hover:bg-white hover:shadow-sm">
+<div class="w-12 h-12 bg-secondary/10 rounded-full flex items-center justify-center">
+<span class="material-symbols-outlined text-secondary" data-icon="military_tech" style="font-variation-settings: 'FILL' 1;">military_tech</span>
+</div>
+<span class="text-[10px] font-label-sm text-center uppercase leading-tight">Veteran</span>
+</div>
+<div class="aspect-square bg-surface-container flex flex-col items-center justify-center gap-2 p-2 rounded-xl border border-transparent hover:border-primary/30 transition-all cursor-pointer hover:bg-white hover:shadow-sm">
+<div class="w-12 h-12 bg-primary-container/20 rounded-full flex items-center justify-center">
+<span class="material-symbols-outlined text-primary" data-icon="bolt" style="font-variation-settings: 'FILL' 1;">bolt</span>
+</div>
+<span class="text-[10px] font-label-sm text-center uppercase leading-tight">Fast Mover</span>
+</div>
+<div class="aspect-square bg-surface-container flex flex-col items-center justify-center gap-2 p-2 rounded-xl border border-transparent hover:border-primary/30 transition-all cursor-pointer hover:bg-white hover:shadow-sm">
+<div class="w-12 h-12 bg-primary-container/20 rounded-full flex items-center justify-center">
+<span class="material-symbols-outlined text-primary" data-icon="nightlight" style="font-variation-settings: 'FILL' 1;">nightlight</span>
+</div>
+<span class="text-[10px] font-label-sm text-center uppercase leading-tight">Night Owl</span>
+</div>
+<div class="aspect-square bg-surface-container flex flex-col items-center justify-center gap-2 p-2 rounded-xl border border-transparent hover:border-primary/30 transition-all cursor-pointer hover:bg-white hover:shadow-sm">
+<div class="w-12 h-12 bg-primary-container/20 rounded-full flex items-center justify-center">
+<span class="material-symbols-outlined text-primary" data-icon="groups" style="font-variation-settings: 'FILL' 1;">groups</span>
+</div>
+<span class="text-[10px] font-label-sm text-center uppercase leading-tight">Socialite</span>
+</div>
+<div class="aspect-square bg-surface-container flex flex-col items-center justify-center gap-2 p-2 rounded-xl border border-transparent hover:border-primary/30 transition-all cursor-pointer hover:bg-white hover:shadow-sm">
+<div class="w-12 h-12 bg-secondary/10 rounded-full flex items-center justify-center">
+<span class="material-symbols-outlined text-secondary" data-icon="star" style="font-variation-settings: 'FILL' 1;">star</span>
+</div>
+<span class="text-[10px] font-label-sm text-center uppercase leading-tight">MVP Week 4</span>
+</div>
+<!-- Empty/Locked Slots -->
+<div class="aspect-square bg-surface-container/50 border border-dashed border-outline-variant flex items-center justify-center rounded-xl opacity-50">
+<span class="material-symbols-outlined text-outline" data-icon="lock">lock</span>
+</div>
+<div class="aspect-square bg-surface-container/50 border border-dashed border-outline-variant flex items-center justify-center rounded-xl opacity-50">
+<span class="material-symbols-outlined text-outline" data-icon="lock">lock</span>
+</div>
+</div>
+</section>
+<!-- Recent Quests Horizontal Scroll -->
+<section>
+<div class="flex items-center justify-between mb-6">
+<h2 class="font-headline-md text-headline-md text-on-surface">Recent Quests</h2>
+<div class="flex gap-2">
+<button class="p-2 border border-outline-variant rounded-full hover:bg-white hover:shadow-sm active:scale-95 transition-all" id="scrollLeft">
+<span class="material-symbols-outlined" data-icon="chevron_left">chevron_left</span>
+</button>
+<button class="p-2 border border-outline-variant rounded-full hover:bg-white hover:shadow-sm active:scale-95 transition-all" id="scrollRight">
+<span class="material-symbols-outlined" data-icon="chevron_right">chevron_right</span>
+</button>
+</div>
+</div>
+<div class="flex overflow-x-auto gap-gutter no-scrollbar pb-6 snap-x" id="questScroll">
+<!-- Quest Card 1 -->
+<div class="min-w-[280px] md:min-w-[320px] snap-start bg-white border border-outline-variant rounded-xl overflow-hidden hover:shadow-md transition-shadow">
+<div class="h-32 relative">
+<div class="bg-cover bg-center w-full h-full" data-alt="A cinematic high-angle view of a modern urban city plaza at dusk. The architecture is futuristic with clean lines and geometric structures. Soft warm lights from buildings contrast with the cool blue atmosphere. The image has a crisp, professional, laboratory-grade quality with subtle grit." style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuAAF8Ht2Gpyyd8xVZlOvDAwz5Y6403dfNjaVHSu2ryGa9wqWRW2pbq87CoTCer_TILigoLBhxjwt44K4j4XLI3VhueHYom8-mV_1kC_wiQPCDlAaTLQu1tiyAPL0cYVM0vwkvjz5vs1MGlb3lTwDqECuGTGTyGParzHDYtMeQZc5fVkadZWRfGomzaKWWB1oItRvyMmsnIqOpNAMAIl8HGfYe3SE6mC1dEaayMTwwYd3hTxdU9723eKuElvuZvM1hGlJwU8b9QSrm8')"></div>
+<div class="absolute top-3 right-3 bg-white/90 backdrop-blur-md px-2 py-1 rounded text-[10px] font-label-sm text-primary uppercase">Completed</div>
+</div>
+<div class="p-4">
+<h3 class="font-headline-md text-[18px] text-on-surface mb-1">Central Hub Sweep</h3>
+<p class="text-[12px] font-label-sm text-on-surface-variant mb-4 uppercase">Downtown District</p>
+<div class="flex items-center justify-between pt-4 border-t border-outline-variant">
+<span class="flex items-center gap-1 font-label-sm text-[12px] text-primary">
+<span class="material-symbols-outlined text-[16px]" data-icon="token">token</span> +450 XP
+                            </span>
+<span class="text-[12px] font-label-sm text-on-surface-variant">2 days ago</span>
+</div>
+</div>
+</div>
+<!-- Quest Card 2 -->
+<div class="min-w-[280px] md:min-w-[320px] snap-start bg-white border border-outline-variant rounded-xl overflow-hidden hover:shadow-md transition-shadow">
+<div class="h-32 relative">
+<div class="bg-cover bg-center w-full h-full" data-alt="A close-up shot of technical equipment and server racks in a high-tech facility. The lighting is dominated by Pike Blue and soft white glows. The focus is on precision-engineered components, evoking a sense of mission-critical performance and systematic order. Sharp utility and geometric edges are prominent." style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuAJMDcIbavy6P72PToDr42bHRR_Tsh5Dr1FrFdqjVHdnIZOg4dnsXWdsYnC4lJa8bxuizv4LORpNzKQCuWzNZ9SxiJkK7adTpT2PQpWf8RB-mAEVLwvHXMUr2Mh8sIRfAiv_QhtAaqY1UmrlzgcZRTrK9sJbLcqTUMUP9FFaomeDhWMt_IrR0LUUuEblqD7HhJoSLLwItIsJo9ZeZD37y_vGovDPOfWkQIBmdq0L1tJfFTSrnSAZrugoN8RmGiFWHEVqbyDRGoPwso')"></div>
+<div class="absolute top-3 right-3 bg-white/90 backdrop-blur-md px-2 py-1 rounded text-[10px] font-label-sm text-primary uppercase">Completed</div>
+</div>
+<div class="p-4">
+<h3 class="font-headline-md text-[18px] text-on-surface mb-1">Node Synchronization</h3>
+<p class="text-[12px] font-label-sm text-on-surface-variant mb-4 uppercase">Data Corridor</p>
+<div class="flex items-center justify-between pt-4 border-t border-outline-variant">
+<span class="flex items-center gap-1 font-label-sm text-[12px] text-primary">
+<span class="material-symbols-outlined text-[16px]" data-icon="token">token</span> +300 XP
+                            </span>
+<span class="text-[12px] font-label-sm text-on-surface-variant">4 days ago</span>
+</div>
+</div>
+</div>
+<!-- Quest Card 3 -->
+<div class="min-w-[280px] md:min-w-[320px] snap-start bg-white border border-outline-variant rounded-xl overflow-hidden hover:shadow-md transition-shadow">
+<div class="h-32 relative">
+<div class="bg-cover bg-center w-full h-full" data-alt="A minimalist architectural detail of a stark white building with strong geometric shadows. The sky is a clear, vibrant Pike Blue. The composition is clean and organized, emphasizing professional transparency and high-contrast elements. The mood is serene and technologically forward-leaning." style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuAYThBItlx8GCir74E_OzGImReUVyEBUYj8SRUunSHcOcaRhYrO-f8hJcm1pWl8blT-7Ram1iDPoOwmpGo0Y4WwOLQvAg9ABFfeTyUSL32pZjE9faeqMijZ5jzTzhcFpSy2aHLFGMi8x3Njy2b5slis4ltRYiOnZpCTRIGIKRlT3siCQf9uVT55nptP9c_YESrCSEbss8S3vTPhu-BMv8ycYcmdhWvEbvHVOE8RwO2aE1WEcsCxffn33Eh-EuFxfh7cRJZl8m6nuXQ')"></div>
+<div class="absolute top-3 right-3 bg-white/90 backdrop-blur-md px-2 py-1 rounded text-[10px] font-label-sm text-primary uppercase">Completed</div>
+</div>
+<div class="p-4">
+<h3 class="font-headline-md text-[18px] text-on-surface mb-1">Grid Pattern Survey</h3>
+<p class="text-[12px] font-label-sm text-on-surface-variant mb-4 uppercase">Industrial Sector</p>
+<div class="flex items-center justify-between pt-4 border-t border-outline-variant">
+<span class="flex items-center gap-1 font-label-sm text-[12px] text-primary">
+<span class="material-symbols-outlined text-[16px]" data-icon="token">token</span> +600 XP
+                            </span>
+<span class="text-[12px] font-label-sm text-on-surface-variant">1 week ago</span>
+</div>
+</div>
+</div>
+<!-- Quest Card 4 -->
+<div class="min-w-[280px] md:min-w-[320px] snap-start bg-white border border-outline-variant rounded-xl overflow-hidden hover:shadow-md transition-shadow">
+<div class="h-32 relative">
+<div class="bg-cover bg-center w-full h-full" data-alt="A wide landscape shot of a sustainable energy farm with futuristic wind turbines and solar panels under a bright morning sun. The palette is dominated by whites and soft metallic tones. The atmosphere is clear and professional, reflecting the laboratory-grade aesthetic of the Pike brand identity." style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuDoMRORLqo8hNTY_DTufePeehbHsF67v0u0Bfkk4kBsrNbrHo2nbrnSm79pS_OSeNDzTYaeWQ1uXu3p_kwW56MyVUYZKNKrvPomJpqsWeOVze7erA-BgX5SMrlsCAJcf9P9G0RLkHW9ApwjqT6fTlzW8Keee-NeoYSx98oMyFfma61Tlxes4H4cnHSSEvvlC3sSrzvSTbVWhg-uVAN9O2vmNNK-Rr9tnlOq70JZKMy6aHKDuEeIowwCx0wscMnMZ2NVmpYCYOylgCg')"></div>
+<div class="absolute top-3 right-3 bg-white/90 backdrop-blur-md px-2 py-1 rounded text-[10px] font-label-sm text-primary uppercase">Completed</div>
+</div>
+<div class="p-4">
+<h3 class="font-headline-md text-[18px] text-on-surface mb-1">Energy Peak Audit</h3>
+<p class="text-[12px] font-label-sm text-on-surface-variant mb-4 uppercase">Solar Ridge</p>
+<div class="flex items-center justify-between pt-4 border-t border-outline-variant">
+<span class="flex items-center gap-1 font-label-sm text-[12px] text-primary">
+<span class="material-symbols-outlined text-[16px]" data-icon="token">token</span> +250 XP
+                            </span>
+<span class="text-[12px] font-label-sm text-on-surface-variant">2 weeks ago</span>
+</div>
+</div>
+</div>
+</div>
+</section>
+</main>
+<!-- Bottom Navigation Bar (Mobile) -->
+<nav class="md:hidden fixed bottom-0 w-full z-50 backdrop-blur-md bg-white/80 border-t border-outline-variant flex justify-around items-center h-20 px-margin-mobile">
+<a class="flex flex-col items-center justify-center text-on-surface-variant px-4 py-1 hover:bg-surface-container-high transition-colors rounded-xl" href="#">
+<span class="material-symbols-outlined" data-icon="home">home</span>
+<span class="font-label-sm text-label-sm mt-1">Home</span>
+</a>
+<a class="flex flex-col items-center justify-center text-on-surface-variant px-4 py-1 hover:bg-surface-container-high transition-colors rounded-xl" href="#">
+<span class="material-symbols-outlined" data-icon="explore">explore</span>
+<span class="font-label-sm text-label-sm mt-1">Explore</span>
+</a>
+<a class="flex flex-col items-center justify-center text-on-surface-variant px-4 py-1 hover:bg-surface-container-high transition-colors rounded-xl" href="#">
+<span class="material-symbols-outlined" data-icon="assignment">assignment</span>
+<span class="font-label-sm text-label-sm mt-1">Quests</span>
+</a>
+<a class="flex flex-col items-center justify-center bg-primary-container text-on-primary-container rounded-full px-4 py-2 shadow-lg scale-110 -translate-y-2" href="#">
+<span class="material-symbols-outlined" data-icon="person" style="font-variation-settings: 'FILL' 1;">person</span>
+<span class="font-label-sm text-label-sm mt-0.5">Profile</span>
+</a>
+</nav>
+<script>
+        // Simple scroll logic for horizontal list
+        const scrollContainer = document.getElementById('questScroll');
+        const scrollLeft = document.getElementById('scrollLeft');
+        const scrollRight = document.getElementById('scrollRight');
+
+        if (scrollLeft && scrollRight && scrollContainer) {
+            scrollLeft.onclick = () => {
+                scrollContainer.scrollBy({ left: -300, behavior: 'smooth' });
+            };
+            scrollRight.onclick = () => {
+                scrollContainer.scrollBy({ left: 300, behavior: 'smooth' });
+            };
+        }
+
+        // Micro-interaction for level ring
+        window.addEventListener('DOMContentLoaded', () => {
+            const circle = document.querySelector('.progress-ring__circle');
+            if (circle) {
+                const radius = circle.r.baseVal.value;
+                const circumference = radius * 2 * Math.PI;
+                circle.style.strokeDasharray = `${circumference} ${circumference}`;
+                
+                // Set to 70% level progress
+                const offset = circumference - (0.7 * circumference);
+                circle.style.strokeDashoffset = circumference;
+                
+                setTimeout(() => {
+                    circle.style.strokeDashoffset = offset;
+                }, 500);
+            }
+        });
+    </script>
+</body></html>

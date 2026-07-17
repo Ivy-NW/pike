@@ -1,16 +1,8 @@
-:root {
-  --pike-blue: #2563eb;
-  --pike-gold: #f59e0b;
-  --deep-slate: #111827;
-  --light-gray: #f8fafc;
-  --success: #10b981;
-  --danger: #ef4444;
-  --purple-accent: #7c3aed;
-  --radius: 20px;
-  --font-heading: var(--font-heading, "Space Grotesk", system-ui, sans-serif);
-  --font-body: var(--font-body, "Inter", system-ui, sans-serif);
-  --max-width: 1120px;
-}
+@import "./theme.css";
+
+/* PIKE Landing — consumer-facing, so components lean on --radius-card (the
+ * spacious 20px/8px doc rule) rather than the denser --radius-md used by
+ * the two internal dashboards. */
 
 * {
   box-sizing: border-box;
@@ -23,9 +15,10 @@ html {
 body {
   margin: 0;
   font-family: var(--font-body);
-  background: #ffffff;
-  color: var(--deep-slate);
+  background: var(--surface);
+  color: var(--on-surface);
   line-height: 1.5;
+  transition: background-color 0.2s ease, color 0.2s ease;
 }
 
 h1,
@@ -53,7 +46,7 @@ svg {
 }
 
 .container {
-  max-width: var(--max-width);
+  max-width: 1120px;
   margin: 0 auto;
   padding: 0 24px;
 }
@@ -63,11 +56,12 @@ svg {
 }
 
 .section-eyebrow {
+  font-family: var(--font-mono);
   font-size: 13px;
   font-weight: 600;
   letter-spacing: 0.06em;
   text-transform: uppercase;
-  color: var(--pike-blue);
+  color: var(--primary);
   margin-bottom: 12px;
 }
 
@@ -79,7 +73,7 @@ svg {
 
 .section-subheading {
   font-size: 17px;
-  color: #475569;
+  color: var(--on-surface-variant);
   max-width: 560px;
   margin-top: 14px;
 }
@@ -90,49 +84,52 @@ svg {
   align-items: center;
   justify-content: center;
   gap: 8px;
-  font-family: var(--font-body);
+  font-family: var(--font-mono);
   font-weight: 600;
-  font-size: 15px;
+  font-size: 13px;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
   padding: 14px 26px;
-  border-radius: var(--radius);
+  border-radius: var(--radius-card);
   border: 1px solid transparent;
   cursor: pointer;
   white-space: nowrap;
+  transition: background-color 0.15s ease, border-color 0.15s ease, opacity 0.15s ease;
 }
 
 .btn-primary {
-  background: var(--pike-blue);
-  color: #ffffff;
+  background: var(--primary-container);
+  color: var(--on-primary-container);
 }
 
 .btn-primary:hover {
-  background: #1d4ed8;
+  opacity: 0.9;
 }
 
 .btn-outline {
   background: transparent;
-  color: var(--pike-blue);
-  border-color: var(--pike-blue);
+  color: var(--primary);
+  border-color: var(--primary);
 }
 
 .btn-outline:hover {
-  background: #eff6ff;
+  background: var(--surface-container-low);
 }
 
 .btn-text {
   background: transparent;
-  color: var(--deep-slate);
+  color: var(--on-surface);
   padding: 14px 4px;
 }
 
 .btn-text:hover {
-  color: var(--pike-blue);
+  color: var(--primary);
 }
 
 .card {
-  background: #ffffff;
-  border: 1px solid #e2e8f0;
-  border-radius: var(--radius);
+  background: var(--surface-container-lowest);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-card);
   padding: 28px;
 }
 
@@ -141,22 +138,29 @@ svg {
   align-items: center;
   gap: 6px;
   padding: 6px 14px;
-  border-radius: 999px;
+  border-radius: var(--radius-full);
   font-size: 13px;
   font-weight: 600;
-  background: #eff6ff;
-  color: var(--pike-blue);
+  background: color-mix(in srgb, var(--primary) 12%, transparent);
+  color: var(--primary);
 }
 
 .icon-badge {
   width: 48px;
   height: 48px;
-  border-radius: var(--radius);
+  border-radius: var(--radius-card);
   display: flex;
   align-items: center;
   justify-content: center;
-  background: #eff6ff;
-  color: var(--pike-blue);
+  background: color-mix(in srgb, var(--primary) 12%, transparent);
+  color: var(--primary);
+}
+
+/* The one component allowed to render gold outside the app's reward screens —
+ * doc section 2: gold signals a reward/achievement moment, so it appears here
+ * only for the "quests pay out real rewards" pitch, never as decoration. */
+.reward-accent {
+  color: var(--secondary-container);
 }
 
 @media (max-width: 720px) {

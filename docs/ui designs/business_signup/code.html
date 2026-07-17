@@ -1,0 +1,344 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>PIKE | Venue Onboarding</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&amp;family=Geist:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<!-- Tailwind Configuration -->
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                "surface": "#f8f9ff",
+                "secondary": "#855300",
+                "on-primary-fixed-variant": "#003ea8",
+                "secondary-container": "#fea619",
+                "on-tertiary-fixed-variant": "#3f465c",
+                "on-background": "#0b1c30",
+                "on-surface": "#0b1c30",
+                "surface-variant": "#d3e4fe",
+                "outline": "#737686",
+                "on-tertiary-container": "#eef0ff",
+                "on-secondary-fixed-variant": "#653e00",
+                "inverse-surface": "#213145",
+                "error-container": "#ffdad6",
+                "on-tertiary-fixed": "#131b2e",
+                "surface-dim": "#cbdbf5",
+                "secondary-fixed": "#ffddb8",
+                "tertiary-fixed": "#dae2fd",
+                "secondary-fixed-dim": "#ffb95f",
+                "on-secondary-fixed": "#2a1700",
+                "tertiary-container": "#656d84",
+                "on-error-container": "#93000a",
+                "tertiary": "#4d556b",
+                "on-primary-fixed": "#00174b",
+                "on-error": "#ffffff",
+                "on-primary-container": "#eeefff",
+                "primary-container": "#2563eb",
+                "error": "#ba1a1a",
+                "primary": "#004ac6",
+                "surface-tint": "#0053db",
+                "outline-variant": "#c3c6d7",
+                "surface-container": "#e5eeff",
+                "tertiary-fixed-dim": "#bec6e0",
+                "primary-fixed-dim": "#b4c5ff",
+                "inverse-on-surface": "#eaf1ff",
+                "surface-container-highest": "#d3e4fe",
+                "background": "#f8f9ff",
+                "surface-container-high": "#dce9ff",
+                "surface-bright": "#f8f9ff",
+                "primary-fixed": "#dbe1ff",
+                "on-tertiary": "#ffffff",
+                "surface-container-lowest": "#ffffff",
+                "inverse-primary": "#b4c5ff",
+                "on-secondary-container": "#684000",
+                "on-secondary": "#ffffff",
+                "on-primary": "#ffffff",
+                "on-surface-variant": "#434655"
+            },
+            "borderRadius": {
+                "DEFAULT": "0.125rem",
+                "lg": "0.25rem",
+                "xl": "0.5rem",
+                "full": "0.75rem"
+            },
+            "spacing": {
+                "margin-mobile": "16px",
+                "margin-desktop": "40px",
+                "gutter": "24px",
+                "unit": "4px",
+                "container-max": "1440px"
+            },
+            "fontFamily": {
+                "label-sm": ["Space Mono"],
+                "body-lg": ["Geist"],
+                "label-md": ["Space Mono"],
+                "headline-lg-mobile": ["Geist"],
+                "headline-md": ["Geist"],
+                "headline-lg": ["Geist"],
+                "body-md": ["Geist"],
+                "headline-xl": ["Geist"]
+            },
+            "fontSize": {
+                "label-sm": ["12px", {"lineHeight": "1.0", "letterSpacing": "0.05em", "fontWeight": "500"}],
+                "body-lg": ["18px", {"lineHeight": "1.6", "fontWeight": "400"}],
+                "label-md": ["14px", {"lineHeight": "1.0", "letterSpacing": "0.05em", "fontWeight": "500"}],
+                "headline-lg-mobile": ["24px", {"lineHeight": "1.2", "fontWeight": "600"}],
+                "headline-md": ["20px", {"lineHeight": "1.4", "fontWeight": "600"}],
+                "headline-lg": ["32px", {"lineHeight": "1.2", "letterSpacing": "-0.01em", "fontWeight": "600"}],
+                "body-md": ["16px", {"lineHeight": "1.6", "fontWeight": "400"}],
+                "headline-xl": ["48px", {"lineHeight": "1.1", "letterSpacing": "-0.02em", "fontWeight": "700"}]
+            }
+          },
+        },
+      }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+            vertical-align: middle;
+        }
+        body {
+            background-color: #f8f9ff;
+            color: #0b1c30;
+            overflow-x: hidden;
+        }
+        .step-transition {
+            transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.3s ease;
+        }
+        .bento-card {
+            background: #ffffff;
+            border: 1px solid #e2e8f0;
+            transition: border-color 0.2s ease, box-shadow 0.2s ease;
+        }
+        .bento-card:hover {
+            border-color: #004ac6;
+            box-shadow: 0px 4px 20px rgba(15, 23, 42, 0.05);
+        }
+    </style>
+</head>
+<body class="font-body-md text-body-md min-h-screen flex flex-col">
+<!-- TopNavBar Suppression Check: Since this is a Transactional/Signup screen, TopNavBar is omitted per "Semantic Shell" Mandate -->
+<main class="flex-grow flex flex-col md:flex-row min-h-screen">
+<!-- Tactical Sidebar: Benefits & Identity -->
+<aside class="hidden md:flex flex-col w-1/3 lg:w-1/4 bg-surface-container-low border-r border-outline-variant p-margin-desktop sticky top-0 h-screen overflow-y-auto">
+<div class="mb-12">
+<span class="font-headline-md text-headline-md font-bold text-primary tracking-tight">PIKE</span>
+<p class="font-label-sm text-label-sm text-outline mt-2 uppercase tracking-widest">Venue Network</p>
+</div>
+<div class="space-y-8">
+<div class="group">
+<div class="flex items-center gap-3 mb-3">
+<span class="material-symbols-outlined text-primary" style="font-variation-settings: 'FILL' 1;">rocket_launch</span>
+<h3 class="font-headline-md text-headline-md text-on-surface">Accelerated Growth</h3>
+</div>
+<p class="text-on-surface-variant font-body-md opacity-80">Access a global network of explorers. Venues on the PIKE network see a 40% increase in discovery during peak cycles.</p>
+</div>
+<div class="group">
+<div class="flex items-center gap-3 mb-3">
+<span class="material-symbols-outlined text-primary" style="font-variation-settings: 'FILL' 1;">monitoring</span>
+<h3 class="font-headline-md text-headline-md text-on-surface">Precision Analytics</h3>
+</div>
+<p class="text-on-surface-variant font-body-md opacity-80">Utilize laboratory-grade data tracking. Monitor footprint density and demographic shifts in real-time.</p>
+</div>
+<div class="group">
+<div class="flex items-center gap-3 mb-3">
+<span class="material-symbols-outlined text-primary" style="font-variation-settings: 'FILL' 1;">security</span>
+<h3 class="font-headline-md text-headline-md text-on-surface">Enterprise Security</h3>
+</div>
+<p class="text-on-surface-variant font-body-md opacity-80">Military-grade encryption for all venue operations. Your business data is segmented and secured by mission-critical protocols.</p>
+</div>
+</div>
+<div class="mt-auto pt-12">
+<div class="rounded-lg overflow-hidden border border-outline-variant aspect-square relative">
+<div class="w-full h-full bg-cover bg-center" data-alt="A clean architectural photograph of a high-tech corporate lobby in light mode. The space features large glass windows, polished white floors, and minimalist blue lighting accents. The aesthetic is professional, systematic, and premium, perfectly matching the Pike Vanguard identity with crisp textures and clinical clarity." style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuBaXatHxM3DlKka848DAGnLoQjd2hSi8_yCMFs_viSeq5j9tPR137q9qGOBn1XMh_67dD16oNRqWniq5Ys-5uo8IH-M3VBJJqm_Na00Lq3iB2zuL5wc2bu5lmEKwEU5GyKkn1CuZw_ckPftzf4AVV_4c0CueidQEDYnHoucuXMqmBWlkRZ5VHfsi3bbx6P08L7pjo8sT_8s1QOUNSFkWs2C-cIKab7jpmOuL8BKc7hYyYNjK9l923WslEnPw4GBnxpxOx3fsUIwVtg')"></div>
+<div class="absolute inset-0 bg-gradient-to-t from-on-background/60 to-transparent"></div>
+<div class="absolute bottom-4 left-4 right-4">
+<p class="text-white font-label-sm text-label-sm">TRANSFORM YOUR SPACE</p>
+</div>
+</div>
+</div>
+</aside>
+<!-- Main Form Canvas -->
+<section class="flex-grow bg-surface relative flex flex-col">
+<!-- Progress Indicator -->
+<div class="w-full px-margin-mobile md:px-margin-desktop pt-12 pb-6">
+<div class="max-w-3xl mx-auto">
+<div class="flex items-center justify-between mb-4">
+<span class="font-label-md text-label-md text-primary font-bold" id="step-indicator-text">STEP 01: BUSINESS DETAILS</span>
+<span class="font-label-md text-label-md text-outline">60% COMPLETE</span>
+</div>
+<div class="h-1 w-full bg-surface-variant rounded-full overflow-hidden">
+<div class="h-full bg-primary transition-all duration-700 ease-in-out" id="progress-bar" style="width: 50%;"></div>
+</div>
+</div>
+</div>
+<!-- Form Multi-Step Container -->
+<div class="flex-grow flex items-center justify-center p-margin-mobile md:p-margin-desktop overflow-hidden">
+<div class="w-full max-w-3xl">
+<!-- Step 1: Business Details -->
+<div class="step-transition opacity-100 translate-x-0" id="step-1">
+<h1 class="font-headline-xl text-headline-xl mb-2 text-on-background">Initialize Your Venue</h1>
+<p class="text-on-surface-variant font-body-lg mb-12">Set up the foundational metadata for your location within the PIKE ecosystem.</p>
+<div class="grid grid-cols-1 md:grid-cols-2 gap-gutter">
+<div class="space-y-6 md:col-span-2">
+<label class="block">
+<span class="font-label-sm text-label-sm text-outline uppercase block mb-2">Legal Business Name</span>
+<input class="w-full bg-surface-container-low border-b border-outline-variant focus:border-primary focus:ring-0 transition-colors p-4 font-body-md outline-none" placeholder="e.g. Neo-Tokyo Research Center" type="text"/>
+</label>
+</div>
+<div class="space-y-2">
+<span class="font-label-sm text-label-sm text-outline uppercase block mb-2">Venue Category</span>
+<div class="grid grid-cols-2 gap-2">
+<button class="flex items-center justify-center gap-2 p-4 border border-outline-variant rounded-lg font-label-md text-label-md hover:border-primary transition-colors text-on-surface">
+<span class="material-symbols-outlined text-[20px]">apartment</span> Corporate
+                                    </button>
+<button class="flex items-center justify-center gap-2 p-4 border border-outline-variant rounded-lg font-label-md text-label-md hover:border-primary transition-colors text-on-surface">
+<span class="material-symbols-outlined text-[20px]">storefront</span> Retail
+                                    </button>
+<button class="flex items-center justify-center gap-2 p-4 border border-outline-variant rounded-lg font-label-md text-label-md hover:border-primary transition-colors text-on-surface">
+<span class="material-symbols-outlined text-[20px]">science</span> Lab
+                                    </button>
+<button class="flex items-center justify-center gap-2 p-4 border border-primary bg-primary/5 rounded-lg font-label-md text-label-md transition-colors text-primary font-bold">
+<span class="material-symbols-outlined text-[20px]">interests</span> Other
+                                    </button>
+</div>
+</div>
+<div class="space-y-6">
+<label class="block">
+<span class="font-label-sm text-label-sm text-outline uppercase block mb-2">Global Coordinates / Location</span>
+<input class="w-full bg-surface-container-low border-b border-outline-variant focus:border-primary focus:ring-0 transition-colors p-4 font-body-md outline-none" placeholder="City, Country" type="text"/>
+</label>
+</div>
+</div>
+<div class="mt-12 flex justify-end">
+<button class="group flex items-center gap-4 bg-primary text-white px-8 py-4 rounded-lg font-label-md text-label-md uppercase tracking-widest hover:bg-primary-container transition-all active:scale-95" onclick="nextStep()">
+                                Protocol Next
+                                <span class="material-symbols-outlined transition-transform group-hover:translate-x-1">arrow_forward</span>
+</button>
+</div>
+</div>
+<!-- Step 2: Account Security -->
+<div class="step-transition hidden opacity-0 translate-x-20" id="step-2">
+<h1 class="font-headline-xl text-headline-xl mb-2 text-on-background">Secure Your Node</h1>
+<p class="text-on-surface-variant font-body-lg mb-12">Establish encrypted access credentials for your administrative dashboard.</p>
+<div class="space-y-8">
+<div class="grid grid-cols-1 md:grid-cols-2 gap-gutter">
+<label class="block">
+<span class="font-label-sm text-label-sm text-outline uppercase block mb-2">Admin Email Address</span>
+<input class="w-full bg-surface-container-low border-b border-outline-variant focus:border-primary focus:ring-0 transition-colors p-4 font-body-md outline-none" placeholder="admin@venue.com" type="email"/>
+</label>
+<label class="block">
+<span class="font-label-sm text-label-sm text-outline uppercase block mb-2">Security Clearance Level</span>
+<select class="w-full bg-surface-container-low border-b border-outline-variant focus:border-primary focus:ring-0 transition-colors p-4 font-body-md outline-none appearance-none">
+<option>L1 - Operational Staff</option>
+<option>L2 - Site Manager</option>
+<option>L3 - Regional Director</option>
+</select>
+</label>
+</div>
+<div class="p-6 bg-primary/5 border border-primary/20 rounded-xl">
+<div class="flex items-start gap-4">
+<span class="material-symbols-outlined text-primary mt-1">shield_lock</span>
+<div>
+<h4 class="font-headline-md text-headline-md text-on-surface mb-1">Two-Factor Authentication</h4>
+<p class="text-on-surface-variant text-body-md">By default, all PIKE accounts require hardware or app-based 2FA to ensure laboratory-grade security of the network.</p>
+</div>
+</div>
+</div>
+<label class="block">
+<span class="font-label-sm text-label-sm text-outline uppercase block mb-2">Establish Master Password</span>
+<input class="w-full bg-surface-container-low border-b border-outline-variant focus:border-primary focus:ring-0 transition-colors p-4 font-body-md outline-none" placeholder="••••••••••••" type="password"/>
+<div class="mt-2 flex gap-1 h-1">
+<div class="flex-grow bg-primary rounded-full"></div>
+<div class="flex-grow bg-primary rounded-full"></div>
+<div class="flex-grow bg-primary rounded-full"></div>
+<div class="flex-grow bg-surface-variant rounded-full"></div>
+</div>
+<span class="text-label-sm font-label-sm text-primary mt-2 block">PASSWORD STRENGTH: TACTICAL</span>
+</label>
+</div>
+<div class="mt-12 flex justify-between items-center">
+<button class="flex items-center gap-2 text-outline font-label-md text-label-md uppercase tracking-widest hover:text-primary transition-colors" onclick="prevStep()">
+<span class="material-symbols-outlined">arrow_back</span>
+                                Return
+                            </button>
+<button class="bg-primary text-white px-12 py-4 rounded-lg font-label-md text-label-md uppercase tracking-widest hover:bg-primary-container transition-all shadow-xl shadow-primary/10 active:scale-95">
+                                Finalize Onboarding
+                            </button>
+</div>
+</div>
+</div>
+</div>
+<!-- Contextual Footer (Simplified for Flow) -->
+<footer class="w-full py-8 px-margin-desktop flex justify-between items-center mt-auto border-t border-outline-variant">
+<span class="font-label-sm text-label-sm text-outline">© 2024 PIKE URBAN EXPLORATION</span>
+<div class="flex gap-6">
+<a class="font-label-sm text-label-sm text-outline hover:text-primary transition-colors" href="#">Privacy Protocol</a>
+<a class="font-label-sm text-label-sm text-outline hover:text-primary transition-colors" href="#">System Support</a>
+</div>
+</footer>
+</section>
+</main>
+<script>
+        let currentStep = 1;
+        const totalSteps = 2;
+
+        function updateUI() {
+            const step1 = document.getElementById('step-1');
+            const step2 = document.getElementById('step-2');
+            const progressBar = document.getElementById('progress-bar');
+            const indicatorText = document.getElementById('step-indicator-text');
+
+            if (currentStep === 1) {
+                step1.classList.remove('hidden');
+                setTimeout(() => {
+                    step1.classList.add('opacity-100', 'translate-x-0');
+                    step1.classList.remove('opacity-0', '-translate-x-20');
+                }, 10);
+                step2.classList.add('hidden', 'opacity-0', 'translate-x-20');
+                progressBar.style.width = '50%';
+                indicatorText.innerText = 'STEP 01: BUSINESS DETAILS';
+            } else {
+                step2.classList.remove('hidden');
+                setTimeout(() => {
+                    step2.classList.add('opacity-100', 'translate-x-0');
+                    step2.classList.remove('opacity-0', 'translate-x-20');
+                }, 10);
+                step1.classList.add('hidden', 'opacity-0', '-translate-x-20');
+                progressBar.style.width = '100%';
+                indicatorText.innerText = 'STEP 02: ACCOUNT SECURITY';
+            }
+        }
+
+        function nextStep() {
+            if (currentStep < totalSteps) {
+                currentStep++;
+                updateUI();
+            }
+        }
+
+        function prevStep() {
+            if (currentStep > 1) {
+                currentStep--;
+                updateUI();
+            }
+        }
+        
+        // Micro-interaction for input fields
+        document.querySelectorAll('input, select').forEach(el => {
+            el.addEventListener('focus', () => {
+                el.parentElement.querySelector('.text-outline').classList.add('text-primary');
+            });
+            el.addEventListener('blur', () => {
+                el.parentElement.querySelector('.text-outline').classList.remove('text-primary');
+            });
+        });
+    </script>
+</body></html>

@@ -154,7 +154,7 @@ export function ArScanView({ questName, imageTargetData, onRecognized }: Props) 
         style={{
           position: "relative",
           color: "white",
-          fontFamily: "Inter, sans-serif",
+          fontFamily: "Inter, system-ui, sans-serif",
           marginTop: 24,
           textAlign: "center",
           padding: "0 24px",
