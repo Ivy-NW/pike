@@ -19,7 +19,18 @@
     "dev:admin": "npm run dev --workspace apps/admin",
     "dev:app": "npm run start --workspace apps/app",
     "build:shared-types": "npm run build --workspace packages/shared-types",
-    "build:design-tokens": "npm run build --workspace packages/design-tokens"
+    "build:design-tokens": "npm run build --workspace packages/design-tokens",
+    "build:api": "npm run build --workspace apps/api",
+    "build:webar": "npm run build --workspace apps/webar",
+    "build:web": "npm run build --workspace apps/web",
+    "build:dashboard": "npm run build --workspace apps/dashboard",
+    "build:admin": "npm run build --workspace apps/admin",
+    "build": "npm run build:shared-types && npm run build:design-tokens && npm run build:api && npm run build:webar && npm run build:web && npm run build:dashboard && npm run build:admin",
+    "start:api": "npm run start:prod --workspace apps/api",
+    "start:webar": "npm run preview --workspace apps/webar",
+    "start:web": "npm run start --workspace apps/web",
+    "start:dashboard": "npm run start --workspace apps/dashboard",
+    "start:admin": "npm run start --workspace apps/admin"
   },
   "devDependencies": {
     "typescript": "^5.5.4"

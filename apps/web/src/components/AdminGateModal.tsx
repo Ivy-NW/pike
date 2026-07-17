@@ -2,12 +2,16 @@
 import { useState } from "react";
 import { api, ApiError } from "@/lib/api";
 
-const ADMIN_URL = process.env.NEXT_PUBLIC_ADMIN_URL ?? "http://localhost:3002";
-
 /**
  * This code is an obscurity layer only -- it decides who ever sees the admin login form.
  * It never authenticates anyone itself; a correct code just redirects to the real
  * email/password login behind AdminAuthGuard in apps/api.
+ *
+ * The admin hostname is never referenced client-side (no NEXT_PUBLIC_ var for it) --
+ * that would ship it in this page's public JS bundle for anyone to read, regardless of
+ * whether they ever enter a code. Instead, on a valid code we navigate to a same-origin
+ * route (/api/admin-gate/redirect) that re-verifies server-side and only then redirects
+ * to the real admin URL, which lives only in a server-only env var.
  */
 export function AdminGateModal({ onClose }: { onClose: () => void }) {
   const [code, setCode] = useState("");
@@ -19,7 +23,7 @@ export function AdminGateModal({ onClose }: { onClose: () => void }) {
     try {
       const { valid } = await api.verifyAdminGate(code);
       if (valid) {
-        window.location.href = `${ADMIN_URL}/login`;
+        window.location.href = `/api/admin-gate/redirect?code=${encodeURIComponent(code)}`;
         return;
       }
       setStatus("error");

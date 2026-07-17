@@ -8,6 +8,12 @@ export const metadata = {
   icons: {
     icon: "/favicon.png",
   },
+  robots: {
+    index: false,
+    follow: false,
+    nocache: true,
+    googleBot: { index: false, follow: false },
+  },
 };
 
 export default function RootLayout({ children }: { children: ReactNode }) {
