@@ -48,7 +48,7 @@ export function ScanPage() {
 
   if (!resolved) {
     return (
-      <div style={{ display: "flex", height: "100vh", alignItems: "center", justifyContent: "center", color: "var(--deep-slate)" }}>
+      <div style={{ display: "flex", height: "100vh", alignItems: "center", justifyContent: "center", color: "var(--on-surface)" }}>
         Loading quest...
       </div>
     );

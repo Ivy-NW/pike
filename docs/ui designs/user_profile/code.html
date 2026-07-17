@@ -1,0 +1,345 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0, viewport-fit=cover" name="viewport"/>
+<title>PIKE | User Profile</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;family=Space+Grotesk:wght@300;400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                "on-secondary": "#472a00",
+                "primary": "#b4c5ff",
+                "secondary-fixed": "#ffddb8",
+                "surface-container-lowest": "#060e20",
+                "secondary-fixed-dim": "#ffb95f",
+                "primary-container": "#2563eb",
+                "error-container": "#93000a",
+                "gold-deep": "#B45309",
+                "on-primary-container": "#eeefff",
+                "surface-container-highest": "#2d3449",
+                "primary-fixed-dim": "#b4c5ff",
+                "surface": "#0b1326",
+                "on-primary-fixed-variant": "#003ea8",
+                "text-muted": "#64748B",
+                "on-tertiary-container": "#f7edff",
+                "on-background": "#dae2fd",
+                "on-error": "#690005",
+                "surface-dim": "#0b1326",
+                "on-surface-variant": "#c3c6d7",
+                "secondary": "#ffb95f",
+                "inverse-on-surface": "#283044",
+                "inverse-surface": "#dae2fd",
+                "on-surface": "#dae2fd",
+                "secondary-container": "#ee9800",
+                "error": "#ffb4ab",
+                "surface-tint": "#b4c5ff",
+                "on-secondary-container": "#5b3800",
+                "surface-container-low": "#131b2e",
+                "outline": "#8d90a0",
+                "on-secondary-fixed": "#2a1700",
+                "on-secondary-fixed-variant": "#653e00",
+                "tertiary-fixed-dim": "#d2bbff",
+                "tertiary-container": "#8343f4",
+                "tertiary": "#d2bbff",
+                "background": "#0b1326",
+                "success-neon": "#10B981",
+                "outline-variant": "#434655",
+                "on-error-container": "#ffdad6",
+                "on-primary-fixed": "#00174b",
+                "surface-variant": "#2d3449",
+                "pike-blue-glow": "#4F46E5",
+                "inverse-primary": "#0053db",
+                "on-tertiary": "#3f008e",
+                "slate-gray": "#1E293B",
+                "on-primary": "#002a78",
+                "on-tertiary-fixed-variant": "#5a00c6",
+                "surface-container": "#171f33",
+                "primary-fixed": "#dbe1ff",
+                "surface-bright": "#31394d",
+                "on-tertiary-fixed": "#25005a",
+                "tertiary-fixed": "#eaddff",
+                "surface-container-high": "#222a3d"
+            },
+            "borderRadius": {
+                "DEFAULT": "0.25rem",
+                "lg": "0.5rem",
+                "xl": "0.75rem",
+                "full": "9999px"
+            },
+            "spacing": {
+                "stack-md": "14px",
+                "section-margin": "28px",
+                "container-padding": "20px",
+                "element-gap": "12px",
+                "unit": "4px",
+                "stack-sm": "8px"
+            },
+            "fontFamily": {
+                "body-md": ["Inter"],
+                "label-caps": ["Space Grotesk"],
+                "display-xl": ["Space Grotesk"],
+                "body-lg": ["Inter"],
+                "headline-sm": ["Space Grotesk"],
+                "label-sm": ["Inter"],
+                "headline-lg-mobile": ["Space Grotesk"],
+                "headline-lg": ["Space Grotesk"]
+            },
+            "fontSize": {
+                "body-md": ["13px", {"lineHeight": "1.6", "fontWeight": "400"}],
+                "label-caps": ["12px", {"lineHeight": "1.0", "letterSpacing": "0.08em", "fontWeight": "700"}],
+                "display-xl": ["32px", {"lineHeight": "1.1", "letterSpacing": "-0.04em", "fontWeight": "700"}],
+                "body-lg": ["15px", {"lineHeight": "1.5", "fontWeight": "600"}],
+                "headline-sm": ["16px", {"lineHeight": "1.4", "fontWeight": "600"}],
+                "label-sm": ["11px", {"lineHeight": "1.2", "fontWeight": "500"}],
+                "headline-lg-mobile": ["20px", {"lineHeight": "1.2", "fontWeight": "700"}],
+                "headline-lg": ["24px", {"lineHeight": "1.2", "letterSpacing": "-0.02em", "fontWeight": "700"}]
+            }
+          },
+        },
+      }
+    </script>
+<style>
+        body {
+            background-color: #0b1326;
+            color: #dae2fd;
+            -webkit-font-smoothing: antialiased;
+        }
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .xp-ring-gradient {
+            background: conic-gradient(#2563eb 0% 70%, transparent 70% 100%);
+        }
+        .scanline-overlay {
+            background: repeating-linear-gradient(0deg, rgba(255, 255, 255, 0.03) 0px, rgba(255, 255, 255, 0.03) 1px, transparent 1px, transparent 2px);
+            pointer-events: none;
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="flex flex-col min-h-screen pb-24">
+<!-- Top AppBar -->
+<header class="fixed top-0 w-full z-50 flex justify-between items-center px-container-padding h-14 bg-surface-container-low shadow-sm">
+<div class="flex items-center gap-stack-sm">
+<span class="text-headline-lg-mobile font-headline-lg-mobile font-black text-primary tracking-tighter">PIKE</span>
+</div>
+<div class="flex items-center gap-stack-md">
+<button class="w-10 h-10 flex items-center justify-center text-on-surface-variant hover:opacity-80 transition-opacity active:scale-95">
+<span class="material-symbols-outlined" data-icon="notifications">notifications</span>
+</button>
+<div class="w-8 h-8 rounded-full overflow-hidden border border-primary/20">
+<img class="w-full h-full object-cover" data-alt="A close-up portrait of a tech-savvy urban explorer with short hair, wearing sleek futuristic glasses that reflect a neon blue interface. The lighting is dramatic and cinematic, with deep navy shadows and sharp cyan highlights, embodying a cyberpunk aesthetic. The background is softly blurred with hints of a high-tech console interface, maintaining a dark mode atmosphere." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDkzBR2XKx1yzNjJkgFgEdIxa5pDMJn4ZOU3vU4Pe_ZGqojxvLD2wuJZ6TE-mmzgS-uk01gkAk87ykloKlM9B-ff1j2KUSFqorgEMr86ofJbeMcroXrf50Nn9_fSc0um_LJilNRtp33xyTxsNWgY6rufqnJ9kntBzG-6Br-6K41ATkCWPQHuG32_sFRW9CLfDHM5fmdQRD0k5THEpnGyEi8jrUC2fapM7KzLx4pF92Tfx7N-avaRwKyBQFSearu3jjPVnvBPepR_34"/>
+</div>
+</div>
+</header>
+<!-- Content Canvas -->
+<main class="mt-14 px-container-padding pt-section-margin space-y-section-margin">
+<!-- Profile Header & XP Ring -->
+<section class="flex flex-col items-center text-center">
+<div class="relative group">
+<!-- Circular XP Ring Container -->
+<div class="w-32 h-32 rounded-full p-1 bg-surface-container-highest/30 relative flex items-center justify-center">
+<div class="absolute inset-0 rounded-full xp-ring-gradient blur-[2px] opacity-40"></div>
+<div class="absolute inset-0 rounded-full xp-ring-gradient"></div>
+<div class="w-28 h-28 rounded-full bg-surface-container-low z-10 flex items-center justify-center overflow-hidden border-4 border-surface">
+<img class="w-full h-full object-cover" data-alt="A profile photo of Alex Kariuki, a young man with a confident expression, set against a dark, technologically sophisticated background. He is wearing a dark charcoal techwear jacket with subtle glowing blue accents on the collar. The image style is sharp and professional, with a cool-toned color palette and atmospheric cinematic lighting that suggests a high-stakes digital adventure environment." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDvMYJy_n4pu1i9nMdJnY5WnGUDI7dWmYCOJLVN2kSPAP-m2mufxyQRIk3OKh5nsvRcI1pYkYOBSc1HvU1U7TUyOe6KHf8NySrX67AAHFC3iYSwbveitTrEyuciQH5SLd2a4tsbl1SFxMksQ11mK9-UOd3fHRgipKv0bvWldJckylPguJLVn_eU3Jn1pITnrqihQwLCISwerAnlsmREwWOebF0T4KZTwA89jBjRiQVJHoazbbQhJWfiPFLjtcH7XQFv-v66YIBsTlA"/>
+</div>
+<!-- Level Badge -->
+<div class="absolute -bottom-1 right-0 bg-primary-container text-on-primary-container px-2 py-0.5 rounded-lg border-2 border-surface z-20 shadow-lg">
+<span class="font-label-caps text-label-caps">LVL 14</span>
+</div>
+</div>
+</div>
+<div class="mt-stack-md">
+<h1 class="font-headline-lg text-headline-lg text-on-surface">Alex Kariuki</h1>
+<div class="inline-flex items-center bg-primary/10 border border-primary/20 px-3 py-1 rounded-full mt-stack-sm">
+<span class="material-symbols-outlined text-[14px] text-primary mr-1" data-icon="verified">verified</span>
+<span class="font-label-caps text-label-caps text-primary">Explorer Tier</span>
+</div>
+</div>
+</section>
+<!-- Stats Bento Grid -->
+<section class="grid grid-cols-2 gap-element-gap">
+<!-- Quests -->
+<div class="bg-slate-gray p-stack-md rounded-xl border border-surface-container-highest relative overflow-hidden group">
+<div class="scanline-overlay absolute inset-0"></div>
+<span class="font-label-caps text-label-caps text-on-surface-variant block mb-stack-sm">QUESTS</span>
+<div class="flex items-baseline gap-1">
+<span class="font-display-xl text-display-xl text-on-surface">37</span>
+<span class="font-label-sm text-label-sm text-success-neon">+3</span>
+</div>
+<div class="absolute bottom-2 right-2 text-primary/10 group-hover:text-primary/20 transition-colors">
+<span class="material-symbols-outlined text-4xl" data-icon="explore">explore</span>
+</div>
+</div>
+<!-- Venues -->
+<div class="bg-slate-gray p-stack-md rounded-xl border border-surface-container-highest relative overflow-hidden group">
+<div class="scanline-overlay absolute inset-0"></div>
+<span class="font-label-caps text-label-caps text-on-surface-variant block mb-stack-sm">VENUES</span>
+<span class="font-display-xl text-display-xl text-on-surface">12</span>
+<div class="absolute bottom-2 right-2 text-primary/10 group-hover:text-primary/20 transition-colors">
+<span class="material-symbols-outlined text-4xl" data-icon="location_on">location_on</span>
+</div>
+</div>
+<!-- Streak -->
+<div class="bg-slate-gray p-stack-md rounded-xl border border-surface-container-highest relative overflow-hidden group">
+<div class="scanline-overlay absolute inset-0"></div>
+<span class="font-label-caps text-label-caps text-on-surface-variant block mb-stack-sm">STREAK</span>
+<div class="flex items-center gap-2">
+<span class="font-display-xl text-display-xl text-secondary">6</span>
+<span class="font-body-md text-body-md text-secondary/60">DAYS</span>
+</div>
+<div class="absolute bottom-2 right-2 text-secondary/10 group-hover:text-secondary/20 transition-colors">
+<span class="material-symbols-outlined text-4xl" data-icon="local_fire_department">local_fire_department</span>
+</div>
+</div>
+<!-- Rank -->
+<div class="bg-slate-gray p-stack-md rounded-xl border border-surface-container-highest relative overflow-hidden group">
+<div class="scanline-overlay absolute inset-0"></div>
+<span class="font-label-caps text-label-caps text-on-surface-variant block mb-stack-sm">RANK</span>
+<div class="flex items-baseline gap-0.5">
+<span class="font-display-xl text-display-xl text-primary">#2</span>
+<span class="font-label-sm text-label-sm text-on-surface-variant ml-1">GLOBAL</span>
+</div>
+<div class="absolute bottom-2 right-2 text-primary/10 group-hover:text-primary/20 transition-colors">
+<span class="material-symbols-outlined text-4xl" data-icon="leaderboard">leaderboard</span>
+</div>
+</div>
+</section>
+<!-- Badges Section -->
+<section>
+<div class="flex justify-between items-center mb-stack-md">
+<h2 class="font-headline-sm text-headline-sm text-on-surface">Earned Badges</h2>
+<button class="text-primary font-label-caps text-label-caps hover:underline transition-all">VIEW ALL</button>
+</div>
+<div class="grid grid-cols-4 gap-stack-sm">
+<!-- Gold Badge 1 -->
+<div class="aspect-square bg-surface-container-high rounded-xl border border-gold-deep/30 flex flex-col items-center justify-center relative overflow-hidden group">
+<div class="absolute inset-0 bg-radial-gradient from-gold-deep/20 to-transparent opacity-50"></div>
+<span class="material-symbols-outlined text-secondary text-3xl mb-1 drop-shadow-[0_0_8px_rgba(255,185,95,0.4)]" data-icon="military_tech">military_tech</span>
+<span class="font-label-sm text-[8px] text-secondary-fixed-dim uppercase tracking-widest">Sovereign</span>
+</div>
+<!-- Gold Badge 2 -->
+<div class="aspect-square bg-surface-container-high rounded-xl border border-gold-deep/30 flex flex-col items-center justify-center relative overflow-hidden group">
+<div class="absolute inset-0 bg-radial-gradient from-gold-deep/20 to-transparent opacity-50"></div>
+<span class="material-symbols-outlined text-secondary text-3xl mb-1 drop-shadow-[0_0_8px_rgba(255,185,95,0.4)]" data-icon="star">star</span>
+<span class="font-label-sm text-[8px] text-secondary-fixed-dim uppercase tracking-widest">Elite</span>
+</div>
+<!-- Silver Badge 1 -->
+<div class="aspect-square bg-surface-container-high rounded-xl border border-outline/20 flex flex-col items-center justify-center relative group">
+<span class="material-symbols-outlined text-on-surface-variant text-3xl mb-1" data-icon="bolt">bolt</span>
+<span class="font-label-sm text-[8px] text-on-surface-variant uppercase tracking-widest">Swift</span>
+</div>
+<!-- Silver Badge 2 -->
+<div class="aspect-square bg-surface-container-high rounded-xl border border-outline/20 flex flex-col items-center justify-center relative group">
+<span class="material-symbols-outlined text-on-surface-variant text-3xl mb-1" data-icon="diamond">diamond</span>
+<span class="font-label-sm text-[8px] text-on-surface-variant uppercase tracking-widest">Flawless</span>
+</div>
+</div>
+</section>
+<!-- Recent Activity Rail -->
+<section>
+<h2 class="font-headline-sm text-headline-sm text-on-surface mb-stack-md">Recent Quests</h2>
+<div class="flex overflow-x-auto space-x-element-gap no-scrollbar -mx-container-padding px-container-padding pb-4">
+<!-- Activity Card 1 -->
+<div class="min-w-[260px] bg-slate-gray rounded-2xl border border-surface-container-highest overflow-hidden p-stack-md flex gap-stack-md">
+<div class="w-16 h-16 rounded-xl bg-surface-container-high flex-shrink-0 flex items-center justify-center">
+<span class="material-symbols-outlined text-primary text-3xl" data-icon="castle">castle</span>
+</div>
+<div>
+<p class="font-headline-sm text-sm text-on-surface">The Citadel Run</p>
+<p class="text-label-sm text-text-muted mt-1 uppercase tracking-wider">COMPLETED • 2H AGO</p>
+<div class="mt-2 flex items-center gap-1">
+<span class="text-success-neon font-label-caps text-label-caps">+450 XP</span>
+</div>
+</div>
+</div>
+<!-- Activity Card 2 -->
+<div class="min-w-[260px] bg-slate-gray rounded-2xl border border-surface-container-highest overflow-hidden p-stack-md flex gap-stack-md">
+<div class="w-16 h-16 rounded-xl bg-surface-container-high flex-shrink-0 flex items-center justify-center">
+<span class="material-symbols-outlined text-secondary text-3xl" data-icon="potted_plant">potted_plant</span>
+</div>
+<div>
+<p class="font-headline-sm text-sm text-on-surface">Arboretum Vault</p>
+<p class="text-label-sm text-text-muted mt-1 uppercase tracking-wider">CLAIMED REWARD</p>
+<div class="mt-2 flex items-center gap-1">
+<span class="text-secondary font-label-caps text-label-caps">LEGENDARY BOX</span>
+</div>
+</div>
+</div>
+</div>
+</section>
+</main>
+<!-- Bottom Navigation Bar -->
+<nav class="fixed bottom-0 w-full z-50 flex justify-around items-center px-4 py-2 pb-safe bg-surface-container-low border-t border-surface-container-highest shadow-[0_-4px_12px_rgba(0,0,0,0.5)] rounded-t-xl">
+<a class="flex flex-col items-center justify-center text-on-surface-variant hover:text-primary transition-colors active:scale-90 duration-200" href="#">
+<span class="material-symbols-outlined mb-1" data-icon="home">home</span>
+<span class="font-label-sm text-label-sm">HOME</span>
+</a>
+<a class="flex flex-col items-center justify-center text-on-surface-variant hover:text-primary transition-colors active:scale-90 duration-200" href="#">
+<span class="material-symbols-outlined mb-1" data-icon="map">map</span>
+<span class="font-label-sm text-label-sm">EXPLORE</span>
+</a>
+<a class="flex flex-col items-center justify-center text-on-surface-variant hover:text-primary transition-colors active:scale-90 duration-200" href="#">
+<span class="material-symbols-outlined mb-1" data-icon="explore">explore</span>
+<span class="font-label-sm text-label-sm">QUESTS</span>
+</a>
+<a class="flex flex-col items-center justify-center text-primary bg-primary/10 rounded-xl px-3 py-1 active:scale-90 transition-all duration-200" href="#">
+<span class="material-symbols-outlined mb-1" data-icon="person" style="font-variation-settings: 'FILL' 1;">person</span>
+<span class="font-label-sm text-label-sm">PROFILE</span>
+</a>
+</nav>
+<script>
+        // Micro-interaction for Stat Boxes
+        document.querySelectorAll('.bg-slate-gray').forEach(card => {
+            card.addEventListener('touchstart', () => {
+                card.classList.add('scale-95');
+            });
+            card.addEventListener('touchend', () => {
+                card.classList.remove('scale-95');
+            });
+        });
+
+        // Add visual noise/grain to background for "Techno-Adventurer" vibe
+        const noiseEffect = () => {
+            const canvas = document.createElement('canvas');
+            canvas.classList.add('fixed', 'inset-0', 'pointer-events-none', 'opacity-[0.03]', 'z-0');
+            document.body.prepend(canvas);
+            const ctx = canvas.getContext('2d');
+            
+            const resize = () => {
+                canvas.width = window.innerWidth;
+                canvas.height = window.innerHeight;
+            };
+
+            const draw = () => {
+                const w = canvas.width;
+                const h = canvas.height;
+                const idata = ctx.createImageData(w, h);
+                const buffer32 = new Uint32Array(idata.data.buffer);
+                for(let i=0; i<buffer32.length; i++) {
+                    if (Math.random() < 0.5) buffer32[i] = 0xff000000;
+                }
+                ctx.putImageData(idata, 0, 0);
+            };
+
+            window.addEventListener('resize', resize);
+            resize();
+            draw();
+        };
+        
+        // Disable for performance if needed, but adds nice atmospheric touch
+        // noiseEffect();
+    </script>
+</body></html>

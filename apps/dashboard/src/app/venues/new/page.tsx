@@ -2,6 +2,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { api, ApiError } from "@/lib/api";
+import { NavHeader } from "@/components/NavHeader";
 
 export default function NewVenuePage() {
   const router = useRouter();
@@ -26,19 +27,22 @@ export default function NewVenuePage() {
   };
 
   return (
-    <div style={{ maxWidth: 480, margin: "60px auto" }} className="card">
-      <h2 style={{ marginTop: 0 }}>Add a venue</h2>
-      <form onSubmit={submit} style={{ display: "flex", flexDirection: "column", gap: 12 }}>
-        <input placeholder="Venue name" value={name} onChange={(e) => setName(e.target.value)} required />
-        <select value={venueType} onChange={(e) => setVenueType(e.target.value)}>
-          <option value="restaurant">Restaurant</option>
-          <option value="live_event">Live event</option>
-          <option value="entertainment">Entertainment venue</option>
-        </select>
-        <input placeholder="Address (optional)" value={address} onChange={(e) => setAddress(e.target.value)} />
-        <button className="primary" disabled={loading}>{loading ? "Creating..." : "Create venue"}</button>
-        {error && <p style={{ color: "var(--danger)" }}>{error}</p>}
-      </form>
-    </div>
+    <>
+      <NavHeader />
+      <div style={{ maxWidth: 480, margin: "60px auto" }} className="card">
+        <h2 style={{ marginTop: 0, fontFamily: "var(--font-heading)" }}>Add a venue</h2>
+        <form onSubmit={submit} style={{ display: "flex", flexDirection: "column", gap: 12 }}>
+          <input placeholder="Venue name" value={name} onChange={(e) => setName(e.target.value)} required />
+          <select value={venueType} onChange={(e) => setVenueType(e.target.value)}>
+            <option value="restaurant">Restaurant</option>
+            <option value="live_event">Live event</option>
+            <option value="entertainment">Entertainment venue</option>
+          </select>
+          <input placeholder="Address (optional)" value={address} onChange={(e) => setAddress(e.target.value)} />
+          <button className="primary" disabled={loading}>{loading ? "Creating..." : "Create venue"}</button>
+          {error && <p style={{ color: "var(--error)" }}>{error}</p>}
+        </form>
+      </div>
+    </>
   );
 }

@@ -1,0 +1,105 @@
+@import "./theme.css";
+
+/* Component classes shared by ScanPage/ArScanView and RewardRevealPage.
+ * theme.css (generated from @pike/design-tokens) supplies the color/radius/font vars. */
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body,
+#root {
+  height: 100%;
+  margin: 0;
+}
+
+body {
+  font-family: var(--font-body);
+  background: var(--surface);
+  color: var(--on-surface);
+  -webkit-font-smoothing: antialiased;
+}
+
+h1,
+h2,
+h3 {
+  font-family: var(--font-heading);
+  margin: 0;
+}
+
+/* Gold is reserved for the reward moment only — see PIKE_UI_Design_Doc section 2.
+ * This page IS that moment, so it's the one screen where reward-accent is expected
+ * to appear prominently rather than sparingly. */
+.reward-accent {
+  color: var(--secondary-container);
+}
+
+.btn-primary {
+  background: var(--primary-container);
+  color: var(--on-primary-container);
+  border: none;
+  border-radius: var(--radius-full);
+  padding: 16px 24px;
+  font-family: var(--font-mono);
+  font-weight: 600;
+  font-size: 14px;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  width: 100%;
+  cursor: pointer;
+}
+
+.btn-primary:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.btn-outline {
+  background: transparent;
+  border: 1px solid var(--outline);
+  color: var(--on-surface);
+  border-radius: var(--radius-full);
+  padding: 16px 24px;
+  font-family: var(--font-mono);
+  font-weight: 600;
+  font-size: 14px;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  width: 100%;
+  cursor: pointer;
+}
+
+.btn-text {
+  background: transparent;
+  border: none;
+  color: var(--primary);
+  font-family: var(--font-body);
+  font-weight: 500;
+  cursor: pointer;
+  padding: 8px;
+}
+
+.card {
+  border-radius: var(--radius-card);
+  padding: var(--stack-md, 16px);
+  background: var(--surface-container-lowest);
+  border: 1px solid var(--border-subtle);
+}
+
+input {
+  width: 100%;
+  padding: 14px;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--border-strong);
+  margin-bottom: 12px;
+  background: var(--surface-container-low);
+  color: var(--on-surface);
+  font-family: var(--font-body);
+  font-size: 15px;
+}
+
+input:focus {
+  outline: none;
+  border-color: var(--primary);
+}

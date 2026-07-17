@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>PIKE Business | Secure Login</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&amp;family=Geist:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "surface": "#f8f9ff",
+                    "secondary": "#855300",
+                    "on-primary-fixed-variant": "#003ea8",
+                    "secondary-container": "#fea619",
+                    "on-tertiary-fixed-variant": "#3f465c",
+                    "on-background": "#0b1c30",
+                    "on-surface": "#0b1c30",
+                    "surface-variant": "#d3e4fe",
+                    "outline": "#737686",
+                    "on-tertiary-container": "#eef0ff",
+                    "on-secondary-fixed-variant": "#653e00",
+                    "inverse-surface": "#213145",
+                    "error-container": "#ffdad6",
+                    "on-tertiary-fixed": "#131b2e",
+                    "surface-dim": "#cbdbf5",
+                    "secondary-fixed": "#ffddb8",
+                    "tertiary-fixed": "#dae2fd",
+                    "secondary-fixed-dim": "#ffb95f",
+                    "on-secondary-fixed": "#2a1700",
+                    "tertiary-container": "#656d84",
+                    "on-error-container": "#93000a",
+                    "tertiary": "#4d556b",
+                    "on-primary-fixed": "#00174b",
+                    "on-error": "#ffffff",
+                    "on-primary-container": "#eeefff",
+                    "primary-container": "#2563eb",
+                    "error": "#ba1a1a",
+                    "primary": "#004ac6",
+                    "surface-tint": "#0053db",
+                    "outline-variant": "#c3c6d7",
+                    "surface-container": "#e5eeff",
+                    "tertiary-fixed-dim": "#bec6e0",
+                    "primary-fixed-dim": "#b4c5ff",
+                    "inverse-on-surface": "#eaf1ff",
+                    "surface-container-highest": "#d3e4fe",
+                    "background": "#f8f9ff",
+                    "surface-container-high": "#dce9ff",
+                    "surface-bright": "#f8f9ff",
+                    "primary-fixed": "#dbe1ff",
+                    "on-tertiary": "#ffffff",
+                    "surface-container-lowest": "#ffffff",
+                    "inverse-primary": "#b4c5ff",
+                    "on-secondary-container": "#684000",
+                    "on-secondary": "#ffffff",
+                    "on-primary": "#ffffff",
+                    "on-surface-variant": "#434655"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.125rem",
+                    "lg": "0.25rem",
+                    "xl": "0.5rem",
+                    "full": "0.75rem"
+            },
+            "spacing": {
+                    "margin-mobile": "16px",
+                    "margin-desktop": "40px",
+                    "gutter": "24px",
+                    "unit": "4px",
+                    "container-max": "1440px"
+            },
+            "fontFamily": {
+                    "label-sm": ["Space Mono"],
+                    "body-lg": ["Geist"],
+                    "label-md": ["Space Mono"],
+                    "headline-lg-mobile": ["Geist"],
+                    "headline-md": ["Geist"],
+                    "headline-lg": ["Geist"],
+                    "body-md": ["Geist"],
+                    "headline-xl": ["Geist"]
+            },
+            "fontSize": {
+                    "label-sm": ["12px", {"lineHeight": "1.0", "letterSpacing": "0.05em", "fontWeight": "500"}],
+                    "body-lg": ["18px", {"lineHeight": "1.6", "fontWeight": "400"}],
+                    "label-md": ["14px", {"lineHeight": "1.0", "letterSpacing": "0.05em", "fontWeight": "500"}],
+                    "headline-lg-mobile": ["24px", {"lineHeight": "1.2", "fontWeight": "600"}],
+                    "headline-md": ["20px", {"lineHeight": "1.4", "fontWeight": "600"}],
+                    "headline-lg": ["32px", {"lineHeight": "1.2", "letterSpacing": "-0.01em", "fontWeight": "600"}],
+                    "body-md": ["16px", {"lineHeight": "1.6", "fontWeight": "400"}],
+                    "headline-xl": ["48px", {"lineHeight": "1.1", "letterSpacing": "-0.02em", "fontWeight": "700"}]
+            }
+          },
+        },
+      }
+    </script>
+<style>
+        body {
+            background-color: #f8f9ff;
+            color: #0b1c30;
+            overflow-x: hidden;
+        }
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .bento-grid {
+            display: grid;
+            grid-template-columns: repeat(12, 1fr);
+            gap: 24px;
+        }
+        .pixel-pattern {
+            background-image: radial-gradient(#004ac6 0.5px, transparent 0.5px);
+            background-size: 16px 16px;
+            opacity: 0.1;
+        }
+    </style>
+</head>
+<body class="min-h-screen flex items-center justify-center p-4 md:p-0">
+<!-- Top Navigation Anchor (As requested by Shared Components guidance, but suppressed for Transactional focus if strict, but PIKE brand identity is paramount) -->
+<!-- Suppressing full Nav for login focus, using a simplified Header -->
+<header class="fixed top-0 left-0 w-full h-16 flex items-center px-margin-desktop z-50 backdrop-blur-md bg-surface/80 border-b border-outline-variant">
+<div class="flex items-center gap-2">
+<span class="font-headline-md text-headline-md font-bold text-primary tracking-tight">PIKE</span>
+<span class="font-label-md text-label-md text-outline uppercase tracking-[0.2em] ml-2 mt-1">Business Portal</span>
+</div>
+</header>
+<main class="w-full max-w-container-max mx-auto flex items-stretch min-h-[700px] bg-surface-container-lowest border border-outline-variant shadow-2xl rounded-xl overflow-hidden mt-16">
+<!-- Left Side: Tactical Illustration / Brand Pattern -->
+<div class="hidden lg:flex w-1/2 relative bg-inverse-surface items-center justify-center overflow-hidden">
+<!-- Animated Shader Background Placeholder -->
+
+<div class="absolute inset-0 pixel-pattern"></div>
+<div class="relative z-10 p-12 flex flex-col justify-between h-full w-full">
+<div>
+<div class="inline-flex items-center gap-2 px-3 py-1 bg-primary text-on-primary rounded-full mb-6">
+<span class="material-symbols-outlined text-[14px]">verified_user</span>
+<span class="font-label-sm text-label-sm">SECURE ENVIRONMENT</span>
+</div>
+<h1 class="font-headline-xl text-headline-xl text-surface-bright max-w-md">
+                        System-Level Precision for Venue Ops.
+                    </h1>
+</div>
+<div class="space-y-6">
+<div class="flex items-start gap-4 p-4 border border-outline/30 rounded-lg bg-surface/5 backdrop-blur-sm">
+<span class="material-symbols-outlined text-primary-fixed-dim">monitoring</span>
+<div>
+<p class="font-headline-md text-headline-md text-white">Live Telemetry</p>
+<p class="font-body-md text-body-md text-outline-variant">Real-time heatmaps and quest engagement tracking.</p>
+</div>
+</div>
+<div class="flex items-start gap-4 p-4 border border-outline/30 rounded-lg bg-surface/5 backdrop-blur-sm">
+<span class="material-symbols-outlined text-primary-fixed-dim">account_balance_wallet</span>
+<div>
+<p class="font-headline-md text-headline-md text-white">Automated Rewards</p>
+<p class="font-body-md text-body-md text-outline-variant">Instant disbursement through PIKE's secure ledger.</p>
+</div>
+</div>
+</div>
+<div class="flex justify-between items-end">
+<div class="font-label-sm text-label-sm text-outline-variant opacity-50">
+                        LAT: 40.7128° N<br/>LON: 74.0060° W
+                    </div>
+<div class="w-12 h-12 border border-outline/30 flex items-center justify-center rounded-lg">
+<span class="material-symbols-outlined text-outline-variant">qr_code_2</span>
+</div>
+</div>
+</div>
+<!-- Foreground visual element -->
+<div class="absolute right-0 bottom-0 w-2/3 h-2/3 pointer-events-none opacity-20">
+<img class="w-full h-full object-contain" data-alt="A highly detailed 3D technical blueprint of a futuristic city district, featuring glowing blue wireframe grids, floating UI elements, and a clean white-dominated laboratory lighting aesthetic. The mood is precise, authoritative, and mission-critical." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDKVOxJvoZ40m_UAZ_-j9oQHZFajzmyrnVeIi4KTY_POFgHlj7NoXWIrL6t1fnumyEVOGTC-OcKkUJmCxBeeCXWZcdHZRFw4t6v1WyYsCSbph9cShgPMwOq6dOFu4rdMXTfXafXnPwej5YOwNOsnYN8Sbudwl-0XZlsalHkiVlFdNK8gNW7vS-41SYPYY5bwSiw6jyhJ5zbFLW-YrmjeplpnFzYgPewiTN12ldXu_j6LN8lXqXb8IM_AA-yqdtulLl7GHV9Ac1aHBo"/>
+</div>
+</div>
+<!-- Right Side: Login Form -->
+<div class="w-full lg:w-1/2 flex flex-col items-center justify-center p-8 md:p-16 lg:p-24 bg-white">
+<div class="w-full max-w-md">
+<div class="mb-12">
+<h2 class="font-headline-lg text-headline-lg text-on-surface mb-2">Welcome Back</h2>
+<p class="font-body-md text-body-md text-outline">Authenticate to access your venue command center.</p>
+</div>
+<form class="space-y-6" id="loginForm">
+<!-- Social Logins -->
+<div class="grid grid-cols-2 gap-4 mb-8">
+<button class="flex items-center justify-center gap-2 p-3 border border-outline-variant rounded hover:bg-surface-container-low transition-all active:scale-[0.98]" type="button">
+<svg class="w-5 h-5" viewbox="0 0 24 24">
+<path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"></path>
+<path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"></path>
+<path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l3.66-2.84z" fill="#FBBC05"></path>
+<path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"></path>
+</svg>
+<span class="font-label-md text-label-md text-on-surface">Google</span>
+</button>
+<button class="flex items-center justify-center gap-2 p-3 border border-outline-variant rounded hover:bg-surface-container-low transition-all active:scale-[0.98]" type="button">
+<span class="material-symbols-outlined text-[20px] text-on-surface">smartphone</span>
+<span class="font-label-md text-label-md text-on-surface">Phone</span>
+</button>
+</div>
+<div class="relative flex items-center justify-center mb-8">
+<div class="border-t border-outline-variant w-full"></div>
+<span class="absolute px-4 bg-white font-label-sm text-label-sm text-outline">OR EMAIL LOGIN</span>
+</div>
+<div class="space-y-4">
+<div class="relative group">
+<label class="block font-label-sm text-label-sm text-on-surface-variant mb-1 ml-1">WORK EMAIL</label>
+<div class="relative">
+<span class="absolute left-4 top-1/2 -translate-y-1/2 material-symbols-outlined text-outline text-[20px] group-focus-within:text-primary">mail</span>
+<input class="w-full pl-12 pr-4 py-3 bg-surface-container-low border border-outline-variant rounded focus:border-primary focus:ring-0 focus:bg-white transition-all outline-none font-body-md" placeholder="name@company.com" type="email"/>
+</div>
+</div>
+<div class="relative group">
+<div class="flex justify-between items-end mb-1">
+<label class="block font-label-sm text-label-sm text-on-surface-variant ml-1">PASSWORD</label>
+<a class="font-label-sm text-label-sm text-primary hover:underline" href="#">FORGOT?</a>
+</div>
+<div class="relative">
+<span class="absolute left-4 top-1/2 -translate-y-1/2 material-symbols-outlined text-outline text-[20px] group-focus-within:text-primary">lock</span>
+<input class="w-full pl-12 pr-12 py-3 bg-surface-container-low border border-outline-variant rounded focus:border-primary focus:ring-0 focus:bg-white transition-all outline-none font-body-md" placeholder="••••••••" type="password"/>
+<button class="absolute right-4 top-1/2 -translate-y-1/2 text-outline hover:text-primary" type="button">
+<span class="material-symbols-outlined text-[20px]">visibility</span>
+</button>
+</div>
+</div>
+</div>
+<div class="flex items-center gap-3">
+<input class="w-4 h-4 rounded border-outline-variant text-primary focus:ring-primary" id="remember" type="checkbox"/>
+<label class="font-label-sm text-label-sm text-on-surface-variant" for="remember">Stay authenticated for 30 days</label>
+</div>
+<button class="w-full py-4 bg-primary text-on-primary font-label-md text-label-md uppercase tracking-widest rounded-lg hover:bg-on-primary-fixed-variant transition-all active:scale-[0.98] shadow-lg shadow-primary/20 flex items-center justify-center gap-2" type="submit">
+<span class="material-symbols-outlined">login</span>
+                        ENTER COMMAND CENTER
+                    </button>
+</form>
+<div class="mt-12 pt-8 border-t border-outline-variant flex flex-col items-center gap-4">
+<p class="font-body-md text-body-md text-outline">New to the PIKE ecosystem?</p>
+<a class="inline-flex items-center gap-2 font-label-md text-label-md text-primary font-bold hover:gap-4 transition-all group" href="#">
+                        Apply for a Venue Account
+                        <span class="material-symbols-outlined">arrow_forward</span>
+</a>
+</div>
+</div>
+</div>
+</main>
+<!-- Footer as per Shared Components -->
+<footer class="fixed bottom-0 left-0 w-full py-6 px-margin-desktop bg-surface-container-lowest border-t border-outline-variant flex justify-between items-center z-50">
+<div class="font-label-sm text-label-sm text-on-surface-variant">
+            © 2024 PIKE Urban Exploration. All rights reserved.
+        </div>
+<div class="flex gap-gutter">
+<a class="font-label-sm text-label-sm text-secondary hover:text-primary transition-colors" href="#">Terms</a>
+<a class="font-label-sm text-label-sm text-secondary hover:text-primary transition-colors" href="#">Privacy</a>
+<a class="font-label-sm text-label-sm text-secondary hover:text-primary transition-colors" href="#">Contact</a>
+<a class="font-label-sm text-label-sm text-secondary hover:text-primary transition-colors" href="#">Developer API</a>
+</div>
+</footer>
+<script>
+        // Simple Interaction: Button Ripple Effect or Form Feedback
+        document.getElementById('loginForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const btn = e.target.querySelector('button[type="submit"]');
+            btn.innerHTML = '<span class="material-symbols-outlined animate-spin">progress_activity</span> AUTHENTICATING...';
+            btn.classList.add('opacity-80', 'cursor-not-allowed');
+            
+            setTimeout(() => {
+                btn.innerHTML = '<span class="material-symbols-outlined">check_circle</span> ACCESS GRANTED';
+                btn.classList.replace('bg-primary', 'bg-green-600');
+                // Potential redirect logic
+            }, 1500);
+        });
+
+        // Background subtle hover movement
+        document.addEventListener('mousemove', (e) => {
+            const x = e.clientX / window.innerWidth;
+            const y = e.clientY / window.innerHeight;
+            const pattern = document.querySelector('.pixel-pattern');
+            if (pattern) {
+                pattern.style.transform = `translate(${x * 10}px, ${y * 10}px)`;
+            }
+        });
+    </script>
+</body></html>

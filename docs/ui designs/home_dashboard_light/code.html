@@ -1,0 +1,356 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>PIKE - Vanguard Dashboard</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Space+Mono:ital,wght@0,400;0,700;1,400;1,700&amp;family=Geist:wght@100..900&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "surface": "#f8f9ff",
+                    "outline-variant": "#c3c6d7",
+                    "on-primary-fixed-variant": "#003ea8",
+                    "on-secondary-fixed-variant": "#653e00",
+                    "primary-container": "#2563eb",
+                    "on-error-container": "#93000a",
+                    "tertiary": "#4d556b",
+                    "primary": "#004ac6",
+                    "on-surface-variant": "#434655",
+                    "on-background": "#0b1c30",
+                    "surface-dim": "#cbdbf5",
+                    "outline": "#737686",
+                    "surface-container-lowest": "#ffffff",
+                    "surface-container-highest": "#d3e4fe",
+                    "tertiary-fixed": "#dae2fd",
+                    "on-secondary": "#ffffff",
+                    "tertiary-fixed-dim": "#bec6e0",
+                    "inverse-surface": "#213145",
+                    "surface-container": "#e5eeff",
+                    "surface-tint": "#0053db",
+                    "primary-fixed-dim": "#b4c5ff",
+                    "on-tertiary-container": "#eef0ff",
+                    "inverse-primary": "#b4c5ff",
+                    "surface-container-high": "#dce9ff",
+                    "error": "#ba1a1a",
+                    "on-tertiary-fixed": "#131b2e",
+                    "surface-container-low": "#eff4ff",
+                    "surface-bright": "#f8f9ff",
+                    "secondary-fixed": "#ffddb8",
+                    "secondary": "#855300",
+                    "on-error": "#ffffff",
+                    "on-secondary-fixed": "#2a1700",
+                    "secondary-container": "#fea619",
+                    "on-surface": "#0b1c30",
+                    "tertiary-container": "#656d84",
+                    "on-tertiary": "#ffffff",
+                    "on-primary-container": "#eeefff",
+                    "inverse-on-surface": "#eaf1ff",
+                    "error-container": "#ffdad6",
+                    "on-secondary-container": "#684000",
+                    "on-tertiary-fixed-variant": "#3f465c",
+                    "secondary-fixed-dim": "#ffb95f",
+                    "on-primary": "#ffffff",
+                    "primary-fixed": "#dbe1ff",
+                    "on-primary-fixed": "#00174b",
+                    "background": "#f8f9ff",
+                    "surface-variant": "#d3e4fe"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.125rem",
+                    "lg": "0.25rem",
+                    "xl": "0.5rem",
+                    "full": "0.75rem"
+            },
+            "spacing": {
+                    "margin-desktop": "40px",
+                    "container-max": "1440px",
+                    "margin-mobile": "16px",
+                    "gutter": "24px",
+                    "unit": "4px"
+            },
+            "fontFamily": {
+                    "headline-lg": ["Geist"],
+                    "label-sm": ["Space Mono"],
+                    "label-md": ["Space Mono"],
+                    "body-lg": ["Geist"],
+                    "headline-lg-mobile": ["Geist"],
+                    "headline-xl": ["Geist"],
+                    "headline-md": ["Geist"],
+                    "body-md": ["Geist"]
+            },
+            "fontSize": {
+                    "headline-lg": ["32px", {"lineHeight": "1.2", "letterSpacing": "-0.01em", "fontWeight": "600"}],
+                    "label-sm": ["12px", {"lineHeight": "1.0", "letterSpacing": "0.05em", "fontWeight": "500"}],
+                    "label-md": ["14px", {"lineHeight": "1.0", "letterSpacing": "0.05em", "fontWeight": "500"}],
+                    "body-lg": ["18px", {"lineHeight": "1.6", "fontWeight": "400"}],
+                    "headline-lg-mobile": ["24px", {"lineHeight": "1.2", "fontWeight": "600"}],
+                    "headline-xl": ["48px", {"lineHeight": "1.1", "letterSpacing": "-0.02em", "fontWeight": "700"}],
+                    "headline-md": ["20px", {"lineHeight": "1.4", "fontWeight": "600"}],
+                    "body-md": ["16px", {"lineHeight": "1.6", "fontWeight": "400"}]
+            }
+          },
+        },
+      }
+    </script>
+<style>
+        body {
+            background-color: #f8f9ff;
+            color: #0b1c30;
+            font-family: 'Geist', sans-serif;
+            overflow-x: hidden;
+        }
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+            display: inline-block;
+            line-height: 1;
+        }
+        .glass-panel {
+            background: rgba(255, 255, 255, 0.7);
+            backdrop-filter: blur(12px);
+            border: 1px solid #E2E8F0;
+        }
+        .bento-grid {
+            display: grid;
+            grid-template-columns: repeat(12, 1fr);
+            gap: 24px;
+        }
+        @media (max-width: 768px) {
+            .bento-grid {
+                grid-template-columns: repeat(4, 1fr);
+                gap: 16px;
+            }
+        }
+        .hero-gradient {
+            background: linear-gradient(135deg, #ffffff 0%, #e5eeff 100%);
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background text-on-surface antialiased pb-24 md:pb-0 md:pt-16">
+<!-- TopAppBar -->
+<header class="fixed top-0 w-full z-50 backdrop-blur-md bg-white/80 dark:bg-surface/80 border-b border-outline-variant dark:border-outline shadow-sm flex items-center justify-between px-margin-mobile md:px-margin-desktop h-16 w-full">
+<div class="flex items-center gap-4">
+<div class="md:hidden">
+<span class="material-symbols-outlined text-primary cursor-pointer">menu</span>
+</div>
+<h1 class="font-headline-md text-headline-md font-bold text-primary dark:text-primary-fixed-dim tracking-tight">PIKE</h1>
+</div>
+<!-- Desktop Nav -->
+<nav class="hidden md:flex items-center gap-8">
+<a class="font-label-md text-label-md text-primary font-bold" href="#">Home</a>
+<a class="font-label-md text-label-md text-on-surface-variant hover:opacity-80 transition-opacity" href="#">Explore</a>
+<a class="font-label-md text-label-md text-on-surface-variant hover:opacity-80 transition-opacity" href="#">Quests</a>
+<a class="font-label-md text-label-md text-on-surface-variant hover:opacity-80 transition-opacity" href="#">Social</a>
+</nav>
+<div class="flex items-center gap-4">
+<span class="material-symbols-outlined text-on-surface-variant hover:opacity-80 transition-opacity cursor-pointer">notifications</span>
+<div class="w-8 h-8 rounded-full bg-primary-fixed flex items-center justify-center overflow-hidden border border-outline-variant">
+<img class="w-full h-auto" data-alt="A clean, professional headshot of a young adult named Alex with a friendly expression. The portrait is set against a soft, bright blue studio background with high-key lighting that perfectly matches the Pike Vanguard light mode aesthetic. The style is sharp, modern, and corporate, emphasizing clarity and tech-forward professionalism." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCm8IN390lEy0-roGpbTDYersG_b5e0PyWSUoirvKdxJWaS17YTDCJsqA9yV0uPiC5-6gKFfgYJKqNn1yPwOyvloYL_uDpZ_uZX-KVI5-lhYWKh6zvYT8UzX7n2h86D-tZXeQNGZYYXg_B7SIddBT06i37vy1WcsEKhXPBT3vtYTdmaDAPC-U-zb9O4CdoV5KZtQlwrMa3QgnVNTa_yGLscYjgKYvrqNIQP16WKPybsKI6zKOaD7L5yYXRvkRzmjYRunk-PSroHCWo"/>
+</div>
+</div>
+</header>
+<main class="max-w-container-max mx-auto px-margin-mobile md:px-margin-desktop py-8 mt-16">
+<!-- Greeting Section -->
+<section class="mb-8">
+<h2 class="font-headline-xl text-headline-xl text-on-surface mb-2 hidden md:block">Good evening, Alex</h2>
+<h2 class="font-headline-lg-mobile text-headline-lg-mobile text-on-surface mb-1 md:hidden">Good evening, Alex</h2>
+<p class="font-body-md text-body-md text-on-surface-variant">Your Vanguard status is optimal. 3 nearby missions available.</p>
+</section>
+<!-- Bento Grid Layout -->
+<div class="bento-grid">
+<!-- Rank & XP Card -->
+<div class="col-span-4 md:col-span-4 glass-panel rounded-xl p-6 flex flex-col justify-between border-subtle hover:border-primary transition-colors cursor-default">
+<div class="flex justify-between items-start mb-6">
+<div>
+<span class="font-label-sm text-label-sm text-primary uppercase tracking-widest block mb-1">Current Rank</span>
+<h3 class="font-headline-lg text-headline-lg text-on-surface">Level 14</h3>
+</div>
+<div class="bg-primary/10 p-3 rounded-lg">
+<span class="material-symbols-outlined text-primary text-3xl">military_tech</span>
+</div>
+</div>
+<div>
+<div class="flex justify-between items-end mb-2">
+<span class="font-label-md text-label-md text-on-surface-variant">2,450 / 3,000 XP</span>
+<span class="font-label-sm text-label-sm text-primary font-bold">82%</span>
+</div>
+<div class="w-full bg-surface-container rounded-full h-3 overflow-hidden">
+<div class="bg-primary h-full rounded-full transition-all duration-1000 ease-out" style="width: 82%"></div>
+</div>
+</div>
+</div>
+<!-- Limited Time Hero Banner -->
+<div class="col-span-4 md:col-span-8 relative rounded-xl overflow-hidden group border border-outline-variant">
+<div class="absolute inset-0 bg-cover bg-center transition-transform duration-700 group-hover:scale-105" data-alt="An expansive, high-angle view of a vibrant Riverside Festival at twilight. The scene is filled with warm, soft-glowing lanterns reflected in a calm river, set against a crisp, light-blue night sky. The overall color palette is airy and clean, with Pike Blue highlights and white accents, maintaining a professional and systematic tech-aesthetic. Professional digital photography with a cinematic feel." style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuDoaZGG0qhA-6RxMnMqswitxiV09HZFZWYOlYn-FHAxcUvxBdHUXcjtcuGJpPa1MqKF35eoAt7jJGC41uMR5OfBVNV52yINpSwNorBzX2BzVasO1AmhO7w3P1q3eipoQ20b8pep2lJ0o0CoVEozDpo9RZQhQftpEMsq7rAUpT8WHTU08U6CcXnhhRVwQcZzjhl_lTnXnHOVTV3c9GvkWXb7dr7SoLhX7qr_snA2_BkLbSAgNe6nSgJisBL_kgJk1fXNp5U9Kf4Mkeo')"></div>
+<div class="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent"></div>
+<div class="relative h-full flex flex-col justify-end p-8 text-white">
+<div class="flex items-center gap-2 mb-2">
+<span class="bg-secondary-container text-on-secondary-container font-label-sm text-label-sm px-3 py-1 rounded-full flex items-center gap-1">
+<span class="material-symbols-outlined text-[14px]">timer</span> LIMITED TIME
+                        </span>
+</div>
+<h3 class="font-headline-lg text-headline-lg mb-2">Riverside Festival Hunt</h3>
+<p class="font-body-md text-body-md text-white/90 max-w-md mb-6">Join the community in tracking down 10 hidden digital fragments along the pier. Earn exclusive Pike Vanguard emblems.</p>
+<button class="w-fit bg-primary text-white font-label-md text-label-md px-6 py-3 rounded-lg hover:opacity-90 transition-opacity active:scale-95 uppercase tracking-wider">Join Mission</button>
+</div>
+</div>
+<!-- Nearby Quests -->
+<div class="col-span-4 md:col-span-7">
+<div class="flex justify-between items-center mb-6">
+<h3 class="font-headline-md text-headline-md text-on-surface">Nearby Quests</h3>
+<button class="text-primary font-label-md text-label-md flex items-center gap-1 hover:underline">
+                        View Map <span class="material-symbols-outlined text-[18px]">map</span>
+</button>
+</div>
+<div class="space-y-4">
+<!-- Java Bean Card -->
+<div class="glass-panel rounded-xl p-4 flex items-center gap-6 hover:shadow-lg transition-shadow group">
+<div class="w-20 h-20 rounded-lg overflow-hidden shrink-0">
+<img class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" data-alt="A minimalist, top-down view of a designer coffee shop interior with light oak wood, white marble countertops, and clean Pike Blue ceramic mugs. The lighting is bright and natural, flooding the space from large industrial windows. The aesthetic is extremely clean, high-end, and professional, perfectly aligning with a mission-critical tech interface." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAE84yHWbAu87PlgdpdzRPvmJLEkhuopujFwR_z07TAEnF7atMqtq-CdUoZiGC2fQ3d1lQoxDMgOwOJvAZIa9toCdgA94GKf5MlTZkxphDZfg0Tl9JhOUV8LpyHSn07NpoqkMoqreDoskjEhkjRYv_uAshsK2HgIaSFMSsUm00VkwGOnUZ7XDrvx6ee4CnAxjbh5hrxf6nFF7DqCjx5RS8No7mbBy4Z_EC50m2W7KijXrrcUCTqYWT4d8xROdpK0XzYFbxI07Qy_lU"/>
+</div>
+<div class="flex-grow">
+<div class="flex justify-between items-start">
+<div>
+<h4 class="font-headline-md text-headline-md text-on-surface mb-1">Java Bean Roastery</h4>
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-primary text-[16px]">location_on</span>
+<span class="font-body-md text-body-md text-on-surface-variant">0.4 miles away</span>
+</div>
+</div>
+<div class="bg-surface-container p-2 rounded-lg text-primary">
+<span class="font-label-sm text-label-sm font-bold">+150 XP</span>
+</div>
+</div>
+</div>
+<button class="bg-surface-container-highest p-3 rounded-full text-primary hover:bg-primary hover:text-white transition-colors">
+<span class="material-symbols-outlined">chevron_right</span>
+</button>
+</div>
+<!-- Additional Quest -->
+<div class="glass-panel rounded-xl p-4 flex items-center gap-6 hover:shadow-lg transition-shadow group">
+<div class="w-20 h-20 rounded-lg overflow-hidden shrink-0">
+<img class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" data-alt="A clean, modern public library reading room with systematic shelving and glowing digital interactive kiosks. The room is designed with a neutral color palette of soft whites and cool slates, accented by Pike Gold details. High-contrast lighting highlights the organized, technological atmosphere of a knowledge-focused space." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDYdCbIqA3uaI6uQOVdM3mUemR_-B_bAlpYK2kGTBi5PmATKv47KyhJNw7k2-smGw7hnc8O2nm17dRx5Cx-ainJztpO_D9kfUgNsJkaoOOMPlRsIBTWem6O_w9g-T7_8FO4WiXwFNyTUlgxrQmcWgI_AP43ZJUl520L0w0xK3kggyPTfbUGwwK-0EiD0F9-58m6lf-45RaBUIBuzfc739JVWuQkozUBfM9MhwmAcKrYkpYCL_FKApADwXkZjN_wlhGC03FPLCHnv-Y"/>
+</div>
+<div class="flex-grow">
+<div class="flex justify-between items-start">
+<div>
+<h4 class="font-headline-md text-headline-md text-on-surface mb-1">Central Archive Sync</h4>
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-primary text-[16px]">location_on</span>
+<span class="font-body-md text-body-md text-on-surface-variant">1.2 miles away</span>
+</div>
+</div>
+<div class="bg-surface-container p-2 rounded-lg text-primary">
+<span class="font-label-sm text-label-sm font-bold">+300 XP</span>
+</div>
+</div>
+</div>
+<button class="bg-surface-container-highest p-3 rounded-full text-primary hover:bg-primary hover:text-white transition-colors">
+<span class="material-symbols-outlined">chevron_right</span>
+</button>
+</div>
+</div>
+</div>
+<!-- Social Section -->
+<div class="col-span-4 md:col-span-5 glass-panel rounded-xl p-6">
+<div class="flex justify-between items-center mb-6">
+<h3 class="font-headline-md text-headline-md text-on-surface">Social</h3>
+<span class="bg-primary/10 text-primary px-3 py-1 rounded-full font-label-sm text-label-sm">4 Online</span>
+</div>
+<div class="space-y-6">
+<div class="flex items-center gap-4">
+<div class="relative">
+<div class="w-12 h-12 rounded-full border-2 border-primary overflow-hidden">
+<img class="w-full h-full object-cover" data-alt="A professional portrait of a woman with a confident smile, wearing modern tech-casual attire. She is set against a clean, geometric background of white panels and soft Pike Blue shadows. High-quality digital art style, bright and airy light-mode aesthetics." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBxOj8LHnXW6BZkZQ2P9ZsbWQ80grAz7xJTbPGedR-EG4pmEsRTb8MM9MuPynCvo_Ke4pYBJAz9NPzmqOpiptHkhf8JgK8Hx_M19gEEwEZ8i5Vb50DfMGAHPXDbzI0PywhnUR2ZKJACvkvVC6uGHkQdKYgwnf5lXTcSvjLnLgZG1qgf4PUoQKKXTMvGO29amTiP6xDQ3LXJ5xf5j9L9jGcv50napOyKrQG1B2S231Wu4i_sKDVh81l2SLEBNeISgVUHh6--P9OdGMA"/>
+</div>
+<div class="absolute bottom-0 right-0 w-3 h-3 bg-green-500 border-2 border-white rounded-full"></div>
+</div>
+<div class="flex-grow">
+<h5 class="font-label-md text-label-md font-bold text-on-surface">Sarah K.</h5>
+<p class="font-label-sm text-label-sm text-on-surface-variant uppercase">At Riverside Festival</p>
+</div>
+<button class="p-2 text-on-surface-variant hover:text-primary transition-colors">
+<span class="material-symbols-outlined">chat_bubble</span>
+</button>
+</div>
+<div class="flex items-center gap-4">
+<div class="relative">
+<div class="w-12 h-12 rounded-full border-2 border-transparent overflow-hidden bg-surface-container">
+<img class="w-full h-full object-cover" data-alt="A focused portrait of a young man with glasses, looking at a digital tablet with blue light reflecting on his face. The background is a blurred modern office space with white and soft blue lighting. Professional, technological, and systematic visual style." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDNxHTLSwj1p7wLuIEZcIZ7BMmFZ_WNsDtvvXb4iOEfwacyCL52yQFUnshJ3ie7LyCo2uc1imp5NPnhxN3b0yFjlEj4C3sSTQJGEspjztHVebTngNr_rL8NW-j7RdDGLOoF3qf3lQdwUPNo3PBAXao9lzeE8b41RXP8C68POY0Ny030iWlDhh_l5X3RPLojkuhPKZLXYQJaaiMVEXzKx8qpcP223vkVF70eZQzSnyc2LkPkIdb_8pQM9IrYXoNyxmLJxtIOrN6qhV8"/>
+</div>
+<div class="absolute bottom-0 right-0 w-3 h-3 bg-green-500 border-2 border-white rounded-full"></div>
+</div>
+<div class="flex-grow">
+<h5 class="font-label-md text-label-md font-bold text-on-surface">Marcus Chen</h5>
+<p class="font-label-sm text-label-sm text-on-surface-variant uppercase">Near Java Bean Roastery</p>
+</div>
+<button class="p-2 text-on-surface-variant hover:text-primary transition-colors">
+<span class="material-symbols-outlined">chat_bubble</span>
+</button>
+</div>
+<div class="flex items-center gap-4 opacity-60">
+<div class="w-12 h-12 rounded-full overflow-hidden bg-surface-container">
+<img class="w-full h-full object-cover" data-alt="A minimalist profile image of a person silhouetted against a bright, high-tech architectural background. The palette is dominated by whites and soft greys with Pike Blue accents. Clean, sharp lines and professional studio lighting." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCu2478gKJtbu9E1cEoo6rGCl_POdA_G-fMh_ZH2HXCmXfrvna9c-OiAAgPORGswETUMaEt3F_HYyuFkadSN6pqpuVAb5E9ir5uvm7HULnTsmiA9ML-Zp2lvuskSYVQpxLfbylLNHEB4T37BH7Aoi-hcUKWZ62U0cO3W-Z_6iH7MD7kmDaoaTe5w4QmqPYQV2YpIaDqADr0Jw2CAL9bIcnOh7tSUrq1uuHfCrzmm3r1sKwkusakBcaKa9538eEsCpjxasXgkbVly7s"/>
+</div>
+<div class="flex-grow">
+<h5 class="font-label-md text-label-md font-bold text-on-surface">Elena R.</h5>
+<p class="font-label-sm text-label-sm text-on-surface-variant uppercase">Last seen 2h ago</p>
+</div>
+<button class="p-2 text-on-surface-variant hover:text-primary transition-colors">
+<span class="material-symbols-outlined">history</span>
+</button>
+</div>
+<button class="w-full border border-outline text-on-surface-variant font-label-md text-label-md py-3 rounded-lg hover:bg-surface-container-low transition-colors uppercase tracking-wider">
+                        Find More Friends
+                    </button>
+</div>
+</div>
+</div>
+</main>
+<!-- FAB -->
+<button class="fixed bottom-24 right-6 md:bottom-8 md:right-8 bg-primary text-white p-4 rounded-full shadow-lg hover:scale-110 active:scale-95 duration-200 z-40">
+<span class="material-symbols-outlined text-3xl">add_task</span>
+</button>
+<!-- BottomNavBar -->
+<nav class="md:hidden fixed bottom-0 w-full z-50 backdrop-blur-md bg-white/80 dark:bg-surface/80 border-t border-outline-variant dark:border-outline flex justify-around items-center h-20 px-margin-mobile w-full">
+<a class="flex flex-col items-center justify-center bg-primary-container text-on-primary-container rounded-full px-4 py-1" href="#">
+<span class="material-symbols-outlined">home</span>
+<span class="font-label-sm text-label-sm">Home</span>
+</a>
+<a class="flex flex-col items-center justify-center text-on-surface-variant dark:text-on-surface-variant px-4 py-1 hover:bg-surface-container-high transition-colors" href="#">
+<span class="material-symbols-outlined">explore</span>
+<span class="font-label-sm text-label-sm">Explore</span>
+</a>
+<a class="flex flex-col items-center justify-center text-on-surface-variant dark:text-on-surface-variant px-4 py-1 hover:bg-surface-container-high transition-colors" href="#">
+<span class="material-symbols-outlined">assignment</span>
+<span class="font-label-sm text-label-sm">Quests</span>
+</a>
+<a class="flex flex-col items-center justify-center text-on-surface-variant dark:text-on-surface-variant px-4 py-1 hover:bg-surface-container-high transition-colors" href="#">
+<span class="material-symbols-outlined">person</span>
+<span class="font-label-sm text-label-sm">Profile</span>
+</a>
+</nav>
+<script>
+        // Simple micro-interaction for the XP bar on load
+        document.addEventListener('DOMContentLoaded', () => {
+            const xpBar = document.querySelector('.bg-primary.h-full');
+            if (xpBar) {
+                xpBar.style.width = '0%';
+                setTimeout(() => {
+                    xpBar.style.width = '82%';
+                }, 300);
+            }
+        });
+    </script>
+</body></html>

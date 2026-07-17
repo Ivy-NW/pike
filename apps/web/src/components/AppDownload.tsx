@@ -26,7 +26,7 @@ export function AppDownload() {
   };
 
   return (
-    <section id="download" className="section" style={{ background: "var(--light-gray)" }}>
+    <section id="download" className="section" style={{ background: "var(--surface-container-low)" }}>
       <div className="container" style={{ maxWidth: 620, textAlign: "center" }}>
         <span className="section-eyebrow" style={{ display: "block" }}>
           Get the app
@@ -66,10 +66,13 @@ export function AppDownload() {
               onChange={(e) => setEmail(e.target.value)}
               style={{
                 padding: "13px 18px",
-                borderRadius: "var(--radius)",
-                border: "1px solid #cbd5e1",
+                borderRadius: "var(--radius-card)",
+                border: "1px solid var(--border-strong)",
+                background: "var(--surface-container-lowest)",
+                color: "var(--on-surface)",
                 fontSize: 15,
                 minWidth: 260,
+                fontFamily: "var(--font-body)",
               }}
             />
             <button className="btn btn-primary" disabled={status === "loading"}>
@@ -78,7 +81,7 @@ export function AppDownload() {
           </form>
         )}
         {status === "error" && (
-          <p style={{ marginTop: 14, color: "var(--danger)", fontSize: 14 }}>
+          <p style={{ marginTop: 14, color: "var(--error)", fontSize: 14 }}>
             Something went wrong — try again in a moment.
           </p>
         )}

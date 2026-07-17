@@ -1,12 +1,7 @@
-:root {
-  --pike-blue: #2563eb;
-  --pike-gold: #f59e0b;
-  --deep-slate: #111827;
-  --light-gray: #f8fafc;
-  --success: #10b981;
-  --danger: #ef4444;
-  --radius: 12px; /* internal tool: denser than the 20px consumer-facing radius */
-}
+@import "./theme.css";
+
+/* Business Dashboard — internal tool, denser than the consumer-facing web/app
+ * surfaces, so components use --radius-md rather than the spacious --radius-card. */
 
 * {
   box-sizing: border-box;
@@ -14,31 +9,65 @@
 
 body {
   margin: 0;
-  font-family: Inter, system-ui, sans-serif;
-  background: var(--light-gray);
-  color: var(--deep-slate);
+  font-family: var(--font-body);
+  background: var(--surface);
+  color: var(--on-surface);
+  transition: background-color 0.2s ease, color 0.2s ease;
 }
 
 a {
-  color: var(--pike-blue);
+  color: var(--primary);
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 14px;
+}
+
+th,
+td {
+  text-align: left;
+  padding: 8px 10px;
+  border-bottom: 1px solid var(--border-subtle);
+}
+
+th {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: var(--on-surface-variant);
+  font-weight: 500;
 }
 
 input,
 select {
   padding: 10px 12px;
-  border-radius: 8px;
-  border: 1px solid #cbd5e1;
+  border-radius: var(--radius);
+  border: 1px solid var(--border-strong);
+  background: var(--surface-container-lowest);
+  color: var(--on-surface);
   font-size: 14px;
   width: 100%;
+  font-family: var(--font-body);
+}
+
+input:focus,
+select:focus {
+  outline: none;
+  border-color: var(--primary);
+  box-shadow: 0 0 0 2px color-mix(in srgb, var(--primary) 20%, transparent);
 }
 
 button.primary {
-  background: var(--pike-blue);
-  color: white;
+  background: var(--primary-container);
+  color: var(--on-primary-container);
   border: none;
-  border-radius: var(--radius);
+  border-radius: var(--radius-md);
   padding: 10px 18px;
   font-weight: 600;
+  font-family: var(--font-body);
   cursor: pointer;
 }
 
@@ -48,35 +77,51 @@ button.primary:disabled {
 }
 
 button.secondary {
-  background: white;
-  color: var(--pike-blue);
-  border: 1px solid var(--pike-blue);
-  border-radius: var(--radius);
+  background: var(--surface-container-lowest);
+  color: var(--primary);
+  border: 1px solid var(--primary);
+  border-radius: var(--radius-md);
   padding: 10px 18px;
+  font-family: var(--font-body);
+  cursor: pointer;
+}
+
+button.danger {
+  background: transparent;
+  color: var(--error);
+  border: 1px solid var(--error);
+  border-radius: var(--radius-md);
+  padding: 8px 14px;
+  font-family: var(--font-body);
   cursor: pointer;
 }
 
 .card {
-  background: white;
-  border-radius: var(--radius);
+  background: var(--surface-container-lowest);
+  border-radius: var(--radius-md);
   padding: 20px;
-  border: 1px solid #e2e8f0;
+  border: 1px solid var(--border-subtle);
 }
 
 .badge {
   display: inline-block;
   padding: 2px 10px;
-  border-radius: 999px;
-  font-size: 12px;
-  font-weight: 600;
+  border-radius: var(--radius-full);
+  font-family: var(--font-mono);
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
 }
 
 .badge-verified {
-  background: #d1fae5;
-  color: #065f46;
+  background: color-mix(in srgb, var(--success) 16%, transparent);
+  color: var(--success);
 }
 
+/* Deliberately neutral, not gold: "pending/unverified" is a status, not a
+ * reward moment — see docs/pike_ui_design.md section 2's gold-discipline rule. */
 .badge-unverified {
-  background: #fef3c7;
-  color: #92400e;
+  background: var(--surface-container-high);
+  color: var(--on-surface-variant);
 }

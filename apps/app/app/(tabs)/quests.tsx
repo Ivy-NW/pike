@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { View, Text, FlatList, StyleSheet, TouchableOpacity } from "react-native";
 import { router } from "expo-router";
 import { api } from "@/lib/api";
-import { colors, radius } from "@/theme";
+import { useTheme } from "@/theme";
 
 interface QuestListItem {
   id: string;
@@ -13,13 +13,35 @@ interface QuestListItem {
   markerId: string | null;
 }
 
-/** "Quest list: shows available quests (across venues), and which ones this user has completed." */
+/** Quest list: available quests across venues, and which ones this user has completed. */
 export default function QuestsScreen() {
+  const theme = useTheme();
   const [quests, setQuests] = useState<QuestListItem[]>([]);
 
   useEffect(() => {
     api.quests().then(setQuests).catch(() => setQuests([]));
   }, []);
+
+  const c = theme.colors;
+  const styles = StyleSheet.create({
+    container: { flex: 1, backgroundColor: c.surface, padding: theme.spacing.containerPadding, paddingTop: 60 },
+    header: { ...theme.font(theme.type.headlineLgMobile), color: c.primary, marginBottom: theme.spacing.sectionMargin },
+    empty: { ...theme.font(theme.type.bodyMd), color: c.onSurfaceVariant },
+    card: {
+      backgroundColor: theme.mode === "dark" ? "rgba(30,41,59,0.7)" : c.surfaceContainerLowest,
+      borderWidth: 1,
+      borderColor: theme.mode === "dark" ? "rgba(255,255,255,0.05)" : c.borderSubtle,
+      borderRadius: theme.radius.card,
+      padding: theme.spacing.stackMd,
+      marginBottom: theme.spacing.stackSm,
+    },
+    cardTitle: { ...theme.font(theme.type.headlineSm), color: c.onSurface },
+    venue: { ...theme.font(theme.type.bodyMd), color: c.onSurfaceVariant, marginTop: 2 },
+    reward: { ...theme.font(theme.type.labelCaps), color: c.secondary, marginTop: 10 },
+    completed: { ...theme.font(theme.type.labelCaps), color: c.success, marginTop: 10 },
+    scanButton: { backgroundColor: c.primaryContainer, borderRadius: theme.radius.full, padding: 12, alignItems: "center", marginTop: 12 },
+    scanButtonText: { ...theme.font(theme.type.labelCaps), color: c.onPrimaryContainer },
+  });
 
   return (
     <View style={styles.container}>
@@ -28,37 +50,37 @@ export default function QuestsScreen() {
         data={quests}
         keyExtractor={(q) => q.id}
         contentContainerStyle={{ paddingBottom: 40 }}
-        ListEmptyComponent={<Text style={{ color: "#64748b" }}>No quests available right now.</Text>}
+        ListEmptyComponent={<Text style={styles.empty}>No quests available right now.</Text>}
         renderItem={({ item }) => (
-          <View style={styles.card}>
+          <TouchableOpacity
+            style={styles.card}
+            onPress={() =>
+              router.push({
+                pathname: "/quest/[id]",
+                params: {
+                  id: item.id,
+                  name: item.name,
+                  venueName: item.venueName,
+                  rewardDescription: item.rewardDescription,
+                  completed: String(item.completed),
+                  markerId: item.markerId ?? "",
+                },
+              })
+            }
+          >
             <Text style={styles.cardTitle}>{item.name}</Text>
             <Text style={styles.venue}>{item.venueName}</Text>
-            <Text style={styles.reward}>{item.rewardDescription}</Text>
-            {item.completed && <Text style={styles.completed}>Completed</Text>}
-            {/* Phase 2 — FR-4: authenticated in-app scan, same WebAR flow via WebView. */}
-            {item.markerId && (
-              <TouchableOpacity
-                style={styles.scanButton}
-                onPress={() => router.push(`/scan/${item.markerId}`)}
-              >
+            <Text style={item.completed ? styles.completed : styles.reward}>
+              {item.completed ? "Completed" : item.rewardDescription}
+            </Text>
+            {!item.completed && item.markerId && (
+              <TouchableOpacity style={styles.scanButton} onPress={() => router.push(`/scan/${item.markerId}`)}>
                 <Text style={styles.scanButtonText}>Scan marker</Text>
               </TouchableOpacity>
             )}
-          </View>
+          </TouchableOpacity>
         )}
       />
     </View>
   );
 }
-
-const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: colors.lightGray, padding: 20, paddingTop: 60 },
-  header: { fontSize: 28, fontWeight: "700", color: colors.deepSlate, marginBottom: 20 },
-  card: { backgroundColor: "white", borderRadius: radius, padding: 16, marginBottom: 12 },
-  cardTitle: { fontSize: 16, fontWeight: "600", color: colors.deepSlate },
-  venue: { color: "#64748b", marginTop: 2 },
-  reward: { color: colors.deepSlate, marginTop: 8 },
-  completed: { color: colors.success, fontWeight: "600", marginTop: 8 },
-  scanButton: { backgroundColor: colors.pikeBlue, borderRadius: radius, padding: 12, alignItems: "center", marginTop: 12 },
-  scanButtonText: { color: "white", fontWeight: "600" },
-});

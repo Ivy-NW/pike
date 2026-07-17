@@ -1,0 +1,305 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0, viewport-fit=cover" name="viewport"/>
+<title>PIKE | Explore Nearby</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;family=Space+Grotesk:wght@300;400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<!-- Design System Theme Configuration -->
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                "on-secondary": "#472a00",
+                "primary": "#b4c5ff",
+                "secondary-fixed": "#ffddb8",
+                "surface-container-lowest": "#060e20",
+                "secondary-fixed-dim": "#ffb95f",
+                "primary-container": "#2563eb",
+                "error-container": "#93000a",
+                "gold-deep": "#B45309",
+                "on-primary-container": "#eeefff",
+                "surface-container-highest": "#2d3449",
+                "primary-fixed-dim": "#b4c5ff",
+                "surface": "#0b1326",
+                "on-primary-fixed-variant": "#003ea8",
+                "text-muted": "#64748B",
+                "on-tertiary-container": "#f7edff",
+                "on-background": "#dae2fd",
+                "on-error": "#690005",
+                "surface-dim": "#0b1326",
+                "on-surface-variant": "#c3c6d7",
+                "secondary": "#ffb95f",
+                "inverse-on-surface": "#283044",
+                "inverse-surface": "#dae2fd",
+                "on-surface": "#dae2fd",
+                "secondary-container": "#ee9800",
+                "error": "#ffb4ab",
+                "surface-tint": "#b4c5ff",
+                "on-secondary-container": "#5b3800",
+                "surface-container-low": "#131b2e",
+                "outline": "#8d90a0",
+                "on-secondary-fixed": "#2a1700",
+                "on-secondary-fixed-variant": "#653e00",
+                "tertiary-fixed-dim": "#d2bbff",
+                "tertiary-container": "#8343f4",
+                "tertiary": "#d2bbff",
+                "background": "#0b1326",
+                "success-neon": "#10B981",
+                "outline-variant": "#434655",
+                "on-error-container": "#ffdad6",
+                "on-primary-fixed": "#00174b",
+                "surface-variant": "#2d3449",
+                "pike-blue-glow": "#4F46E5",
+                "inverse-primary": "#0053db",
+                "on-tertiary": "#3f008e",
+                "slate-gray": "#1E293B",
+                "on-primary": "#002a78",
+                "on-tertiary-fixed-variant": "#5a00c6",
+                "surface-container": "#171f33",
+                "primary-fixed": "#dbe1ff",
+                "surface-bright": "#31394d",
+                "on-tertiary-fixed": "#25005a",
+                "tertiary-fixed": "#eaddff",
+                "surface-container-high": "#222a3d"
+            },
+            "borderRadius": {
+                "DEFAULT": "0.25rem",
+                "lg": "0.5rem",
+                "xl": "0.75rem",
+                "full": "9999px"
+            },
+            "spacing": {
+                "stack-md": "14px",
+                "section-margin": "28px",
+                "container-padding": "20px",
+                "element-gap": "12px",
+                "unit": "4px",
+                "stack-sm": "8px"
+            },
+            "fontFamily": {
+                "body-md": ["Inter"],
+                "label-caps": ["Space Grotesk"],
+                "display-xl": ["Space Grotesk"],
+                "body-lg": ["Inter"],
+                "headline-sm": ["Space Grotesk"],
+                "label-sm": ["Inter"],
+                "headline-lg-mobile": ["Space Grotesk"],
+                "headline-lg": ["Space Grotesk"]
+            },
+            "fontSize": {
+                "body-md": ["13px", {"lineHeight": "1.6", "fontWeight": "400"}],
+                "label-caps": ["12px", {"lineHeight": "1.0", "letterSpacing": "0.08em", "fontWeight": "700"}],
+                "display-xl": ["32px", {"lineHeight": "1.1", "letterSpacing": "-0.04em", "fontWeight": "700"}],
+                "body-lg": ["15px", {"lineHeight": "1.5", "fontWeight": "600"}],
+                "headline-sm": ["16px", {"lineHeight": "1.4", "fontWeight": "600"}],
+                "label-sm": ["11px", {"lineHeight": "1.2", "fontWeight": "500"}],
+                "headline-lg-mobile": ["20px", {"lineHeight": "1.2", "fontWeight": "700"}],
+                "headline-lg": ["24px", {"lineHeight": "1.2", "letterSpacing": "-0.02em", "fontWeight": "700"}]
+            }
+          },
+        },
+      }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        
+        .grid-overlay {
+            background-image: linear-gradient(rgba(79, 70, 229, 0.05) 1px, transparent 1px),
+                              linear-gradient(90deg, rgba(79, 70, 229, 0.05) 1px, transparent 1px);
+            background-size: 28px 28px;
+        }
+
+        .scanlines {
+            background: repeating-linear-gradient(
+                0deg,
+                rgba(0, 0, 0, 0.05),
+                rgba(0, 0, 0, 0.05) 1px,
+                transparent 1px,
+                transparent 2px
+            );
+            pointer-events: none;
+        }
+
+        .marker-glow-gold { filter: drop-shadow(0 0 8px rgba(180, 83, 9, 0.6)); }
+        .marker-glow-blue { filter: drop-shadow(0 0 8px rgba(37, 99, 235, 0.6)); }
+        .marker-glow-purple { filter: drop-shadow(0 0 8px rgba(131, 67, 244, 0.6)); }
+
+        @keyframes pulse-ring {
+            0% { transform: scale(0.8); opacity: 0.5; }
+            100% { transform: scale(1.5); opacity: 0; }
+        }
+        .pulse-effect::before {
+            content: '';
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            border: 2px solid currentColor;
+            animation: pulse-ring 2s infinite ease-out;
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+</head>
+<body class="bg-background text-on-background font-body-md min-h-screen selection:bg-primary/30 overflow-hidden">
+<!-- TopAppBar -->
+<header class="fixed top-0 w-full z-50 flex justify-between items-center px-container-padding h-14 bg-surface-container-low shadow-sm">
+<div class="flex items-center gap-3">
+<div class="w-8 h-8 rounded-full overflow-hidden border border-primary/20">
+<img class="w-full h-full object-cover" data-alt="A cinematic, high-detail portrait of a tech-savvy urban explorer wearing futuristic obsidian glasses and a sleek navy utility jacket. The background features blurred neon city lights in deep blue and gold, matching the Techno-Adventurer aesthetic. The lighting is dramatic and low-key, emphasizing a modern, high-tech fintech gaming persona." src="https://lh3.googleusercontent.com/aida-public/AB6AXuA_QIWvFJ9raVxx3PrLzg7JtjwexP2K2Rq3shhCZ_xTndioN1oeeTWPwdXBdNADjUfwU2926OS_9rs1xnrV9a2Ux9f7hKIyIzk3mKJMDyjJstl9WZOQ6dIFxUnyC59SwDBGrOwLfEBRXW6u_GREGV82zGKyFRLUNOi4zK_nzpmQqj23Kk5qk3FRWqlceLOsygPajuyibeWcjlrF6m2L5WMwWvvopY3UN0mk_aYIxspSy0BltdY5jmHT8uAkpzUaltXWreMUjrgSd9k"/>
+</div>
+<h1 class="text-headline-lg-mobile font-headline-lg-mobile font-black text-primary tracking-tighter">PIKE</h1>
+</div>
+<div class="flex items-center gap-4">
+<button class="hover:opacity-80 transition-opacity active:scale-95 text-primary">
+<span class="material-symbols-outlined">search</span>
+</button>
+<button class="hover:opacity-80 transition-opacity active:scale-95 text-primary">
+<span class="material-symbols-outlined">notifications</span>
+</button>
+</div>
+</header>
+<!-- Main Map Container -->
+<main class="relative w-full h-[884px] pt-14 pb-safe">
+<!-- The "Map" - Using an Image Placeholder with detailed prompt -->
+<div class="absolute inset-0 z-0">
+<div class="w-full h-full bg-surface-container-lowest grid-overlay relative">
+<!-- Mock Map Image -->
+<div class="absolute inset-0 opacity-40 mix-blend-luminosity">
+<div class="w-full h-full bg-cover bg-center" data-alt="An intricate, top-down dark-themed futuristic map of a metropolitan city area, designed in a sleek techno-minimalist style. The map uses a deep navy and slate-gray palette with glowing neon circuitry lines for streets. Minimalist architectural wireframes represent buildings, and a subtle hexagonal digital grid is overlaid across the entire landscape to simulate a high-stakes gaming radar interface." style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuC6pJTy6Hr01H0WHNlm2_UZ7L2QVYrkaaEZ3d-JIvLK1hxWp1lRzqUFCmN7eZQs7k-mvMtYuVzNFVudM4S4BPyI5P3PUJAlOcs1-Xz_Nwdz0ER8NwKxgZsIpov1g5FkYXPv98daX8zLDqp5KDgeUoV4KWkMWBuK-94_nlphizunF8rPlGDqkC2Gm7-_5kmEcGb_4ffrGsBKGK2KXVZ6Bxu_wKi50Fs7UM_JBMod83ckWic_S2iydodozCp7BrkC6cUxOaf446UeuZU')"></div>
+</div>
+<!-- Atmospheric Shader Overlay -->
+
+<!-- Markers Layer -->
+<div class="absolute inset-0 z-10">
+<!-- Blue Marker (Active) -->
+<button class="absolute top-[30%] left-[25%] group transition-transform hover:scale-110 active:scale-90">
+<div class="relative flex flex-col items-center">
+<div class="bg-primary-container text-white p-2 rounded-full marker-glow-blue pulse-effect flex items-center justify-center">
+<span class="material-symbols-outlined text-[18px]" style="font-variation-settings: 'FILL' 1;">explore</span>
+</div>
+<div class="mt-1 bg-surface-container-high px-2 py-0.5 rounded-lg border border-primary/20">
+<span class="text-label-sm font-label-sm text-primary uppercase">Active Quest</span>
+</div>
+</div>
+</button>
+<!-- Gold Marker (Completed) -->
+<button class="absolute top-[55%] left-[65%] group transition-transform hover:scale-110 active:scale-90">
+<div class="relative flex flex-col items-center">
+<div class="bg-secondary-container text-on-secondary p-2 rounded-full marker-glow-gold flex items-center justify-center">
+<span class="material-symbols-outlined text-[18px]" style="font-variation-settings: 'FILL' 1;">verified</span>
+</div>
+<div class="mt-1 bg-surface-container-high px-2 py-0.5 rounded-lg border border-secondary/20">
+<span class="text-label-sm font-label-sm text-secondary uppercase">Completed</span>
+</div>
+</div>
+</button>
+<!-- Purple Marker (Legendary) -->
+<button class="absolute top-[42%] left-[50%] group transition-transform hover:scale-110 active:scale-90">
+<div class="relative flex flex-col items-center">
+<div class="bg-tertiary-container text-white p-2.5 rounded-full marker-glow-purple flex items-center justify-center border-2 border-white/20">
+<span class="material-symbols-outlined text-[20px]" style="font-variation-settings: 'FILL' 1;">workspace_premium</span>
+</div>
+<div class="mt-1 bg-surface-container-high px-2 py-0.5 rounded-lg border border-tertiary/40">
+<span class="text-label-sm font-label-sm text-tertiary uppercase">Legendary</span>
+</div>
+</div>
+</button>
+<!-- Another Active (Blue) -->
+<button class="absolute top-[75%] left-[20%] group transition-transform hover:scale-110 active:scale-90">
+<div class="relative flex flex-col items-center">
+<div class="bg-primary-container text-white p-2 rounded-full marker-glow-blue flex items-center justify-center">
+<span class="material-symbols-outlined text-[18px]" style="font-variation-settings: 'FILL' 1;">my_location</span>
+</div>
+</div>
+</button>
+</div>
+</div>
+</div>
+<!-- Legend Floating Card -->
+<div class="absolute bottom-24 left-1/2 -translate-x-1/2 w-[calc(100%-40px)] max-w-sm z-30">
+<div class="bg-surface-container-low/90 backdrop-blur-md rounded-2xl p-4 border border-surface-container-highest shadow-2xl">
+<div class="flex items-center justify-between mb-3 border-b border-surface-container-highest pb-2">
+<h2 class="text-label-caps font-label-caps text-on-surface-variant">MAP LEGEND</h2>
+<span class="text-primary text-[14px] flex items-center gap-1 font-semibold">
+<span class="material-symbols-outlined text-[16px]">near_me</span>
+                        4 Nearby
+                    </span>
+</div>
+<div class="grid grid-cols-3 gap-2">
+<div class="flex flex-col items-center text-center">
+<div class="w-8 h-8 rounded-full bg-secondary-container/20 flex items-center justify-center mb-1">
+<span class="material-symbols-outlined text-secondary text-[16px]" style="font-variation-settings: 'FILL' 1;">verified</span>
+</div>
+<span class="text-label-sm font-label-sm text-on-surface-variant">Completed</span>
+</div>
+<div class="flex flex-col items-center text-center">
+<div class="w-8 h-8 rounded-full bg-primary-container/20 flex items-center justify-center mb-1">
+<span class="material-symbols-outlined text-primary text-[16px]" style="font-variation-settings: 'FILL' 1;">explore</span>
+</div>
+<span class="text-label-sm font-label-sm text-on-surface-variant">Active</span>
+</div>
+<div class="flex flex-col items-center text-center">
+<div class="w-8 h-8 rounded-full bg-tertiary-container/20 flex items-center justify-center mb-1">
+<span class="material-symbols-outlined text-tertiary text-[16px]" style="font-variation-settings: 'FILL' 1;">workspace_premium</span>
+</div>
+<span class="text-label-sm font-label-sm text-on-surface-variant">Legendary</span>
+</div>
+</div>
+</div>
+</div>
+<!-- Explore Nearby Floating Header Overlay -->
+<div class="absolute top-20 left-container-padding right-container-padding z-30 flex gap-2">
+<div class="flex-1 bg-surface-container-high/90 backdrop-blur-lg rounded-full h-11 flex items-center px-4 border border-surface-variant shadow-lg">
+<span class="material-symbols-outlined text-on-surface-variant mr-3">search</span>
+<span class="text-body-md font-body-md text-on-surface-variant">Explore Nearby...</span>
+</div>
+<button class="w-11 h-11 bg-primary-container rounded-full flex items-center justify-center text-white shadow-[0_0_15px_rgba(37,99,235,0.4)] active:scale-95 transition-transform">
+<span class="material-symbols-outlined">filter_list</span>
+</button>
+</div>
+<div class="scanlines fixed inset-0 z-40 pointer-events-none"></div>
+</main>
+<!-- BottomNavBar -->
+<nav class="fixed bottom-0 w-full z-50 flex justify-around items-center px-4 py-2 pb-safe bg-surface-container-low border-t border-surface-container-highest shadow-[0_-4px_12px_rgba(0,0,0,0.5)] rounded-t-xl">
+<a class="flex flex-col items-center justify-center text-on-surface-variant hover:text-primary transition-colors active:scale-90 duration-200" href="#">
+<span class="material-symbols-outlined mb-1">home</span>
+<span class="text-label-sm font-label-sm">HOME</span>
+</a>
+<a class="flex flex-col items-center justify-center text-primary bg-primary/10 rounded-xl px-3 py-1 active:scale-90 transition-all duration-200" href="#">
+<span class="material-symbols-outlined mb-1" style="font-variation-settings: 'FILL' 1;">map</span>
+<span class="text-label-sm font-label-sm">EXPLORE</span>
+</a>
+<a class="flex flex-col items-center justify-center text-on-surface-variant hover:text-primary transition-colors active:scale-90 duration-200" href="#">
+<span class="material-symbols-outlined mb-1">explore</span>
+<span class="text-label-sm font-label-sm">QUESTS</span>
+</a>
+<a class="flex flex-col items-center justify-center text-on-surface-variant hover:text-primary transition-colors active:scale-90 duration-200" href="#">
+<span class="material-symbols-outlined mb-1">person</span>
+<span class="text-label-sm font-label-sm">PROFILE</span>
+</a>
+</nav>
+<script>
+        // Simple micro-interaction for markers
+        document.querySelectorAll('button[class*="absolute"]').forEach(marker => {
+            marker.addEventListener('click', (e) => {
+                const label = marker.querySelector('span.text-label-sm').innerText;
+                console.log(`Navigating to ${label} quest...`);
+                // Add a small interaction effect
+                marker.classList.add('scale-125');
+                setTimeout(() => marker.classList.remove('scale-125'), 200);
+            });
+        });
+    </script>
+</body></html>

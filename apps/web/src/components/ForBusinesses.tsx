@@ -31,7 +31,7 @@ export function ForBusinesses() {
           </div>
         </div>
 
-        <div className="card" style={{ background: "var(--light-gray)", border: "none" }}>
+        <div className="card" style={{ background: "var(--surface-container-low)", border: "none" }}>
           <ol style={{ margin: 0, padding: 0, listStyle: "none", display: "flex", flexDirection: "column", gap: 20 }}>
             {points.map((point, i) => (
               <li key={point} style={{ display: "flex", gap: 16, alignItems: "flex-start" }}>
@@ -41,14 +41,15 @@ export function ForBusinesses() {
                     width: 30,
                     height: 30,
                     borderRadius: "50%",
-                    background: "#fff",
-                    border: "1px solid #dbe3ee",
+                    background: "var(--surface-container-lowest)",
+                    border: "1px solid var(--border-subtle)",
                     display: "flex",
                     alignItems: "center",
                     justifyContent: "center",
                     fontSize: 13,
                     fontWeight: 700,
-                    color: "var(--pike-blue)",
+                    fontFamily: "var(--font-mono)",
+                    color: "var(--primary)",
                   }}
                 >
                   {i + 1}
