@@ -4,5 +4,6 @@
   "installCommand": "cd ../.. && npm install",
   "buildCommand": "cd ../.. && npm run build:shared-types && npm run build --workspace apps/webar",
   "outputDirectory": "dist",
-  "ignoreCommand": "cd ../.. && git diff --quiet HEAD^ HEAD -- apps/webar packages package.json package-lock.json"
+  "ignoreCommand": "cd ../.. && git diff --quiet HEAD^ HEAD -- apps/webar packages package.json package-lock.json",
+  "rewrites": [{ "source": "/(.*)", "destination": "/index.html" }]
 }
