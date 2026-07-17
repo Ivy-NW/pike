@@ -200,3 +200,32 @@ model Admin {
 
   @@map("admins")
 }
+
+/// Marketing-site admin code gate (obscurity layer only -- the real security boundary is
+/// Admin's own email/password login via AdminAuthGuard). Every attempt is logged so repeated
+/// failures are visible to admins even though the code itself isn't the trust boundary.
+model AdminGateAttempt {
+  id        String   @id @default(uuid())
+  ipHash    String
+  userAgent String
+  success   Boolean
+  createdAt DateTime @default(now())
+
+  @@index([ipHash, createdAt])
+  @@map("admin_gate_attempts")
+}
+
+enum WaitlistAudience {
+  consumer
+  business
+}
+
+/// Captured from the landing page's "app not published yet" download CTA.
+model WaitlistSignup {
+  id        String           @id @default(uuid())
+  email     String           @unique
+  audience  WaitlistAudience
+  createdAt DateTime         @default(now())
+
+  @@map("waitlist_signups")
+}

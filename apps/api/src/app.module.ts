@@ -12,6 +12,8 @@ import { UsersModule } from "./users/users.module";
 import { AdminModule } from "./admin/admin.module";
 import { PaymentsModule } from "./payments/payments.module";
 import { GamificationModule } from "./gamification/gamification.module";
+import { AdminGateModule } from "./admin-gate/admin-gate.module";
+import { WaitlistModule } from "./waitlist/waitlist.module";
 
 @Module({
   imports: [
@@ -28,6 +30,8 @@ import { GamificationModule } from "./gamification/gamification.module";
     AdminModule,
     PaymentsModule,
     GamificationModule,
+    AdminGateModule,
+    WaitlistModule,
   ],
 })
 export class AppModule {}

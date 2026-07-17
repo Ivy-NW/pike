@@ -6,6 +6,7 @@
     "packages/*",
     "apps/api",
     "apps/webar",
+    "apps/web",
     "apps/dashboard",
     "apps/admin",
     "apps/app"
@@ -13,6 +14,7 @@
   "scripts": {
     "dev:api": "npm run start:dev --workspace apps/api",
     "dev:webar": "npm run dev --workspace apps/webar",
+    "dev:web": "npm run dev --workspace apps/web",
     "dev:dashboard": "npm run dev --workspace apps/dashboard",
     "dev:admin": "npm run dev --workspace apps/admin",
     "dev:app": "npm run start --workspace apps/app",
