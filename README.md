@@ -1,6 +1,6 @@
 # PIKE — Phase 1 (Core Platform)
 
-WebAR + App + Business Dashboard + Admin, one backend, one Postgres database. See `docs/PIKE_v1_PRD.md` and `docs/pike_ui_design.md` for the source-of-truth requirements and design system this build follows.
+WebAR + App + Business Dashboard + Admin, one backend, one Postgres database. See `docs/PIKE_v1_PRD.md` and `docs/pike_ui_design.md` for the source-of-truth requirements and design system this build follows. Architecture decisions are recorded in `docs/adr`.
 
 ## Structure
 
