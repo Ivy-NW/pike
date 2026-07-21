@@ -20,6 +20,7 @@ pike/
 ```bash
 npm install
 npm run build:shared-types
+npm run build:design-tokens
 ```
 
 Copy `.env.example` → `apps/api/.env` and fill in `DATABASE_URL` (Neon) and `REDIS_URL` at minimum. Firebase, Stripe, and 8th Wall are optional in dev — see the `TODO(credentials)` markers below.
