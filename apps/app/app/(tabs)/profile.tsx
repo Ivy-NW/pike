@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { View, Text, StyleSheet, TouchableOpacity, FlatList } from "react-native";
 import { router } from "expo-router";
+import { MaterialIcons } from "@expo/vector-icons";
 import type { UserProfile } from "@pike/shared-types";
 import { api } from "@/lib/api";
 import { clearIdentityToken } from "@/lib/auth";
@@ -143,7 +144,12 @@ export default function ProfileScreen() {
               return (
                 <View style={styles.badgeSlot}>
                   <View style={[styles.badgeIcon, !earned && styles.badgeIconLocked]}>
-                    <Text style={{ fontSize: 22, opacity: earned ? 1 : 0.35 }}>🏅</Text>
+                    <MaterialIcons
+                      name="stars"
+                      size={24}
+                      color={earned ? c.secondary : c.outline}
+                      style={{ opacity: earned ? 1 : 0.35 }}
+                    />
                   </View>
                   <Text style={styles.badgeName} numberOfLines={2}>
                     {item.name}
