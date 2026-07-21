@@ -56,6 +56,42 @@ export function CoinIcon({ size = 24, color = "currentColor" }: IconProps) {
   );
 }
 
+export function ShieldIcon({ size = 24, color = "currentColor" }: IconProps) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 24 24" stroke={color} {...base}>
+      <path d="M12 3.5 19 6.3v5.4c0 4.6-3 8.3-7 9.3-4-1-7-4.7-7-9.3V6.3l7-2.8Z" />
+      <path d="m9 12.2 2 2 4-4.4" />
+    </svg>
+  );
+}
+
+export function AnalyticsIcon({ size = 24, color = "currentColor" }: IconProps) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 24 24" stroke={color} {...base}>
+      <path d="M5 20V11" />
+      <path d="M12 20V4" />
+      <path d="M19 20v-7" />
+    </svg>
+  );
+}
+
+export function BoltIcon({ size = 24, color = "currentColor" }: IconProps) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 24 24" stroke={color} {...base}>
+      <path d="M13 2.5 4.5 14h6L9.5 21.5 18 10h-6l1-7.5Z" />
+    </svg>
+  );
+}
+
+export function LockIcon({ size = 24, color = "currentColor" }: IconProps) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 24 24" stroke={color} {...base}>
+      <rect x="5" y="11" width="14" height="9" rx="1.5" />
+      <path d="M8 11V7.5a4 4 0 0 1 8 0V11" />
+    </svg>
+  );
+}
+
 export function AppleIcon({ size = 20, color = "currentColor" }: IconProps) {
   return (
     <svg width={size} height={size} viewBox="0 0 24 24" fill={color} aria-hidden="true">
@@ -69,6 +105,23 @@ export function PlayIcon({ size = 20, color = "currentColor" }: IconProps) {
   return (
     <svg width={size} height={size} viewBox="0 0 24 24" fill={color} aria-hidden="true">
       <path d="M5 3.6c0-.6.6-1 1.2-.7l13 8.4c.5.3.5 1.1 0 1.4l-13 8.4c-.6.3-1.2-.1-1.2-.7V3.6Z" />
+    </svg>
+  );
+}
+
+export function SunIcon({ size = 24, color = "currentColor" }: IconProps) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 24 24" stroke={color} {...base}>
+      <circle cx="12" cy="12" r="4.3" />
+      <path d="M12 2.8v2.6M12 18.6v2.6M21.2 12h-2.6M5.4 12H2.8M18 6l-1.9 1.9M7.9 16.1 6 18M18 18l-1.9-1.9M7.9 7.9 6 6" />
+    </svg>
+  );
+}
+
+export function MoonIcon({ size = 24, color = "currentColor" }: IconProps) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 24 24" stroke={color} {...base}>
+      <path d="M20.5 14.7A8.6 8.6 0 1 1 9.3 3.5a7 7 0 0 0 11.2 11.2Z" />
     </svg>
   );
 }

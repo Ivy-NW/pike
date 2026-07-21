@@ -1,5 +1,7 @@
 "use client";
 import { useEffect, useState } from "react";
+import { MoonIcon, SunIcon } from "./icons";
+import styles from "./ThemeToggle.module.css";
 
 /** Persists to localStorage under the same key themeInitScript reads on next load. */
 export function ThemeToggle() {
@@ -18,14 +20,9 @@ export function ThemeToggle() {
   };
 
   return (
-    <button
-      onClick={toggle}
-      aria-label="Toggle color theme"
-      className="btn-text"
-      style={{ padding: 8, fontSize: 18, lineHeight: 1 }}
-    >
-      <span className="material-symbols-outlined" style={{ fontSize: 20 }}>
-        {mode === "dark" ? "light_mode" : "dark_mode"}
+    <button onClick={toggle} aria-label="Toggle color theme" className={styles.toggle}>
+      <span key={mode} className={styles.icon}>
+        {mode === "dark" ? <SunIcon size={19} /> : <MoonIcon size={19} />}
       </span>
     </button>
   );

@@ -1,0 +1,36 @@
+.hero { padding: clamp(56px, 7vw, 104px) 0 clamp(76px, 9vw, 136px); overflow: hidden; }
+/* Hero is above the fold, so it gets a one-time load-in instead of a scroll trigger —
+   gated behind [data-js] (added by the blocking script in layout.tsx) so content stays
+   visible by default with JS disabled, and `both` so it starts hidden pre-animation. */
+[data-js] .copy { animation: heroRise .8s cubic-bezier(.16,.8,.24,1) both; }
+[data-js] .visual { animation: heroRise .9s cubic-bezier(.16,.8,.24,1) .12s both; }
+@keyframes heroRise { from { opacity: 0; transform: translateY(26px); } to { opacity: 1; transform: none; } }
+@media (prefers-reduced-motion: reduce) { [data-js] .copy, [data-js] .visual { animation: none; } }
+.grid { display: grid; grid-template-columns: minmax(390px,.82fr) minmax(0,1.18fr); align-items: center; gap: clamp(38px,5vw,84px); }
+.copy { position: relative; z-index: 2; }
+.copy h1 { max-width: 650px; font-size: clamp(48px,6.1vw,88px); line-height: .94; letter-spacing: -.062em; font-weight: 650; }
+.copy h1 em { font-style: normal; color: var(--primary); }
+.lede { max-width: 570px; margin-top: 28px; color: var(--landing-muted); font-size: clamp(17px,1.5vw,20px); line-height: 1.6; }
+.actions { display: flex; align-items: center; flex-wrap: wrap; gap: 14px 24px; margin-top: 34px; }
+.note { margin-top: 22px; font-size: 13px; color: var(--landing-muted); }
+.note span { font-size: 9px; color: var(--success); margin-right: 7px; }
+.visual { position: relative; min-height: 650px; margin-right: max(-24px, calc((1180px - 100vw) / 2)); }
+.visual:before { content: ""; position: absolute; z-index: -1; inset: 8% -8% -7% 10%; background: #d9d0c2; transform: rotate(3deg); }
+.photo { object-fit: cover; object-position: 54% center; }
+.scanCard { position: absolute; left: -32px; top: 12%; width: 190px; padding: 16px; background: rgba(249,247,242,.96); color: #161c28; box-shadow: 0 24px 60px rgba(14,19,29,.2); transform: rotate(-3deg); }
+.scanTop { display: flex; justify-content: space-between; align-items: center; text-transform: uppercase; font-size: 9px; letter-spacing: .1em; }
+.scanTop b { font-size: 9px; color: #147a4c; }
+.marker { position: relative; height: 118px; margin: 15px 0 12px; background: #e9e5db; overflow: hidden; }
+.marker span { position: absolute; width: 27px; height: 27px; border-color: #2563eb; border-style: solid; }
+.marker span:nth-child(1){left:13px;top:13px;border-width:2px 0 0 2px}.marker span:nth-child(2){right:13px;top:13px;border-width:2px 2px 0 0}.marker span:nth-child(3){right:13px;bottom:13px;border-width:0 2px 2px 0}.marker span:nth-child(4){left:13px;bottom:13px;border-width:0 0 2px 2px}
+.marker i { position: absolute; left: 18px; right: 18px; top: 50%; height: 2px; background: #2563eb; box-shadow: 0 0 12px #2563eb; animation: scan 3s ease-in-out infinite; }
+.scanCard p { font-size: 12px; line-height: 1.35; font-weight: 650; }
+.rewardCard { position: absolute; right: 5%; bottom: 9%; min-width: 245px; padding: 17px 20px; background: #111827; color: #fff; display: flex; gap: 14px; align-items: center; box-shadow: 0 24px 60px rgba(14,19,29,.28); animation: float 5s ease-in-out infinite; }
+.spark { color: #f59e0b; font-size: 28px; }
+.rewardCard small,.rewardCard strong { display:block}.rewardCard small{color:#aab4c5;font-size:10px;text-transform:uppercase;letter-spacing:.1em}.rewardCard strong{margin-top:3px;font-size:14px}
+.caption { position:absolute; right: -1px; top: 5%; background: #111827; color:white; padding: 13px 15px; font-size:11px; line-height:1.4; letter-spacing:.04em; }
+@keyframes scan { 0%,100%{transform:translateY(-35px);opacity:.55}50%{transform:translateY(35px);opacity:1} }
+@keyframes float { 0%,100%{transform:translateY(0)}50%{transform:translateY(-9px)} }
+@media (max-width: 900px) { .grid{grid-template-columns:1fr}.copy{max-width:720px}.visual{min-height:560px;margin:0}.photo{object-position:center}.scanCard{left:4%} }
+@media (max-width: 600px) { .hero{padding-top:48px}.copy h1{font-size:clamp(44px,14vw,66px)}.visual{min-height:480px}.scanCard{width:150px;left:-4px;top:9%;padding:12px}.marker{height:90px}.rewardCard{right:-4px;bottom:6%;min-width:215px}.caption{display:none}.visual:before{inset:5% -5% -5% 7%} }
+@media (prefers-reduced-motion: reduce) { .marker i, .rewardCard { animation: none; } }

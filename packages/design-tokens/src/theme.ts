@@ -47,6 +47,41 @@ function toCssVars(colors: ColorTokens, prefix = ""): string {
     .join("\n");
 }
 
+const toKebab = (key: string) => key.replace(/([A-Z])/g, "-$1").toLowerCase();
+
+/**
+ * Emits one `--type-{style}-*` group of vars per TypeScale entry (font-family,
+ * font-size, font-weight, line-height, and letter-spacing where set), so
+ * components can consume the type scale via CSS vars instead of hand-typing
+ * raw font values. `uppercase` isn't emitted as a var -- it's a static,
+ * compile-time-known property per style key, so a consuming .module.css class
+ * just writes `text-transform: uppercase` directly rather than branching on a var.
+ */
+function toTypeCssVars(type: TypeScale): string {
+  return Object.entries(type)
+    .map(([key, style]) => {
+      const kebab = toKebab(key);
+      const lines = [
+        `  --type-${kebab}-font-family: "${style.fontFamily}";`,
+        `  --type-${kebab}-font-size: ${style.fontSize}px;`,
+        `  --type-${kebab}-font-weight: ${style.fontWeight};`,
+        `  --type-${kebab}-line-height: ${style.lineHeight};`,
+      ];
+      if (style.letterSpacing !== undefined) {
+        lines.push(`  --type-${kebab}-letter-spacing: ${style.letterSpacing}em;`);
+      }
+      return lines.join("\n");
+    })
+    .join("\n");
+}
+
+/** Emits `--spacing-*` vars from the SpacingScale (doc §4 spacing tokens). */
+function toSpacingCssVars(spacing: SpacingScale): string {
+  return Object.entries(spacing)
+    .map(([key, value]) => `  --spacing-${toKebab(key)}: ${value}px;`)
+    .join("\n");
+}
+
 /**
  * Generates the CSS variable block consumed by all three Next.js apps.
  * `:root` (and `[data-theme="light"]`) carries the light/corporate identity;
@@ -65,6 +100,8 @@ ${toCssVars(vanguardLight)}
   --radius-xl: ${vanguardLightRadius.xl}px;
   --radius-full: ${vanguardLightRadius.full}px;
   --radius-card: ${vanguardLightRadius.card}px;
+${toSpacingCssVars(vanguardLightSpacing)}
+${toTypeCssVars(vanguardLightType)}
   --font-heading: "Geist", system-ui, sans-serif;
   --font-body: "Geist", system-ui, sans-serif;
   --font-mono: "Space Mono", ui-monospace, monospace;
@@ -80,6 +117,8 @@ ${toCssVars(vanguardDark)}
     --radius-xl: ${vanguardDarkRadius.xl}px;
     --radius-full: ${vanguardDarkRadius.full}px;
     --radius-card: ${vanguardDarkRadius.card}px;
+${toSpacingCssVars(vanguardDarkSpacing)}
+${toTypeCssVars(vanguardDarkType)}
     --font-heading: "Space Grotesk", system-ui, sans-serif;
     --font-body: "Inter", system-ui, sans-serif;
     --font-mono: "Space Grotesk", system-ui, sans-serif;
@@ -95,6 +134,8 @@ ${toCssVars(vanguardDark)}
   --radius-xl: ${vanguardDarkRadius.xl}px;
   --radius-full: ${vanguardDarkRadius.full}px;
   --radius-card: ${vanguardDarkRadius.card}px;
+${toSpacingCssVars(vanguardDarkSpacing)}
+${toTypeCssVars(vanguardDarkType)}
   --font-heading: "Space Grotesk", system-ui, sans-serif;
   --font-body: "Inter", system-ui, sans-serif;
   --font-mono: "Space Grotesk", system-ui, sans-serif;

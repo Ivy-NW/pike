@@ -1,34 +1,28 @@
 import Link from "next/link";
 import { Wordmark } from "./Logo";
 import { AdminGateTrigger } from "./AdminGateTrigger";
+import styles from "./Footer.module.css";
+
+const soon = (topic: string) => `/coming-soon?topic=${encodeURIComponent(topic)}`;
 
 export function Footer() {
   return (
-    <footer style={{ borderTop: "1px solid var(--border-subtle)", padding: "48px 0", background: "var(--surface-container-lowest)" }}>
-      <div
-        className="container"
-        style={{ display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: 24 }}
-      >
-        <Wordmark size={18} />
-
-        <nav style={{ display: "flex", gap: 24 }}>
-          <Link href="/privacy" className="btn-text" style={{ fontSize: 13, padding: 0, color: "var(--on-surface-variant)" }}>
-            Privacy
-          </Link>
-          <Link href="/terms" className="btn-text" style={{ fontSize: 13, padding: 0, color: "var(--on-surface-variant)" }}>
-            Terms
-          </Link>
-          <a href="mailto:hello@pike.app" className="btn-text" style={{ fontSize: 13, padding: 0, color: "var(--on-surface-variant)" }}>
-            Contact
-          </a>
-        </nav>
-
-        {/* The "©" is an ordinary-looking copyright line -- and also a disguised admin-gate
-            click target (see AdminGateTrigger). Ctrl+Alt+A does the same thing. */}
-        <AdminGateTrigger>
-          <span style={{ fontSize: 13, color: "var(--outline)" }}>© {new Date().getFullYear()} PIKE</span>
-        </AdminGateTrigger>
+    <footer className={styles.footer}>
+      <div className={`container ${styles.top}`}>
+        <div className={styles.brand}><Wordmark size={20} /><p>Turning everyday venue visits into rewarding experiences worth coming back for.</p><span>Make the next visit happen.</span></div>
+        <FooterGroup title="Product" links={[["How it works","/#how-it-works"],["For players","/#for-players"],["For venues","/#for-venues"],["Player waitlist","/#player-waitlist"]]} />
+        <FooterGroup title="Company" links={[["About",soon("About")],["Contact","mailto:hello@pike.app"],["Careers",soon("Careers")],["Press",soon("Press")]]} />
+        <FooterGroup title="Legal & safety" links={[["Privacy Policy","/privacy"],["Terms of Service","/terms"],["Cookie Policy",soon("Cookie Policy")],["Acceptable Use",soon("Acceptable Use")],["Accessibility",soon("Accessibility")],["Data Requests",soon("Data Requests")]]} />
+      </div>
+      <div className={`container ${styles.bottom}`}>
+        <AdminGateTrigger><span className={styles.copyright}>© {new Date().getFullYear()} PIKE</span></AdminGateTrigger>
+        <p><span aria-hidden="true">●</span> Player access is coming soon</p>
+        <a href="#main-content">Back to top ↑</a>
       </div>
     </footer>
   );
+}
+
+function FooterGroup({ title, links }: { title: string; links: string[][] }) {
+  return <nav className={styles.group} aria-label={title}><h2>{title}</h2><ul>{links.map(([label,href])=><li key={label}>{href.startsWith("mailto:") ? <a href={href}>{label}</a> : <Link href={href}>{label}</Link>}</li>)}</ul></nav>;
 }
