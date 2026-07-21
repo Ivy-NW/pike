@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
 import { router } from "expo-router";
+import { MaterialIcons } from "@expo/vector-icons";
 import type { UserProfile } from "@pike/shared-types";
 import { api } from "@/lib/api";
 import { useTheme } from "@/theme";
@@ -28,7 +29,6 @@ export default function HomeScreen() {
     headerLeft: { flexDirection: "row", alignItems: "center", gap: 10 },
     header: { ...theme.font(theme.type.headlineLgMobile), color: c.primary },
     streak: { flexDirection: "row", alignItems: "center", gap: 4 },
-    streakFlame: { fontSize: 18 },
     streakCount: { ...theme.font(theme.type.headlineSm), color: c.secondary },
     card: {
       backgroundColor: theme.mode === "dark" ? "rgba(30,41,59,0.7)" : c.surfaceContainerLowest,
@@ -57,7 +57,7 @@ export default function HomeScreen() {
         </View>
         {me && me.currentStreak > 0 && (
           <View style={styles.streak}>
-            <Text style={styles.streakFlame}>🔥</Text>
+            <MaterialIcons name="whatshot" size={18} color={c.secondary} />
             <Text style={styles.streakCount}>{me.currentStreak}</Text>
           </View>
         )}

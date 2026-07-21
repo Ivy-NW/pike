@@ -13,7 +13,9 @@ async function bootstrap() {
   // MarkerCompileService, which writes here and returns URLs pointing back at this route.
   app.useStaticAssets(join(process.cwd(), "uploads"), { prefix: "/uploads" });
 
-  const port = process.env.API_PORT ? Number(process.env.API_PORT) : 4000;
+  // Render (and most PaaS hosts) assign a dynamic port via PORT and expect the
+  // service to bind to it; API_PORT stays as the local-dev override.
+  const port = Number(process.env.PORT ?? process.env.API_PORT ?? 4000);
   await app.listen(port);
   // eslint-disable-next-line no-console
   console.log(`PIKE API listening on :${port}`);
