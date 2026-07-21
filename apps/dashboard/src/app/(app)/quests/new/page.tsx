@@ -1,8 +1,7 @@
 "use client";
-import { Suspense, useState } from "react";
+import { Suspense, useEffect, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { api, ApiError } from "@/lib/api";
-import { NavHeader } from "@/components/NavHeader";
 
 function fileToBase64(file: File): Promise<string> {
   return new Promise((resolve, reject) => {
@@ -15,7 +14,10 @@ function fileToBase64(file: File): Promise<string> {
 
 function NewQuestForm() {
   const router = useRouter();
-  const venueId = useSearchParams().get("venueId");
+  const venueIdParam = useSearchParams().get("venueId");
+
+  const [venues, setVenues] = useState<any[] | null>(null);
+  const [venueId, setVenueId] = useState<string | null>(venueIdParam);
 
   const [step, setStep] = useState<"template" | "upload" | "payment" | "done">("template");
   const [name, setName] = useState("");
@@ -30,7 +32,31 @@ function NewQuestForm() {
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
 
-  if (!venueId) return <p style={{ padding: 32 }}>Missing venueId — go back to the dashboard and pick a venue.</p>;
+  useEffect(() => {
+    if (!venueId) api.listVenues().then(setVenues).catch((e) => setError(e.message));
+  }, [venueId]);
+
+  if (!venueId) {
+    return (
+      <div className="card" style={{ maxWidth: 480, margin: "40px auto" }}>
+        <div className="card-title">Which venue is this quest for?</div>
+        {error && <p style={{ color: "var(--error)" }}>{error}</p>}
+        {venues === null ? (
+          <div className="skeleton-row" />
+        ) : venues.length === 0 ? (
+          <p className="card-subtext">No venues yet — add one first.</p>
+        ) : (
+          <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
+            {venues.map((v) => (
+              <button key={v.id} className="secondary" style={{ textAlign: "left" }} onClick={() => setVenueId(v.id)}>
+                {v.name}
+              </button>
+            ))}
+          </div>
+        )}
+      </div>
+    );
+  }
 
   const createQuestAndMarker = async () => {
     setLoading(true);
@@ -85,12 +111,10 @@ function NewQuestForm() {
   };
 
   return (
-    <>
-    <NavHeader />
-    <div style={{ maxWidth: 520, margin: "60px auto" }} className="card">
+    <div className="card" style={{ maxWidth: 520, margin: "20px auto" }}>
       {step === "template" && (
         <>
-          <h2 style={{ marginTop: 0, fontFamily: "var(--font-heading)" }}>Create a quest</h2>
+          <div className="card-title">Create a quest</div>
           <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
             <input placeholder="Quest name" value={name} onChange={(e) => setName(e.target.value)} />
             <input placeholder="Theme (e.g. pirate, cyberpunk, safari)" value={theme} onChange={(e) => setTheme(e.target.value)} />
@@ -107,7 +131,7 @@ function NewQuestForm() {
             <input placeholder="Reward description (e.g. 15% off your bill)" value={rewardDescription} onChange={(e) => setRewardDescription(e.target.value)} />
             <label style={{ fontSize: 13, color: "var(--on-surface-variant)" }}>Max redemptions / day</label>
             <input type="number" min={1} value={maxRedemptionsPerDay} onChange={(e) => setMaxRedemptionsPerDay(Number(e.target.value))} />
-            <button className="secondary" onClick={() => setStep("upload")} disabled={!name || !theme || !rewardDescription}>
+            <button className="primary" onClick={() => setStep("upload")} disabled={!name || !theme || !rewardDescription}>
               Next: upload marker image
             </button>
           </div>
@@ -116,15 +140,15 @@ function NewQuestForm() {
 
       {step === "upload" && (
         <>
-          <h2 style={{ marginTop: 0 }}>Upload a marker image</h2>
-          <p style={{ color: "var(--on-surface-variant)", fontSize: 14 }}>
+          <div className="card-title">Upload a marker image</div>
+          <p className="card-subtext">
             A photo or logo — this gets sent to the marker-compiling service and returns a print-ready marker plus fallback QR (FR-10).
           </p>
           <input type="file" accept="image/*" onChange={(e) => setImageFile(e.target.files?.[0] ?? null)} />
           <div style={{ marginTop: 16, display: "flex", gap: 8 }}>
             <button className="secondary" onClick={() => setStep("template")}>Back</button>
             <button className="primary" onClick={createQuestAndMarker} disabled={loading}>
-              {loading ? "Creating..." : "Create & publish"}
+              {loading ? "Creating…" : "Create & publish"}
             </button>
           </div>
           {error && <p style={{ color: "var(--error)" }}>{error}</p>}
@@ -133,17 +157,15 @@ function NewQuestForm() {
 
       {step === "payment" && (
         <>
-          <h2 style={{ marginTop: 0 }}>Add a payment method to activate this quest</h2>
-          <p style={{ color: "var(--on-surface-variant)", fontSize: 14 }}>
-            Your quest is saved as a draft — nothing is lost. Add a payment method now to publish it immediately.
-          </p>
+          <div className="card-title">Add a payment method to activate this quest</div>
+          <p className="card-subtext">Your quest is saved as a draft — nothing is lost. Add a payment method now to publish it immediately.</p>
           <input
             placeholder="Stripe payment method id (dev stub — e.g. pm_card_visa)"
             value={paymentMethodInput}
             onChange={(e) => setPaymentMethodInput(e.target.value)}
           />
           <button className="primary" style={{ marginTop: 12 }} onClick={submitPayment} disabled={loading}>
-            {loading ? "Verifying..." : "Add payment method & publish"}
+            {loading ? "Verifying…" : "Add payment method & publish"}
           </button>
           {error && <p style={{ color: "var(--error)" }}>{error}</p>}
         </>
@@ -151,20 +173,26 @@ function NewQuestForm() {
 
       {step === "done" && (
         <>
-          <h2 style={{ marginTop: 0, color: "var(--success)" }}>Quest is live!</h2>
-          <p>Print the marker/QR from the quest detail page and place it at your venue.</p>
+          <div className="card-title" style={{ color: "var(--success)" }}>Quest is live!</div>
+          <p className="card-subtext">Print the marker/QR from the quest detail page and place it at your venue.</p>
           <button className="primary" onClick={() => router.push(`/quests/${questId}`)}>View quest</button>
         </>
       )}
     </div>
-    </>
   );
 }
 
 export default function NewQuestPage() {
   return (
-    <Suspense fallback={<div style={{ padding: 32 }}>Loading...</div>}>
-      <NewQuestForm />
-    </Suspense>
+    <>
+      <div className="page-header">
+        <div>
+          <h1>New quest</h1>
+        </div>
+      </div>
+      <Suspense fallback={<div className="skeleton-row" />}>
+        <NewQuestForm />
+      </Suspense>
+    </>
   );
 }

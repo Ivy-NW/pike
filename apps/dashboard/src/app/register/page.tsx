@@ -3,12 +3,14 @@ import { useState } from "react";
 import Link from "next/link";
 import { api, ApiError } from "@/lib/api";
 import { AuthSplitPanel } from "@/components/AuthSplitPanel";
+import { EyeIcon, EyeOffIcon } from "@/components/icons";
 
 /** Self-registration — the primary path into the dashboard (PRD section 12). No payment required here. */
 export default function RegisterPage() {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
   const [done, setDone] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
@@ -60,7 +62,24 @@ export default function RegisterPage() {
           <span style={{ fontFamily: "var(--font-mono)", fontSize: 11, letterSpacing: "0.05em", textTransform: "uppercase", color: "var(--on-surface-variant)" }}>
             Password
           </span>
-          <input type="password" minLength={8} value={password} onChange={(e) => setPassword(e.target.value)} required />
+          <span style={{ position: "relative", display: "flex", alignItems: "center" }}>
+            <input
+              type={showPassword ? "text" : "password"}
+              minLength={8}
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              required
+              style={{ paddingRight: 40 }}
+            />
+            <button
+              type="button"
+              onClick={() => setShowPassword((v) => !v)}
+              aria-label={showPassword ? "Hide password" : "Show password"}
+              style={{ position: "absolute", right: 8, background: "none", border: 0, padding: 4, cursor: "pointer", color: "var(--outline)", display: "flex" }}
+            >
+              {showPassword ? <EyeOffIcon size={16} /> : <EyeIcon size={16} />}
+            </button>
+          </span>
         </label>
         <button className="primary" style={{ marginTop: 8 }} disabled={loading}>
           {loading ? "Creating..." : "Create account"}

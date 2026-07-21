@@ -6,7 +6,7 @@ import { getToken } from "@/lib/auth";
 export default function Index() {
   const router = useRouter();
   useEffect(() => {
-    router.replace(getToken() ? "/home" : "/login");
+    router.replace(getToken() ? "/dashboard" : "/login");
   }, [router]);
   return null;
 }

@@ -14,7 +14,11 @@ export default function ForgotPasswordPage() {
         Self-service password reset isn&apos;t available yet. Email us and we&apos;ll verify your
         identity and reset it manually.
       </p>
-      <a href="mailto:support@pike.app?subject=Password%20reset" className="btn btn-primary" style={{ width: "100%" }}>
+      <a
+        href="mailto:support@pike.app?subject=Password%20reset"
+        className="primary"
+        style={{ display: "block", width: "100%", textAlign: "center", textDecoration: "none", boxSizing: "border-box" }}
+      >
         Email support@pike.app
       </a>
       <p style={{ marginTop: 24, fontSize: 14, color: "var(--on-surface-variant)" }}>
