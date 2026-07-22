@@ -27,6 +27,7 @@ Copy `.env.example` → `apps/api/.env` and fill in `DATABASE_URL` (Neon) and `R
 
 ```bash
 cd apps/api
+npm run prisma:generate    # generates @prisma/client types from prisma/schema.prisma
 npx prisma migrate dev      # applies migrations to your Postgres
 npm run seed:admin          # seeds the first admin account from ADMIN_SEED_EMAIL/PASSWORD
 ```
@@ -55,4 +56,4 @@ The Expo app (`apps/app`) was scaffolded and typechecks but wasn't runtime-verif
 
 ## Phase boundaries
 
-XP/streaks/badges, authenticated in-app quest scanning, the macro-quest/leaderboard mechanic, and PostHog analytics are Phase 2/3/4 per PRD section 12 — not built. Look for `// TODO(phase-2)` / `// TODO(phase-3)` markers in `apps/app` for where they hook in.
+Phase 1 is implemented for feature scope. Phase 2 identity depth is now in progress: XP, levels, streaks, badges, and authenticated in-app scanning have a working first slice. The macro-quest/leaderboard mechanic and PostHog analytics remain Phase 3/4 per PRD section 12. See `docs/progress.md` and `docs/adr` for handoff status and decision history.
