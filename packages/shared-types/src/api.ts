@@ -29,6 +29,7 @@ export interface CreateRedemptionRequest {
 export interface CreateRedemptionResponse {
   redemption: Pick<Redemption, "id" | "status" | "createdAt">;
   capRemaining: number;
+  scanCountThisSession: number;
 }
 
 /** POST /redemptions/:id/claim — requires a signed-in PIKE account (Authorization: Bearer <consumer token>). */
@@ -40,11 +41,30 @@ export interface ClaimRewardRequest {
 export interface ClaimRewardResponse {
   redemption: Redemption;
   user: User;
-  /** Phase 2 — FR-2: XP/badges awarded by this specific claim, for a "+50 XP" style moment. */
+  /** Phase 2 — FR-2: XP/badges awarded by this specific claim. Repeat claims return 0 XP. */
   award: {
     xpAwarded: number;
     newBadges: { key: string; name: string; description: string }[];
   };
+}
+
+export interface UserWalletItem {
+  redemptionId: string;
+  venue: Pick<Venue, "id" | "name">;
+  quest: Pick<Quest, "id" | "name" | "rewardType" | "rewardDescription">;
+  expiresAt: string | null;
+  isExpired: boolean;
+  claimedAt: string;
+}
+
+export interface UserQuestListItem {
+  id: string;
+  name: string;
+  theme: string;
+  venueName: string;
+  rewardDescription: string;
+  completed: boolean;
+  markerId: string | null;
 }
 
 /** POST /auth/consumer/signup */
