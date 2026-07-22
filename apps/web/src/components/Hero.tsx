@@ -24,7 +24,7 @@ export function Hero() {
             <p>Point your camera<br />at the marker</p>
           </div>
           <div className={styles.rewardCard} aria-hidden="true">
-            <span className={styles.spark}>✦</span>
+            <span className={styles.spark}>Reward</span>
             <div><small>Reward unlocked</small><strong>A treat for next time</strong></div>
           </div>
           <span className={styles.caption}>A small moment.<br />A reason to return.</span>

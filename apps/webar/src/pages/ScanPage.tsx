@@ -29,10 +29,10 @@ export function ScanPage() {
   const handleRecognized = async () => {
     if (!markerId) return;
     try {
-      const redemption = await api.createRedemption(markerId, sessionId());
+      const result = await api.createRedemption(markerId, sessionId());
       // Carry ?channel=app&appToken=... through so the reward screen knows this is the
       // authenticated in-app scan (Phase 2 — FR-4) and can auto-claim instead of asking again.
-      navigate(`/reward/${(redemption as any).id}${location.search}`);
+      navigate(`/reward/${result.redemption.id}${location.search}`);
     } catch (err) {
       setError(err instanceof ApiError ? err.message : "Something went wrong recording your visit");
     }

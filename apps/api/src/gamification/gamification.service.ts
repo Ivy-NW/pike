@@ -1,5 +1,5 @@
 import { Injectable } from "@nestjs/common";
-import type { User } from "@prisma/client";
+import type { Prisma, User } from "@prisma/client";
 import { PrismaService } from "../prisma/prisma.service";
 import { BADGE_DEFINITIONS } from "./badges";
 
@@ -7,6 +7,7 @@ import { BADGE_DEFINITIONS } from "./badges";
 const QUEST_XP_REWARD = 50;
 /** XP required per level, constant across levels — easy to make progressive later. */
 const XP_PER_LEVEL = 100;
+type GamificationDb = PrismaService | Prisma.TransactionClient;
 
 export interface LevelInfo {
   level: number;
@@ -41,8 +42,8 @@ export class GamificationService {
    * Called once a redemption is successfully claimed (FR-2's XP/streak/badges — Phase 2).
    * Streak increments at most once per UTC calendar day; XP is awarded on every claim.
    */
-  async awardForClaim(userId: string): Promise<AwardResult> {
-    const user = await this.prisma.user.findUniqueOrThrow({ where: { id: userId } });
+  async awardForClaim(userId: string, db: GamificationDb = this.prisma): Promise<AwardResult> {
+    const user = await db.user.findUniqueOrThrow({ where: { id: userId } });
 
     const today = this.utcDateOnly(new Date());
     const lastDay = user.lastQuestCompletedAt ? this.utcDateOnly(user.lastQuestCompletedAt) : null;
@@ -58,7 +59,7 @@ export class GamificationService {
     }
     const longestStreak = Math.max(user.longestStreak, currentStreak);
 
-    const updated = await this.prisma.user.update({
+    const updated = await db.user.update({
       where: { id: userId },
       data: {
         xp: { increment: QUEST_XP_REWARD },
@@ -68,17 +69,17 @@ export class GamificationService {
       },
     });
 
-    const totalCompleted = await this.prisma.redemption.count({
+    const totalCompleted = await db.redemption.count({
       where: { userId, status: { not: "rejected" } },
     });
 
-    const already = await this.prisma.userBadge.findMany({ where: { userId }, select: { badgeKey: true } });
+    const already = await db.userBadge.findMany({ where: { userId }, select: { badgeKey: true } });
     const earnedKeys = new Set(already.map((b) => b.badgeKey));
     const stats = { totalCompleted, currentStreak: updated.currentStreak };
     const toAward = BADGE_DEFINITIONS.filter((b) => !earnedKeys.has(b.key) && b.check(stats));
 
     if (toAward.length > 0) {
-      await this.prisma.userBadge.createMany({
+      await db.userBadge.createMany({
         data: toAward.map((b) => ({ userId, badgeKey: b.key })),
         skipDuplicates: true,
       });

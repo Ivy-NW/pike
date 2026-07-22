@@ -1,22 +1,14 @@
 import { useEffect, useState } from "react";
 import { View, Text, FlatList, StyleSheet, TouchableOpacity } from "react-native";
 import { router } from "expo-router";
+import type { UserQuestListItem } from "@pike/shared-types";
 import { api } from "@/lib/api";
 import { useTheme } from "@/theme";
-
-interface QuestListItem {
-  id: string;
-  name: string;
-  venueName: string;
-  rewardDescription: string;
-  completed: boolean;
-  markerId: string | null;
-}
 
 /** Quest list: available quests across venues, and which ones this user has completed. */
 export default function QuestsScreen() {
   const theme = useTheme();
-  const [quests, setQuests] = useState<QuestListItem[]>([]);
+  const [quests, setQuests] = useState<UserQuestListItem[]>([]);
 
   useEffect(() => {
     api.quests().then(setQuests).catch(() => setQuests([]));

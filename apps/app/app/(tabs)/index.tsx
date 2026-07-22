@@ -21,6 +21,7 @@ export default function HomeScreen() {
   }, []);
 
   const xpProgress = me ? me.xpIntoLevel / me.xpForNextLevel : 0;
+  const earnedBadgeCount = me ? me.badges.filter((badge) => badge.earnedAt).length : 0;
   const c = theme.colors;
 
   const styles = StyleSheet.create({
@@ -44,6 +45,19 @@ export default function HomeScreen() {
     xpTrack: { height: 8, borderRadius: 4, backgroundColor: c.surfaceContainerHighest, overflow: "hidden" },
     xpFill: { height: "100%", backgroundColor: c.primaryContainer, borderRadius: 4 },
     cardBody: { ...theme.font(theme.type.bodyMd), color: c.onSurfaceVariant, marginBottom: 12 },
+    progressGrid: { flexDirection: "row", gap: 8 },
+    progressItem: {
+      flex: 1,
+      minHeight: 74,
+      borderRadius: theme.radius.card,
+      backgroundColor: theme.mode === "dark" ? "rgba(180,197,255,0.08)" : c.surfaceContainer,
+      borderWidth: 1,
+      borderColor: c.surfaceContainerHighest,
+      padding: 10,
+      justifyContent: "space-between",
+    },
+    progressValue: { ...theme.font(theme.type.headlineSm), color: c.onSurface },
+    progressLabel: { ...theme.font(theme.type.labelSm), color: c.onSurfaceVariant },
     primaryButton: { backgroundColor: c.primaryContainer, borderRadius: theme.radius.card, padding: 14, alignItems: "center" },
     primaryButtonText: { ...theme.font(theme.type.labelCaps), color: c.onPrimaryContainer },
   });
@@ -73,6 +87,30 @@ export default function HomeScreen() {
           </View>
           <View style={styles.xpTrack}>
             <View style={[styles.xpFill, { width: `${Math.round(xpProgress * 100)}%` }]} />
+          </View>
+        </View>
+      )}
+
+      {me && (
+        <View style={styles.card}>
+          <Text style={styles.cardTitle}>Identity progress</Text>
+          <Text style={styles.cardBody}>Streaks and badges update when you claim verified quests.</Text>
+          <View style={styles.progressGrid}>
+            <View style={styles.progressItem}>
+              <MaterialIcons name="whatshot" size={20} color={c.secondary} />
+              <Text style={styles.progressValue}>{me.currentStreak}</Text>
+              <Text style={styles.progressLabel}>Current streak</Text>
+            </View>
+            <View style={styles.progressItem}>
+              <MaterialIcons name="timeline" size={20} color={c.primary} />
+              <Text style={styles.progressValue}>{me.longestStreak}</Text>
+              <Text style={styles.progressLabel}>Best streak</Text>
+            </View>
+            <View style={styles.progressItem}>
+              <MaterialIcons name="stars" size={20} color={c.secondary} />
+              <Text style={styles.progressValue}>{earnedBadgeCount}</Text>
+              <Text style={styles.progressLabel}>Badges earned</Text>
+            </View>
           </View>
         </View>
       )}
