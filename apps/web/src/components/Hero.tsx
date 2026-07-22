@@ -1,88 +1,33 @@
-import { CameraIcon } from "./icons";
+import Image from "next/image";
+import styles from "./Hero.module.css";
 
 const DASHBOARD_URL = process.env.NEXT_PUBLIC_DASHBOARD_URL ?? "http://localhost:3001";
 
-const technicalGrid = {
-  backgroundImage:
-    "linear-gradient(to right, color-mix(in srgb, var(--outline-variant) 40%, transparent) 1px, transparent 1px), linear-gradient(to bottom, color-mix(in srgb, var(--outline-variant) 40%, transparent) 1px, transparent 1px)",
-  backgroundSize: "40px 40px",
-} as const;
-
 export function Hero() {
   return (
-    <section className="section" style={{ paddingTop: 80, paddingBottom: 96, position: "relative", overflow: "hidden", ...technicalGrid }}>
-      <div className="container" style={{ display: "grid", gridTemplateColumns: "1.1fr 0.9fr", gap: 56, alignItems: "center", position: "relative" }}>
-        <div>
-          <span className="pill">
-            <span style={{ width: 8, height: 8, borderRadius: "50%", background: "var(--primary)" }} />
-            No app required to start
-          </span>
-          <h1 className="section-heading" style={{ maxWidth: 580, marginTop: 20, fontSize: "clamp(34px, 4.6vw, 52px)", lineHeight: 1.05 }}>
-            A visit to your favorite spot, turned into a <span style={{ color: "var(--primary)", fontStyle: "italic" }}>quest.</span>
-          </h1>
-          <p className="section-subheading" style={{ maxWidth: 480 }}>
-            Point your camera at a marker, complete the quest, and walk away with a reward —
-            right from your phone&apos;s browser, no download needed to try it.
-          </p>
-          <div style={{ display: "flex", alignItems: "center", gap: 20, marginTop: 34, flexWrap: "wrap" }}>
-            <a href="#download" className="btn btn-primary">
-              Download the app
-            </a>
-            <a href={`${DASHBOARD_URL}/register`} className="btn-text" style={{ fontWeight: 600 }}>
-              Own a business? Create a quest →
-            </a>
+    <section className={styles.hero} aria-labelledby="hero-heading">
+      <div className={`container ${styles.grid}`}>
+        <div className={styles.copy}>
+          <h1 id="hero-heading">Make every visit worth <em>coming back for.</em></h1>
+          <p className={styles.lede}>Create playful, rewarding moments inside your venue. Players scan, play and unlock something worth returning for—straight from their phone.</p>
+          <div className={styles.actions}>
+            <a href={`${DASHBOARD_URL}/register`} className="btn btn-primary">Create your first quest</a>
+            <a href="#how-it-works" className="btn btn-link">See the player experience <span aria-hidden="true">↓</span></a>
           </div>
+          <p className={styles.note}><span aria-hidden="true">●</span> No app needed for the first play.</p>
         </div>
-
-        <div style={{ display: "flex", justifyContent: "center" }}>
-          <div
-            style={{
-              width: 280,
-              borderRadius: 40,
-              border: "10px solid var(--slate-gray)",
-              background: "var(--slate-gray)",
-              boxShadow: "0 30px 60px -20px rgba(15,23,42,0.35)",
-            }}
-          >
-            <div
-              style={{
-                borderRadius: 30,
-                overflow: "hidden",
-                background: "linear-gradient(160deg,#1e293b,#0f172a)",
-                aspectRatio: "9 / 18",
-                position: "relative",
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-              }}
-            >
-              <div
-                style={{
-                  width: 150,
-                  height: 150,
-                  borderRadius: 24,
-                  border: "2.5px solid var(--primary-container)",
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "center",
-                  boxShadow: "0 0 0 8px rgba(37,99,235,0.12)",
-                }}
-              >
-                <CameraIcon size={40} color="#93c5fd" />
-              </div>
-              <span
-                style={{
-                  position: "absolute",
-                  bottom: 26,
-                  color: "#cbd5e1",
-                  fontSize: 12,
-                  letterSpacing: "0.02em",
-                }}
-              >
-                Point your camera at the marker
-              </span>
-            </div>
+        <div className={styles.visual}>
+          <Image src="/images/landing/hero-venue.png" alt="A visitor discovering a quest marker at a welcoming café" fill priority sizes="(max-width: 760px) 100vw, 58vw" className={styles.photo} />
+          <div className={styles.scanCard} aria-hidden="true">
+            <div className={styles.scanTop}><span>PIKE quest</span><b>Live</b></div>
+            <div className={styles.marker}><span /><span /><span /><span /><i /></div>
+            <p>Point your camera<br />at the marker</p>
           </div>
+          <div className={styles.rewardCard} aria-hidden="true">
+            <span className={styles.spark}>✦</span>
+            <div><small>Reward unlocked</small><strong>A treat for next time</strong></div>
+          </div>
+          <span className={styles.caption}>A small moment.<br />A reason to return.</span>
         </div>
       </div>
     </section>
