@@ -32,7 +32,7 @@ export function PlayerJourney() {
         <Reveal variant="scale" delay={150} className={styles.journeyVisual}>
           <div className={styles.phoneSequence} aria-label="A quest marker is scanned, the challenge completes, and a reward appears">
             <div className={styles.phoneTop}><span>9:41</span><span>● ● ●</span></div>
-            <div className={styles.questScene}><span className={styles.questHint}>Find the mark</span><div className={styles.reticle}><i /><i /><i /><i /><b /></div><div className={styles.progress}><span /></div><p className={styles.progressText}>Quest in progress</p><div className={styles.reveal}><span>✦</span><small>Reward unlocked</small><strong>Your next visit<br />just got better.</strong><em>Save reward</em></div></div>
+            <div className={styles.questScene}><span className={styles.questHint}>Find the mark</span><div className={styles.reticle}><i /><i /><i /><i /><b /></div><div className={styles.progress}><span /></div><p className={styles.progressText}>Quest in progress</p><div className={styles.reveal}><span>Reward</span><small>Reward unlocked</small><strong>Your next visit<br />just got better.</strong><em>Save reward</em></div></div>
           </div>
           <div className={styles.sequenceNote}><span>00:18</span><p>That’s all it takes to turn curiosity into a reason to come back.</p></div>
         </Reveal>
