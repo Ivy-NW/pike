@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { useParams, useSearchParams } from "react-router-dom";
 import { api, ApiError } from "../lib/api";
 import { clearConsumerToken, getConsumerToken, setConsumerToken } from "../lib/auth";
+import type { ClaimRewardResponse } from "@pike/shared-types";
 
 interface RedemptionDetail {
   id: string;
@@ -60,7 +61,7 @@ export function RewardRevealPage() {
     setClaiming(true);
     setError(null);
     try {
-      const result: any = await api.claimReward(redemptionId, { channel });
+      const result: ClaimRewardResponse = await api.claimReward(redemptionId, { channel });
       setAward(result.award ?? null);
       setClaimed(true);
     } catch (err) {
