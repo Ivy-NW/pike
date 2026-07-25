@@ -50,6 +50,21 @@ export class UsersService {
     }));
   }
 
+  /**
+   * Store-compliance account deletion (PRD §13, UI §7.5): a real "delete my account" that removes
+   * the person, not just their login. Deletes the user row — XP, streaks, and badges go with it
+   * (badges cascade via UserBadge.onDelete: Cascade) — and de-identifies their completion records
+   * by nulling userId rather than deleting them, so the FR-13 fraud/audit trail and the immutable
+   * on-chain attestation hashes stay intact but no longer link back to a person. One transaction so
+   * a partial failure can't leave a user deleted while their redemptions still name them.
+   */
+  async deleteAccount(userId: string) {
+    await this.prisma.$transaction([
+      this.prisma.redemption.updateMany({ where: { userId }, data: { userId: null } }),
+      this.prisma.user.delete({ where: { id: userId } }),
+    ]);
+  }
+
   /** Available quests platform-wide, flagged with whether this user already completed them. */
   async questList(userId: string) {
     const [liveQuests, myRedemptions] = await Promise.all([
