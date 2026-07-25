@@ -53,7 +53,13 @@ export function RewardRevealPage() {
 
   useEffect(() => {
     if (!redemptionId) return;
-    api.getRedemption(redemptionId).then(setRedemption as any).catch(() => setError("Could not load your reward"));
+    api
+      .getRedemption(redemptionId)
+      .then(setRedemption as any)
+      .catch((err) => {
+        const detail = err instanceof ApiError ? `${err.statusCode} ${err.message}` : err instanceof Error ? err.message : String(err);
+        setError(`Could not load your reward — ${detail}`);
+      });
   }, [redemptionId]);
 
   const claimNow = async () => {

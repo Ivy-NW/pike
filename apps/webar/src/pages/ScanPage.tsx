@@ -34,7 +34,8 @@ export function ScanPage() {
       // authenticated in-app scan (Phase 2 — FR-4) and can auto-claim instead of asking again.
       navigate(`/reward/${result.redemption.id}${location.search}`);
     } catch (err) {
-      setError(err instanceof ApiError ? err.message : "Something went wrong recording your visit");
+      const detail = err instanceof ApiError ? `${err.statusCode} ${err.message}` : err instanceof Error ? err.message : String(err);
+      setError(`Something went wrong recording your visit — ${detail}`);
     }
   };
 
