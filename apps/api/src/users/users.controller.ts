@@ -1,4 +1,4 @@
-import { Controller, Get, Req, UseGuards } from "@nestjs/common";
+import { Controller, Delete, Get, HttpCode, Req, UseGuards } from "@nestjs/common";
 import { ConsumerAuthGuard } from "../auth/guards/consumer-auth.guard";
 import { UsersService } from "./users.service";
 
@@ -24,5 +24,13 @@ export class UsersController {
   @UseGuards(ConsumerAuthGuard)
   async quests(@Req() req: any) {
     return this.users.questList(req.userId);
+  }
+
+  /** Store-compliance in-app account deletion (PRD §13). Removes the authenticated user's account. */
+  @Delete("me")
+  @UseGuards(ConsumerAuthGuard)
+  @HttpCode(204)
+  async deleteAccount(@Req() req: any) {
+    await this.users.deleteAccount(req.userId);
   }
 }
