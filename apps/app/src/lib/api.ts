@@ -1,5 +1,7 @@
 import type {
   ConsumerAuthResponse,
+  LeaderboardResponse,
+  MacroQuestProgress,
   SigninConsumerRequest,
   SignupConsumerRequest,
   UserProfile,
@@ -24,6 +26,8 @@ async function request<T>(path: string, init?: RequestInit): Promise<T> {
     const body = await res.json().catch(() => ({}));
     throw new Error(body.message ?? "Request failed");
   }
+  // 204 No Content (e.g. account deletion) has no body to parse.
+  if (res.status === 204) return undefined as T;
   return res.json();
 }
 
@@ -41,4 +45,11 @@ export const api = {
       method: "POST",
       body: JSON.stringify(body),
     }),
+  // Store-compliance account deletion (PRD §13). Returns 204; the caller then clears the token.
+  deleteAccount: () => request<void>("/users/me", { method: "DELETE" }),
+  // Phase 3 — FR-7: reputational leaderboards.
+  leaderboardGlobal: () => request<LeaderboardResponse>("/leaderboard/global"),
+  leaderboardVenue: (venueId: string) => request<LeaderboardResponse>(`/leaderboard/venue/${venueId}`),
+  // Phase 3 — FR-5: the live macro-quest + this user's progress (null if none live).
+  macroQuest: () => request<MacroQuestProgress | null>("/users/me/macro-quest"),
 };
