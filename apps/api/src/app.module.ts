@@ -16,6 +16,8 @@ import { GamificationModule } from "./gamification/gamification.module";
 import { AdminGateModule } from "./admin-gate/admin-gate.module";
 import { WaitlistModule } from "./waitlist/waitlist.module";
 import { AttestationModule } from "./attestation/attestation.module";
+import { LeaderboardModule } from "./leaderboard/leaderboard.module";
+import { MacroQuestModule } from "./macro-quest/macro-quest.module";
 
 @Module({
   imports: [
@@ -36,6 +38,8 @@ import { AttestationModule } from "./attestation/attestation.module";
     AdminGateModule,
     WaitlistModule,
     AttestationModule,
+    LeaderboardModule,
+    MacroQuestModule,
   ],
 })
 export class AppModule {}
