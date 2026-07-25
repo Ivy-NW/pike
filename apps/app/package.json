@@ -4,10 +4,10 @@
   "private": true,
   "main": "index.js",
   "scripts": {
-    "start": "cross-env EXPO_OFFLINE=1 REACT_NATIVE_PACKAGER_HOSTNAME=192.168.150.123 expo start",
-    "android": "cross-env EXPO_OFFLINE=1 REACT_NATIVE_PACKAGER_HOSTNAME=192.168.150.123 expo start --android",
-    "ios": "cross-env EXPO_OFFLINE=1 REACT_NATIVE_PACKAGER_HOSTNAME=192.168.150.123 expo start --ios",
-    "web": "cross-env EXPO_OFFLINE=1 REACT_NATIVE_PACKAGER_HOSTNAME=192.168.150.123 expo start --web"
+    "start": "cross-env EXPO_OFFLINE=1 REACT_NATIVE_PACKAGER_HOSTNAME=172.20.10.5 expo start",
+    "android": "cross-env EXPO_OFFLINE=1 REACT_NATIVE_PACKAGER_HOSTNAME=172.20.10.5 expo start --android",
+    "ios": "cross-env EXPO_OFFLINE=1 REACT_NATIVE_PACKAGER_HOSTNAME=172.20.10.5 expo start --ios",
+    "web": "cross-env EXPO_OFFLINE=1 REACT_NATIVE_PACKAGER_HOSTNAME=172.20.10.5 expo start --web"
   },
   "dependencies": {
     "@expo-google-fonts/geist": "^0.4.2",

@@ -8,15 +8,27 @@ export default function QuestDetailPage() {
   const [quest, setQuest] = useState<any>(null);
   const [stats, setStats] = useState<any>(null);
   const [error, setError] = useState<string | null>(null);
+  const [statsError, setStatsError] = useState<string | null>(null);
 
   useEffect(() => {
     if (!questId) return;
-    Promise.all([api.getQuest(questId), api.getQuestStats(questId)])
-      .then(([q, s]) => {
-        setQuest(q);
-        setStats(s);
-      })
-      .catch((err) => setError(err instanceof ApiError ? err.message : "Could not load quest"));
+    let cancelled = false;
+    setError(null);
+    setStatsError(null);
+
+    api
+      .getQuest(questId)
+      .then((q) => { if (!cancelled) setQuest(q); })
+      .catch((err) => { if (!cancelled) setError(err instanceof ApiError ? err.message : "Could not load quest"); });
+
+    api
+      .getQuestStats(questId)
+      .then((s) => { if (!cancelled) setStats(s); })
+      .catch((err) => { if (!cancelled) setStatsError(err instanceof ApiError ? err.message : "Could not load redemption stats"); });
+
+    return () => {
+      cancelled = true;
+    };
   }, [questId]);
 
   if (error) return <p style={{ color: "var(--error)" }}>{error}</p>;
@@ -38,6 +50,13 @@ export default function QuestDetailPage() {
         <div className="card-title">Reward</div>
         <p>{quest.rewardDescription} ({quest.rewardTier === "high_value" ? "app-only claim" : "unauthenticated web claim OK"})</p>
       </div>
+
+      {statsError && !stats && (
+        <div className="card" style={{ maxWidth: 640, marginBottom: 16 }}>
+          <div className="card-title">Redemptions</div>
+          <p className="card-subtext" style={{ color: "var(--error)" }}>{statsError}</p>
+        </div>
+      )}
 
       {stats && (
         <div className="card" style={{ maxWidth: 640, marginBottom: 16 }}>
