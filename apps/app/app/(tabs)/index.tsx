@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
 import { router } from "expo-router";
 import { MaterialIcons } from "@expo/vector-icons";
-import type { UserProfile } from "@pike/shared-types";
+import type { MacroQuestProgress, UserProfile } from "@pike/shared-types";
 import { api } from "@/lib/api";
 import { useTheme } from "@/theme";
 import { Logo } from "@/components/Logo";
@@ -13,11 +13,13 @@ export default function HomeScreen() {
   const [me, setMe] = useState<UserProfile | null>(null);
   const [walletCount, setWalletCount] = useState<number | null>(null);
   const [questCount, setQuestCount] = useState<number | null>(null);
+  const [macro, setMacro] = useState<MacroQuestProgress | null>(null);
 
   useEffect(() => {
     api.me().then(setMe).catch(() => {});
     api.wallet().then((w) => setWalletCount(w.length)).catch(() => setWalletCount(0));
     api.quests().then((q) => setQuestCount(q.filter((x) => !x.completed).length)).catch(() => setQuestCount(0));
+    api.macroQuest().then(setMacro).catch(() => {});
   }, []);
 
   const xpProgress = me ? me.xpIntoLevel / me.xpForNextLevel : 0;
@@ -60,6 +62,12 @@ export default function HomeScreen() {
     progressLabel: { ...theme.font(theme.type.labelSm), color: c.onSurfaceVariant },
     primaryButton: { backgroundColor: c.primaryContainer, borderRadius: theme.radius.card, padding: 14, alignItems: "center" },
     primaryButtonText: { ...theme.font(theme.type.labelCaps), color: c.onPrimaryContainer },
+    macroDots: { flexDirection: "row", gap: 6, marginTop: 12, flexWrap: "wrap" },
+    macroDot: { flexDirection: "row", alignItems: "center", gap: 4 },
+    macroDotLabel: { ...theme.font(theme.type.labelSm), color: c.onSurfaceVariant },
+    macroHint: { ...theme.font(theme.type.labelSm), color: c.onSurfaceVariant, marginTop: 12 },
+    rewardRow: { flexDirection: "row", alignItems: "center", gap: 6, marginTop: 12 },
+    rewardText: { ...theme.font(theme.type.labelSm), color: c.secondary, flex: 1 },
   });
 
   return (
@@ -128,7 +136,42 @@ export default function HomeScreen() {
         </TouchableOpacity>
       </View>
 
-      {/* TODO(phase-3): macro-quest progress renders here. */}
+      {/* Phase 3 — FR-5: multi-venue macro-quest tracker. Progress bar is Pike Blue; the reward
+          only shows in gold once actually unlocked (UI §2 — gold is reserved for rewards). */}
+      {macro && (
+        <View style={styles.card}>
+          <View style={styles.xpHeaderRow}>
+            <Text style={styles.cardTitle}>{macro.name}</Text>
+            <Text style={styles.xpLabel}>{macro.visitedCount} / {macro.requiredVenues} venues</Text>
+          </View>
+          <Text style={styles.cardBody}>{macro.description}</Text>
+          <View style={styles.xpTrack}>
+            <View style={[styles.xpFill, { width: `${Math.min(100, Math.round((macro.visitedCount / macro.requiredVenues) * 100))}%` }]} />
+          </View>
+          <View style={styles.macroDots}>
+            {macro.venues.map((v) => (
+              <View key={v.id} style={styles.macroDot}>
+                <MaterialIcons
+                  name={v.visited ? "check-circle" : "radio-button-unchecked"}
+                  size={14}
+                  color={v.visited ? c.primary : c.outline}
+                />
+                <Text style={styles.macroDotLabel}>{v.name}</Text>
+              </View>
+            ))}
+          </View>
+          {macro.completed ? (
+            <View style={styles.rewardRow}>
+              <MaterialIcons name="emoji-events" size={18} color={c.secondary} />
+              <Text style={styles.rewardText}>Reward unlocked — {macro.reward.description}</Text>
+            </View>
+          ) : (
+            <Text style={styles.macroHint}>
+              Visit {macro.requiredVenues - macro.visitedCount} more to unlock the top reward
+            </Text>
+          )}
+        </View>
+      )}
     </View>
   );
 }
