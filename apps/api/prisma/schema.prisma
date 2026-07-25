@@ -96,8 +96,9 @@ model Venue {
   address    String?
   createdAt  DateTime @default(now())
 
-  quests  Quest[]
-  markers Marker[]
+  quests           Quest[]
+  markers          Marker[]
+  macroQuestVenues MacroQuestVenue[]
 
   @@index([businessId])
   @@map("venues")
@@ -242,8 +243,9 @@ model User {
   lastQuestCompletedAt DateTime?
   createdAt            DateTime  @default(now())
 
-  redemptions Redemption[]
-  badges      UserBadge[]
+  redemptions           Redemption[]
+  badges                UserBadge[]
+  macroQuestCompletions MacroQuestCompletion[]
 
   @@map("users")
 }
@@ -297,4 +299,64 @@ model WaitlistSignup {
   createdAt DateTime         @default(now())
 
   @@map("waitlist_signups")
+}
+
+enum MacroQuestStatus {
+  draft
+  live
+  ended
+}
+
+/// Phase 3 — FR-5: a multi-venue macro-quest. Visit `requiredVenues` of the participating venues
+/// within [startsAt, endsAt] to unlock the largest reward tier. One live macro-quest at a time in v1.
+/// Per-user progress is derived from redemptions at the participating venues, not stored — only the
+/// terminal completion is recorded (MacroQuestCompletion), consistent with ADR 0005's award model.
+model MacroQuest {
+  id                String           @id @default(uuid())
+  name              String
+  description       String
+  /// How many distinct participating venues a user must visit within the window to complete it.
+  requiredVenues    Int
+  rewardType        RewardType
+  rewardDescription String
+  rewardTier        RewardTier       @default(high_value)
+  startsAt          DateTime
+  endsAt            DateTime
+  status            MacroQuestStatus @default(draft)
+  createdAt         DateTime         @default(now())
+  updatedAt         DateTime         @updatedAt
+
+  venues      MacroQuestVenue[]
+  completions MacroQuestCompletion[]
+
+  @@index([status])
+  @@map("macro_quests")
+}
+
+/// The set of venues that count toward a macro-quest (the "5 partner venues").
+model MacroQuestVenue {
+  id           String     @id @default(uuid())
+  macroQuestId String
+  macroQuest   MacroQuest @relation(fields: [macroQuestId], references: [id], onDelete: Cascade)
+  venueId      String
+  venue        Venue      @relation(fields: [venueId], references: [id], onDelete: Cascade)
+
+  @@unique([macroQuestId, venueId])
+  @@index([macroQuestId])
+  @@map("macro_quest_venues")
+}
+
+/// Terminal record that a user reached `requiredVenues` within the window. The unique constraint
+/// makes the unlock idempotent (a repeat check never double-awards), per ADR 0005.
+model MacroQuestCompletion {
+  id           String     @id @default(uuid())
+  macroQuestId String
+  macroQuest   MacroQuest @relation(fields: [macroQuestId], references: [id], onDelete: Cascade)
+  userId       String
+  user         User       @relation(fields: [userId], references: [id], onDelete: Cascade)
+  completedAt  DateTime   @default(now())
+
+  @@unique([macroQuestId, userId])
+  @@index([userId])
+  @@map("macro_quest_completions")
 }
