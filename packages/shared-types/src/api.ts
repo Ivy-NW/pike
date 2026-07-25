@@ -67,6 +67,51 @@ export interface UserQuestListItem {
   markerId: string | null;
 }
 
+/** Phase 3 — FR-7: reputational leaderboards (no monetary value, no shared currency). */
+export interface LeaderboardEntry {
+  rank: number;
+  userId: string;
+  username: string;
+  /** The ranking metric: total XP on the global board, completion count on a venue board. */
+  score: number;
+  level: number;
+  /** True for the requesting user's own row, so clients can highlight it. */
+  isMe: boolean;
+}
+
+/** GET /leaderboard/global and /leaderboard/venue/:venueId */
+export interface LeaderboardResponse {
+  scope: "global" | "venue";
+  venueId: string | null;
+  entries: LeaderboardEntry[];
+  /** The requesting user's own standing, included even when they fall outside the top-N. */
+  me: LeaderboardEntry | null;
+}
+
+/** Phase 3 — FR-5: one participating venue's state within a macro-quest, for the requesting user. */
+export interface MacroQuestVenueProgress {
+  /** Venue id. */
+  id: string;
+  name: string;
+  /** True if the user has a non-rejected completion at this venue within the macro-quest window. */
+  visited: boolean;
+}
+
+/** GET /users/me/macro-quest — the live macro-quest and this user's derived progress, or null if none. */
+export interface MacroQuestProgress {
+  id: string;
+  name: string;
+  description: string;
+  requiredVenues: number;
+  visitedCount: number;
+  completed: boolean;
+  completedAt: string | null;
+  startsAt: string;
+  endsAt: string;
+  reward: { type: RewardType; description: string; tier: RewardTier };
+  venues: MacroQuestVenueProgress[];
+}
+
 /** POST /auth/consumer/signup */
 export interface SignupConsumerRequest {
   phone: string;
