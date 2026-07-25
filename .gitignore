@@ -9,3 +9,6 @@ build/
 .DS_Store
 coverage/
 apps/api/uploads/
+packages/contracts/artifacts/
+packages/contracts/cache/
+packages/contracts/typechain-types/

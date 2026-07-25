@@ -51,6 +51,22 @@ enum MarkerStatus {
   failed
 }
 
+/// On-chain attestation addendum (docs/PIKE_onchain_attestation_PRD.md), FR-A1-A7.
+enum AttestationStatus {
+  pending
+  queued
+  batched
+  confirmed
+  failed
+}
+
+enum BatchStatus {
+  building
+  submitting
+  confirmed
+  failed
+}
+
 model Business {
   id                    String        @id @default(uuid())
   name                  String
@@ -150,10 +166,63 @@ model Redemption {
   flagReason   String?
   createdAt    DateTime          @default(now())
 
+  /// On-chain attestation addendum, FR-A2: keccak256 of {id, markerId, venueId, questId,
+  /// sessionId, userAgent, ipHash, createdAt}. Computed synchronously at row-creation time —
+  /// see RedemptionsService.create() — so it is always set before the row is ever queued.
+  attestationHash    String?
+  attestationStatus  AttestationStatus @default(pending)
+  attestationBatchId String?
+  attestationBatch   AttestationBatch? @relation(fields: [attestationBatchId], references: [id])
+  /// FR-A4: serialized merkletreejs proof, sufficient to verify this row's inclusion in its
+  /// batch's on-chain root independently of the rest of the batch.
+  merkleProof        Json?
+  merkleLeafIndex    Int?
+
   @@index([questId, createdAt])
   @@index([venueId, questId, createdAt])
   @@index([sessionId])
+  @@index([attestationStatus])
+  @@index([attestationBatchId])
   @@map("redemptions")
+}
+
+/// On-chain attestation addendum, FR-A3/FR-A4/FR-A6: one row per Merkle-batch write to
+/// Avalanche. Redemptions link back via Redemption.attestationBatchId.
+model AttestationBatch {
+  id            String      @id @default(uuid())
+  status        BatchStatus @default(building)
+  merkleRoot    String?
+  itemCount     Int
+  txHash        String?     @unique
+  chainId       Int?
+  gasUsed       BigInt?
+  gasCostWei    BigInt?
+  windowStartAt DateTime
+  windowEndAt   DateTime?
+  submittedAt   DateTime?
+  confirmedAt   DateTime?
+  retryCount    Int         @default(0)
+  lastError     String?
+  createdAt     DateTime    @default(now())
+  updatedAt     DateTime    @updatedAt
+
+  redemptions Redemption[]
+
+  @@index([status])
+  @@map("attestation_batches")
+}
+
+/// On-chain attestation addendum, FR-A3: batch window/threshold are admin-editable at
+/// runtime (no deploy needed) — single-row table, id is always 1. Env vars only seed this
+/// row's initial values on first migration; AttestationConfigService reads/caches this row.
+model AttestationConfig {
+  id                  Int      @id @default(1)
+  batchWindowMs       Int
+  batchCountThreshold Int
+  maxRetries          Int      @default(5)
+  updatedAt           DateTime @updatedAt
+
+  @@map("attestation_config")
 }
 
 /// Consumer accounts. FR-1: same credential across WebAR claim and app install — our own

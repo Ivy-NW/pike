@@ -26,6 +26,7 @@ The current product and design source documents are:
 | [0003](0003-use-one-shared-backend-with-postgres-and-redis.md) | Accepted | 2026-07-21 | Use one shared backend with Postgres and Redis |
 | [0004](0004-use-8th-wall-backed-webar-marker-recognition-for-v1.md) | Accepted | 2026-07-21 | Use 8th Wall backed WebAR marker recognition for v1 |
 | [0005](0005-award-identity-progress-on-authenticated-claims.md) | Accepted | 2026-07-22 | Award identity progress on authenticated claims |
+| [0006](0006-attest-completion-hashes-to-avalanche-c-chain.md) | Accepted | 2026-07-25 | Attest completion hashes to Avalanche C-Chain |
 
 ## Suggested Next ADRs
 

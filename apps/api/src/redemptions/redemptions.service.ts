@@ -1,25 +1,44 @@
-import { createHash } from "node:crypto";
-import { ForbiddenException, Injectable, NotFoundException } from "@nestjs/common";
+import { createHash, randomUUID } from "node:crypto";
+import { ForbiddenException, Injectable, Logger, NotFoundException } from "@nestjs/common";
 import type { Prisma } from "@prisma/client";
 import { PrismaService } from "../prisma/prisma.service";
 import { RedemptionCapService } from "../redis/redemption-cap.service";
 import { MarkersService } from "../markers/markers.service";
 import { GamificationService } from "../gamification/gamification.service";
+import { AttestationHashService } from "../attestation/attestation-hash.service";
+import { AttestationQueueService } from "../attestation/attestation-queue.service";
 
 const REPEAT_SCAN_WINDOW_MS = 5 * 60 * 1000;
 type RedemptionsDb = PrismaService | Prisma.TransactionClient;
 
 @Injectable()
 export class RedemptionsService {
+  private readonly logger = new Logger(RedemptionsService.name);
+
   constructor(
     private readonly prisma: PrismaService,
     private readonly caps: RedemptionCapService,
     private readonly markers: MarkersService,
     private readonly gamification: GamificationService,
+    private readonly attestationHash: AttestationHashService,
+    private readonly attestationQueue: AttestationQueueService,
   ) {}
 
   private hashIp(ip: string): string {
     return createHash("sha256").update(ip).digest("hex");
+  }
+
+  /**
+   * Fire-and-forget: never awaited by create(), so it cannot add latency to the
+   * reward-reveal response (on-chain attestation addendum, FR-A1 / "zero added latency").
+   * If the Redis enqueue itself fails, the row's attestationHash is already durably in
+   * Postgres — AttestationBatchService's reconciliation sweep picks it up regardless.
+   */
+  private attestAsync(redemptionId: string): void {
+    void this.attestationQueue
+      .enqueue(redemptionId)
+      .then(() => this.prisma.redemption.update({ where: { id: redemptionId }, data: { attestationStatus: "queued" } }))
+      .catch((err) => this.logger.error(`Attestation enqueue failed for redemption ${redemptionId}`, err));
   }
 
   private async safeUser(userId: string, db: RedemptionsDb = this.prisma) {
@@ -47,6 +66,24 @@ export class RedemptionsService {
       ipHash: this.hashIp(ip),
     };
 
+    // On-chain attestation addendum, FR-A1/FR-A2: id is generated client-side (rather than
+    // left to Prisma's default) so the full hash — including the row's own id — can be
+    // computed in one pass before create(). Every branch below attests identically
+    // (Decision: attest every completion, not just accepted ones — see FR-A1 and the FR-13
+    // comment below, "log the completion signal regardless of outcome").
+    const redemptionId = randomUUID();
+    const createdAt = new Date();
+    const attestationHash = this.attestationHash.computeLeafHash({
+      redemptionId,
+      markerId,
+      venueId: venue.id,
+      questId: quest.id,
+      sessionId,
+      userAgent,
+      ipHash: deviceSignal.ipHash,
+      createdAt,
+    });
+
     // FR-13: log the completion signal regardless of outcome, so rejected/flagged attempts
     // are still visible to anti-gaming review — this is what feeds the admin oversight view.
     const recentSameSession = await this.prisma.redemption.count({
@@ -61,14 +98,18 @@ export class RedemptionsService {
     if (quest.expiresAt && quest.expiresAt < new Date()) {
       const redemption = await this.prisma.redemption.create({
         data: {
+          id: redemptionId,
           markerId,
           questId: quest.id,
           venueId: venue.id,
           status: "rejected",
           flagReason: "quest_expired",
+          createdAt,
+          attestationHash,
           ...deviceSignal,
         },
       });
+      this.attestAsync(redemption.id);
       return { redemption, capRemaining: 0, scanCountThisSession };
     }
 
@@ -77,28 +118,36 @@ export class RedemptionsService {
       await this.caps.decrement(venue.id, quest.id);
       const redemption = await this.prisma.redemption.create({
         data: {
+          id: redemptionId,
           markerId,
           questId: quest.id,
           venueId: venue.id,
           status: "rejected",
           flagReason: "redemption_cap_reached",
+          createdAt,
+          attestationHash,
           ...deviceSignal,
         },
       });
+      this.attestAsync(redemption.id);
       return { redemption, capRemaining: 0, scanCountThisSession };
     }
 
     const isRepeatScan = recentSameSession > 0;
     const redemption = await this.prisma.redemption.create({
       data: {
+        id: redemptionId,
         markerId,
         questId: quest.id,
         venueId: venue.id,
         status: isRepeatScan ? "flagged" : "claimed",
         flagReason: isRepeatScan ? "repeat_scan_same_session" : null,
+        createdAt,
+        attestationHash,
         ...deviceSignal,
       },
     });
+    this.attestAsync(redemption.id);
 
     return { redemption, capRemaining: Math.max(0, quest.maxRedemptionsPerDay - count), scanCountThisSession };
   }
