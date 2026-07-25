@@ -33,6 +33,20 @@ Phase 2 identity depth is in progress and has a working first slice:
 | Authenticated in-app scan | Implemented for flow | App opens WebAR in a WebView with the app identity token; WebAR auto-claims through the app channel |
 | Claim idempotency | Implemented | Repeat claims by the same user return 0 XP instead of double-awarding |
 
+## Phase 3 Status
+
+Phase 3 (macro-quest + leaderboard) has started with the leaderboard slice:
+
+| Area | Status | Notes |
+|---|---|---|
+| Leaderboard — global | Implemented | `GET /leaderboard/global` ranks users by XP (FR-7). Stands in for the PRD's "city" board until venues carry structured city data — same ranking logic, different WHERE clause |
+| Leaderboard — venue | Implemented | `GET /leaderboard/venue/:venueId` ranks users by completion count at a venue; excludes rejected + anonymized (account-deleted) redemptions |
+| Leaderboard — app | Implemented | `app/leaderboard.tsx` (global board, caller's row highlighted in Pike Blue — never gold, per UI §2), reached from Profile |
+| Macro-quest — backend | Implemented | `GET /users/me/macro-quest` (FR-5). New `MacroQuest`/`MacroQuestVenue`/`MacroQuestCompletion` models; progress is DERIVED from redemptions at participating venues within the window; reaching `requiredVenues` records an idempotent completion (ADR 0005). **Migration `20260725120000_add_macro_quest` is prepared but NOT yet applied to Neon** — run `prisma migrate deploy` (or `migrate dev`) before this endpoint works at runtime |
+| Macro-quest — app | Implemented | Home shows a macro-quest tracker (progress bar + per-venue check dots in Pike Blue; reward shown in gold only once unlocked). `seed:phase2` now seeds a live 2-of-3-venue macro-quest |
+
+Ranking + progress logic unit-tested (`leaderboard.service.spec.ts`, `macro-quest.service.spec.ts`). Full apps/api suite: 33 passing.
+
 ## Current Decisions
 
 - [ADR 0002](adr/0002-deliver-phase-1-as-a-connected-core-platform.md): Phase 1 is one connected core platform.
@@ -44,7 +58,7 @@ Phase 2 identity depth is in progress and has a working first slice:
 - Test the authenticated in-app scan on an Android emulator or physical device with camera permissions.
 - Confirm Redis connectivity or add a local Redis fallback for development.
 - Seed a small known data set for Phase 2 demos: one user, one live quest, one ready marker, one unclaimed redemption.
-- Add account deletion before store submission.
+- ~~Add account deletion before store submission.~~ Done (2026-07-25) — `DELETE /users/me` (ConsumerAuthGuard, 204) deletes the user (XP/streak inline, badges via cascade) and **anonymizes** their redemptions (nulls `userId`) so the FR-13 audit trail and on-chain attestation hashes survive de-identified. Wired to the Profile "Delete my account" button behind a destructive confirm. Unit-tested (`users.service.spec.ts`). Web-fallback deletion path (PRD §13, Google-acceptable) still outstanding.
 - Decide whether Phase 2 needs an XP transaction ledger or whether the direct user XP counter is enough until later.
-- Keep Phase 3 macro-quest and leaderboard work out of the current Phase 2 slice unless explicitly reprioritized.
+- Phase 3 core done (leaderboard + macro-quest, 2026-07-25). **Apply the `20260725120000_add_macro_quest` migration to Neon** (`prisma migrate deploy`) — the macro-quest endpoint returns 500 until then. Remaining Phase 3 polish: a city-scoped leaderboard once venues carry structured city data; and deciding how the macro-quest's unlocked reward enters the wallet (currently completion is recorded but not yet materialized as a claimable reward).
 
