@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { View, Text, StyleSheet, TouchableOpacity, FlatList } from "react-native";
+import { View, Text, StyleSheet, TouchableOpacity, FlatList, Alert } from "react-native";
 import { router } from "expo-router";
 import { MaterialIcons } from "@expo/vector-icons";
 import type { UserProfile } from "@pike/shared-types";
@@ -23,6 +23,32 @@ export default function ProfileScreen() {
   const logOut = async () => {
     await clearIdentityToken();
     router.replace("/login");
+  };
+
+  // App Store guideline 5.1.1(v): real in-app account deletion, gated behind an explicit
+  // destructive confirmation. On success the account (XP/streak/badges) is gone server-side,
+  // so we clear the local token and send the user back to login.
+  const deleteAccount = () => {
+    Alert.alert(
+      "Delete account?",
+      "This permanently deletes your PIKE account, including your XP, streak, and badges. This can't be undone.",
+      [
+        { text: "Cancel", style: "cancel" },
+        {
+          text: "Delete",
+          style: "destructive",
+          onPress: async () => {
+            try {
+              await api.deleteAccount();
+              await clearIdentityToken();
+              router.replace("/login");
+            } catch {
+              Alert.alert("Couldn't delete account", "Something went wrong. Please try again.");
+            }
+          },
+        },
+      ],
+    );
   };
 
   const c = theme.colors;
@@ -89,6 +115,18 @@ export default function ProfileScreen() {
     dangerButtonText: { ...theme.font(theme.type.labelCaps), color: c.error },
     linkButton: { padding: 14, alignItems: "center" },
     linkText: { ...theme.font(theme.type.labelSm), color: c.outline },
+    navRow: {
+      flexDirection: "row",
+      alignItems: "center",
+      gap: 12,
+      backgroundColor: theme.mode === "dark" ? "rgba(30,41,59,0.7)" : c.surfaceContainerLowest,
+      borderRadius: theme.radius.card,
+      padding: theme.spacing.stackMd,
+      marginBottom: theme.spacing.stackMd,
+      borderWidth: 1,
+      borderColor: theme.mode === "dark" ? "rgba(255,255,255,0.05)" : c.borderSubtle,
+    },
+    navRowText: { ...theme.font(theme.type.headlineSm), color: c.onSurface, flex: 1 },
   });
 
   const initial = (me?.name ?? me?.username ?? "?").charAt(0).toUpperCase();
@@ -161,18 +199,21 @@ export default function ProfileScreen() {
         </View>
       )}
 
+      {/* Phase 3 — FR-7: reputational leaderboard access (UI §7.5). */}
+      <TouchableOpacity style={styles.navRow} onPress={() => router.push("/leaderboard")}>
+        <MaterialIcons name="leaderboard" size={20} color={c.primary} />
+        <Text style={styles.navRowText}>Leaderboard</Text>
+        <MaterialIcons name="chevron-right" size={22} color={c.onSurfaceVariant} />
+      </TouchableOpacity>
+
       {/* TODO(phase-3): favorited venues list (drives push notification triggers) renders here. */}
 
       <TouchableOpacity style={styles.dangerButton} onPress={logOut}>
         <Text style={styles.dangerButtonText}>Log out</Text>
       </TouchableOpacity>
 
-      {/*
-        App Store guideline 5.1.1(v): account creation requires in-app account deletion,
-        not just a support ticket. TODO: wire this to a real DELETE /users/me endpoint
-        that removes XP/streak/reward-wallet data (PRD section 13).
-      */}
-      <TouchableOpacity style={styles.linkButton}>
+      {/* App Store guideline 5.1.1(v): real in-app account deletion (PRD section 13). */}
+      <TouchableOpacity style={styles.linkButton} onPress={deleteAccount}>
         <Text style={styles.linkText}>Delete my account</Text>
       </TouchableOpacity>
     </View>
