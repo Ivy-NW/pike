@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { View, Text, StyleSheet, TouchableOpacity, FlatList, Alert } from "react-native";
 import { router } from "expo-router";
 import { MaterialIcons } from "@expo/vector-icons";
-import type { UserProfile } from "@pike/shared-types";
+import type { FavoriteVenueItem, UserProfile } from "@pike/shared-types";
 import { api } from "@/lib/api";
 import { clearIdentityToken } from "@/lib/auth";
 import { useTheme } from "@/theme";
@@ -13,12 +13,25 @@ export default function ProfileScreen() {
   const [me, setMe] = useState<UserProfile | null>(null);
   const [questsCompleted, setQuestsCompleted] = useState<number | null>(null);
   const [rewardsClaimed, setRewardsClaimed] = useState<number | null>(null);
+  const [favorites, setFavorites] = useState<FavoriteVenueItem[]>([]);
 
   useEffect(() => {
     api.me().then(setMe).catch(() => {});
     api.quests().then((q) => setQuestsCompleted(q.filter((x) => x.completed).length)).catch(() => {});
     api.wallet().then((w) => setRewardsClaimed(w.length)).catch(() => {});
+    api.favorites().then(setFavorites).catch(() => {});
   }, []);
+
+  // FR-6: remove a favorite from the Profile list (optimistic, reverts on failure).
+  const unfavorite = async (venueId: string) => {
+    const prev = favorites;
+    setFavorites((list) => list.filter((v) => v.id !== venueId));
+    try {
+      await api.removeFavorite(venueId);
+    } catch {
+      setFavorites(prev);
+    }
+  };
 
   const logOut = async () => {
     await clearIdentityToken();
@@ -127,6 +140,9 @@ export default function ProfileScreen() {
       borderColor: theme.mode === "dark" ? "rgba(255,255,255,0.05)" : c.borderSubtle,
     },
     navRowText: { ...theme.font(theme.type.headlineSm), color: c.onSurface, flex: 1 },
+    favRow: { flexDirection: "row", alignItems: "center", gap: 12, paddingVertical: 10, borderTopWidth: 1, borderTopColor: theme.mode === "dark" ? "rgba(255,255,255,0.05)" : c.borderSubtle },
+    favName: { ...theme.font(theme.type.bodyMd), color: c.onSurface, flex: 1 },
+    favEmpty: { ...theme.font(theme.type.bodyMd), color: c.onSurfaceVariant },
   });
 
   const initial = (me?.name ?? me?.username ?? "?").charAt(0).toUpperCase();
@@ -206,7 +222,23 @@ export default function ProfileScreen() {
         <MaterialIcons name="chevron-right" size={22} color={c.onSurfaceVariant} />
       </TouchableOpacity>
 
-      {/* TODO(phase-3): favorited venues list (drives push notification triggers) renders here. */}
+      {/* FR-6: favorited venues (will drive "new quest at a favorited venue" push triggers). */}
+      <View style={styles.card}>
+        <Text style={styles.cardTitle}>Favorite venues</Text>
+        {favorites.length === 0 ? (
+          <Text style={[styles.favEmpty, { marginTop: 8 }]}>Tap the heart on a venue in the Map tab to save it here.</Text>
+        ) : (
+          favorites.map((v) => (
+            <View key={v.id} style={styles.favRow}>
+              <MaterialIcons name="place" size={18} color={c.primary} />
+              <Text style={styles.favName} numberOfLines={1}>{v.name}</Text>
+              <TouchableOpacity onPress={() => unfavorite(v.id)} hitSlop={8}>
+                <MaterialIcons name="favorite" size={18} color={c.primary} />
+              </TouchableOpacity>
+            </View>
+          ))
+        )}
+      </View>
 
       <TouchableOpacity style={styles.dangerButton} onPress={logOut}>
         <Text style={styles.dangerButtonText}>Log out</Text>

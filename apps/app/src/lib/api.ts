@@ -1,5 +1,6 @@
 import type {
   ConsumerAuthResponse,
+  FavoriteVenueItem,
   LeaderboardResponse,
   MacroQuestProgress,
   SigninConsumerRequest,
@@ -52,4 +53,8 @@ export const api = {
   leaderboardVenue: (venueId: string) => request<LeaderboardResponse>(`/leaderboard/venue/${venueId}`),
   // Phase 3 — FR-5: the live macro-quest + this user's progress (null if none live).
   macroQuest: () => request<MacroQuestProgress | null>("/users/me/macro-quest"),
+  // Phase 3 — FR-6: favorited venues.
+  favorites: () => request<FavoriteVenueItem[]>("/users/me/favorites"),
+  addFavorite: (venueId: string) => request<void>(`/users/me/favorites/${venueId}`, { method: "PUT" }),
+  removeFavorite: (venueId: string) => request<void>(`/users/me/favorites/${venueId}`, { method: "DELETE" }),
 };

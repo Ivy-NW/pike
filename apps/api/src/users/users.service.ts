@@ -110,6 +110,7 @@ export class UsersService {
       id: q.id,
       name: q.name,
       theme: q.theme,
+      venueId: q.venueId,
       venueName: q.venue.name,
       rewardDescription: q.rewardDescription,
       completed: completedQuestIds.has(q.id),

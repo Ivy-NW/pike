@@ -45,8 +45,9 @@ Phase 3 (macro-quest + leaderboard) has started with the leaderboard slice:
 | Macro-quest — backend | Implemented | `GET /users/me/macro-quest` (FR-5). New `MacroQuest`/`MacroQuestVenue`/`MacroQuestCompletion` models; progress is DERIVED from redemptions at participating venues within the window; reaching `requiredVenues` records an idempotent completion (ADR 0005). **Migration `20260725120000_add_macro_quest` is prepared but NOT yet applied to Neon** — run `prisma migrate deploy` (or `migrate dev`) before this endpoint works at runtime |
 | Macro-quest — app | Implemented | Home shows a macro-quest tracker (progress bar + per-venue check dots in Pike Blue; reward shown in gold only once unlocked). `seed:phase2` now seeds a live 2-of-3-venue macro-quest |
 | Macro-quest — reward | Implemented | The unlocked top-tier reward materializes in the wallet: `/users/me/wallet` now returns a discriminated union of quest and macro-quest rewards (derived from `MacroQuestCompletion`, no separate reward row). Rewards screen renders both, tagging macro rewards |
+| Favorited venues (FR-6 foundation) | Implemented | New `FavoriteVenue` model (migration `20260727100000_add_favorite_venue`, **not yet applied**). `PUT/DELETE/GET /users/me/favorites` (idempotent). Map tab has a per-venue heart toggle; Profile shows the favorites list (fills its old `TODO(phase-3)`). `venueId` now exposed on quest-list items. Groundwork for FR-6 push — the FCM triggers/delivery remain to build once Firebase creds exist |
 
-Ranking + progress + wallet-union logic unit-tested. Full apps/api suite: 34 passing.
+Ranking + progress + wallet-union + favorites logic unit-tested. Full apps/api suite: 38 passing.
 
 ## Current Decisions
 
@@ -61,6 +62,8 @@ Ranking + progress + wallet-union logic unit-tested. Full apps/api suite: 34 pas
 - Seed a small known data set for Phase 2 demos: one user, one live quest, one ready marker, one unclaimed redemption.
 - ~~Add account deletion before store submission.~~ Done (2026-07-25) — `DELETE /users/me` (ConsumerAuthGuard, 204) deletes the user (XP/streak inline, badges via cascade) and **anonymizes** their redemptions (nulls `userId`) so the FR-13 audit trail and on-chain attestation hashes survive de-identified. Wired to the Profile "Delete my account" button behind a destructive confirm. Unit-tested (`users.service.spec.ts`). Web-fallback deletion path (PRD §13, Google-acceptable) still outstanding.
 - Decide whether Phase 2 needs an XP transaction ledger or whether the direct user XP counter is enough until later.
-- Phase 3 done (leaderboard + macro-quest + macro-quest reward materialization, 2026-07-25). **Apply the `20260725120000_add_macro_quest` migration to Neon** (`prisma migrate deploy`) — the macro-quest endpoint and wallet macro rewards need it. Remaining Phase 3 polish: a city-scoped leaderboard once venues carry structured city data.
+- Phase 3 done (leaderboard + macro-quest + macro-quest reward materialization, 2026-07-25). Remaining Phase 3 polish: a city-scoped leaderboard once venues carry structured city data.
+- FR-6 started (favorited venues foundation, 2026-07-27). Remaining FR-6: FCM device-token registration + the streak-expiry and new-quest-at-favorited-venue triggers/delivery (needs a Firebase project + creds; can follow the existing Stripe/8th-Wall credential-stub pattern).
+- **Two migrations are prepared but NOT yet applied to Neon** — `20260725120000_add_macro_quest` and `20260727100000_add_favorite_venue`. Run `npm run prisma:deploy --workspace apps/api` (or a Render deploy) before these endpoints work at runtime.
 - `prisma generate` now runs on `postinstall` and as part of `build` (apps/api) to prevent the stale-client drift that broke compilation earlier. No git hook (no husky in repo) — run `npm install` or `prisma generate` after pulling a schema change if deps don't reinstall.
 
