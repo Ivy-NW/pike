@@ -80,10 +80,20 @@ export interface UserQuestListItem {
   id: string;
   name: string;
   theme: string;
+  venueId: string;
   venueName: string;
   rewardDescription: string;
   completed: boolean;
   markerId: string | null;
+}
+
+/** Phase 3 — FR-6: a venue the user has favorited (GET /users/me/favorites). */
+export interface FavoriteVenueItem {
+  /** Venue id. */
+  id: string;
+  name: string;
+  venueType: string;
+  favoritedAt: string;
 }
 
 /** Phase 3 — FR-7: reputational leaderboards (no monetary value, no shared currency). */
