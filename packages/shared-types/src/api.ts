@@ -87,6 +87,11 @@ export interface UserQuestListItem {
   markerId: string | null;
 }
 
+/** POST /users/me/push-token — register this device's Expo/FCM push token (FR-6). */
+export interface RegisterPushTokenRequest {
+  token: string;
+}
+
 /** Phase 3 — FR-6: a venue the user has favorited (GET /users/me/favorites). */
 export interface FavoriteVenueItem {
   /** Venue id. */
