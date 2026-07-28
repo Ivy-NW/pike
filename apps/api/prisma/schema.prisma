@@ -248,6 +248,7 @@ model User {
   badges                UserBadge[]
   macroQuestCompletions MacroQuestCompletion[]
   favoriteVenues        FavoriteVenue[]
+  pushTokens            PushToken[]
 
   @@map("users")
 }
@@ -377,4 +378,17 @@ model FavoriteVenue {
   @@unique([userId, venueId])
   @@index([userId])
   @@map("favorite_venues")
+}
+
+/// Phase 3 — FR-6: a consumer device's push token (Expo/FCM). A device re-registers on launch, so
+/// the token is unique and upserted. Delivery itself is credential-gated — see NotificationsService.
+model PushToken {
+  id        String   @id @default(uuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  token     String   @unique
+  createdAt DateTime @default(now())
+
+  @@index([userId])
+  @@map("push_tokens")
 }
