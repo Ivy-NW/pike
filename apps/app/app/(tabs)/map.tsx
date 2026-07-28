@@ -8,6 +8,7 @@ import { useTheme } from "@/theme";
 interface QuestListItem {
   id: string;
   name: string;
+  venueId: string;
   venueName: string;
   rewardDescription: string;
   completed: boolean;
@@ -23,10 +24,31 @@ interface QuestListItem {
 export default function MapScreen() {
   const theme = useTheme();
   const [quests, setQuests] = useState<QuestListItem[]>([]);
+  const [favorites, setFavorites] = useState<Set<string>>(new Set());
 
   useEffect(() => {
     api.quests().then(setQuests).catch(() => setQuests([]));
+    api.favorites().then((f) => setFavorites(new Set(f.map((v) => v.id)))).catch(() => {});
   }, []);
+
+  // FR-6: optimistic favorite toggle for a quest's venue; reverts if the request fails.
+  const toggleFavorite = async (venueId: string) => {
+    const isFav = favorites.has(venueId);
+    setFavorites((prev) => {
+      const next = new Set(prev);
+      isFav ? next.delete(venueId) : next.add(venueId);
+      return next;
+    });
+    try {
+      await (isFav ? api.removeFavorite(venueId) : api.addFavorite(venueId));
+    } catch {
+      setFavorites((prev) => {
+        const next = new Set(prev);
+        isFav ? next.add(venueId) : next.delete(venueId);
+        return next;
+      });
+    }
+  };
 
   const c = theme.colors;
   const styles = StyleSheet.create({
@@ -65,6 +87,7 @@ export default function MapScreen() {
       gap: 12,
     },
     dot: { width: 10, height: 10, borderRadius: 5 },
+    favBtn: { padding: 4 },
     cardTitle: { ...theme.font(theme.type.headlineSm), color: c.onSurface },
     cardSub: { ...theme.font(theme.type.bodyMd), color: c.onSurfaceVariant, marginTop: 2 },
     empty: { ...theme.font(theme.type.bodyMd), color: c.onSurfaceVariant, textAlign: "center", marginTop: 24 },
@@ -108,6 +131,13 @@ export default function MapScreen() {
                 <Text style={styles.cardTitle}>{item.venueName}</Text>
                 <Text style={styles.cardSub}>{item.name}</Text>
               </View>
+              <TouchableOpacity onPress={() => toggleFavorite(item.venueId)} hitSlop={8} style={styles.favBtn}>
+                <MaterialIcons
+                  name={favorites.has(item.venueId) ? "favorite" : "favorite-border"}
+                  size={20}
+                  color={favorites.has(item.venueId) ? c.primary : c.onSurfaceVariant}
+                />
+              </TouchableOpacity>
               <MaterialIcons name="chevron-right" size={22} color={c.onSurfaceVariant} />
             </TouchableOpacity>
           )}
