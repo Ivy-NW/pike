@@ -18,6 +18,7 @@ import { WaitlistModule } from "./waitlist/waitlist.module";
 import { AttestationModule } from "./attestation/attestation.module";
 import { LeaderboardModule } from "./leaderboard/leaderboard.module";
 import { MacroQuestModule } from "./macro-quest/macro-quest.module";
+import { FavoritesModule } from "./favorites/favorites.module";
 
 @Module({
   imports: [
@@ -40,6 +41,7 @@ import { MacroQuestModule } from "./macro-quest/macro-quest.module";
     AttestationModule,
     LeaderboardModule,
     MacroQuestModule,
+    FavoritesModule,
   ],
 })
 export class AppModule {}
