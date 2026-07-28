@@ -1,21 +1,17 @@
 import { useEffect, useState } from "react";
 import { View, Text, FlatList, StyleSheet } from "react-native";
+import type { UserWalletItem } from "@pike/shared-types";
 import { api } from "@/lib/api";
 import { useTheme } from "@/theme";
 
-interface WalletItem {
-  redemptionId: string;
-  venue: { name: string };
-  quest: { name: string; rewardDescription: string };
-  expiresAt: string | null;
-  isExpired: boolean;
-  claimedAt: string;
-}
+const titleOf = (w: UserWalletItem) => (w.kind === "quest" ? w.quest.rewardDescription : w.rewardDescription);
+const subtitleOf = (w: UserWalletItem) => (w.kind === "quest" ? w.venue.name : w.name);
+const keyOf = (w: UserWalletItem) => (w.kind === "quest" ? w.redemptionId : `macro-${w.macroQuestId}`);
 
-/** FR-3: every reward claimed across every WebAR quest, unredeemed vs. expired-history split. */
+/** FR-3: every reward — single-quest (WebAR) and macro-quest (FR-5) — unredeemed vs. expired-history split. */
 export default function RewardsScreen() {
   const theme = useTheme();
-  const [wallet, setWallet] = useState<WalletItem[]>([]);
+  const [wallet, setWallet] = useState<UserWalletItem[]>([]);
 
   useEffect(() => {
     api.wallet().then(setWallet).catch(() => setWallet([]));
@@ -34,7 +30,24 @@ export default function RewardsScreen() {
     rewardName: { ...theme.font(theme.type.headlineSm), color: c.secondary },
     venue: { ...theme.font(theme.type.bodyMd), color: "#fff", marginTop: 4 },
     expiry: { ...theme.font(theme.type.labelSm), color: c.textMuted, marginTop: 8 },
+    tag: { alignSelf: "flex-start", marginTop: 8, paddingHorizontal: 8, paddingVertical: 3, borderRadius: theme.radius.full, borderWidth: 1, borderColor: c.primary },
+    tagText: { ...theme.font(theme.type.labelSm), color: c.primary },
   });
+
+  const Card = ({ item, faded }: { item: UserWalletItem; faded?: boolean }) => (
+    <View style={[styles.card, faded && { opacity: 0.6 }]}>
+      <Text style={styles.rewardName}>{titleOf(item)}</Text>
+      <Text style={styles.venue}>{subtitleOf(item)}</Text>
+      {item.kind === "macro-quest" && (
+        <View style={styles.tag}>
+          <Text style={styles.tagText}>MACRO-QUEST</Text>
+        </View>
+      )}
+      {item.kind === "quest" && (
+        <Text style={styles.expiry}>{item.expiresAt ? `Expires ${new Date(item.expiresAt).toLocaleDateString()}` : "No expiry"}</Text>
+      )}
+    </View>
+  );
 
   return (
     <View style={styles.container}>
@@ -43,16 +56,10 @@ export default function RewardsScreen() {
       <Text style={styles.sectionLabel}>Unredeemed</Text>
       <FlatList
         data={unredeemed}
-        keyExtractor={(w) => w.redemptionId}
+        keyExtractor={keyOf}
         scrollEnabled={false}
         ListEmptyComponent={<Text style={styles.empty}>No unredeemed rewards yet.</Text>}
-        renderItem={({ item }) => (
-          <View style={styles.card}>
-            <Text style={styles.rewardName}>{item.quest.rewardDescription}</Text>
-            <Text style={styles.venue}>{item.venue.name}</Text>
-            <Text style={styles.expiry}>{item.expiresAt ? `Expires ${new Date(item.expiresAt).toLocaleDateString()}` : "No expiry"}</Text>
-          </View>
-        )}
+        renderItem={({ item }) => <Card item={item} />}
       />
 
       {expired.length > 0 && (
@@ -60,14 +67,9 @@ export default function RewardsScreen() {
           <Text style={styles.sectionLabel}>History (expired)</Text>
           <FlatList
             data={expired}
-            keyExtractor={(w) => w.redemptionId}
+            keyExtractor={keyOf}
             scrollEnabled={false}
-            renderItem={({ item }) => (
-              <View style={[styles.card, { opacity: 0.6 }]}>
-                <Text style={styles.rewardName}>{item.quest.rewardDescription}</Text>
-                <Text style={styles.venue}>{item.venue.name}</Text>
-              </View>
-            )}
+            renderItem={({ item }) => <Card item={item} faded />}
           />
         </>
       )}
