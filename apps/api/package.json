@@ -3,7 +3,8 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "build": "nest build",
+    "postinstall": "prisma generate",
+    "build": "prisma generate && nest build",
     "start": "nest start",
     "start:dev": "nest start --watch",
     "start:prod": "node dist/src/main.js",
@@ -12,6 +13,7 @@
     "prisma:deploy": "prisma migrate deploy",
     "seed:admin": "ts-node scripts/seed-admin.ts",
     "seed:attestation-config": "ts-node scripts/seed-attestation-config.ts",
+    "seed:phase2": "ts-node scripts/seed-phase2.ts",
     "test": "jest"
   },
   "dependencies": {

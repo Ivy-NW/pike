@@ -1,4 +1,5 @@
 import { Injectable } from "@nestjs/common";
+import type { MacroQuestRewardWalletItem, QuestRewardWalletItem, UserWalletItem } from "@pike/shared-types";
 import { PrismaService } from "../prisma/prisma.service";
 import { GamificationService } from "../gamification/gamification.service";
 
@@ -31,23 +32,52 @@ export class UsersService {
     };
   }
 
-  /** FR-3: every claimed reward across every WebAR quest this user has participated in. */
-  async wallet(userId: string) {
+  /**
+   * FR-3 reward wallet: every reward this user has earned, spanning single WebAR quests and the
+   * top-tier rewards unlocked by completing macro-quests (FR-5). Macro-quest completions materialize
+   * their reward here directly from the recorded completion — no separate reward row to keep in sync.
+   */
+  async wallet(userId: string): Promise<UserWalletItem[]> {
+    const now = new Date();
+
     const redemptions = await this.prisma.redemption.findMany({
       where: { userId, status: { not: "rejected" } },
       include: { quest: true, marker: { include: { venue: true } } },
       orderBy: { createdAt: "desc" },
     });
+    const questRewards = redemptions.map(
+      (r): QuestRewardWalletItem => ({
+        kind: "quest",
+        redemptionId: r.id,
+        venue: { id: r.marker.venue.id, name: r.marker.venue.name },
+        quest: { id: r.quest.id, name: r.quest.name, rewardType: r.quest.rewardType, rewardDescription: r.quest.rewardDescription },
+        expiresAt: r.quest.expiresAt ? r.quest.expiresAt.toISOString() : null,
+        isExpired: r.quest.expiresAt ? r.quest.expiresAt < now : false,
+        claimedAt: r.createdAt.toISOString(),
+      }),
+    );
 
-    const now = new Date();
-    return redemptions.map((r) => ({
-      redemptionId: r.id,
-      venue: { id: r.marker.venue.id, name: r.marker.venue.name },
-      quest: { id: r.quest.id, name: r.quest.name, rewardType: r.quest.rewardType, rewardDescription: r.quest.rewardDescription },
-      expiresAt: r.quest.expiresAt,
-      isExpired: r.quest.expiresAt ? r.quest.expiresAt < now : false,
-      claimedAt: r.createdAt,
-    }));
+    const completions = await this.prisma.macroQuestCompletion.findMany({
+      where: { userId },
+      include: { macroQuest: true },
+      orderBy: { completedAt: "desc" },
+    });
+    const macroRewards = completions.map(
+      (cpl): MacroQuestRewardWalletItem => ({
+        kind: "macro-quest",
+        macroQuestId: cpl.macroQuestId,
+        name: cpl.macroQuest.name,
+        rewardType: cpl.macroQuest.rewardType,
+        rewardDescription: cpl.macroQuest.rewardDescription,
+        rewardTier: cpl.macroQuest.rewardTier,
+        expiresAt: null,
+        isExpired: false,
+        claimedAt: cpl.completedAt.toISOString(),
+      }),
+    );
+
+    // Newest first across both reward kinds (claimedAt is an ISO string, so lexical == chronological).
+    return [...questRewards, ...macroRewards].sort((a, b) => (a.claimedAt < b.claimedAt ? 1 : -1));
   }
 
   /**

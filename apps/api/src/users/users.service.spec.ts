@@ -25,3 +25,35 @@ describe("UsersService.deleteAccount", () => {
     expect($transaction).toHaveBeenCalledWith(["updateMany-op", "delete-op"]);
   });
 });
+
+describe("UsersService.wallet", () => {
+  it("merges single-quest and macro-quest rewards, newest first", async () => {
+    const prisma = {
+      redemption: {
+        findMany: jest.fn().mockResolvedValue([
+          {
+            id: "r1",
+            createdAt: new Date("2026-07-10T00:00:00.000Z"),
+            quest: { id: "q1", name: "Find the Kraken", rewardType: "discount", rewardDescription: "10% off", expiresAt: null },
+            marker: { venue: { id: "v1", name: "Aquarium" } },
+          },
+        ]),
+      },
+      macroQuestCompletion: {
+        findMany: jest.fn().mockResolvedValue([
+          {
+            macroQuestId: "mq1",
+            completedAt: new Date("2026-07-20T00:00:00.000Z"),
+            macroQuest: { name: "Deep Dive", rewardType: "vip_pass", rewardTier: "high_value", rewardDescription: "VIP tour" },
+          },
+        ]),
+      },
+    } as any;
+    const wallet = await new UsersService(prisma, {} as any).wallet("me");
+
+    // Macro-quest completion (07-20) sorts ahead of the quest reward (07-10).
+    expect(wallet.map((w) => w.kind)).toEqual(["macro-quest", "quest"]);
+    expect(wallet[0]).toMatchObject({ kind: "macro-quest", macroQuestId: "mq1", rewardDescription: "VIP tour", isExpired: false });
+    expect(wallet[1]).toMatchObject({ kind: "quest", redemptionId: "r1" });
+  });
+});

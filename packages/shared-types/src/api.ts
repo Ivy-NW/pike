@@ -48,7 +48,9 @@ export interface ClaimRewardResponse {
   };
 }
 
-export interface UserWalletItem {
+/** A reward claimed by completing a single WebAR quest (FR-3). */
+export interface QuestRewardWalletItem {
+  kind: "quest";
   redemptionId: string;
   venue: Pick<Venue, "id" | "name">;
   quest: Pick<Quest, "id" | "name" | "rewardType" | "rewardDescription">;
@@ -56,6 +58,23 @@ export interface UserWalletItem {
   isExpired: boolean;
   claimedAt: string;
 }
+
+/** Phase 3 — FR-5: the top-tier reward unlocked by completing a multi-venue macro-quest. */
+export interface MacroQuestRewardWalletItem {
+  kind: "macro-quest";
+  macroQuestId: string;
+  name: string;
+  rewardType: RewardType;
+  rewardDescription: string;
+  rewardTier: RewardTier;
+  /** Macro-quest rewards carry no expiry today, so this is always null / not expired. */
+  expiresAt: string | null;
+  isExpired: boolean;
+  claimedAt: string;
+}
+
+/** FR-3 reward wallet, now spanning both single-quest and macro-quest rewards. */
+export type UserWalletItem = QuestRewardWalletItem | MacroQuestRewardWalletItem;
 
 export interface UserQuestListItem {
   id: string;
