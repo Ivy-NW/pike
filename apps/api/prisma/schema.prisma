@@ -99,6 +99,7 @@ model Venue {
   quests           Quest[]
   markers          Marker[]
   macroQuestVenues MacroQuestVenue[]
+  favoritedBy      FavoriteVenue[]
 
   @@index([businessId])
   @@map("venues")
@@ -246,6 +247,7 @@ model User {
   redemptions           Redemption[]
   badges                UserBadge[]
   macroQuestCompletions MacroQuestCompletion[]
+  favoriteVenues        FavoriteVenue[]
 
   @@map("users")
 }
@@ -359,4 +361,20 @@ model MacroQuestCompletion {
   @@unique([macroQuestId, userId])
   @@index([userId])
   @@map("macro_quest_completions")
+}
+
+/// Phase 3 — FR-6 substrate: venues a consumer has favorited. Drives the Profile favorites list and,
+/// once push delivery is wired, the "new quest at a favorited venue" notification. Idempotent via the
+/// unique (userId, venueId).
+model FavoriteVenue {
+  id        String   @id @default(uuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  venueId   String
+  venue     Venue    @relation(fields: [venueId], references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now())
+
+  @@unique([userId, venueId])
+  @@index([userId])
+  @@map("favorite_venues")
 }
