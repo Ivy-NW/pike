@@ -1,6 +1,7 @@
 import { ForbiddenException, Injectable, NotFoundException } from "@nestjs/common";
 import { PrismaService } from "../prisma/prisma.service";
 import { RedemptionCapService } from "../redis/redemption-cap.service";
+import { NotificationsService } from "../notifications/notifications.service";
 import { CreateQuestDto } from "./dto/create-quest.dto";
 
 @Injectable()
@@ -8,6 +9,7 @@ export class QuestsService {
   constructor(
     private readonly prisma: PrismaService,
     private readonly caps: RedemptionCapService,
+    private readonly notifications: NotificationsService,
   ) {}
 
   create(venueId: string, dto: CreateQuestDto) {
@@ -58,7 +60,11 @@ export class QuestsService {
     if (!readyMarker) {
       throw new ForbiddenException("Generate and finish compiling a marker before publishing");
     }
-    return this.prisma.quest.update({ where: { id: questId }, data: { status: "live" } });
+    const updated = await this.prisma.quest.update({ where: { id: questId }, data: { status: "live" } });
+    // FR-6: notify venue favoriters of the new live quest. Fire-and-forget — a notification failure
+    // must never fail the publish itself.
+    void this.notifications.notifyNewQuestAtVenue(quest.venueId, quest.venue.name, quest.name).catch(() => undefined);
+    return updated;
   }
 
   /** Basic dashboard numbers (PRD section 12): redemption counts and remaining cap — real, not stubbed. */
