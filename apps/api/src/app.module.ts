@@ -19,6 +19,7 @@ import { AttestationModule } from "./attestation/attestation.module";
 import { LeaderboardModule } from "./leaderboard/leaderboard.module";
 import { MacroQuestModule } from "./macro-quest/macro-quest.module";
 import { FavoritesModule } from "./favorites/favorites.module";
+import { NotificationsModule } from "./notifications/notifications.module";
 
 @Module({
   imports: [
@@ -42,6 +43,7 @@ import { FavoritesModule } from "./favorites/favorites.module";
     LeaderboardModule,
     MacroQuestModule,
     FavoritesModule,
+    NotificationsModule,
   ],
 })
 export class AppModule {}
