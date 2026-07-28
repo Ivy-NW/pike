@@ -57,4 +57,7 @@ export const api = {
   favorites: () => request<FavoriteVenueItem[]>("/users/me/favorites"),
   addFavorite: (venueId: string) => request<void>(`/users/me/favorites/${venueId}`, { method: "PUT" }),
   removeFavorite: (venueId: string) => request<void>(`/users/me/favorites/${venueId}`, { method: "DELETE" }),
+  // Phase 3 — FR-6: register this device's push token. TODO(FR-6): call on launch with the token from
+  // expo-notifications (getExpoPushTokenAsync) once the package + notification permissions are added.
+  registerPushToken: (token: string) => request<void>("/users/me/push-token", { method: "POST", body: JSON.stringify({ token }) }),
 };
