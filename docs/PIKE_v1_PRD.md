@@ -70,6 +70,8 @@ Loyalty and discount tools give venues no way to build real engagement, and venu
 **Leaderboard**
 - FR-7: City- and venue-level leaderboards, reputational only (no monetary value, no shared currency) — this is the v1 answer to portable rewards without fintech complexity.
 
+**On "reputational only"**: badges and reward-wallet entries are additionally mirrored on-chain as **non-transferable (soulbound)** ERC-1155 tokens — see the [PIKE Soulbound Token Layer PRD](PIKE_token_layer_PRD.md). This does not introduce a currency and does not weaken FR-7's constraint: a token that cannot be transferred cannot be sold, traded, or accumulated as a shared currency, so rewards stay reputational while gaining a portable, independently verifiable proof. Postgres remains the source of truth for XP, badges, and the wallet; the chain never enters the claim or cap-enforcement path.
+
 **Explicitly out of scope for v1**: guilds, friend challenges, AI-driven dynamic difficulty, sponsored-quest marketplace.
 
 ---

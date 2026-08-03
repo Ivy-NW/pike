@@ -27,6 +27,7 @@ The current product and design source documents are:
 | [0004](0004-use-8th-wall-backed-webar-marker-recognition-for-v1.md) | Accepted | 2026-07-21 | Use 8th Wall backed WebAR marker recognition for v1 |
 | [0005](0005-award-identity-progress-on-authenticated-claims.md) | Accepted | 2026-07-22 | Award identity progress on authenticated claims |
 | [0006](0006-attest-completion-hashes-to-avalanche-c-chain.md) | Accepted | 2026-07-25 | Attest completion hashes to Avalanche C-Chain |
+| [0007](0007-mirror-badges-and-rewards-as-soulbound-tokens.md) | Accepted | 2026-07-31 | Mirror badges and rewards as soulbound tokens on Avalanche |
 
 ## Suggested Next ADRs
 

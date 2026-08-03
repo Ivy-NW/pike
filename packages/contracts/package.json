@@ -6,7 +6,9 @@
     "compile": "hardhat compile",
     "test": "hardhat test",
     "deploy:fuji": "hardhat run scripts/deploy.ts --network avalancheFuji",
-    "deploy:mainnet": "hardhat run scripts/deploy.ts --network avalanche"
+    "deploy:mainnet": "hardhat run scripts/deploy.ts --network avalanche",
+    "deploy:tokens:fuji": "hardhat run scripts/deploy-tokens.ts --network avalancheFuji",
+    "deploy:tokens:mainnet": "hardhat run scripts/deploy-tokens.ts --network avalanche"
   },
   "devDependencies": {
     "@nomicfoundation/hardhat-toolbox-viem": "^4.1.0",

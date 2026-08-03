@@ -1,6 +1,6 @@
 # PIKE Progress
 
-Last updated: 2026-07-22
+Last updated: 2026-07-31
 
 This document is the handoff trail for collaborators. The PRD remains the product source of truth, while ADRs capture architecture decisions.
 
@@ -51,11 +51,28 @@ Phase 3 (macro-quest + leaderboard) has started with the leaderboard slice:
 
 Ranking + progress + wallet-union + favorites + notification-trigger logic unit-tested. Full apps/api suite: 42 passing.
 
+## Soulbound Token Layer Status
+
+Scoped in the [Soulbound Token Layer PRD](PIKE_token_layer_PRD.md) and decided in [ADR 0007](adr/0007-mirror-badges-and-rewards-as-soulbound-tokens.md). Phase A complete 2026-07-31; nothing in `apps/` has been touched.
+
+| Phase | Area | Status | Notes |
+|---|---|---|---|
+| A | `PikeAchievements` + `PikeRewardVouchers` contracts | Implemented | ERC-1155, soulbound via a shared `SoulboundERC1155` base that reverts in `_update` when both ends are real holders (and on `setApprovalForAll`). Achievements are idempotent per (holder, id); vouchers per `redemptionRef`, since repeat visits mean balance carries no idempotency information. 19 new tests, 21 passing across the package |
+| B | Fuji deployment | Deployed 2026-07-31 | `PikeAchievements` → `0x2292bcf86cdefa46d87af78ef6310bcedeb880e5`; `PikeRewardVouchers` → `0x089b5e065d5912b77ea58bfce045d346500a9d3b`. Both verified on-chain (bytecode present, `owner()` = service wallet `0x5b31a2bb77bdd108b7ac7fc507664099ff36611e`). Deployed via `npm run deploy:tokens:fuji`, deliberately a separate script from `deploy.ts` so the live `AttestationRegistry` (`0x86124ef07500b269449c953967516a1f75fd0323`) can never be redeployed by accident. **Testnet only — not mainnet.** Requires a `gas` ceiling in `hardhat.config.ts`: Avalanche caps blocks at 15M gas and Hardhat otherwise sends its own 30M default, which the RPC rejects with "exceeds block gas limit" |
+| C | Backend wiring | Not started | Deterministic custodial addresses, Redis mint queue, batch service, reconciliation sweep — reuses the `src/attestation` queue/batch/retry pattern. **Should queue behind FR-6 push delivery** |
+| D | Export to self-custody, public achievement rendering | Not started | Open questions in PRD section 12 |
+| E | Mainnet promotion | Not started | Requires a soak period and an external contract review — unlike `AttestationRegistry`, these hold state users care about and an ID-mapping bug is permanent |
+
+Phases A and B touch no existing runtime path and cannot regress the current build.
+
+One build-config change was required: OpenZeppelin's ERC1155 pulls in `Arrays.sol`, which uses the `mcopy` opcode and needs a Cancun-capable compiler, so `hardhat.config.ts` now compiles with solc 0.8.28 targeting `cancun` (supported on Avalanche C-Chain since Durango). `AttestationRegistry.sol` is pinned by an override to its original 0.8.24 settings — recompiling it under a different compiler would produce bytecode not matching the deployed contract and break source verification.
+
 ## Current Decisions
 
 - [ADR 0002](adr/0002-deliver-phase-1-as-a-connected-core-platform.md): Phase 1 is one connected core platform.
 - [ADR 0004](adr/0004-use-8th-wall-backed-webar-marker-recognition-for-v1.md): WebAR marker recognition remains the proof-of-presence path.
 - [ADR 0005](adr/0005-award-identity-progress-on-authenticated-claims.md): XP, streaks, and badges are awarded on authenticated claims, not raw scans.
+- [ADR 0007](adr/0007-mirror-badges-and-rewards-as-soulbound-tokens.md): badges and reward-wallet entries mirror on-chain as non-transferable tokens; Postgres stays the source of truth and the chain never enters the claim path.
 
 ## Next Work
 
@@ -66,6 +83,7 @@ Ranking + progress + wallet-union + favorites + notification-trigger logic unit-
 - Decide whether Phase 2 needs an XP transaction ledger or whether the direct user XP counter is enough until later.
 - Phase 3 done (leaderboard + macro-quest + macro-quest reward materialization, 2026-07-25). Remaining Phase 3 polish: a city-scoped leaderboard once venues carry structured city data.
 - FR-6 largely built (favorited venues + notification triggers/registration, 2026-07-27). Remaining FR-6: real Expo/FCM delivery (swap the `NotificationsService.send` stub for a provider once `FCM_SERVER_KEY` + `expo-server-sdk`/`firebase-admin` exist) and the app's `expo-notifications` token acquisition on launch.
-- **Migrations prepared but NOT yet applied to Neon** — `20260725120000_add_macro_quest`, `20260727100000_add_favorite_venue`, `20260727110000_add_push_token`. Run `npm run prisma:deploy --workspace apps/api` (or a Render deploy) before these endpoints work at runtime.
+- ~~**Migrations prepared but NOT yet applied to Neon** — `20260725120000_add_macro_quest`, `20260727100000_add_favorite_venue`, `20260727110000_add_push_token`.~~ Applied. Verified 2026-07-31 with `npx prisma migrate status` against Neon: all 10 migrations found, "Database schema is up to date." The macro-quest, favorites, and push-token endpoints work at runtime.
+- Soulbound token layer designed (2026-07-31, [PRD](PIKE_token_layer_PRD.md) + [ADR 0007](adr/0007-mirror-badges-and-rewards-as-soulbound-tokens.md)). Next: Phase A — write `PikeAchievements` and `PikeRewardVouchers` in `packages/contracts` with soulbound-enforcement and token-ID-stability tests, then Phase B deploy to Fuji for the two addresses. Phase C backend wiring should not start before FR-6 push delivery ships.
 - `prisma generate` now runs on `postinstall` and as part of `build` (apps/api) to prevent the stale-client drift that broke compilation earlier. No git hook (no husky in repo) — run `npm install` or `prisma generate` after pulling a schema change if deps don't reinstall.
 

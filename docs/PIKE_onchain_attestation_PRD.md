@@ -25,7 +25,7 @@ Section 8.5 of the parent PRD treats marker recognition (vs. plain QR) as the co
 
 - Fraud *detection* logic (anomaly scoring, automated flagging) — this feature only makes records tamper-evident; deciding what's suspicious is a separate, later effort.
 - On-chain storage of raw device signal, marker images, or any PII — only hashes go on-chain.
-- Reward NFTs / badges / VIP-pass tokenization — that's a separate feature (see the "reward wallet on-chain" recommendation), not this one.
+- Reward NFTs / badges / VIP-pass tokenization — that's a separate feature, not this one. Since scoped as its own addendum: [PIKE Soulbound Token Layer PRD](PIKE_token_layer_PRD.md), which mirrors badges and reward-wallet entries on-chain as non-transferable ERC-1155 tokens. It reuses this document's queue/batch/retry pattern but shares none of its contracts, and leaves the non-goal below (no client-side blockchain interaction) fully intact.
 - Client-side blockchain interaction of any kind — the visitor's browser never touches Avalanche, directly or indirectly.
 - A dedicated Avalanche L1 for PIKE — this uses the shared C-Chain; a purpose-built L1 is a Horizon 2+ conversation.
 
