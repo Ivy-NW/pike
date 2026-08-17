@@ -12,3 +12,6 @@ apps/api/uploads/
 packages/contracts/artifacts/
 packages/contracts/cache/
 packages/contracts/typechain-types/
+
+# Expo web export (PWA build output — regenerate with expo export -p web)
+apps/app/dist-web/
