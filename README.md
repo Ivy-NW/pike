@@ -12,7 +12,7 @@ pike/
     ├── webar/        React + Vite — zero-install scan → reward → claim flow
     ├── dashboard/    Next.js — business self-registration + quest creation
     ├── admin/        Next.js — separate login, platform oversight
-    └── app/          Expo React Native — consumer app shell (wallet, quests, profile)
+    └── app/          Expo React Native → consumer PWA (web export) + native shell
 ```
 
 ## Setup
@@ -53,6 +53,19 @@ Three external integrations don't have credentials in this environment and are s
 - **8th Wall** (`apps/api/src/markers/marker-compile.service.ts`, `apps/webar/src/components/ArScanView.tsx`) — marker "compiling" is simulated server-side; the WebAR scan screen has a real camera preview but recognition is a manual dev button until an 8th Wall app key is wired in.
 
 The Expo app (`apps/app`) was scaffolded and typechecks but wasn't runtime-verified in this session — no simulator/device was available. `apps/webar`, `apps/dashboard`, and `apps/admin` were all driven end-to-end in a real browser.
+
+## Consumer distribution: PWA (not App Store / Play Store)
+
+The consumer app ships as an **installable PWA** (`npx expo export -p web` → `apps/app/dist-web`), not a store build. This matches the market: Kenya is ~85–90% Android, and Android Chrome has full PWA support (install prompt, camera via `getUserMedia`, web push). Skipping the stores removes review cycles, $99/yr Apple + Google fees, and store compliance work (camera justification, Data Safety form) for zero product cost — the WebAR funnel is already browser-native, and B2B revenue via Stripe is outside store-IAP scope anyway.
+
+PWA wiring lives in `apps/app`:
+
+- `public/manifest.webmanifest` + `public/sw.js` + icons — installability + offline shell + push/notification handlers.
+- `src/lib/pwa.ts` — web-only bootstrap: injects the manifest link (Expo's static `index.html` doesn't), registers the SW, captures `beforeinstallprompt`, and subscribes to web push (VAPID key fetched from `GET /push/vapid-public-key`, subscription JSON registered via `POST /users/me/push-token`).
+- `app/scan/[markerId].tsx` — platform branch: native renders the WebAR flow in a WebView; web hands off to `webar` with `?channel=app&appToken=...&returnUrl=...`, and webar's reward screen shows "Back to your wallet" (→ the PWA origin).
+- `src/components/PwaInstallBanner.tsx` — install prompt UI on Home when Chrome offers it.
+
+Backend delivery: `NotificationsService` now distinguishes web-push subscriptions (JSON tokens) from Expo/FCM tokens. Web push is live once `VAPID_PUBLIC_KEY`/`VAPID_PRIVATE_KEY`/`VAPID_SUBJECT` are set (`npx web-push generate-vapid-keys --json`); FCM remains a `TODO(credentials)` stub. Run the web build: `npm run dev:app` (Expo web) or serve `apps/app/dist-web`.
 
 ## Phase boundaries
 
