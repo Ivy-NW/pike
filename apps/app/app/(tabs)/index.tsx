@@ -6,6 +6,7 @@ import type { MacroQuestProgress, UserProfile } from "@pike/shared-types";
 import { api } from "@/lib/api";
 import { useTheme } from "@/theme";
 import { Logo } from "@/components/Logo";
+import { PwaInstallBanner } from "@/components/PwaInstallBanner";
 
 /** UI doc 7.1 — daily-open identity dashboard: streak (flame, gold) + XP bar (Pike Blue fill). */
 export default function HomeScreen() {
@@ -84,6 +85,8 @@ export default function HomeScreen() {
           </View>
         )}
       </View>
+
+      <PwaInstallBanner />
 
       {me && (
         <View style={styles.card}>

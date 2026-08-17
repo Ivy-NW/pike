@@ -37,6 +37,9 @@ export function RewardRevealPage() {
   const [searchParams] = useSearchParams();
   const channel = searchParams.get("channel") === "app" ? "app" : "webar";
   const appToken = searchParams.get("appToken");
+  // PWA hand-off (channel=app on web): after claiming, "Back to your wallet" returns to the
+  // app origin instead of leaving the user stranded on the webar flow.
+  const returnUrl = searchParams.get("returnUrl");
 
   const [redemption, setRedemption] = useState<RedemptionDetail | null>(null);
   const [claimed, setClaimed] = useState(false);
@@ -194,7 +197,13 @@ export function RewardRevealPage() {
                 New badge{award.newBadges.length > 1 ? "s" : ""}: {award.newBadges.map((b) => b.name).join(", ")}
               </p>
             )}
-            <button className="btn-primary">Add to Wallet</button>
+            {channel === "app" && returnUrl ? (
+              <a className="btn-primary" href={returnUrl} style={{ textDecoration: "none", display: "inline-block" }}>
+                Back to your wallet
+              </a>
+            ) : (
+              <button className="btn-primary">Add to Wallet</button>
+            )}
             {channel === "webar" && (
               <>
                 <p style={{ color: "var(--on-surface-variant)", fontSize: 14, marginTop: 16 }}>

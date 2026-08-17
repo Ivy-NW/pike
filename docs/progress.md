@@ -73,6 +73,7 @@ One build-config change was required: OpenZeppelin's ERC1155 pulls in `Arrays.so
 - [ADR 0004](adr/0004-use-8th-wall-backed-webar-marker-recognition-for-v1.md): WebAR marker recognition remains the proof-of-presence path.
 - [ADR 0005](adr/0005-award-identity-progress-on-authenticated-claims.md): XP, streaks, and badges are awarded on authenticated claims, not raw scans.
 - [ADR 0007](adr/0007-mirror-badges-and-rewards-as-soulbound-tokens.md): badges and reward-wallet entries mirror on-chain as non-transferable tokens; Postgres stays the source of truth and the chain never enters the claim path.
+- **Consumer distribution = PWA, not stores** (2026-08-17): the consumer app ships as an installable PWA via `expo export -p web`, matching an Android-dominant Kenya market and eliminating store fees/review/compliance. See the "Consumer distribution" section in the README. Web push delivery added to `NotificationsService` (JSON subscription tokens vs. the still-stubbed Expo/FCM path); VAPID keys via `GET /push/vapid-public-key` + `npx web-push generate-vapid-keys --json`.
 
 ## Next Work
 
