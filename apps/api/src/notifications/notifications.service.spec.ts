@@ -1,6 +1,18 @@
+// Mock expo-server-sdk before importing the service
+jest.mock("expo-server-sdk", () => {
+  return {
+    Expo: jest.fn().mockImplementation(() => ({
+      chunkPushNotifications: jest.fn((messages) => [messages]),
+      sendPushNotificationsAsync: jest.fn().mockResolvedValue([]),
+    })),
+    ExpoPushMessage: {},
+    ExpoPushTicket: {},
+  };
+});
+
 import { NotificationsService } from "./notifications.service";
 
-// Config with no FCM_SERVER_KEY -> delivery disabled (stub/log mode), which is what we unit-test.
+// Config with no VAPID keys -> web push disabled (stub/log mode), which is what we unit-test.
 const stubConfig = { get: () => undefined } as any;
 
 describe("NotificationsService", () => {

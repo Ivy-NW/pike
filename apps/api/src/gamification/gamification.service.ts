@@ -1,6 +1,7 @@
 import { Injectable } from "@nestjs/common";
 import type { Prisma, User } from "@prisma/client";
 import { PrismaService } from "../prisma/prisma.service";
+import { TokenQueueService } from "../tokens/token-queue.service";
 import { BADGE_DEFINITIONS } from "./badges";
 
 /** Flat XP per claimed redemption (any channel/tier) — simplest model for v1 of Phase 2. */
@@ -24,7 +25,10 @@ export interface AwardResult {
 
 @Injectable()
 export class GamificationService {
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(
+    private readonly prisma: PrismaService,
+    private readonly tokenQueue: TokenQueueService,
+  ) {}
 
   levelInfo(xp: number): LevelInfo {
     return {
@@ -83,6 +87,27 @@ export class GamificationService {
         data: toAward.map((b) => ({ userId, badgeKey: b.key })),
         skipDuplicates: true,
       });
+
+      // Phase C — FR-T1: enqueue achievement mints for newly awarded badges.
+      // Token IDs 1-999 are badges (PRD section 7.1). Mapping is explicit in BADGE_DEFINITIONS order.
+      for (let i = 0; i < toAward.length; i++) {
+        const badgeIndex = BADGE_DEFINITIONS.findIndex((b) => b.key === toAward[i]?.key);
+        if (badgeIndex !== -1) {
+          const tokenId = badgeIndex + 1; // 1-based token IDs
+          void this.tokenQueue?.enqueueMintAchievement(userId, tokenId).catch(() => undefined);
+        }
+      }
+
+      // Phase C — FR-T1: check for level milestone tokens (1000-1999 range).
+      // Level milestones at 5, 10, 25, 50.
+      const level = this.levelInfo(updated.xp).level;
+      const milestones = [5, 10, 25, 50];
+      for (const milestone of milestones) {
+        if (level >= milestone) {
+          const tokenId = 1000 + milestone; // e.g., level 5 = token 1005
+          void this.tokenQueue?.enqueueMintAchievement(userId, tokenId).catch(() => undefined);
+        }
+      }
     }
 
     const { passwordHash: _passwordHash, ...safeUser } = updated;
