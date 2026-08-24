@@ -152,21 +152,25 @@ model Marker {
 
 /// FR-13: device/session signal logged on every completion, even before an account exists.
 model Redemption {
-  id           String            @id @default(uuid())
-  markerId     String
-  marker       Marker            @relation(fields: [markerId], references: [id], onDelete: Cascade)
-  questId      String
-  quest        Quest             @relation(fields: [questId], references: [id], onDelete: Cascade)
-  venueId      String
-  userId       String?
-  user         User?             @relation(fields: [userId], references: [id])
-  claimMethod  ClaimMethod?
-  status       RedemptionStatus  @default(claimed)
-  sessionId    String
-  userAgent    String
-  ipHash       String
-  flagReason   String?
-  createdAt    DateTime          @default(now())
+  id                String            @id @default(uuid())
+  markerId          String
+  marker            Marker            @relation(fields: [markerId], references: [id], onDelete: Cascade)
+  questId           String
+  quest             Quest             @relation(fields: [questId], references: [id], onDelete: Cascade)
+  venueId           String
+  userId            String?
+  user              User?             @relation(fields: [userId], references: [id])
+  claimMethod       ClaimMethod?
+  status            RedemptionStatus  @default(claimed)
+  sessionId         String
+  userAgent         String
+  ipHash            String
+  flagReason        String?
+  createdAt         DateTime          @default(now())
+  /// On-chain voucher issue transaction hash.
+  voucherIssueTxHash String?
+  /// On-chain voucher burn (redeem) transaction hash.
+  voucherBurnTxHash String?
 
   /// On-chain attestation addendum, FR-A2: keccak256 of {id, markerId, venueId, questId,
   /// sessionId, userAgent, ipHash, createdAt}. Computed synchronously at row-creation time —
