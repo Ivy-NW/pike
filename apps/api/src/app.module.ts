@@ -20,6 +20,7 @@ import { LeaderboardModule } from "./leaderboard/leaderboard.module";
 import { MacroQuestModule } from "./macro-quest/macro-quest.module";
 import { FavoritesModule } from "./favorites/favorites.module";
 import { NotificationsModule } from "./notifications/notifications.module";
+import { TokensModule } from "./tokens/tokens.module";
 
 @Module({
   imports: [
@@ -40,6 +41,7 @@ import { NotificationsModule } from "./notifications/notifications.module";
     AdminGateModule,
     WaitlistModule,
     AttestationModule,
+    TokensModule,
     LeaderboardModule,
     MacroQuestModule,
     FavoritesModule,
