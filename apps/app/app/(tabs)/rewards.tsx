@@ -1,8 +1,9 @@
 import { useEffect, useState } from "react";
-import { View, Text, FlatList, StyleSheet } from "react-native";
+import { View, Text, StyleSheet, ScrollView } from "react-native";
 import type { UserWalletItem } from "@pike/shared-types";
 import { api } from "@/lib/api";
 import { useTheme } from "@/theme";
+import { TopNav } from "@/components/TopNav";
 
 const titleOf = (w: UserWalletItem) => (w.kind === "quest" ? w.quest.rewardDescription : w.rewardDescription);
 const subtitleOf = (w: UserWalletItem) => (w.kind === "quest" ? w.venue.name : w.name);
@@ -22,8 +23,8 @@ export default function RewardsScreen() {
   const c = theme.colors;
 
   const styles = StyleSheet.create({
-    container: { flex: 1, backgroundColor: c.surface, padding: theme.spacing.containerPadding, paddingTop: 60 },
-    header: { ...theme.font(theme.type.headlineLgMobile), color: c.primary, marginBottom: theme.spacing.stackMd },
+    container: { flex: 1, backgroundColor: c.surface },
+    content: { padding: theme.spacing.containerPadding, paddingTop: 16, paddingBottom: 110 },
     sectionLabel: { ...theme.font(theme.type.labelCaps), color: c.onSurfaceVariant, marginBottom: theme.spacing.stackSm, marginTop: theme.spacing.stackSm },
     empty: { ...theme.font(theme.type.bodyMd), color: c.onSurfaceVariant, marginBottom: 16 },
     card: { backgroundColor: c.slateGray, borderRadius: theme.radius.card, padding: theme.spacing.stackMd, marginBottom: theme.spacing.stackSm, borderWidth: 1, borderColor: c.surfaceContainerHighest },
@@ -35,7 +36,7 @@ export default function RewardsScreen() {
   });
 
   const Card = ({ item, faded }: { item: UserWalletItem; faded?: boolean }) => (
-    <View style={[styles.card, faded && { opacity: 0.6 }]}>
+    <View key={keyOf(item)} style={[styles.card, faded && { opacity: 0.6 }]}>
       <Text style={styles.rewardName}>{titleOf(item)}</Text>
       <Text style={styles.venue}>{subtitleOf(item)}</Text>
       {item.kind === "macro-quest" && (
@@ -51,28 +52,25 @@ export default function RewardsScreen() {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.header}>Reward wallet</Text>
+      <TopNav title="Rewards" showLogo={false} subtitle={`${unredeemed.length} available`} />
+      <ScrollView contentContainerStyle={styles.content} showsVerticalScrollIndicator={false}>
 
       <Text style={styles.sectionLabel}>Unredeemed</Text>
-      <FlatList
-        data={unredeemed}
-        keyExtractor={keyOf}
-        scrollEnabled={false}
-        ListEmptyComponent={<Text style={styles.empty}>No unredeemed rewards yet.</Text>}
-        renderItem={({ item }) => <Card item={item} />}
-      />
+      {unredeemed.length === 0 ? (
+        <Text style={styles.empty}>No unredeemed rewards yet.</Text>
+      ) : (
+        unredeemed.map((item) => <Card key={keyOf(item)} item={item} />)
+      )}
 
       {expired.length > 0 && (
         <>
           <Text style={styles.sectionLabel}>History (expired)</Text>
-          <FlatList
-            data={expired}
-            keyExtractor={keyOf}
-            scrollEnabled={false}
-            renderItem={({ item }) => <Card item={item} faded />}
-          />
+          {expired.map((item) => (
+            <Card key={keyOf(item)} item={item} faded />
+          ))}
         </>
       )}
+      </ScrollView>
     </View>
   );
 }

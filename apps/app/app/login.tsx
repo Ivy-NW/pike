@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { View, Text, TextInput, TouchableOpacity, StyleSheet, ScrollView } from "react-native";
 import { router } from "expo-router";
+import { Ionicons } from "@expo/vector-icons";
 import { setIdentityToken } from "@/lib/auth";
 import { api } from "@/lib/api";
 import { useTheme } from "@/theme";
@@ -26,6 +27,7 @@ export default function LoginScreen() {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -78,6 +80,27 @@ export default function LoginScreen() {
       color: c.onSurface,
       ...theme.font(theme.type.bodyMd),
     },
+    passwordContainer: {
+      flexDirection: "row",
+      alignItems: "center",
+      backgroundColor: c.surfaceContainerLow,
+      borderRadius: theme.radius.card,
+      marginBottom: 12,
+      borderWidth: 1,
+      borderColor: c.borderStrong,
+    },
+    passwordInput: {
+      flex: 1,
+      padding: 16,
+      color: c.onSurface,
+      ...theme.font(theme.type.bodyMd),
+    },
+    eyeButton: {
+      paddingHorizontal: 16,
+      paddingVertical: 14,
+      justifyContent: "center",
+      alignItems: "center",
+    },
     primaryButton: { backgroundColor: c.primaryContainer, borderRadius: theme.radius.card, padding: 16, alignItems: "center" },
     primaryButtonText: { ...theme.font(theme.type.headlineSm), color: c.onPrimaryContainer },
     link: { ...theme.font(theme.type.bodyMd), color: c.primary, textAlign: "center", marginTop: 16 },
@@ -104,14 +127,28 @@ export default function LoginScreen() {
             onChangeText={setIdentifier}
             autoCapitalize="none"
           />
-          <TextInput
-            style={styles.input}
-            placeholder="Password"
-            placeholderTextColor={c.onSurfaceVariant}
-            value={password}
-            onChangeText={setPassword}
-            secureTextEntry
-          />
+          <View style={styles.passwordContainer}>
+            <TextInput
+              style={styles.passwordInput}
+              placeholder="Password"
+              placeholderTextColor={c.onSurfaceVariant}
+              value={password}
+              onChangeText={setPassword}
+              secureTextEntry={!showPassword}
+            />
+            <TouchableOpacity
+              style={styles.eyeButton}
+              onPress={() => setShowPassword((prev) => !prev)}
+              hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
+              accessibilityLabel={showPassword ? "Hide password" : "Show password"}
+            >
+              <Ionicons
+                name={showPassword ? "eye-off-outline" : "eye-outline"}
+                size={20}
+                color={c.onSurfaceVariant}
+              />
+            </TouchableOpacity>
+          </View>
 
           <TouchableOpacity
             style={[styles.primaryButton, (loading || !identifier || !password) && { opacity: 0.6 }]}
@@ -146,14 +183,28 @@ export default function LoginScreen() {
             keyboardType="email-address"
             autoCapitalize="none"
           />
-          <TextInput
-            style={styles.input}
-            placeholder="Password (min 8 characters)"
-            placeholderTextColor={c.onSurfaceVariant}
-            value={password}
-            onChangeText={setPassword}
-            secureTextEntry
-          />
+          <View style={styles.passwordContainer}>
+            <TextInput
+              style={styles.passwordInput}
+              placeholder="Password (min 8 characters)"
+              placeholderTextColor={c.onSurfaceVariant}
+              value={password}
+              onChangeText={setPassword}
+              secureTextEntry={!showPassword}
+            />
+            <TouchableOpacity
+              style={styles.eyeButton}
+              onPress={() => setShowPassword((prev) => !prev)}
+              hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
+              accessibilityLabel={showPassword ? "Hide password" : "Show password"}
+            >
+              <Ionicons
+                name={showPassword ? "eye-off-outline" : "eye-outline"}
+                size={20}
+                color={c.onSurfaceVariant}
+              />
+            </TouchableOpacity>
+          </View>
 
           <TouchableOpacity
             style={[styles.primaryButton, (loading || !phone || !username || !name || !email || password.length < 8) && { opacity: 0.6 }]}

@@ -1,11 +1,12 @@
 import { useEffect, useState } from "react";
-import { View, Text, StyleSheet, TouchableOpacity, FlatList, Alert } from "react-native";
+import { View, Text, StyleSheet, TouchableOpacity, FlatList, Alert, ScrollView } from "react-native";
 import { router } from "expo-router";
 import { MaterialIcons } from "@expo/vector-icons";
 import type { FavoriteVenueItem, UserProfile } from "@pike/shared-types";
 import { api } from "@/lib/api";
 import { clearIdentityToken } from "@/lib/auth";
 import { useTheme } from "@/theme";
+import { TopNav } from "@/components/TopNav";
 
 /** UI doc 7.5 — identity, history, and settings. */
 export default function ProfileScreen() {
@@ -66,9 +67,9 @@ export default function ProfileScreen() {
 
   const c = theme.colors;
   const styles = StyleSheet.create({
-    container: { flex: 1, backgroundColor: c.surface, padding: theme.spacing.containerPadding, paddingTop: 60 },
-    header: { ...theme.font(theme.type.headlineLgMobile), color: c.primary, marginBottom: theme.spacing.sectionMargin },
-    avatarWrap: { alignItems: "center", marginBottom: theme.spacing.sectionMargin },
+    container: { flex: 1, backgroundColor: c.surface },
+    content: { padding: theme.spacing.containerPadding, paddingTop: 16, paddingBottom: 110 },
+    avatarWrap: { alignItems: "center", marginBottom: theme.spacing.sectionMargin, marginTop: 8 },
     avatarRing: {
       width: 84,
       height: 84,
@@ -149,9 +150,9 @@ export default function ProfileScreen() {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.header}>Profile</Text>
-
-      <View style={styles.avatarWrap}>
+      <TopNav title="Profile" showLogo={false} subtitle={me?.username ? `@${me.username}` : undefined} />
+      <ScrollView contentContainerStyle={styles.content} showsVerticalScrollIndicator={false}>
+        <View style={styles.avatarWrap}>
         <View style={styles.avatarRing}>
           <Text style={styles.avatarInitial}>{initial}</Text>
         </View>
@@ -248,6 +249,7 @@ export default function ProfileScreen() {
       <TouchableOpacity style={styles.linkButton} onPress={deleteAccount}>
         <Text style={styles.linkText}>Delete my account</Text>
       </TouchableOpacity>
+      </ScrollView>
     </View>
   );
 }

@@ -1,11 +1,11 @@
 import { useEffect, useState } from "react";
-import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
+import { View, Text, StyleSheet, TouchableOpacity, ScrollView } from "react-native";
 import { router } from "expo-router";
 import { MaterialIcons } from "@expo/vector-icons";
 import type { MacroQuestProgress, UserProfile } from "@pike/shared-types";
 import { api } from "@/lib/api";
 import { useTheme } from "@/theme";
-import { Logo } from "@/components/Logo";
+import { TopNav } from "@/components/TopNav";
 import { PwaInstallBanner } from "@/components/PwaInstallBanner";
 
 /** UI doc 7.1 — daily-open identity dashboard: streak (flame, gold) + XP bar (Pike Blue fill). */
@@ -28,12 +28,20 @@ export default function HomeScreen() {
   const c = theme.colors;
 
   const styles = StyleSheet.create({
-    container: { flex: 1, backgroundColor: c.surface, padding: theme.spacing.containerPadding, paddingTop: 60 },
-    headerRow: { flexDirection: "row", alignItems: "center", justifyContent: "space-between", marginBottom: theme.spacing.sectionMargin },
-    headerLeft: { flexDirection: "row", alignItems: "center", gap: 10 },
-    header: { ...theme.font(theme.type.headlineLgMobile), color: c.primary },
-    streak: { flexDirection: "row", alignItems: "center", gap: 4 },
-    streakCount: { ...theme.font(theme.type.headlineSm), color: c.secondary },
+    container: { flex: 1, backgroundColor: c.surface },
+    content: { padding: theme.spacing.containerPadding, paddingTop: 16, paddingBottom: 110 },
+    streakBadge: {
+      flexDirection: "row",
+      alignItems: "center",
+      gap: 5,
+      backgroundColor: theme.mode === "dark" ? "rgba(255, 185, 95, 0.12)" : "rgba(238, 152, 0, 0.1)",
+      borderWidth: 1,
+      borderColor: "rgba(255, 185, 95, 0.3)",
+      borderRadius: theme.radius.full,
+      paddingHorizontal: 10,
+      paddingVertical: 4,
+    },
+    streakCount: { ...theme.font(theme.type.headlineSm), color: c.secondary, fontSize: 14 },
     card: {
       backgroundColor: theme.mode === "dark" ? "rgba(30,41,59,0.7)" : c.surfaceContainerLowest,
       borderWidth: 1,
@@ -71,22 +79,19 @@ export default function HomeScreen() {
     rewardText: { ...theme.font(theme.type.labelSm), color: c.secondary, flex: 1 },
   });
 
+  const rightAction =
+    me && me.currentStreak > 0 ? (
+      <View style={styles.streakBadge}>
+        <MaterialIcons name="whatshot" size={16} color={c.secondary} />
+        <Text style={styles.streakCount}>{me.currentStreak}d</Text>
+      </View>
+    ) : undefined;
+
   return (
     <View style={styles.container}>
-      <View style={styles.headerRow}>
-        <View style={styles.headerLeft}>
-          <Logo size={28} />
-          <Text style={styles.header}>PIKE</Text>
-        </View>
-        {me && me.currentStreak > 0 && (
-          <View style={styles.streak}>
-            <MaterialIcons name="whatshot" size={18} color={c.secondary} />
-            <Text style={styles.streakCount}>{me.currentStreak}</Text>
-          </View>
-        )}
-      </View>
-
-      <PwaInstallBanner />
+      <TopNav title="PIKE" showLogo rightAction={rightAction} />
+      <ScrollView contentContainerStyle={styles.content} showsVerticalScrollIndicator={false}>
+        <PwaInstallBanner />
 
       {me && (
         <View style={styles.card}>
@@ -175,6 +180,7 @@ export default function HomeScreen() {
           )}
         </View>
       )}
+      </ScrollView>
     </View>
   );
 }

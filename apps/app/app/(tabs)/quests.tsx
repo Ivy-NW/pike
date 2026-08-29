@@ -4,6 +4,7 @@ import { router } from "expo-router";
 import type { UserQuestListItem } from "@pike/shared-types";
 import { api } from "@/lib/api";
 import { useTheme } from "@/theme";
+import { TopNav } from "@/components/TopNav";
 
 /** Quest list: available quests across venues, and which ones this user has completed. */
 export default function QuestsScreen() {
@@ -16,9 +17,9 @@ export default function QuestsScreen() {
 
   const c = theme.colors;
   const styles = StyleSheet.create({
-    container: { flex: 1, backgroundColor: c.surface, padding: theme.spacing.containerPadding, paddingTop: 60 },
-    header: { ...theme.font(theme.type.headlineLgMobile), color: c.primary, marginBottom: theme.spacing.sectionMargin },
-    empty: { ...theme.font(theme.type.bodyMd), color: c.onSurfaceVariant },
+    container: { flex: 1, backgroundColor: c.surface },
+    content: { padding: theme.spacing.containerPadding, paddingTop: 16, paddingBottom: 110 },
+    empty: { ...theme.font(theme.type.bodyMd), color: c.onSurfaceVariant, textAlign: "center", marginTop: 24 },
     card: {
       backgroundColor: theme.mode === "dark" ? "rgba(30,41,59,0.7)" : c.surfaceContainerLowest,
       borderWidth: 1,
@@ -37,11 +38,12 @@ export default function QuestsScreen() {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.header}>Quests</Text>
+      <TopNav title="Quests" showLogo={false} subtitle={`${quests.filter(q => !q.completed).length} active quests`} />
       <FlatList
         data={quests}
         keyExtractor={(q) => q.id}
-        contentContainerStyle={{ paddingBottom: 40 }}
+        contentContainerStyle={styles.content}
+        showsVerticalScrollIndicator={false}
         ListEmptyComponent={<Text style={styles.empty}>No quests available right now.</Text>}
         renderItem={({ item }) => (
           <TouchableOpacity
