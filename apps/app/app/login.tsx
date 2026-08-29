@@ -40,11 +40,12 @@ export default function LoginScreen() {
     setLoading(true);
     setError(null);
     try {
-      const { token } = await api.signinConsumer({ identifier, password });
+      const cleanIdentifier = identifier.trim();
+      const { token } = await api.signinConsumer({ identifier: cleanIdentifier, password });
       await finishLogin(token);
     } catch (e: any) {
       console.error("[signin]", e?.message ?? e);
-      setError("Invalid username/email or password");
+      setError(e?.message ?? "Invalid username/email or password");
     } finally {
       setLoading(false);
     }
@@ -54,11 +55,17 @@ export default function LoginScreen() {
     setLoading(true);
     setError(null);
     try {
-      const { token } = await api.signupConsumer({ phone, username, name, email, password });
+      const { token } = await api.signupConsumer({
+        phone: phone.trim(),
+        username: username.trim(),
+        name: name.trim(),
+        email: email.trim(),
+        password,
+      });
       await finishLogin(token);
     } catch (e: any) {
       console.error("[signup]", e?.message ?? e);
-      setError("Could not create your account — check your details and try again");
+      setError(e?.message ?? "Could not create your account — check your details and try again");
     } finally {
       setLoading(false);
     }
