@@ -157,81 +157,18 @@ export default function MapScreen() {
           display: inline-block;
           border: 1px solid rgba(251, 191, 36, 0.25);
         }
-        
-        /* Layer switcher pill */
-        .layer-switcher {
-          position: absolute;
-          top: 14px;
-          right: 14px;
-          z-index: 1000;
-          display: flex;
-          background: rgba(15, 23, 42, 0.88);
-          backdrop-filter: blur(12px);
-          -webkit-backdrop-filter: blur(12px);
-          border: 1px solid rgba(255, 255, 255, 0.15);
-          border-radius: 24px;
-          padding: 3px;
-          box-shadow: 0 8px 24px rgba(0,0,0,0.4);
-        }
-        .layer-btn {
-          background: transparent;
-          border: none;
-          color: #94a3b8;
-          font-size: 12px;
-          font-weight: 600;
-          padding: 6px 12px;
-          border-radius: 18px;
-          cursor: pointer;
-          transition: all 0.2s ease;
-        }
-        .layer-btn.active {
-          background: #2563eb;
-          color: #ffffff;
-          box-shadow: 0 2px 8px rgba(37, 99, 235, 0.4);
-        }
       </style>
     </head>
     <body>
-      <div class="layer-switcher">
-        <button id="btn-topo" class="layer-btn active" onclick="setLayer('topo')">Smooth Topo</button>
-        <button id="btn-osm" class="layer-btn" onclick="setLayer('osm')">OpenStreet</button>
-        <button id="btn-hot" class="layer-btn" onclick="setLayer('hot')">Clean Sheet</button>
-      </div>
       <div id="map"></div>
       <script>
         var map = L.map('map', { zoomControl: false, attributionControl: false }).setView([40.7128, -74.0060], 14);
 
-        var topoLayer = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Topo_Map/MapServer/tile/{z}/{y}/{x}', {
-          maxZoom: 19
-        });
-        
-        var osmLayer = L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
-          maxZoom: 19
-        });
-        
-        var hotLayer = L.tileLayer('https://{s}.tile.openstreetmap.fr/hot/{z}/{x}/{y}.png', {
-          maxZoom: 19
-        });
-
-        // Default to smooth topographic terrain map
-        topoLayer.addTo(map);
-        var currentLayer = topoLayer;
-
-        function setLayer(type) {
-          map.removeLayer(currentLayer);
-          document.getElementById('btn-topo').className = 'layer-btn' + (type === 'topo' ? ' active' : '');
-          document.getElementById('btn-osm').className = 'layer-btn' + (type === 'osm' ? ' active' : '');
-          document.getElementById('btn-hot').className = 'layer-btn' + (type === 'hot' ? ' active' : '');
-          
-          if (type === 'topo') {
-            currentLayer = topoLayer;
-          } else if (type === 'osm') {
-            currentLayer = osmLayer;
-          } else if (type === 'hot') {
-            currentLayer = hotLayer;
-          }
-          currentLayer.addTo(map);
-        }
+        // Smooth Google Maps Roadmap / Terrain in Leaflet
+        L.tileLayer('https://mt1.google.com/vt/lyrs=m&x={x}&y={y}&z={z}', {
+          maxZoom: 20,
+          subdomains: ['mt0', 'mt1', 'mt2', 'mt3']
+        }).addTo(map);
 
         var markers = ${JSON.stringify(venueMarkers)};
         if (markers.length > 0) {
@@ -306,7 +243,7 @@ export default function MapScreen() {
 
   return (
     <View style={styles.container}>
-      <TopNav title="Explore" showLogo={false} subtitle="Live OpenStreetMap discovery" />
+      <TopNav title="Explore" showLogo={false} subtitle="Interactive Quest Map" />
       <View style={styles.mapContainer}>
         {Platform.OS === "web" ? (
           <iframe
