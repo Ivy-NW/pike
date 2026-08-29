@@ -1,11 +1,10 @@
 import React from "react";
-import { View, Text, StyleSheet, Platform, TouchableOpacity, Alert } from "react-native";
+import { View, Text, StyleSheet, Platform } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { MaterialIcons } from "@expo/vector-icons";
 import { useTheme } from "@/theme";
 import { Logo } from "./Logo";
 import { NeumorphicView } from "./NeumorphicView";
-
 import { router } from "expo-router";
 
 interface TopNavProps {
@@ -31,7 +30,7 @@ export function TopNav({ title = "PIKE", showLogo = true, subtitle, rightAction 
     header: {
       backgroundColor: isDark ? "#141314" : c.surface,
       borderBottomWidth: 1,
-      borderBottomColor: "rgba(255, 255, 255, 0.04)",
+      borderBottomColor: isDark ? "rgba(255, 255, 255, 0.04)" : "rgba(0, 0, 0, 0.06)",
       paddingTop: topPadding,
       paddingBottom: 12,
       paddingHorizontal: 16,
@@ -62,16 +61,16 @@ export function TopNav({ title = "PIKE", showLogo = true, subtitle, rightAction 
     },
     subtitle: {
       ...theme.font(theme.type.labelSm),
-      color: "#00dbe9",
+      color: isDark ? "#00dbe9" : c.primary,
       fontSize: 11,
       marginTop: 1,
     },
     right: {
       flexDirection: "row",
       alignItems: "center",
-      gap: 8,
+      gap: 10,
     },
-    bellButton: {
+    iconButton: {
       width: 38,
       height: 38,
       borderRadius: 19,
@@ -90,11 +89,29 @@ export function TopNav({ title = "PIKE", showLogo = true, subtitle, rightAction 
         </View>
       </View>
       <View style={styles.right}>
-        {rightAction ? rightAction : (
+        {/* Creative Day/Night Quantum Theme Toggle */}
+        <NeumorphicView
+          variant="raised"
+          glow={isDark ? "none" : "gold"}
+          radius={19}
+          style={styles.iconButton}
+          onPress={theme.toggleTheme}
+        >
+          <MaterialIcons
+            name={isDark ? "nightlight-round" : "wb-sunny"}
+            size={18}
+            color={isDark ? "#00f0ff" : "#f59e0b"}
+          />
+        </NeumorphicView>
+
+        {/* Notifications Bell or Custom Right Action */}
+        {rightAction ? (
+          rightAction
+        ) : (
           <NeumorphicView
             variant="raised"
             radius={19}
-            style={styles.bellButton}
+            style={styles.iconButton}
             onPress={handleNotificationPress}
           >
             <MaterialIcons name="notifications-none" size={20} color={c.primary} />

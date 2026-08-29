@@ -177,8 +177,13 @@ export default function MapScreen() {
 
         L.control.zoom({ position: 'topright' }).addTo(map);
 
-        // Dark CartoDB Tiles matching C:\\Users\\user\\Desktop\\Ken\\omni
-        L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
+        // Free CARTO Tiles matching C:\\Users\\user\\Desktop\\Ken\\omni (Dark / Light adaptive)
+        var isDarkMode = ${isDark};
+        var tileUrl = isDarkMode
+          ? 'https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png'
+          : 'https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png';
+
+        L.tileLayer(tileUrl, {
           subdomains: 'abc',
           maxZoom: 19,
           attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> &copy; <a href="https://carto.com/attributions">CARTO</a>'

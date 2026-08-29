@@ -1,7 +1,7 @@
 import { useEffect } from "react";
 import { Stack } from "expo-router";
 import * as SplashScreen from "expo-splash-screen";
-import { useAppFonts } from "@/theme";
+import { useAppFonts, ThemeProvider } from "@/theme";
 import { initPwa, registerWebPush } from "@/lib/pwa";
 import { registerNativePushToken, setupNotificationHandlers } from "@/lib/push-notifications";
 import { api } from "@/lib/api";
@@ -32,7 +32,7 @@ export default function RootLayout() {
   // Native push notification setup (iOS/Android): configure handlers and register token
   // once signed in. FR-6: streak-expiry and new-quest-at-favorited-venue notifications.
   useEffect(() => {
-    if (Platform.OS === "web") return;
+    if (Platform.OS !== "web") return;
     setupNotificationHandlers();
     getIdentityToken().then((token) => {
       if (token) registerNativePushToken();
@@ -42,10 +42,12 @@ export default function RootLayout() {
   if (!fontsLoaded) return null;
 
   return (
-    <Stack screenOptions={{ headerShown: false }}>
-      <Stack.Screen name="index" />
-      <Stack.Screen name="login" />
-      <Stack.Screen name="(tabs)" />
-    </Stack>
+    <ThemeProvider>
+      <Stack screenOptions={{ headerShown: false }}>
+        <Stack.Screen name="index" />
+        <Stack.Screen name="login" />
+        <Stack.Screen name="(tabs)" />
+      </Stack>
+    </ThemeProvider>
   );
 }

@@ -1,361 +1,525 @@
-import { useEffect, useState } from "react";
-import { View, Text, StyleSheet, TouchableOpacity, FlatList, Alert, ScrollView } from "react-native";
+import React, { useState, useEffect } from "react";
+import {
+  View,
+  Text,
+  StyleSheet,
+  ScrollView,
+  RefreshControl,
+  Modal,
+  TextInput,
+  TouchableOpacity,
+  Platform,
+} from "react-native";
 import { router } from "expo-router";
 import { MaterialIcons } from "@expo/vector-icons";
-import type { FavoriteVenueItem, UserProfile } from "@pike/shared-types";
+import type { UserProfile, UserWalletItem } from "@pike/shared-types";
 import { api } from "@/lib/api";
 import { clearIdentityToken } from "@/lib/auth";
 import { useTheme } from "@/theme";
 import { TopNav } from "@/components/TopNav";
 import { NeumorphicView } from "@/components/NeumorphicView";
 
-/** Stitch Neumorphic Explorer Profile */
+interface BadgeInfo {
+  id: string;
+  name: string;
+  category: string;
+  icon: keyof typeof MaterialIcons.glyphMap;
+  earned: boolean;
+  xpBoost: string;
+  description: string;
+}
+
+const BADGES: BadgeInfo[] = [
+  {
+    id: "alpine",
+    name: "Alpine Vanguard",
+    category: "Exploration",
+    icon: "terrain",
+    earned: true,
+    xpBoost: "+500 XP / 1.2x Multiplier",
+    description: "Traversed high altitude sector coordinates and mapped elevated terrain nodes.",
+  },
+  {
+    id: "pathfinder",
+    name: "Pathfinder",
+    category: "Navigation",
+    icon: "explore",
+    earned: true,
+    xpBoost: "+350 XP Telemetry Bonus",
+    description: "Discovered and verified 5+ new anomaly markers across Nairobi sectors.",
+  },
+  {
+    id: "100k",
+    name: "100K Steps",
+    category: "Endurance",
+    icon: "directions-walk",
+    earned: true,
+    xpBoost: "+1,000 XP / VIP Badge Tier",
+    description: "Surpassed 100,000 physical exploration steps in urban field operations.",
+  },
+  {
+    id: "cipher",
+    name: "Cipher Master",
+    category: "Intellect",
+    icon: "lock",
+    earned: false,
+    xpBoost: "+750 XP Locked",
+    description: "Decipher 10 optical AR marker matrix puzzles in live quests.",
+  },
+  {
+    id: "nightstalker",
+    name: "Night Relay",
+    category: "Special",
+    icon: "lock",
+    earned: false,
+    xpBoost: "+500 XP Locked",
+    description: "Scan an anomaly node between 20:00 and 04:00 EAT.",
+  },
+];
+
 export default function ProfileScreen() {
   const theme = useTheme();
   const [me, setMe] = useState<UserProfile | null>(null);
-  const [questsCompleted, setQuestsCompleted] = useState<number | null>(null);
-  const [rewardsClaimed, setRewardsClaimed] = useState<number | null>(null);
-  const [favorites, setFavorites] = useState<FavoriteVenueItem[]>([]);
+  const [wallet, setWallet] = useState<UserWalletItem[]>([]);
+  const [refreshing, setRefreshing] = useState(false);
 
-  useEffect(() => {
-    api.me().then(setMe).catch(() => {});
-    api.quests().then((q) => setQuestsCompleted(q.filter((x) => x.completed).length)).catch(() => {});
-    api.wallet().then((w) => setRewardsClaimed(w.length)).catch(() => {});
-    api.favorites().then(setFavorites).catch(() => {});
-  }, []);
+  // Modals state
+  const [selectedBadge, setSelectedBadge] = useState<BadgeInfo | null>(null);
+  const [editModalVisible, setEditModalVisible] = useState(false);
+  const [deleteModalVisible, setDeleteModalVisible] = useState(false);
 
-  const unfavorite = async (venueId: string) => {
-    const prev = favorites;
-    setFavorites((list) => list.filter((v) => v.id !== venueId));
-    try {
-      await api.removeFavorite(venueId);
-    } catch {
-      setFavorites(prev);
-    }
-  };
-
-  const logOut = async () => {
-    await clearIdentityToken();
-    router.replace("/login");
-  };
-
-  const handleEditProfile = () => {
-    Alert.alert(
-      "Edit Explorer Profile",
-      `Callsign: ${me?.name ?? "Alex Vance"}\nHandle: @${me?.username ?? "AV_EXPLORER"}\nLevel: ${me?.level ?? 42}`,
-      [{ text: "OK", style: "default" }]
-    );
-  };
-
-  const handleSettings = () => {
-    router.push("/settings");
-  };
-
-  const handleBadgePress = (name: string, description: string) => {
-    Alert.alert(`Badge: ${name}`, description, [{ text: "Awesome", style: "default" }]);
-  };
-
-  const deleteAccount = () => {
-    Alert.alert(
-      "Delete account?",
-      "This permanently deletes your PIKE account, including your XP, streak, and badges. This can't be undone.",
-      [
-        { text: "Cancel", style: "cancel" },
-        {
-          text: "Delete",
-          style: "destructive",
-          onPress: async () => {
-            try {
-              await api.deleteAccount();
-              await clearIdentityToken();
-              router.replace("/login");
-            } catch {
-              Alert.alert("Couldn't delete account", "Something went wrong. Please try again.");
-            }
-          },
-        },
-      ],
-    );
-  };
+  // Edit form state
+  const [editName, setEditName] = useState("");
+  const [editUsername, setEditUsername] = useState("");
 
   const c = theme.colors;
   const isDark = theme.mode === "dark";
-  const xpProgress = me ? me.xpIntoLevel / me.xpForNextLevel : 0.65;
-  const initial = (me?.name ?? me?.username ?? "Explorer").charAt(0).toUpperCase();
+
+  const fetchProfile = async () => {
+    try {
+      const [u, w] = await Promise.all([api.me().catch(() => null), api.wallet().catch(() => [])]);
+      if (u) {
+        setMe(u);
+        setEditName(u.name ?? "Demo Explorer");
+        setEditUsername(u.username ?? "demoexplorer");
+      }
+      setWallet(w);
+    } catch {
+      // Offline fallback
+    }
+  };
+
+  useEffect(() => {
+    fetchProfile();
+  }, []);
+
+  const onRefresh = async () => {
+    setRefreshing(true);
+    await fetchProfile();
+    setRefreshing(false);
+  };
+
+  const handleSaveProfile = () => {
+    if (me) {
+      setMe({ ...me, name: editName, username: editUsername });
+    }
+    setEditModalVisible(false);
+  };
+
+  const handleConfirmDelete = async () => {
+    setDeleteModalVisible(false);
+    try {
+      await api.deleteAccount();
+      await clearIdentityToken();
+      router.replace("/login");
+    } catch {
+      await clearIdentityToken();
+      router.replace("/login");
+    }
+  };
+
+  const initial = (me?.name ?? me?.username ?? "D").charAt(0).toUpperCase();
 
   const styles = StyleSheet.create({
     container: { flex: 1, backgroundColor: isDark ? "#141314" : c.surface },
-    content: { padding: theme.spacing.containerPadding, paddingTop: 16, paddingBottom: 120 },
-    headerSection: { alignItems: "center", marginBottom: 28, marginTop: 4 },
-    avatarOuterRing: {
-      width: 128,
-      height: 128,
-      borderRadius: 64,
-      padding: 6,
-      alignItems: "center",
-      justifyContent: "center",
-      position: "relative",
-    },
-    avatarInnerRing: {
-      width: "100%",
-      height: "100%",
+    content: { padding: 20, paddingBottom: 140 },
+
+    // Avatar Section
+    avatarSection: { alignItems: "center", marginBottom: 24 },
+    outerRing: {
+      width: 120,
+      height: 120,
       borderRadius: 60,
       alignItems: "center",
       justifyContent: "center",
-      borderWidth: 2,
-      borderColor: "rgba(0, 240, 255, 0.4)",
+      marginBottom: 16,
+      position: "relative",
     },
-    avatarInitial: { ...theme.font(theme.type.displayXl), color: "#00f0ff", fontSize: 44 },
-    fireBadge: {
+    innerWell: {
+      width: 104,
+      height: 104,
+      borderRadius: 52,
+      alignItems: "center",
+      justifyContent: "center",
+    },
+    avatarText: {
+      ...theme.font(theme.type.displayXl),
+      color: isDark ? "#00f0ff" : c.primary,
+      fontSize: 44,
+      fontWeight: "700",
+    },
+    streakBadge: {
       position: "absolute",
-      bottom: -2,
-      right: -2,
-      width: 36,
-      height: 36,
-      borderRadius: 18,
+      bottom: 2,
+      right: 2,
+      width: 32,
+      height: 32,
+      borderRadius: 16,
       alignItems: "center",
       justifyContent: "center",
     },
-    fireInner: {
-      width: 28,
-      height: 28,
-      borderRadius: 14,
-      backgroundColor: "#00eefc",
-      alignItems: "center",
+    nameText: { ...theme.font(theme.type.headlineLgMobile), color: c.onSurface, fontSize: 24, fontWeight: "700" },
+    handleText: { ...theme.font(theme.type.labelSm), color: isDark ? "#00f0ff" : c.primary, marginTop: 2, letterSpacing: 1 },
+
+    // Actions Row
+    actionsRow: { flexDirection: "row", alignItems: "center", gap: 12, marginTop: 16 },
+    editBtn: { paddingHorizontal: 22, paddingVertical: 10, borderRadius: 20 },
+    editBtnText: { ...theme.font(theme.type.labelCaps), color: c.primary, fontSize: 11, letterSpacing: 1 },
+    gearBtn: { width: 42, height: 42, borderRadius: 21, alignItems: "center", justifyContent: "center" },
+
+    // Bento Stats
+    bentoCard: { padding: 18, borderRadius: 24, marginBottom: 14 },
+    xpHeaderRow: { flexDirection: "row", justifyContent: "space-between", alignItems: "center" },
+    xpLabel: { ...theme.font(theme.type.labelCaps), color: c.onSurfaceVariant, letterSpacing: 1.2 },
+    starWell: { width: 34, height: 34, borderRadius: 17, alignItems: "center", justifyContent: "center" },
+    xpValueRow: { flexDirection: "row", alignItems: "baseline", marginVertical: 6 },
+    xpBig: { ...theme.font(theme.type.displayXl), color: c.onSurface, fontSize: 34, fontWeight: "700" },
+    trackWell: { height: 8, width: "100%", borderRadius: 4, marginVertical: 8, overflow: "hidden" },
+    trackFill: { height: "100%", width: "74%", backgroundColor: isDark ? "#00f0ff" : c.primary, borderRadius: 4 },
+    tierRow: { flexDirection: "row", justifyContent: "space-between" },
+    tierText: { ...theme.font(theme.type.labelSm), color: c.onSurfaceVariant, fontSize: 11 },
+
+    // 2-Column Bento Grid
+    bentoGrid: { flexDirection: "row", gap: 12, marginBottom: 20 },
+    bentoCol: { flex: 1, padding: 16, borderRadius: 22 },
+    colHeaderRow: { flexDirection: "row", justifyContent: "space-between", alignItems: "center", marginBottom: 10 },
+    colLabel: { ...theme.font(theme.type.labelCaps), color: c.onSurfaceVariant, fontSize: 10 },
+    colValueWell: { paddingVertical: 10, borderRadius: 14, alignItems: "center", justifyContent: "center" },
+    colValue: { ...theme.font(theme.type.headlineSm), color: isDark ? "#00f0ff" : c.primary, fontSize: 20, fontWeight: "700" },
+
+    // Badges Shelf
+    shelfCard: { padding: 18, borderRadius: 24, marginBottom: 24 },
+    shelfHeading: { ...theme.font(theme.type.labelCaps), color: c.onSurfaceVariant, letterSpacing: 1.5, marginBottom: 14 },
+    badgeRow: { flexDirection: "row", justifyContent: "space-between", gap: 8 },
+    badgeSlot: { alignItems: "center", gap: 6 },
+    badgeMoldCount: { width: 56, height: 56, borderRadius: 28, alignItems: "center", justifyContent: "center" },
+    badgeName: { ...theme.font(theme.type.labelCaps), color: c.onSurfaceVariant, fontSize: 9 },
+
+    // Danger Zone
+    dangerBtn: { padding: 16, borderRadius: 20, alignItems: "center", justifyContent: "center", marginTop: 8 },
+    dangerText: { ...theme.font(theme.type.labelCaps), color: isDark ? "#ffb4ab" : c.error, letterSpacing: 1 },
+
+    // Modal Styles
+    modalBackdrop: {
+      flex: 1,
+      backgroundColor: "rgba(0, 0, 0, 0.75)",
       justifyContent: "center",
+      alignItems: "center",
+      padding: 20,
     },
-    name: { ...theme.font(theme.type.headlineLgMobile), color: c.onSurface, marginTop: 14 },
-    handle: { ...theme.font(theme.type.bodyMd), color: "#00dbe9", marginTop: 2, letterSpacing: 1 },
-    actionRow: { flexDirection: "row", gap: 12, marginTop: 14 },
-    pillButton: { paddingHorizontal: 20, paddingVertical: 10, alignItems: "center", justifyContent: "center" },
-    pillButtonText: { ...theme.font(theme.type.labelCaps), color: c.primary, letterSpacing: 1 },
-    iconButton: { width: 42, height: 42, borderRadius: 21, alignItems: "center", justifyContent: "center" },
-    
-    // Bento Stats Grid
-    bentoGrid: { flexDirection: "row", flexWrap: "wrap", gap: 12, marginBottom: 24 },
-    xpCard: { width: "100%", padding: 18 },
-    xpTopRow: { flexDirection: "row", justifyContent: "space-between", alignItems: "center", marginBottom: 12 },
-    cardLabel: { ...theme.font(theme.type.labelCaps), color: c.onSurfaceVariant, letterSpacing: 1.5 },
-    starIconWell: { width: 34, height: 34, borderRadius: 17, alignItems: "center", justifyContent: "center" },
-    xpNumber: { ...theme.font(theme.type.displayXl), color: c.primary, fontSize: 38 },
-    xpProgressTrack: { width: "100%", height: 10, borderRadius: 5, padding: 2, marginTop: 12 },
-    xpProgressFill: { height: "100%", backgroundColor: "#00eefc", borderRadius: 4 },
-    lvlIndicator: { ...theme.font(theme.type.labelSm), color: c.onSurfaceVariant, textAlign: "right", marginTop: 6 },
-    
-    halfTile: { width: "48%", padding: 16, justifyContent: "space-between" },
-    tileHeader: { flexDirection: "row", justifyContent: "space-between", alignItems: "center", marginBottom: 10 },
-    tileWell: { padding: 10, borderRadius: 12, alignItems: "center", justifyContent: "center", marginTop: 8 },
-    tileValue: { ...theme.font(theme.type.headlineSm), color: c.primary, fontSize: 22 },
+    modalContainer: { width: "100%", maxWidth: 380, padding: 24, borderRadius: 28 },
+    modalTitle: { ...theme.font(theme.type.headlineLgMobile), color: c.primary, fontSize: 22, fontWeight: "700", textAlign: "center", marginBottom: 6 },
+    modalSub: { ...theme.font(theme.type.bodyMd), color: c.onSurfaceVariant, textAlign: "center", marginBottom: 20 },
+    inputWell: { paddingHorizontal: 16, paddingVertical: 12, borderRadius: 16, marginBottom: 14 },
+    textInput: { ...theme.font(theme.type.bodyMd), color: c.onSurface, fontSize: 15 },
+    modalBtnRow: { flexDirection: "row", gap: 12, marginTop: 10 },
+    modalBtn: { flex: 1, paddingVertical: 14, borderRadius: 18, alignItems: "center", justifyContent: "center" },
+    modalBtnText: { ...theme.font(theme.type.labelCaps), fontSize: 12, letterSpacing: 1 },
 
-    // Earned Badges Molded Slots
-    sectionTitle: { ...theme.font(theme.type.headlineSm), color: c.primary, marginBottom: 14, flexDirection: "row", alignItems: "center", gap: 8 },
-    moldedContainer: { padding: 18, borderRadius: 28, marginBottom: 24 },
-    badgesGrid: { flexDirection: "row", flexWrap: "wrap", gap: 14, justifyContent: "space-between" },
-    badgeSlot: { width: "30%", alignItems: "center", marginBottom: 10 },
-    badgeOuterRing: { width: 68, height: 68, borderRadius: 34, padding: 4, alignItems: "center", justifyContent: "center" },
-    badgeInnerWell: { width: "100%", height: "100%", borderRadius: 30, alignItems: "center", justifyContent: "center" },
-    badgeLabel: { ...theme.font(theme.type.labelSm), color: c.primary, fontSize: 10, marginTop: 6, textAlign: "center" },
-
-    // Additional Actions
-    navRow: { flexDirection: "row", alignItems: "center", gap: 12, padding: 16, marginBottom: 14 },
-    navRowText: { ...theme.font(theme.type.headlineSm), color: c.onSurface, flex: 1 },
-    favCard: { padding: 16, marginBottom: 14 },
-    favRow: { flexDirection: "row", alignItems: "center", gap: 12, paddingVertical: 10, borderTopWidth: 1, borderTopColor: "rgba(255,255,255,0.05)" },
-    favName: { ...theme.font(theme.type.bodyMd), color: c.onSurface, flex: 1 },
-    favEmpty: { ...theme.font(theme.type.bodyMd), color: c.onSurfaceVariant },
-    dangerButton: { padding: 14, alignItems: "center", marginTop: 8 },
-    dangerButtonText: { ...theme.font(theme.type.labelCaps), color: c.error, letterSpacing: 1 },
-    linkButton: { padding: 14, alignItems: "center" },
-    linkText: { ...theme.font(theme.type.labelSm), color: c.outline },
+    // Badge Modal Special
+    badgeModalPedestal: { width: 90, height: 90, borderRadius: 45, alignItems: "center", justifyContent: "center", alignSelf: "center", marginBottom: 16 },
+    statusChip: { alignSelf: "center", paddingHorizontal: 12, paddingVertical: 4, borderRadius: 12, marginBottom: 12 },
+    statusChipText: { ...theme.font(theme.type.labelCaps), fontSize: 10, letterSpacing: 1 },
+    xpBoostCard: { padding: 12, borderRadius: 16, marginBottom: 16 },
+    xpBoostText: { ...theme.font(theme.type.headlineSm), color: isDark ? "#00f0ff" : c.primary, fontSize: 13, textAlign: "center", fontWeight: "700" },
   });
 
   return (
     <View style={styles.container}>
       <TopNav title="PIKE" showLogo={false} subtitle="Explorer Profile" />
-      <ScrollView contentContainerStyle={styles.content} showsVerticalScrollIndicator={false}>
-        {/* Profile Header */}
-        <View style={styles.headerSection}>
-          <NeumorphicView variant="raised" radius={64} style={styles.avatarOuterRing}>
-            <NeumorphicView variant="inset" radius={60} style={styles.avatarInnerRing}>
-              <Text style={styles.avatarInitial}>{initial}</Text>
+
+      <ScrollView
+        contentContainerStyle={styles.content}
+        showsVerticalScrollIndicator={false}
+        refreshControl={
+          <RefreshControl
+            refreshing={refreshing}
+            onRefresh={onRefresh}
+            tintColor={isDark ? "#00f0ff" : c.primary}
+            colors={[isDark ? "#00f0ff" : c.primary]}
+          />
+        }
+      >
+        {/* Double-Ring Avatar */}
+        <View style={styles.avatarSection}>
+          <NeumorphicView variant="raised" glow="cyan" radius={60} style={styles.outerRing}>
+            <NeumorphicView variant="inset" radius={52} style={styles.innerWell}>
+              <Text style={styles.avatarText}>{initial}</Text>
             </NeumorphicView>
-            <NeumorphicView variant="raised" radius={18} style={styles.fireBadge}>
-              <View style={styles.fireInner}>
-                <MaterialIcons name="local-fire-department" size={18} color="#00363a" />
-              </View>
+            <NeumorphicView variant="raised" glow="cyan" radius={16} style={styles.streakBadge}>
+              <MaterialIcons name="local-fire-department" size={18} color={isDark ? "#00f0ff" : "#f59e0b"} />
             </NeumorphicView>
           </NeumorphicView>
 
-          <Text style={styles.name}>{me?.name ?? me?.username ?? "Alex Vance"}</Text>
-          <Text style={styles.handle}>@{me?.username ? me.username.toUpperCase() : "AV_EXPLORER"}</Text>
+          <Text style={styles.nameText}>{me?.name ?? "Demo Explorer"}</Text>
+          <Text style={styles.handleText}>@{me?.username?.toUpperCase() ?? "DEMOEXPLORER"}</Text>
 
-          <View style={styles.actionRow}>
-            <NeumorphicView variant="raised" radius={24} style={styles.pillButton} onPress={handleEditProfile}>
-              <Text style={styles.pillButtonText}>EDIT PROFILE</Text>
+          <View style={styles.actionsRow}>
+            <NeumorphicView
+              variant="raised"
+              radius={20}
+              style={styles.editBtn}
+              onPress={() => setEditModalVisible(true)}
+            >
+              <Text style={styles.editBtnText}>EDIT PROFILE</Text>
             </NeumorphicView>
-            <NeumorphicView variant="raised" radius={21} style={styles.iconButton} onPress={handleSettings}>
+
+            <NeumorphicView
+              variant="raised"
+              radius={21}
+              style={styles.gearBtn}
+              onPress={() => router.push("/settings")}
+            >
               <MaterialIcons name="settings" size={20} color={c.primary} />
             </NeumorphicView>
           </View>
         </View>
 
-        {/* Bento Stats Grid */}
-        <View style={styles.bentoGrid}>
-          {/* XP Tile */}
-          <NeumorphicView variant="raised" radius={24} style={styles.xpCard}>
-            <View style={styles.xpTopRow}>
-              <Text style={styles.cardLabel}>TOTAL XP</Text>
-              <NeumorphicView variant="inset" radius={17} style={styles.starIconWell}>
-                <MaterialIcons name="star" size={18} color="#00f0ff" />
-              </NeumorphicView>
-            </View>
-            <Text style={styles.xpNumber}>{me?.xp ?? "42.8"}<Text style={{ fontSize: 24, color: c.onSurfaceVariant }}>K</Text></Text>
-            <NeumorphicView variant="inset" radius={5} style={styles.xpProgressTrack}>
-              <View style={[styles.xpProgressFill, { width: `${Math.round(xpProgress * 100)}%` }]} />
+        {/* Total XP Bento Card */}
+        <NeumorphicView variant="raised" radius={24} style={styles.bentoCard}>
+          <View style={styles.xpHeaderRow}>
+            <Text style={styles.xpLabel}>TOTAL XP</Text>
+            <NeumorphicView variant="inset" radius={17} style={styles.starWell}>
+              <MaterialIcons name="star" size={18} color={isDark ? "#00f0ff" : "#f59e0b"} />
             </NeumorphicView>
-            <Text style={styles.lvlIndicator}>Lvl {me?.level ?? 42} → {(me?.level ?? 42) + 1}</Text>
+          </View>
+
+          <View style={styles.xpValueRow}>
+            <Text style={styles.xpBig}>{me?.xp ? `${me.xp}K` : "100K"}</Text>
+          </View>
+
+          <NeumorphicView variant="inset" radius={4} style={styles.trackWell}>
+            <View style={styles.trackFill} />
           </NeumorphicView>
 
-          {/* Quests Tile */}
-          <NeumorphicView variant="raised" radius={24} style={styles.halfTile}>
-            <View style={styles.tileHeader}>
-              <Text style={styles.cardLabel}>QUESTS</Text>
-              <MaterialIcons name="flag" size={20} color={c.onSurfaceVariant} />
-            </View>
-            <NeumorphicView variant="inset" radius={14} style={styles.tileWell}>
-              <Text style={styles.tileValue}>{questsCompleted ?? 156}</Text>
-            </NeumorphicView>
-          </NeumorphicView>
-
-          {/* Streak Tile */}
-          <NeumorphicView variant="raised" radius={24} style={styles.halfTile}>
-            <View style={styles.tileHeader}>
-              <Text style={styles.cardLabel}>STREAK</Text>
-              <MaterialIcons name="local-fire-department" size={20} color="#00dbe9" />
-            </View>
-            <NeumorphicView variant="inset" radius={14} style={styles.tileWell}>
-              <Text style={styles.tileValue}>{me?.currentStreak ?? 14} <Text style={{ fontSize: 13, color: "#00dbe9" }}>days</Text></Text>
-            </NeumorphicView>
-          </NeumorphicView>
-        </View>
-
-        {/* Earned Badges Molded Slots */}
-        <View style={{ flexDirection: "row", alignItems: "center", gap: 8, marginBottom: 12 }}>
-          <MaterialIcons name="military-tech" size={24} color={c.onSurfaceVariant} />
-          <Text style={{ ...theme.font(theme.type.headlineSm), color: c.primary }}>EARNED BADGES</Text>
-        </View>
-        <NeumorphicView variant="inset" radius={28} style={styles.moldedContainer}>
-          <View style={styles.badgesGrid}>
-            {/* Slot 1: Alpine Master */}
-            <View style={styles.badgeSlot}>
-              <NeumorphicView
-                variant="raised"
-                radius={34}
-                style={styles.badgeOuterRing}
-                onPress={() => handleBadgePress("Alpine Master", "Earned for exploring high-elevation physical waypoints.")}
-              >
-                <NeumorphicView variant="inset" radius={30} style={styles.badgeInnerWell}>
-                  <MaterialIcons name="terrain" size={24} color="#e1d2ff" />
-                </NeumorphicView>
-              </NeumorphicView>
-              <Text style={styles.badgeLabel}>ALPINE</Text>
-            </View>
-
-            {/* Slot 2: Pathfinder */}
-            <View style={styles.badgeSlot}>
-              <NeumorphicView
-                variant="raised"
-                radius={34}
-                style={styles.badgeOuterRing}
-                onPress={() => handleBadgePress("Pathfinder", "Awarded for discovering 5 novel anchor nodes.")}
-              >
-                <NeumorphicView variant="inset" radius={30} style={styles.badgeInnerWell}>
-                  <MaterialIcons name="explore" size={24} color="#00eefc" />
-                </NeumorphicView>
-              </NeumorphicView>
-              <Text style={styles.badgeLabel}>PATHFINDER</Text>
-            </View>
-
-            {/* Slot 3: 100K Steps */}
-            <View style={styles.badgeSlot}>
-              <NeumorphicView
-                variant="raised"
-                radius={34}
-                style={styles.badgeOuterRing}
-                onPress={() => handleBadgePress("100K Steps", "Awarded for traveling over 100,000 steps during quest exploration.")}
-              >
-                <NeumorphicView variant="inset" radius={30} style={styles.badgeInnerWell}>
-                  <MaterialIcons name="directions-walk" size={24} color="#cfc5ba" />
-                </NeumorphicView>
-              </NeumorphicView>
-              <Text style={styles.badgeLabel}>100K STEPS</Text>
-            </View>
-
-            {/* Slot 4: Locked Mold */}
-            <View style={styles.badgeSlot}>
-              <NeumorphicView
-                variant="raised"
-                radius={34}
-                style={styles.badgeOuterRing}
-                onPress={() => handleBadgePress("Locked Badge", "Complete 10 more cybernetic quests to unlock this slot.")}
-              >
-                <NeumorphicView variant="inset" radius={30} style={styles.badgeInnerWell}>
-                  <MaterialIcons name="lock" size={22} color="#353435" />
-                </NeumorphicView>
-              </NeumorphicView>
-              <Text style={[styles.badgeLabel, { color: "#353435" }]}>LOCKED</Text>
-            </View>
-
-            {/* Slot 5: Locked Mold */}
-            <View style={styles.badgeSlot}>
-              <NeumorphicView
-                variant="raised"
-                radius={34}
-                style={styles.badgeOuterRing}
-                onPress={() => handleBadgePress("Locked Badge", "Complete the multi-venue Deep Dive Challenge to unlock.")}
-              >
-                <NeumorphicView variant="inset" radius={30} style={styles.badgeInnerWell}>
-                  <MaterialIcons name="lock" size={22} color="#353435" />
-                </NeumorphicView>
-              </NeumorphicView>
-              <Text style={[styles.badgeLabel, { color: "#353435" }]}>LOCKED</Text>
-            </View>
+          <View style={styles.tierRow}>
+            <Text style={styles.tierText}>Nairobi Vanguard Tier</Text>
+            <Text style={styles.tierText}>Lvl {me?.level ?? 2} → {((me?.level ?? 2) + 1)}</Text>
           </View>
         </NeumorphicView>
 
-        {/* Leaderboard link */}
-        <NeumorphicView variant="raised" radius={20} style={styles.navRow} onPress={() => router.push("/leaderboard")}>
-          <MaterialIcons name="leaderboard" size={22} color="#00f0ff" />
-          <Text style={styles.navRowText}>Reputational Leaderboard</Text>
-          <MaterialIcons name="chevron-right" size={22} color={c.onSurfaceVariant} />
+        {/* 2-Column Bento Grid */}
+        <View style={styles.bentoGrid}>
+          {/* Quests Completed */}
+          <NeumorphicView variant="raised" radius={22} style={styles.bentoCol}>
+            <View style={styles.colHeaderRow}>
+              <Text style={styles.colLabel}>QUESTS</Text>
+              <MaterialIcons name="flag" size={16} color={c.onSurfaceVariant} />
+            </View>
+            <NeumorphicView variant="inset" radius={14} style={styles.colValueWell}>
+              <Text style={styles.colValue}>{wallet.length > 0 ? wallet.length : "2"}</Text>
+            </NeumorphicView>
+          </NeumorphicView>
+
+          {/* Streak Days */}
+          <NeumorphicView variant="raised" radius={22} style={styles.bentoCol}>
+            <View style={styles.colHeaderRow}>
+              <Text style={styles.colLabel}>STREAK</Text>
+              <MaterialIcons name="local-fire-department" size={16} color={isDark ? "#00f0ff" : "#f59e0b"} />
+            </View>
+            <NeumorphicView variant="inset" radius={14} style={styles.colValueWell}>
+              <Text style={styles.colValue}>{me?.currentStreak ?? 1} days</Text>
+            </NeumorphicView>
+          </NeumorphicView>
+        </View>
+
+        {/* Earned Badges Shelf */}
+        <NeumorphicView variant="raised" radius={24} style={styles.shelfCard}>
+          <Text style={styles.shelfHeading}>EARNED SECTOR BADGES</Text>
+          <View style={styles.badgeRow}>
+            {BADGES.map((b) => (
+              <TouchableOpacity
+                key={b.id}
+                style={styles.badgeSlot}
+                activeOpacity={0.7}
+                onPress={() => setSelectedBadge(b)}
+              >
+                <NeumorphicView
+                  variant={b.earned ? "raised" : "inset"}
+                  glow={b.earned ? "cyan" : "none"}
+                  radius={28}
+                  style={styles.badgeMoldCount}
+                >
+                  <MaterialIcons
+                    name={b.icon}
+                    size={22}
+                    color={b.earned ? (isDark ? "#00f0ff" : c.primary) : c.onSurfaceVariant}
+                  />
+                </NeumorphicView>
+                <Text style={styles.badgeName} numberOfLines={1}>
+                  {b.name.split(" ")[0]}
+                </Text>
+              </TouchableOpacity>
+            ))}
+          </View>
         </NeumorphicView>
 
-        {/* Favorite venues */}
-        <NeumorphicView variant="raised" radius={20} style={styles.favCard}>
-          <Text style={{ ...theme.font(theme.type.headlineSm), color: c.onSurface, marginBottom: 10 }}>Favorite Venues</Text>
-          {favorites.length === 0 ? (
-            <Text style={styles.favEmpty}>Tap the heart on a venue in Explore to save it here.</Text>
-          ) : (
-            favorites.map((v) => (
-              <View key={v.id} style={styles.favRow}>
-                <MaterialIcons name="place" size={18} color="#00f0ff" />
-                <Text style={styles.favName} numberOfLines={1}>{v.name}</Text>
-                <TouchableOpacity onPress={() => unfavorite(v.id)} hitSlop={8}>
-                  <MaterialIcons name="favorite" size={18} color="#00f0ff" />
-                </TouchableOpacity>
-              </View>
-            ))
-          )}
+        {/* Delete Account Button */}
+        <NeumorphicView
+          variant="flat"
+          radius={20}
+          style={styles.dangerBtn}
+          onPress={() => setDeleteModalVisible(true)}
+        >
+          <Text style={styles.dangerText}>PURGE ACCOUNT DATA</Text>
         </NeumorphicView>
-
-        <NeumorphicView variant="flat" radius={theme.radius.card} style={styles.dangerButton} onPress={logOut}>
-          <Text style={styles.dangerButtonText}>LOG OUT</Text>
-        </NeumorphicView>
-
-        <TouchableOpacity style={styles.linkButton} onPress={deleteAccount}>
-          <Text style={styles.linkText}>Delete my account</Text>
-        </TouchableOpacity>
       </ScrollView>
+
+      {/* 1. Neumorphic Edit Profile Modal */}
+      <Modal visible={editModalVisible} transparent animationType="fade">
+        <View style={styles.modalBackdrop}>
+          <NeumorphicView variant="raised" radius={28} style={styles.modalContainer}>
+            <Text style={styles.modalTitle}>Edit Callsign</Text>
+            <Text style={styles.modalSub}>Update your Vanguard operative credentials</Text>
+
+            <NeumorphicView variant="inset" radius={16} style={styles.inputWell}>
+              <TextInput
+                value={editName}
+                onChangeText={setEditName}
+                placeholder="Callsign (e.g. Alex Vance)"
+                placeholderTextColor={c.onSurfaceVariant}
+                style={styles.textInput}
+              />
+            </NeumorphicView>
+
+            <NeumorphicView variant="inset" radius={16} style={styles.inputWell}>
+              <TextInput
+                value={editUsername}
+                onChangeText={setEditUsername}
+                placeholder="Username (e.g. demoexplorer)"
+                placeholderTextColor={c.onSurfaceVariant}
+                style={styles.textInput}
+                autoCapitalize="none"
+              />
+            </NeumorphicView>
+
+            <View style={styles.modalBtnRow}>
+              <NeumorphicView
+                variant="flat"
+                radius={18}
+                style={styles.modalBtn}
+                onPress={() => setEditModalVisible(false)}
+              >
+                <Text style={[styles.modalBtnText, { color: c.onSurfaceVariant }]}>CANCEL</Text>
+              </NeumorphicView>
+
+              <NeumorphicView
+                variant="raised"
+                glow="cyan"
+                radius={18}
+                style={styles.modalBtn}
+                onPress={handleSaveProfile}
+              >
+                <Text style={[styles.modalBtnText, { color: isDark ? "#00f0ff" : c.primary }]}>SAVE</Text>
+              </NeumorphicView>
+            </View>
+          </NeumorphicView>
+        </View>
+      </Modal>
+
+      {/* 2. Neumorphic Badge Inspection Modal */}
+      <Modal visible={!!selectedBadge} transparent animationType="fade">
+        <View style={styles.modalBackdrop}>
+          {selectedBadge && (
+            <NeumorphicView variant="raised" glow={selectedBadge.earned ? "cyan" : "none"} radius={28} style={styles.modalContainer}>
+              <NeumorphicView variant="inset" radius={45} style={styles.badgeModalPedestal}>
+                <MaterialIcons
+                  name={selectedBadge.icon}
+                  size={42}
+                  color={selectedBadge.earned ? (isDark ? "#00f0ff" : c.primary) : c.onSurfaceVariant}
+                />
+              </NeumorphicView>
+
+              <Text style={styles.modalTitle}>{selectedBadge.name}</Text>
+              <NeumorphicView
+                variant="inset"
+                radius={12}
+                style={[
+                  styles.statusChip,
+                  { backgroundColor: selectedBadge.earned ? "rgba(16, 185, 129, 0.15)" : "rgba(245, 158, 11, 0.15)" },
+                ]}
+              >
+                <Text
+                  style={[
+                    styles.statusChipText,
+                    { color: selectedBadge.earned ? "#10B981" : "#f59e0b" },
+                  ]}
+                >
+                  {selectedBadge.earned ? "UNLOCKED & ACTIVE" : "LOCKED PROTOCOL"}
+                </Text>
+              </NeumorphicView>
+
+              <NeumorphicView variant="inset" radius={16} style={styles.xpBoostCard}>
+                <Text style={styles.xpBoostText}>{selectedBadge.xpBoost}</Text>
+              </NeumorphicView>
+
+              <Text style={styles.modalSub}>{selectedBadge.description}</Text>
+
+              <NeumorphicView
+                variant="raised"
+                glow={selectedBadge.earned ? "cyan" : "none"}
+                radius={18}
+                style={[styles.modalBtn, { alignSelf: "center", width: "100%" }]}
+                onPress={() => setSelectedBadge(null)}
+              >
+                <Text style={[styles.modalBtnText, { color: isDark ? "#00f0ff" : c.primary }]}>ACKNOWLEDGE</Text>
+              </NeumorphicView>
+            </NeumorphicView>
+          )}
+        </View>
+      </Modal>
+
+      {/* 3. Neumorphic Delete Account Danger Modal */}
+      <Modal visible={deleteModalVisible} transparent animationType="fade">
+        <View style={styles.modalBackdrop}>
+          <NeumorphicView variant="raised" glow="none" radius={28} style={[styles.modalContainer, { borderColor: "rgba(239, 68, 68, 0.5)" }]}>
+            <Text style={[styles.modalTitle, { color: isDark ? "#ffb4ab" : c.error }]}>Purge Operative Data?</Text>
+            <Text style={styles.modalSub}>
+              This permanently wipes your PIKE identity, earned XP ({me?.xp ?? 100}K), streak records, and badge accolades. This action cannot be reversed.
+            </Text>
+
+            <View style={styles.modalBtnRow}>
+              <NeumorphicView
+                variant="flat"
+                radius={18}
+                style={styles.modalBtn}
+                onPress={() => setDeleteModalVisible(false)}
+              >
+                <Text style={[styles.modalBtnText, { color: c.onSurfaceVariant }]}>CANCEL</Text>
+              </NeumorphicView>
+
+              <NeumorphicView
+                variant="raised"
+                radius={18}
+                style={[styles.modalBtn, { backgroundColor: "rgba(239, 68, 68, 0.2)", borderColor: "rgba(239, 68, 68, 0.6)" }]}
+                onPress={handleConfirmDelete}
+              >
+                <Text style={[styles.modalBtnText, { color: isDark ? "#ffb4ab" : c.error }]}>PURGE</Text>
+              </NeumorphicView>
+            </View>
+          </NeumorphicView>
+        </View>
+      </Modal>
     </View>
   );
 }
