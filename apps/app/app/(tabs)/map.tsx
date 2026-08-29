@@ -90,7 +90,10 @@ export default function MapScreen() {
       <style>
         * { box-sizing: border-box; margin: 0; padding: 0; }
         body, html { width: 100%; height: 100%; background: #060e20; overflow: hidden; }
-        #map { width: 100%; height: 100%; }
+        #map { width: 100%; height: 100%; background: #060e20; }
+        .leaflet-tile {
+          filter: brightness(0.6) invert(1) contrast(3) hue-rotate(200deg) saturate(0.3) brightness(0.7);
+        }
         .custom-pin {
           background: #2563eb;
           color: #fff;
@@ -127,8 +130,9 @@ export default function MapScreen() {
       <div id="map"></div>
       <script>
         var map = L.map('map', { zoomControl: false, attributionControl: false }).setView([40.7128, -74.0060], 14);
-        L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
-          maxZoom: 19
+        L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+          maxZoom: 19,
+          subdomains: ['a', 'b', 'c']
         }).addTo(map);
 
         var markers = ${JSON.stringify(venueMarkers)};
