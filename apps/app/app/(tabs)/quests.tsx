@@ -1,5 +1,5 @@
-import { useEffect, useState } from "react";
-import { View, Text, FlatList, StyleSheet, TouchableOpacity } from "react-native";
+import { useEffect, useState, useCallback } from "react";
+import { View, Text, FlatList, StyleSheet, TouchableOpacity, RefreshControl } from "react-native";
 import { router } from "expo-router";
 import { MaterialIcons } from "@expo/vector-icons";
 import type { UserQuestListItem } from "@pike/shared-types";
@@ -8,24 +8,54 @@ import { useTheme } from "@/theme";
 import { TopNav } from "@/components/TopNav";
 import { NeumorphicView } from "@/components/NeumorphicView";
 
-/** Stitch Quests List (Neumorphic) */
+type FilterType = "all" | "active" | "completed";
+
+/** Stitch Quests List (Neumorphic & Buttery Smooth) */
 export default function QuestsScreen() {
   const theme = useTheme();
   const [quests, setQuests] = useState<UserQuestListItem[]>([]);
+  const [filter, setFilter] = useState<FilterType>("all");
+  const [refreshing, setRefreshing] = useState(false);
+
+  const fetchQuests = useCallback(async () => {
+    try {
+      const data = await api.quests();
+      setQuests(data);
+    } catch {
+      // keep current state
+    }
+  }, []);
 
   useEffect(() => {
-    api.quests().then(setQuests).catch(() => setQuests([]));
-  }, []);
+    fetchQuests();
+  }, [fetchQuests]);
+
+  const onRefresh = async () => {
+    setRefreshing(true);
+    await fetchQuests();
+    setRefreshing(false);
+  };
 
   const c = theme.colors;
   const isDark = theme.mode === "dark";
 
+  const filteredQuests = quests.filter((q) => {
+    if (filter === "active") return !q.completed;
+    if (filter === "completed") return q.completed;
+    return true;
+  });
+
   const styles = StyleSheet.create({
-    container: { flex: 1, backgroundColor: isDark ? "#0f172a" : c.surface },
-    content: { padding: theme.spacing.containerPadding, paddingTop: 16, paddingBottom: 120 },
-    headerTitle: { ...theme.font(theme.type.headlineLgMobile), color: c.onSurface },
-    headerSub: { ...theme.font(theme.type.bodyMd), color: c.onSurfaceVariant, marginTop: 4, marginBottom: 20 },
+    container: { flex: 1, backgroundColor: isDark ? "#141314" : c.surface },
+    content: { padding: theme.spacing.containerPadding, paddingTop: 16, paddingBottom: 130 },
+    headerTitle: { ...theme.font(theme.type.headlineLgMobile), color: c.onSurface, fontSize: 26 },
+    headerSub: { ...theme.font(theme.type.bodyMd), color: c.onSurfaceVariant, marginTop: 4, marginBottom: 16 },
     
+    // Filter Pills
+    filterRow: { flexDirection: "row", gap: 10, marginBottom: 18 },
+    filterPill: { paddingHorizontal: 16, paddingVertical: 8 },
+    filterPillText: { ...theme.font(theme.type.labelCaps), fontSize: 11, letterSpacing: 0.8 },
+
     // Feature Quest Card
     featureCard: { padding: 20, borderRadius: 24, marginBottom: 20, borderWidth: 1, borderColor: "rgba(207, 197, 186, 0.25)" },
     premiumBadge: { flexDirection: "row", alignItems: "center", gap: 5, paddingHorizontal: 10, paddingVertical: 4, alignSelf: "flex-start", marginBottom: 12 },
@@ -59,39 +89,92 @@ export default function QuestsScreen() {
 
   return (
     <View style={styles.container}>
-      <TopNav title="Quests" showLogo={false} subtitle={`${quests.filter(q => !q.completed).length} available`} />
+      <TopNav title="Quests" showLogo={false} subtitle={`${quests.filter(q => !q.completed).length} active missions`} />
       <FlatList
-        data={quests}
+        data={filteredQuests}
         keyExtractor={(q) => q.id}
         contentContainerStyle={styles.content}
         showsVerticalScrollIndicator={false}
+        refreshControl={
+          <RefreshControl
+            refreshing={refreshing}
+            onRefresh={onRefresh}
+            tintColor="#00f0ff"
+            colors={["#00f0ff"]}
+          />
+        }
         ListHeaderComponent={
           <>
             <Text style={styles.headerTitle}>Available Quests</Text>
             <Text style={styles.headerSub}>Complete missions to earn XP and unlock new sectors.</Text>
 
-            {/* Feature Premium Quest */}
-            <NeumorphicView variant="raised" glow="premium" radius={24} style={styles.featureCard}>
-              <NeumorphicView variant="inset" radius={12} style={styles.premiumBadge}>
-                <MaterialIcons name="star" size={12} color="#cfc5ba" />
-                <Text style={styles.premiumText}>PREMIUM QUEST</Text>
+            {/* Filter Tabs */}
+            <View style={styles.filterRow}>
+              <NeumorphicView
+                variant={filter === "all" ? "inset" : "raised"}
+                radius={16}
+                style={styles.filterPill}
+                onPress={() => setFilter("all")}
+              >
+                <Text style={[styles.filterPillText, { color: filter === "all" ? "#00f0ff" : c.onSurfaceVariant }]}>
+                  ALL ({quests.length})
+                </Text>
               </NeumorphicView>
-              <Text style={styles.featureTitle}>The Golden Node</Text>
-              <Text style={styles.featureDesc}>Locate and interface with the legendary mainframe cluster. High risk, high reward.</Text>
-              <View style={styles.featureFooter}>
-                <View style={styles.featureReward}>
-                  <MaterialIcons name="stars" size={18} color="#cfc5ba" />
-                  <Text style={styles.featureRewardText}>+2500 XP</Text>
-                </View>
-                <NeumorphicView variant="raised" radius={18} style={styles.initiateBtn} onPress={() => router.push("/(tabs)/map")}>
-                  <MaterialIcons name="rocket-launch" size={16} color="#cfc5ba" />
-                  <Text style={styles.initiateBtnText}>INITIATE</Text>
+              <NeumorphicView
+                variant={filter === "active" ? "inset" : "raised"}
+                radius={16}
+                style={styles.filterPill}
+                onPress={() => setFilter("active")}
+              >
+                <Text style={[styles.filterPillText, { color: filter === "active" ? "#00f0ff" : c.onSurfaceVariant }]}>
+                  ACTIVE ({quests.filter((q) => !q.completed).length})
+                </Text>
+              </NeumorphicView>
+              <NeumorphicView
+                variant={filter === "completed" ? "inset" : "raised"}
+                radius={16}
+                style={styles.filterPill}
+                onPress={() => setFilter("completed")}
+              >
+                <Text style={[styles.filterPillText, { color: filter === "completed" ? "#10B981" : c.onSurfaceVariant }]}>
+                  COMPLETED ({quests.filter((q) => q.completed).length})
+                </Text>
+              </NeumorphicView>
+            </View>
+
+            {/* Feature Premium Quest (Only shown in 'all' or 'active') */}
+            {filter !== "completed" && (
+              <NeumorphicView variant="raised" glow="premium" radius={24} style={styles.featureCard}>
+                <NeumorphicView variant="inset" radius={12} style={styles.premiumBadge}>
+                  <MaterialIcons name="star" size={12} color="#cfc5ba" />
+                  <Text style={styles.premiumText}>PREMIUM QUEST</Text>
                 </NeumorphicView>
-              </View>
-            </NeumorphicView>
+                <Text style={styles.featureTitle}>The Golden Node</Text>
+                <Text style={styles.featureDesc}>Locate and interface with the legendary mainframe cluster. High risk, high reward.</Text>
+                <View style={styles.featureFooter}>
+                  <View style={styles.featureReward}>
+                    <MaterialIcons name="stars" size={18} color="#cfc5ba" />
+                    <Text style={styles.featureRewardText}>+2500 XP</Text>
+                  </View>
+                  <NeumorphicView
+                    variant="raised"
+                    radius={18}
+                    style={styles.initiateBtn}
+                    onPress={() => router.push("/(tabs)/map")}
+                  >
+                    <MaterialIcons name="rocket-launch" size={16} color="#cfc5ba" />
+                    <Text style={styles.initiateBtnText}>INITIATE</Text>
+                  </NeumorphicView>
+                </View>
+              </NeumorphicView>
+            )}
           </>
         }
-        ListEmptyComponent={<Text style={styles.emptyText}>No quests available in this sector.</Text>}
+        ListEmptyComponent={
+          <Text style={styles.emptyText}>
+            {filter === "completed" ? "No completed quests yet." : "No quests found in this category."}
+          </Text>
+        }
         renderItem={({ item }) => (
           <NeumorphicView
             variant="raised"

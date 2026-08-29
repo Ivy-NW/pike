@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { View, Text, StyleSheet, ScrollView, Alert } from "react-native";
+import { View, Text, StyleSheet, ScrollView, Alert, RefreshControl } from "react-native";
 import { MaterialIcons } from "@expo/vector-icons";
 import type { UserWalletItem } from "@pike/shared-types";
 import { api } from "@/lib/api";
@@ -15,21 +15,53 @@ const keyOf = (w: UserWalletItem) => (w.kind === "quest" ? w.redemptionId : `mac
 export default function RewardsScreen() {
   const theme = useTheme();
   const [wallet, setWallet] = useState<UserWalletItem[]>([]);
+  const [refreshing, setRefreshing] = useState(false);
+
+  const fetchWallet = async () => {
+    try {
+      const data = await api.wallet();
+      setWallet(data);
+    } catch {
+      setWallet([]);
+    }
+  };
 
   useEffect(() => {
-    api.wallet().then(setWallet).catch(() => setWallet([]));
+    fetchWallet();
   }, []);
+
+  const onRefresh = async () => {
+    setRefreshing(true);
+    await fetchWallet();
+    setRefreshing(false);
+  };
 
   const unredeemed = wallet.filter((w) => !w.isExpired);
   const expired = wallet.filter((w) => w.isExpired);
   const c = theme.colors;
   const isDark = theme.mode === "dark";
 
+  const handleAddFunds = () => {
+    Alert.alert(
+      "Add Explorer Points",
+      "Connect your wallet or complete high-yield AR missions to earn additional PIKE points.",
+      [{ text: "Understood", style: "default" }]
+    );
+  };
+
+  const handleHistory = () => {
+    Alert.alert(
+      "Transaction History",
+      `Total Vouchers: ${wallet.length}\nActive: ${unredeemed.length}\nRedeemed / Expired: ${expired.length}`,
+      [{ text: "Close", style: "cancel" }]
+    );
+  };
+
   const handleRedeem = (item: UserWalletItem) => {
     Alert.alert(
       "Redeem Reward",
       `Present this voucher at ${subtitleOf(item)}:\n\n${titleOf(item)}`,
-      [{ text: "Done", style: "default" }]
+      [{ text: "Confirm Redemption", style: "default" }, { text: "Cancel", style: "cancel" }]
     );
   };
 
@@ -71,7 +103,18 @@ export default function RewardsScreen() {
   return (
     <View style={styles.container}>
       <TopNav title="Rewards" showLogo={false} subtitle={`${unredeemed.length} vouchers`} />
-      <ScrollView contentContainerStyle={styles.content} showsVerticalScrollIndicator={false}>
+      <ScrollView
+        contentContainerStyle={styles.content}
+        showsVerticalScrollIndicator={false}
+        refreshControl={
+          <RefreshControl
+            refreshing={refreshing}
+            onRefresh={onRefresh}
+            tintColor="#00f0ff"
+            colors={["#00f0ff"]}
+          />
+        }
+      >
         {/* Total Balance Card */}
         <NeumorphicView variant="raised" glow="cyan" radius={28} style={styles.balanceCard}>
           <Text style={styles.balanceLabel}>TOTAL BALANCE</Text>
@@ -80,11 +123,11 @@ export default function RewardsScreen() {
             <Text style={styles.balanceUnit}>PTS</Text>
           </View>
           <View style={styles.balanceBtnRow}>
-            <NeumorphicView variant="raised" radius={20} style={styles.balanceBtn}>
+            <NeumorphicView variant="raised" radius={20} style={styles.balanceBtn} onPress={handleAddFunds}>
               <MaterialIcons name="add" size={16} color={c.primary} />
               <Text style={styles.balanceBtnText}>ADD FUNDS</Text>
             </NeumorphicView>
-            <NeumorphicView variant="raised" radius={20} style={styles.balanceBtn}>
+            <NeumorphicView variant="raised" radius={20} style={styles.balanceBtn} onPress={handleHistory}>
               <MaterialIcons name="history" size={16} color={c.primary} />
               <Text style={styles.balanceBtnText}>HISTORY</Text>
             </NeumorphicView>

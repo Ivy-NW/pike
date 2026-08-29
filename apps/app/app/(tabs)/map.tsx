@@ -40,6 +40,7 @@ export default function MapScreen() {
   const theme = useTheme();
   const [quests, setQuests] = useState<QuestListItem[]>([]);
   const [favorites, setFavorites] = useState<Set<string>>(new Set());
+  const [nodeFilter, setNodeFilter] = useState<"all" | "high" | "exploration">("all");
   const webViewRef = useRef<WebView>(null);
 
   useEffect(() => {
@@ -279,23 +280,42 @@ export default function MapScreen() {
 
         {/* Quick Filter Pills */}
         <View style={styles.filterRow}>
-          <NeumorphicView variant="inset" radius={12} style={styles.filterPill}>
-            <Text style={styles.filterPillActive}>● ALL NODES</Text>
+          <NeumorphicView
+            variant={nodeFilter === "all" ? "inset" : "raised"}
+            radius={12}
+            style={styles.filterPill}
+            onPress={() => setNodeFilter("all")}
+          >
+            <Text style={nodeFilter === "all" ? styles.filterPillActive : styles.filterPillInactive}>● ALL NODES</Text>
           </NeumorphicView>
-          <NeumorphicView variant="raised" radius={12} style={styles.filterPill}>
-            <Text style={styles.filterPillInactive}>HIGH YIELD</Text>
+          <NeumorphicView
+            variant={nodeFilter === "high" ? "inset" : "raised"}
+            radius={12}
+            style={styles.filterPill}
+            onPress={() => setNodeFilter("high")}
+          >
+            <Text style={nodeFilter === "high" ? styles.filterPillActive : styles.filterPillInactive}>HIGH YIELD</Text>
           </NeumorphicView>
-          <NeumorphicView variant="raised" radius={12} style={styles.filterPill}>
-            <Text style={styles.filterPillInactive}>EXPLORATION</Text>
+          <NeumorphicView
+            variant={nodeFilter === "exploration" ? "inset" : "raised"}
+            radius={12}
+            style={styles.filterPill}
+            onPress={() => setNodeFilter("exploration")}
+          >
+            <Text style={nodeFilter === "exploration" ? styles.filterPillActive : styles.filterPillInactive}>EXPLORATION</Text>
           </NeumorphicView>
         </View>
 
         <FlatList
-          data={quests}
+          data={quests.filter((q) => {
+            if (nodeFilter === "high") return q.rewardDescription.toLowerCase().includes("off") || q.rewardDescription.toLowerCase().includes("free");
+            if (nodeFilter === "exploration") return !q.completed;
+            return true;
+          })}
           keyExtractor={(q) => q.id}
-          contentContainerStyle={{ paddingBottom: 120 }}
+          contentContainerStyle={{ paddingBottom: 130 }}
           showsVerticalScrollIndicator={false}
-          ListEmptyComponent={<Text style={styles.empty}>No nodes detected in this sector.</Text>}
+          ListEmptyComponent={<Text style={styles.empty}>No nodes detected in this filter category.</Text>}
           renderItem={({ item }) => (
             <NeumorphicView
               variant="raised"

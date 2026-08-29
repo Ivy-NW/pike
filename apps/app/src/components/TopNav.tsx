@@ -1,8 +1,10 @@
-import React, { ReactNode } from "react";
-import { View, Text, StyleSheet, Platform } from "react-native";
+import React from "react";
+import { View, Text, StyleSheet, Platform, TouchableOpacity, Alert } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
+import { MaterialIcons } from "@expo/vector-icons";
 import { useTheme } from "@/theme";
 import { Logo } from "./Logo";
+import { NeumorphicView } from "./NeumorphicView";
 
 interface TopNavProps {
   title?: string;
@@ -15,24 +17,29 @@ export function TopNav({ title = "PIKE", showLogo = true, subtitle, rightAction 
   const theme = useTheme();
   const insets = useSafeAreaInsets();
   const c = theme.colors;
+  const isDark = theme.mode === "dark";
 
-  const topPadding = Platform.OS === "web" ? 16 : Math.max(insets.top, 16) + 6;
+  const topPadding = Platform.OS === "web" ? 14 : Math.max(insets.top, 14) + 4;
+
+  const handleNotificationPress = () => {
+    Alert.alert("Notifications", "You have no new notifications. All sector relays are operational.");
+  };
 
   const styles = StyleSheet.create({
     header: {
-      backgroundColor: theme.mode === "dark" ? c.surfaceContainerLowest : c.surface,
+      backgroundColor: isDark ? "#141314" : c.surface,
       borderBottomWidth: 1,
-      borderBottomColor: c.neumorphBorder,
+      borderBottomColor: "rgba(255, 255, 255, 0.04)",
       paddingTop: topPadding,
-      paddingBottom: 14,
-      paddingHorizontal: theme.spacing.containerPadding,
+      paddingBottom: 12,
+      paddingHorizontal: 16,
       flexDirection: "row",
       alignItems: "center",
       justifyContent: "space-between",
       zIndex: 100,
-      shadowColor: theme.mode === "dark" ? "#000000" : "#a3b1c6",
+      shadowColor: isDark ? "#000000" : "#a3b1c6",
       shadowOffset: { width: 0, height: 4 },
-      shadowOpacity: theme.mode === "dark" ? 0.45 : 0.15,
+      shadowOpacity: isDark ? 0.5 : 0.15,
       shadowRadius: 8,
       elevation: 4,
     },
@@ -47,30 +54,51 @@ export function TopNav({ title = "PIKE", showLogo = true, subtitle, rightAction 
     title: {
       ...theme.font(theme.type.headlineLgMobile),
       color: c.primary,
-      letterSpacing: 1.5,
+      fontWeight: "700",
+      letterSpacing: -0.5,
+      fontSize: 22,
     },
     subtitle: {
       ...theme.font(theme.type.labelSm),
-      color: c.onSurfaceVariant,
-      marginTop: 2,
+      color: "#00dbe9",
+      fontSize: 11,
+      marginTop: 1,
     },
     right: {
       flexDirection: "row",
       alignItems: "center",
       gap: 8,
     },
+    bellButton: {
+      width: 38,
+      height: 38,
+      borderRadius: 19,
+      alignItems: "center",
+      justifyContent: "center",
+    },
   });
 
   return (
     <View style={styles.header}>
       <View style={styles.left}>
-        {showLogo ? <Logo size={28} /> : null}
+        {showLogo ? <Logo size={26} /> : null}
         <View style={styles.titleCol}>
           <Text style={styles.title}>{title}</Text>
           {subtitle ? <Text style={styles.subtitle}>{subtitle}</Text> : null}
         </View>
       </View>
-      {rightAction ? <View style={styles.right}>{rightAction as any}</View> : null}
+      <View style={styles.right}>
+        {rightAction ? rightAction : (
+          <NeumorphicView
+            variant="raised"
+            radius={19}
+            style={styles.bellButton}
+            onPress={handleNotificationPress}
+          >
+            <MaterialIcons name="notifications-none" size={20} color={c.primary} />
+          </NeumorphicView>
+        )}
+      </View>
     </View>
   );
 }

@@ -1,5 +1,5 @@
-import { useEffect, useState } from "react";
-import { View, Text, StyleSheet, ScrollView } from "react-native";
+import { useEffect, useState, useCallback } from "react";
+import { View, Text, StyleSheet, ScrollView, RefreshControl, Alert } from "react-native";
 import { router } from "expo-router";
 import { MaterialIcons } from "@expo/vector-icons";
 import type { MacroQuestProgress, UserProfile, UserQuestListItem } from "@pike/shared-types";
@@ -16,13 +16,50 @@ export default function HomeScreen() {
   const [walletCount, setWalletCount] = useState<number | null>(null);
   const [quests, setQuests] = useState<UserQuestListItem[]>([]);
   const [macro, setMacro] = useState<MacroQuestProgress | null>(null);
+  const [refreshing, setRefreshing] = useState(false);
+
+  const loadData = useCallback(async () => {
+    try {
+      const [profileData, questsData, walletData, macroData] = await Promise.allSettled([
+        api.me(),
+        api.quests(),
+        api.wallet(),
+        api.macroQuest(),
+      ]);
+      if (profileData.status === "fulfilled") setMe(profileData.value);
+      if (questsData.status === "fulfilled") setQuests(questsData.value);
+      if (walletData.status === "fulfilled") setWalletCount(walletData.value.length);
+      if (macroData.status === "fulfilled") setMacro(macroData.value);
+    } catch {
+      // ignore
+    }
+  }, []);
 
   useEffect(() => {
-    api.me().then(setMe).catch(() => {});
-    api.wallet().then((w) => setWalletCount(w.length)).catch(() => setWalletCount(0));
-    api.quests().then(setQuests).catch(() => setQuests([]));
-    api.macroQuest().then(setMacro).catch(() => {});
-  }, []);
+    loadData();
+  }, [loadData]);
+
+  const onRefresh = async () => {
+    setRefreshing(true);
+    await loadData();
+    setRefreshing(false);
+  };
+
+  const handleMobilityPress = () => {
+    Alert.alert(
+      "Mobility Track: Adept",
+      "Your exploration traversal rating is in the top 15% of active Vanguards in this sector.",
+      [{ text: "Great", style: "default" }]
+    );
+  };
+
+  const handleIntellectPress = () => {
+    Alert.alert(
+      "Intellect Track: Savant",
+      "You have deciphered multiple complex AR markers and node alignments.",
+      [{ text: "Nice", style: "default" }]
+    );
+  };
 
   const xpProgress = me ? me.xpIntoLevel / me.xpForNextLevel : 0.65;
   const c = theme.colors;
@@ -93,7 +130,18 @@ export default function HomeScreen() {
   return (
     <View style={styles.container}>
       <TopNav title="PIKE" showLogo rightAction={rightAction} />
-      <ScrollView contentContainerStyle={styles.content} showsVerticalScrollIndicator={false}>
+      <ScrollView
+        contentContainerStyle={styles.content}
+        showsVerticalScrollIndicator={false}
+        refreshControl={
+          <RefreshControl
+            refreshing={refreshing}
+            onRefresh={onRefresh}
+            tintColor="#00f0ff"
+            colors={["#00f0ff"]}
+          />
+        }
+      >
         <PwaInstallBanner />
 
         {/* Welcome Section */}
@@ -121,7 +169,7 @@ export default function HomeScreen() {
 
         {/* Identity Progress Modules (Bento Grid) */}
         <View style={styles.moduleGrid}>
-          <NeumorphicView variant="raised" radius={20} style={styles.moduleCard}>
+          <NeumorphicView variant="raised" radius={20} style={styles.moduleCard} onPress={handleMobilityPress}>
             <NeumorphicView variant="inset" radius={28} style={styles.moduleWell}>
               <MaterialIcons name="directions-run" size={28} color="#7df4ff" />
             </NeumorphicView>
@@ -131,7 +179,7 @@ export default function HomeScreen() {
             </View>
           </NeumorphicView>
 
-          <NeumorphicView variant="raised" radius={20} style={styles.moduleCard}>
+          <NeumorphicView variant="raised" radius={20} style={styles.moduleCard} onPress={handleIntellectPress}>
             <NeumorphicView variant="inset" radius={28} style={styles.moduleWell}>
               <MaterialIcons name="psychology" size={28} color="#00f0ff" />
             </NeumorphicView>

@@ -39,6 +39,26 @@ export default function ProfileScreen() {
     router.replace("/login");
   };
 
+  const handleEditProfile = () => {
+    Alert.alert(
+      "Edit Explorer Profile",
+      `Callsign: ${me?.name ?? "Alex Vance"}\nHandle: @${me?.username ?? "AV_EXPLORER"}\nLevel: ${me?.level ?? 42}`,
+      [{ text: "OK", style: "default" }]
+    );
+  };
+
+  const handleSettings = () => {
+    Alert.alert(
+      "Settings",
+      "• Dark Mode: Always Active\n• AR Tracking: 8th Wall Enabled\n• Haptic Feedback: Tactile\n• Build: v2.0-neu",
+      [{ text: "Close", style: "cancel" }]
+    );
+  };
+
+  const handleBadgePress = (name: string, description: string) => {
+    Alert.alert(`Badge: ${name}`, description, [{ text: "Awesome", style: "default" }]);
+  };
+
   const deleteAccount = () => {
     Alert.alert(
       "Delete account?",
@@ -174,10 +194,10 @@ export default function ProfileScreen() {
           <Text style={styles.handle}>@{me?.username ? me.username.toUpperCase() : "AV_EXPLORER"}</Text>
 
           <View style={styles.actionRow}>
-            <NeumorphicView variant="raised" radius={24} style={styles.pillButton}>
+            <NeumorphicView variant="raised" radius={24} style={styles.pillButton} onPress={handleEditProfile}>
               <Text style={styles.pillButtonText}>EDIT PROFILE</Text>
             </NeumorphicView>
-            <NeumorphicView variant="raised" radius={21} style={styles.iconButton}>
+            <NeumorphicView variant="raised" radius={21} style={styles.iconButton} onPress={handleSettings}>
               <MaterialIcons name="settings" size={20} color={c.primary} />
             </NeumorphicView>
           </View>
@@ -232,7 +252,12 @@ export default function ProfileScreen() {
           <View style={styles.badgesGrid}>
             {/* Slot 1: Alpine Master */}
             <View style={styles.badgeSlot}>
-              <NeumorphicView variant="raised" radius={34} style={styles.badgeOuterRing}>
+              <NeumorphicView
+                variant="raised"
+                radius={34}
+                style={styles.badgeOuterRing}
+                onPress={() => handleBadgePress("Alpine Master", "Earned for exploring high-elevation physical waypoints.")}
+              >
                 <NeumorphicView variant="inset" radius={30} style={styles.badgeInnerWell}>
                   <MaterialIcons name="terrain" size={24} color="#e1d2ff" />
                 </NeumorphicView>
@@ -242,7 +267,12 @@ export default function ProfileScreen() {
 
             {/* Slot 2: Pathfinder */}
             <View style={styles.badgeSlot}>
-              <NeumorphicView variant="raised" radius={34} style={styles.badgeOuterRing}>
+              <NeumorphicView
+                variant="raised"
+                radius={34}
+                style={styles.badgeOuterRing}
+                onPress={() => handleBadgePress("Pathfinder", "Awarded for discovering 5 novel anchor nodes.")}
+              >
                 <NeumorphicView variant="inset" radius={30} style={styles.badgeInnerWell}>
                   <MaterialIcons name="explore" size={24} color="#00eefc" />
                 </NeumorphicView>
@@ -252,7 +282,12 @@ export default function ProfileScreen() {
 
             {/* Slot 3: 100K Steps */}
             <View style={styles.badgeSlot}>
-              <NeumorphicView variant="raised" radius={34} style={styles.badgeOuterRing}>
+              <NeumorphicView
+                variant="raised"
+                radius={34}
+                style={styles.badgeOuterRing}
+                onPress={() => handleBadgePress("100K Steps", "Awarded for traveling over 100,000 steps during quest exploration.")}
+              >
                 <NeumorphicView variant="inset" radius={30} style={styles.badgeInnerWell}>
                   <MaterialIcons name="directions-walk" size={24} color="#cfc5ba" />
                 </NeumorphicView>
@@ -262,7 +297,12 @@ export default function ProfileScreen() {
 
             {/* Slot 4: Locked Mold */}
             <View style={styles.badgeSlot}>
-              <NeumorphicView variant="raised" radius={34} style={styles.badgeOuterRing}>
+              <NeumorphicView
+                variant="raised"
+                radius={34}
+                style={styles.badgeOuterRing}
+                onPress={() => handleBadgePress("Locked Badge", "Complete 10 more cybernetic quests to unlock this slot.")}
+              >
                 <NeumorphicView variant="inset" radius={30} style={styles.badgeInnerWell}>
                   <MaterialIcons name="lock" size={22} color="#353435" />
                 </NeumorphicView>
@@ -272,7 +312,12 @@ export default function ProfileScreen() {
 
             {/* Slot 5: Locked Mold */}
             <View style={styles.badgeSlot}>
-              <NeumorphicView variant="raised" radius={34} style={styles.badgeOuterRing}>
+              <NeumorphicView
+                variant="raised"
+                radius={34}
+                style={styles.badgeOuterRing}
+                onPress={() => handleBadgePress("Locked Badge", "Complete the multi-venue Deep Dive Challenge to unlock.")}
+              >
                 <NeumorphicView variant="inset" radius={30} style={styles.badgeInnerWell}>
                   <MaterialIcons name="lock" size={22} color="#353435" />
                 </NeumorphicView>
