@@ -44,8 +44,8 @@ async function main() {
     update: {},
     create: {
       id: BUSINESS_ID,
-      name: "Demo Aquarium",
-      email: "owner@demo-aquarium.test",
+      name: "Nairobi Vanguard Hubs",
+      email: "owner@nairobi-vanguard.test",
       paymentStatus: "verified",
       emailVerified: true,
     },
@@ -53,42 +53,49 @@ async function main() {
 
   await prisma.venue.upsert({
     where: { id: VENUE_ID },
-    update: {},
+    update: {
+      name: "KICC Sky Deck Lounge",
+      venueType: "landmark",
+      address: "Harambee Ave, Nairobi CBD, Kenya",
+    },
     create: {
       id: VENUE_ID,
       businessId: BUSINESS_ID,
-      name: "Demo Aquarium — Main Hall",
-      venueType: "aquarium",
-      address: "1 Harbor Way",
+      name: "KICC Sky Deck Lounge",
+      venueType: "landmark",
+      address: "Harambee Ave, Nairobi CBD, Kenya",
     },
   });
 
-  // Two more participating venues for the macro-quest (no quests/markers needed — the macro-quest
-  // counts any non-rejected redemption at these venues).
-  for (const [id, name, type] of [
-    [VENUE2_ID, "Demo Aquarium — Tide Pools", "aquarium"],
-    [VENUE3_ID, "Demo Aquarium — Shark Reef", "aquarium"],
+  // Two more participating venues for the macro-quest in Nairobi
+  for (const [id, name, type, address] of [
+    [VENUE2_ID, "Sarit Tech Hub & Cafe", "tech_hub", "Pio Gama Pinto Rd, Westlands, Nairobi, Kenya"],
+    [VENUE3_ID, "Nairobi National Museum Gallery", "museum", "Museum Hill, Kipande Rd, Nairobi, Kenya"],
   ] as const) {
     await prisma.venue.upsert({
       where: { id },
-      update: {},
-      create: { id, businessId: BUSINESS_ID, name, venueType: type },
+      update: { name, venueType: type, address },
+      create: { id, businessId: BUSINESS_ID, name, venueType: type, address },
     });
   }
 
-  // Live macro-quest: visit 2 of the 3 venues within a wide window to unlock the top reward.
+  // Live macro-quest: visit 2 of the 3 venues in Nairobi within a wide window to unlock the top reward.
   const now = Date.now();
   await prisma.macroQuest.upsert({
     where: { id: MACRO_QUEST_ID },
-    update: { status: "live" },
+    update: {
+      name: "Nairobi Cyber-Circuit Vanguard",
+      description: "Traverse 2 of 3 designated anchor nodes across Nairobi this cycle.",
+      status: "live",
+    },
     create: {
       id: MACRO_QUEST_ID,
-      name: "Deep Dive Challenge",
-      description: "Visit 2 of our 3 exhibits this month to unlock the VIP reward.",
+      name: "Nairobi Cyber-Circuit Vanguard",
+      description: "Traverse 2 of 3 designated anchor nodes across Nairobi this cycle.",
       requiredVenues: 2,
       rewardType: "vip_pass",
       rewardTier: "high_value",
-      rewardDescription: "VIP behind-the-scenes aquarium tour",
+      rewardDescription: "VIP Access to Nairobi Tech Summit & Rooftop Lounge",
       startsAt: new Date(now - 30 * 24 * 60 * 60 * 1000),
       endsAt: new Date(now + 30 * 24 * 60 * 60 * 1000),
       status: "live",
@@ -104,15 +111,19 @@ async function main() {
 
   await prisma.quest.upsert({
     where: { id: QUEST_ID },
-    update: { status: "live" },
+    update: {
+      name: "Decipher the KICC Anomaly",
+      rewardDescription: "15% off at KICC Sky Lounge",
+      status: "live",
+    },
     create: {
       id: QUEST_ID,
       venueId: VENUE_ID,
-      name: "Find the Kraken",
-      theme: "pirate",
+      name: "Decipher the KICC Anomaly",
+      theme: "cyberpunk",
       rewardType: "discount",
       rewardTier: "low_stakes",
-      rewardDescription: "10% off at the gift shop",
+      rewardDescription: "15% off at KICC Sky Lounge",
       maxRedemptionsPerDay: 50,
       status: "live",
     },
