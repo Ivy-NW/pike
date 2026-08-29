@@ -57,6 +57,11 @@ export interface ColorTokens {
   textMuted: string;
   borderSubtle: string;
   borderStrong: string;
+  neumorphSurface: string;
+  neumorphShadowDark: string;
+  neumorphShadowLight: string;
+  neumorphInset: string;
+  neumorphBorder: string;
 }
 
 export const vanguardDark: ColorTokens = {
@@ -101,6 +106,11 @@ export const vanguardDark: ColorTokens = {
   textMuted: "#64748B",
   borderSubtle: "rgba(255,255,255,0.08)",
   borderStrong: "#434655",
+  neumorphSurface: "#131b2e",
+  neumorphShadowDark: "rgba(0, 0, 0, 0.75)",
+  neumorphShadowLight: "rgba(255, 255, 255, 0.08)",
+  neumorphInset: "#0a1020",
+  neumorphBorder: "rgba(255, 255, 255, 0.09)",
 };
 
 export const vanguardLight: ColorTokens = {
@@ -145,4 +155,9 @@ export const vanguardLight: ColorTokens = {
   textMuted: "#64748B",
   borderSubtle: "#E2E8F0",
   borderStrong: "#CBD5E1",
+  neumorphSurface: "#e9f0fc",
+  neumorphShadowDark: "rgba(163, 177, 198, 0.6)",
+  neumorphShadowLight: "#ffffff",
+  neumorphInset: "#dde6f4",
+  neumorphBorder: "rgba(255, 255, 255, 0.8)",
 };

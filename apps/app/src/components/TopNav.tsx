@@ -20,9 +20,9 @@ export function TopNav({ title = "PIKE", showLogo = true, subtitle, rightAction 
 
   const styles = StyleSheet.create({
     header: {
-      backgroundColor: theme.mode === "dark" ? "rgba(11, 19, 38, 0.98)" : c.surfaceContainerLowest,
+      backgroundColor: theme.mode === "dark" ? c.surfaceContainerLowest : c.surface,
       borderBottomWidth: 1,
-      borderBottomColor: theme.mode === "dark" ? "rgba(67, 70, 85, 0.4)" : c.borderSubtle,
+      borderBottomColor: c.neumorphBorder,
       paddingTop: topPadding,
       paddingBottom: 14,
       paddingHorizontal: theme.spacing.containerPadding,
@@ -30,6 +30,11 @@ export function TopNav({ title = "PIKE", showLogo = true, subtitle, rightAction 
       alignItems: "center",
       justifyContent: "space-between",
       zIndex: 100,
+      shadowColor: theme.mode === "dark" ? "#000000" : "#a3b1c6",
+      shadowOffset: { width: 0, height: 4 },
+      shadowOpacity: theme.mode === "dark" ? 0.45 : 0.15,
+      shadowRadius: 8,
+      elevation: 4,
     },
     left: {
       flexDirection: "row",
@@ -42,7 +47,7 @@ export function TopNav({ title = "PIKE", showLogo = true, subtitle, rightAction 
     title: {
       ...theme.font(theme.type.headlineLgMobile),
       color: c.primary,
-      letterSpacing: 1,
+      letterSpacing: 1.5,
     },
     subtitle: {
       ...theme.font(theme.type.labelSm),

@@ -6,6 +6,7 @@ import { MaterialIcons } from "@expo/vector-icons";
 import { api } from "@/lib/api";
 import { useTheme } from "@/theme";
 import { TopNav } from "@/components/TopNav";
+import { NeumorphicView } from "@/components/NeumorphicView";
 
 interface QuestListItem {
   id: string;
@@ -203,17 +204,24 @@ export default function MapScreen() {
       width: "100%",
       backgroundColor: c.surfaceContainerLowest,
       borderBottomWidth: 1,
-      borderBottomColor: c.surfaceContainerHighest,
+      borderBottomColor: c.neumorphBorder,
       overflow: "hidden",
     },
     sheet: {
       flex: 1,
       backgroundColor: c.surfaceContainerLow,
-      borderTopLeftRadius: theme.radius.card,
-      borderTopRightRadius: theme.radius.card,
-      paddingTop: theme.spacing.stackMd,
+      borderTopLeftRadius: 28,
+      borderTopRightRadius: 28,
+      paddingTop: theme.spacing.stackMd + 2,
       paddingHorizontal: theme.spacing.containerPadding,
-      marginTop: -16,
+      marginTop: -20,
+      borderTopWidth: 1,
+      borderTopColor: c.neumorphBorder,
+      shadowColor: theme.mode === "dark" ? "#000000" : "#a3b1c6",
+      shadowOffset: { width: 0, height: -6 },
+      shadowOpacity: theme.mode === "dark" ? 0.6 : 0.2,
+      shadowRadius: 10,
+      elevation: 8,
     },
     sheetHeaderRow: {
       flexDirection: "row",
@@ -221,21 +229,17 @@ export default function MapScreen() {
       alignItems: "center",
       marginBottom: theme.spacing.stackMd,
     },
-    sheetTitle: { ...theme.font(theme.type.labelCaps), color: c.onSurfaceVariant },
+    sheetTitle: { ...theme.font(theme.type.labelCaps), color: c.onSurfaceVariant, letterSpacing: 1 },
     sheetCount: { ...theme.font(theme.type.bodyLg), color: c.primary },
     card: {
-      backgroundColor: theme.mode === "dark" ? "rgba(30,41,59,0.7)" : c.surfaceContainerLowest,
-      borderWidth: 1,
-      borderColor: theme.mode === "dark" ? "rgba(255,255,255,0.05)" : c.borderSubtle,
-      borderRadius: theme.radius.card,
-      padding: theme.spacing.stackMd,
-      marginBottom: theme.spacing.stackSm,
+      padding: theme.spacing.stackMd + 2,
+      marginBottom: theme.spacing.stackSm + 4,
       flexDirection: "row",
       alignItems: "center",
       gap: 12,
     },
     dot: { width: 10, height: 10, borderRadius: 5 },
-    favBtn: { padding: 4 },
+    favBtn: { padding: 6 },
     cardTitle: { ...theme.font(theme.type.headlineSm), color: c.onSurface },
     cardSub: { ...theme.font(theme.type.bodyMd), color: c.onSurfaceVariant, marginTop: 2 },
     empty: { ...theme.font(theme.type.bodyMd), color: c.onSurfaceVariant, textAlign: "center", marginTop: 24 },
@@ -249,7 +253,7 @@ export default function MapScreen() {
           <iframe
             srcDoc={mapHtml}
             style={{ width: "100%", height: "100%", border: "none" }}
-            title="OpenStreetMap"
+            title="Google Maps"
           />
         ) : (
           <WebView
@@ -272,7 +276,9 @@ export default function MapScreen() {
           showsVerticalScrollIndicator={false}
           ListEmptyComponent={<Text style={styles.empty}>No quests available right now.</Text>}
           renderItem={({ item }) => (
-            <TouchableOpacity
+            <NeumorphicView
+              variant="raised"
+              radius={16}
               style={styles.card}
               onPress={() =>
                 router.push({
@@ -301,7 +307,7 @@ export default function MapScreen() {
                 />
               </TouchableOpacity>
               <MaterialIcons name="chevron-right" size={22} color={c.onSurfaceVariant} />
-            </TouchableOpacity>
+            </NeumorphicView>
           )}
         />
       </View>

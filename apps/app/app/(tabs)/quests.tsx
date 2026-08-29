@@ -1,12 +1,13 @@
 import { useEffect, useState } from "react";
-import { View, Text, FlatList, StyleSheet, TouchableOpacity } from "react-native";
+import { View, Text, FlatList, StyleSheet } from "react-native";
 import { router } from "expo-router";
 import type { UserQuestListItem } from "@pike/shared-types";
 import { api } from "@/lib/api";
 import { useTheme } from "@/theme";
 import { TopNav } from "@/components/TopNav";
+import { NeumorphicView } from "@/components/NeumorphicView";
 
-/** Quest list: available quests across venues, and which ones this user has completed. */
+/** Quest list: available quests across venues with tactile neumorphic cards. */
 export default function QuestsScreen() {
   const theme = useTheme();
   const [quests, setQuests] = useState<UserQuestListItem[]>([]);
@@ -21,19 +22,31 @@ export default function QuestsScreen() {
     content: { padding: theme.spacing.containerPadding, paddingTop: 16, paddingBottom: 110 },
     empty: { ...theme.font(theme.type.bodyMd), color: c.onSurfaceVariant, textAlign: "center", marginTop: 24 },
     card: {
-      backgroundColor: theme.mode === "dark" ? "rgba(30,41,59,0.7)" : c.surfaceContainerLowest,
-      borderWidth: 1,
-      borderColor: theme.mode === "dark" ? "rgba(255,255,255,0.05)" : c.borderSubtle,
-      borderRadius: theme.radius.card,
-      padding: theme.spacing.stackMd,
-      marginBottom: theme.spacing.stackSm,
+      padding: theme.spacing.stackMd + 2,
+      marginBottom: theme.spacing.stackSm + 6,
     },
     cardTitle: { ...theme.font(theme.type.headlineSm), color: c.onSurface },
-    venue: { ...theme.font(theme.type.bodyMd), color: c.onSurfaceVariant, marginTop: 2 },
-    reward: { ...theme.font(theme.type.labelCaps), color: c.secondary, marginTop: 10 },
-    completed: { ...theme.font(theme.type.labelCaps), color: c.success, marginTop: 10 },
-    scanButton: { backgroundColor: c.primaryContainer, borderRadius: theme.radius.full, padding: 12, alignItems: "center", marginTop: 12 },
-    scanButtonText: { ...theme.font(theme.type.labelCaps), color: c.onPrimaryContainer },
+    venue: { ...theme.font(theme.type.bodyMd), color: c.onSurfaceVariant, marginTop: 3 },
+    rewardRow: {
+      flexDirection: "row",
+      alignItems: "center",
+      justifyContent: "space-between",
+      marginTop: 12,
+    },
+    rewardBadge: {
+      paddingHorizontal: 10,
+      paddingVertical: 4,
+      alignSelf: "flex-start",
+    },
+    reward: { ...theme.font(theme.type.labelCaps), color: c.secondary, fontSize: 11 },
+    completed: { ...theme.font(theme.type.labelCaps), color: c.success, fontSize: 11 },
+    scanButton: {
+      paddingVertical: 10,
+      paddingHorizontal: 16,
+      alignItems: "center",
+      marginTop: 12,
+    },
+    scanButtonText: { ...theme.font(theme.type.labelCaps), color: "#ffffff", letterSpacing: 0.5 },
   });
 
   return (
@@ -46,7 +59,9 @@ export default function QuestsScreen() {
         showsVerticalScrollIndicator={false}
         ListEmptyComponent={<Text style={styles.empty}>No quests available right now.</Text>}
         renderItem={({ item }) => (
-          <TouchableOpacity
+          <NeumorphicView
+            variant="raised"
+            radius={20}
             style={styles.card}
             onPress={() =>
               router.push({
@@ -64,15 +79,29 @@ export default function QuestsScreen() {
           >
             <Text style={styles.cardTitle}>{item.name}</Text>
             <Text style={styles.venue}>{item.venueName}</Text>
-            <Text style={item.completed ? styles.completed : styles.reward}>
-              {item.completed ? "Completed" : item.rewardDescription}
-            </Text>
+            <View style={styles.rewardRow}>
+              <NeumorphicView
+                variant="inset"
+                radius={8}
+                style={styles.rewardBadge}
+              >
+                <Text style={item.completed ? styles.completed : styles.reward}>
+                  {item.completed ? "✓ COMPLETED" : `🎁 ${item.rewardDescription}`}
+                </Text>
+              </NeumorphicView>
+            </View>
             {!item.completed && item.markerId && (
-              <TouchableOpacity style={styles.scanButton} onPress={() => router.push(`/scan/${item.markerId}`)}>
-                <Text style={styles.scanButtonText}>Scan marker</Text>
-              </TouchableOpacity>
+              <NeumorphicView
+                variant="raised"
+                glow="blue"
+                radius={theme.radius.full}
+                style={styles.scanButton}
+                onPress={() => router.push(`/scan/${item.markerId}`)}
+              >
+                <Text style={styles.scanButtonText}>SCAN MARKER (AR)</Text>
+              </NeumorphicView>
             )}
-          </TouchableOpacity>
+          </NeumorphicView>
         )}
       />
     </View>

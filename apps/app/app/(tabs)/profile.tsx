@@ -7,6 +7,7 @@ import { api } from "@/lib/api";
 import { clearIdentityToken } from "@/lib/auth";
 import { useTheme } from "@/theme";
 import { TopNav } from "@/components/TopNav";
+import { NeumorphicView } from "@/components/NeumorphicView";
 
 /** UI doc 7.5 — identity, history, and settings. */
 export default function ProfileScreen() {
@@ -71,77 +72,65 @@ export default function ProfileScreen() {
     content: { padding: theme.spacing.containerPadding, paddingTop: 16, paddingBottom: 110 },
     avatarWrap: { alignItems: "center", marginBottom: theme.spacing.sectionMargin, marginTop: 8 },
     avatarRing: {
-      width: 84,
-      height: 84,
-      borderRadius: 42,
-      backgroundColor: c.surfaceContainerHigh,
+      width: 88,
+      height: 88,
+      borderRadius: 44,
       alignItems: "center",
       justifyContent: "center",
-      borderWidth: 3,
-      borderColor: c.primaryContainer,
     },
-    avatarInitial: { ...theme.font(theme.type.displayXl), color: c.onSurface },
-    name: { ...theme.font(theme.type.headlineLg), color: c.onSurface, marginTop: 12 },
+    avatarInitial: { ...theme.font(theme.type.displayXl), color: c.primary, fontSize: 36 },
+    name: { ...theme.font(theme.type.headlineLg), color: c.onSurface, marginTop: 14 },
     tierPill: {
       flexDirection: "row",
       alignItems: "center",
       gap: 6,
-      backgroundColor: theme.mode === "dark" ? "rgba(180,197,255,0.1)" : "rgba(0,74,198,0.08)",
-      borderWidth: 1,
-      borderColor: c.primaryContainer,
-      borderRadius: theme.radius.full,
-      paddingHorizontal: 12,
+      paddingHorizontal: 14,
       paddingVertical: 6,
-      marginTop: 8,
+      marginTop: 10,
     },
-    tierText: { ...theme.font(theme.type.labelCaps), color: c.primary },
+    tierText: { ...theme.font(theme.type.labelCaps), color: c.primary, letterSpacing: 0.8 },
     statsRow: { flexDirection: "row", flexWrap: "wrap", gap: theme.spacing.elementGap, marginBottom: theme.spacing.sectionMargin },
     statCard: {
       width: "47%",
-      backgroundColor: c.slateGray,
-      borderRadius: theme.radius.card,
-      padding: theme.spacing.stackMd,
-      borderWidth: 1,
-      borderColor: c.surfaceContainerHighest,
+      padding: theme.spacing.stackMd + 2,
     },
-    statLabel: { ...theme.font(theme.type.labelCaps), color: c.onSurfaceVariant, marginBottom: 8 },
+    statLabel: { ...theme.font(theme.type.labelCaps), color: c.onSurfaceVariant, marginBottom: 8, letterSpacing: 0.8 },
     statNumber: { ...theme.font(theme.type.displayXl), color: c.onSurface },
     statNumberGold: { ...theme.font(theme.type.displayXl), color: c.secondary },
-    card: { backgroundColor: theme.mode === "dark" ? "rgba(30,41,59,0.7)" : c.surfaceContainerLowest, borderRadius: theme.radius.card, padding: theme.spacing.stackMd, marginBottom: theme.spacing.stackMd, borderWidth: 1, borderColor: theme.mode === "dark" ? "rgba(255,255,255,0.05)" : c.borderSubtle },
-    cardTitleRow: { flexDirection: "row", justifyContent: "space-between", alignItems: "center", marginBottom: 12 },
+    card: {
+      padding: theme.spacing.stackMd + 2,
+      marginBottom: theme.spacing.stackMd + 4,
+    },
+    cardTitleRow: { flexDirection: "row", justifyContent: "space-between", alignItems: "center", marginBottom: 14 },
     cardTitle: { ...theme.font(theme.type.headlineSm), color: c.onSurface },
-    viewAll: { ...theme.font(theme.type.labelCaps), color: c.primary },
+    viewAll: { ...theme.font(theme.type.labelCaps), color: c.primary, fontSize: 11 },
     badgeSlot: { flex: 1 / 3, alignItems: "center", marginBottom: 14 },
     badgeIcon: {
-      width: 56,
-      height: 56,
-      borderRadius: 16,
-      backgroundColor: c.surfaceContainerHigh,
+      width: 58,
+      height: 58,
+      borderRadius: 18,
       alignItems: "center",
       justifyContent: "center",
       marginBottom: 6,
-      borderWidth: 1,
-      borderColor: "rgba(180,83,9,0.3)",
     },
-    badgeIconLocked: { borderColor: c.outline + "33" },
     badgeName: { ...theme.font(theme.type.labelSm), color: c.onSurfaceVariant, textAlign: "center" },
-    dangerButton: { backgroundColor: "transparent", borderRadius: theme.radius.card, padding: 14, alignItems: "center", borderWidth: 1, borderColor: c.error, marginTop: 8 },
-    dangerButtonText: { ...theme.font(theme.type.labelCaps), color: c.error },
+    dangerButton: {
+      padding: 14,
+      alignItems: "center",
+      marginTop: 8,
+    },
+    dangerButtonText: { ...theme.font(theme.type.labelCaps), color: c.error, letterSpacing: 0.8 },
     linkButton: { padding: 14, alignItems: "center" },
     linkText: { ...theme.font(theme.type.labelSm), color: c.outline },
     navRow: {
       flexDirection: "row",
       alignItems: "center",
       gap: 12,
-      backgroundColor: theme.mode === "dark" ? "rgba(30,41,59,0.7)" : c.surfaceContainerLowest,
-      borderRadius: theme.radius.card,
-      padding: theme.spacing.stackMd,
-      marginBottom: theme.spacing.stackMd,
-      borderWidth: 1,
-      borderColor: theme.mode === "dark" ? "rgba(255,255,255,0.05)" : c.borderSubtle,
+      padding: theme.spacing.stackMd + 2,
+      marginBottom: theme.spacing.stackMd + 4,
     },
     navRowText: { ...theme.font(theme.type.headlineSm), color: c.onSurface, flex: 1 },
-    favRow: { flexDirection: "row", alignItems: "center", gap: 12, paddingVertical: 10, borderTopWidth: 1, borderTopColor: theme.mode === "dark" ? "rgba(255,255,255,0.05)" : c.borderSubtle },
+    favRow: { flexDirection: "row", alignItems: "center", gap: 12, paddingVertical: 10, borderTopWidth: 1, borderTopColor: c.neumorphBorder },
     favName: { ...theme.font(theme.type.bodyMd), color: c.onSurface, flex: 1 },
     favEmpty: { ...theme.font(theme.type.bodyMd), color: c.onSurfaceVariant },
   });
@@ -153,102 +142,107 @@ export default function ProfileScreen() {
       <TopNav title="Profile" showLogo={false} subtitle={me?.username ? `@${me.username}` : undefined} />
       <ScrollView contentContainerStyle={styles.content} showsVerticalScrollIndicator={false}>
         <View style={styles.avatarWrap}>
-        <View style={styles.avatarRing}>
-          <Text style={styles.avatarInitial}>{initial}</Text>
+          <NeumorphicView variant="raised" glow="blue" radius={44} style={styles.avatarRing}>
+            <Text style={styles.avatarInitial}>{initial}</Text>
+          </NeumorphicView>
+          <Text style={styles.name}>{me?.name ?? me?.username ?? "PIKE explorer"}</Text>
+          {me && (
+            <NeumorphicView variant="inset" radius={theme.radius.full} style={styles.tierPill}>
+              <Text style={styles.tierText}>LEVEL {me.level}</Text>
+            </NeumorphicView>
+          )}
         </View>
-        <Text style={styles.name}>{me?.name ?? me?.username ?? "PIKE explorer"}</Text>
+
+        <View style={styles.statsRow}>
+          <NeumorphicView variant="raised" radius={20} style={styles.statCard}>
+            <Text style={styles.statLabel}>QUESTS</Text>
+            <Text style={styles.statNumber}>{questsCompleted ?? "-"}</Text>
+          </NeumorphicView>
+          <NeumorphicView variant="raised" radius={20} style={styles.statCard}>
+            <Text style={styles.statLabel}>REWARDS</Text>
+            <Text style={styles.statNumber}>{rewardsClaimed ?? "-"}</Text>
+          </NeumorphicView>
+          <NeumorphicView variant="raised" radius={20} style={styles.statCard}>
+            <Text style={styles.statLabel}>STREAK</Text>
+            <Text style={styles.statNumberGold}>{me?.currentStreak ?? "-"}</Text>
+          </NeumorphicView>
+          <NeumorphicView variant="raised" radius={20} style={styles.statCard}>
+            <Text style={styles.statLabel}>TOTAL XP</Text>
+            <Text style={styles.statNumber}>{me?.xp ?? "-"}</Text>
+          </NeumorphicView>
+        </View>
+
         {me && (
-          <View style={styles.tierPill}>
-            <Text style={styles.tierText}>LEVEL {me.level}</Text>
-          </View>
-        )}
-      </View>
-
-      <View style={styles.statsRow}>
-        <View style={styles.statCard}>
-          <Text style={styles.statLabel}>QUESTS</Text>
-          <Text style={styles.statNumber}>{questsCompleted ?? "-"}</Text>
-        </View>
-        <View style={styles.statCard}>
-          <Text style={styles.statLabel}>REWARDS</Text>
-          <Text style={styles.statNumber}>{rewardsClaimed ?? "-"}</Text>
-        </View>
-        <View style={styles.statCard}>
-          <Text style={styles.statLabel}>STREAK</Text>
-          <Text style={styles.statNumberGold}>{me?.currentStreak ?? "-"}</Text>
-        </View>
-        <View style={styles.statCard}>
-          <Text style={styles.statLabel}>TOTAL XP</Text>
-          <Text style={styles.statNumber}>{me?.xp ?? "-"}</Text>
-        </View>
-      </View>
-
-      {me && (
-        <View style={styles.card}>
-          <View style={styles.cardTitleRow}>
-            <Text style={styles.cardTitle}>Earned badges</Text>
-            <Text style={styles.viewAll}>VIEW ALL</Text>
-          </View>
-          <FlatList
-            data={me.badges}
-            numColumns={3}
-            scrollEnabled={false}
-            keyExtractor={(b) => b.key}
-            renderItem={({ item }) => {
-              const earned = !!item.earnedAt;
-              return (
-                <View style={styles.badgeSlot}>
-                  <View style={[styles.badgeIcon, !earned && styles.badgeIconLocked]}>
-                    <MaterialIcons
-                      name="stars"
-                      size={24}
-                      color={earned ? c.secondary : c.outline}
-                      style={{ opacity: earned ? 1 : 0.35 }}
-                    />
-                  </View>
-                  <Text style={styles.badgeName} numberOfLines={2}>
-                    {item.name}
-                  </Text>
-                </View>
-              );
-            }}
-          />
-        </View>
-      )}
-
-      {/* Phase 3 — FR-7: reputational leaderboard access (UI §7.5). */}
-      <TouchableOpacity style={styles.navRow} onPress={() => router.push("/leaderboard")}>
-        <MaterialIcons name="leaderboard" size={20} color={c.primary} />
-        <Text style={styles.navRowText}>Leaderboard</Text>
-        <MaterialIcons name="chevron-right" size={22} color={c.onSurfaceVariant} />
-      </TouchableOpacity>
-
-      {/* FR-6: favorited venues (will drive "new quest at a favorited venue" push triggers). */}
-      <View style={styles.card}>
-        <Text style={styles.cardTitle}>Favorite venues</Text>
-        {favorites.length === 0 ? (
-          <Text style={[styles.favEmpty, { marginTop: 8 }]}>Tap the heart on a venue in the Map tab to save it here.</Text>
-        ) : (
-          favorites.map((v) => (
-            <View key={v.id} style={styles.favRow}>
-              <MaterialIcons name="place" size={18} color={c.primary} />
-              <Text style={styles.favName} numberOfLines={1}>{v.name}</Text>
-              <TouchableOpacity onPress={() => unfavorite(v.id)} hitSlop={8}>
-                <MaterialIcons name="favorite" size={18} color={c.primary} />
-              </TouchableOpacity>
+          <NeumorphicView variant="raised" radius={20} style={styles.card}>
+            <View style={styles.cardTitleRow}>
+              <Text style={styles.cardTitle}>Earned badges</Text>
+              <Text style={styles.viewAll}>VIEW ALL</Text>
             </View>
-          ))
+            <FlatList
+              data={me.badges}
+              numColumns={3}
+              scrollEnabled={false}
+              keyExtractor={(b) => b.key}
+              renderItem={({ item }) => {
+                const earned = !!item.earnedAt;
+                return (
+                  <View style={styles.badgeSlot}>
+                    <NeumorphicView
+                      variant={earned ? "raised" : "inset"}
+                      glow={earned ? "gold" : "none"}
+                      radius={18}
+                      style={styles.badgeIcon}
+                    >
+                      <MaterialIcons
+                        name="stars"
+                        size={26}
+                        color={earned ? c.secondary : c.outline}
+                        style={{ opacity: earned ? 1 : 0.35 }}
+                      />
+                    </NeumorphicView>
+                    <Text style={styles.badgeName} numberOfLines={2}>
+                      {item.name}
+                    </Text>
+                  </View>
+                );
+              }}
+            />
+          </NeumorphicView>
         )}
-      </View>
 
-      <TouchableOpacity style={styles.dangerButton} onPress={logOut}>
-        <Text style={styles.dangerButtonText}>Log out</Text>
-      </TouchableOpacity>
+        {/* Phase 3 — FR-7: reputational leaderboard access */}
+        <NeumorphicView variant="raised" radius={20} style={styles.navRow} onPress={() => router.push("/leaderboard")}>
+          <MaterialIcons name="leaderboard" size={22} color={c.primary} />
+          <Text style={styles.navRowText}>Leaderboard</Text>
+          <MaterialIcons name="chevron-right" size={22} color={c.onSurfaceVariant} />
+        </NeumorphicView>
 
-      {/* App Store guideline 5.1.1(v): real in-app account deletion (PRD section 13). */}
-      <TouchableOpacity style={styles.linkButton} onPress={deleteAccount}>
-        <Text style={styles.linkText}>Delete my account</Text>
-      </TouchableOpacity>
+        {/* FR-6: favorited venues */}
+        <NeumorphicView variant="raised" radius={20} style={styles.card}>
+          <Text style={styles.cardTitle}>Favorite venues</Text>
+          {favorites.length === 0 ? (
+            <Text style={[styles.favEmpty, { marginTop: 8 }]}>Tap the heart on a venue in the Map tab to save it here.</Text>
+          ) : (
+            favorites.map((v) => (
+              <View key={v.id} style={styles.favRow}>
+                <MaterialIcons name="place" size={18} color={c.primary} />
+                <Text style={styles.favName} numberOfLines={1}>{v.name}</Text>
+                <TouchableOpacity onPress={() => unfavorite(v.id)} hitSlop={8}>
+                  <MaterialIcons name="favorite" size={18} color={c.primary} />
+                </TouchableOpacity>
+              </View>
+            ))
+          )}
+        </NeumorphicView>
+
+        <NeumorphicView variant="flat" radius={theme.radius.card} style={styles.dangerButton} onPress={logOut}>
+          <Text style={styles.dangerButtonText}>LOG OUT</Text>
+        </NeumorphicView>
+
+        {/* App Store guideline 5.1.1(v): in-app account deletion */}
+        <TouchableOpacity style={styles.linkButton} onPress={deleteAccount}>
+          <Text style={styles.linkText}>Delete my account</Text>
+        </TouchableOpacity>
       </ScrollView>
     </View>
   );
