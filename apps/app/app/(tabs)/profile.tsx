@@ -48,11 +48,7 @@ export default function ProfileScreen() {
   };
 
   const handleSettings = () => {
-    Alert.alert(
-      "Settings",
-      "• Dark Mode: Always Active\n• AR Tracking: 8th Wall Enabled\n• Haptic Feedback: Tactile\n• Build: v2.0-neu",
-      [{ text: "Close", style: "cancel" }]
-    );
+    router.push("/settings");
   };
 
   const handleBadgePress = (name: string, description: string) => {

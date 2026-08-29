@@ -6,6 +6,8 @@ import { useTheme } from "@/theme";
 import { Logo } from "./Logo";
 import { NeumorphicView } from "./NeumorphicView";
 
+import { router } from "expo-router";
+
 interface TopNavProps {
   title?: string;
   showLogo?: boolean;
@@ -22,7 +24,7 @@ export function TopNav({ title = "PIKE", showLogo = true, subtitle, rightAction 
   const topPadding = Platform.OS === "web" ? 14 : Math.max(insets.top, 14) + 4;
 
   const handleNotificationPress = () => {
-    Alert.alert("Notifications", "You have no new notifications. All sector relays are operational.");
+    router.push("/notifications");
   };
 
   const styles = StyleSheet.create({

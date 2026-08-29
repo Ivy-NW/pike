@@ -57,7 +57,18 @@ export const api = {
   favorites: () => request<FavoriteVenueItem[]>("/users/me/favorites"),
   addFavorite: (venueId: string) => request<void>(`/users/me/favorites/${venueId}`, { method: "PUT" }),
   removeFavorite: (venueId: string) => request<void>(`/users/me/favorites/${venueId}`, { method: "DELETE" }),
-  // Phase 3 — FR-6: register this device's push token. TODO(FR-6): call on launch with the token from
-  // expo-notifications (getExpoPushTokenAsync) once the package + notification permissions are added.
+  // Phase 3 — FR-6: register this device's push token.
   registerPushToken: (token: string) => request<void>("/users/me/push-token", { method: "POST", body: JSON.stringify({ token }) }),
+  // AR marker resolution and redemption
+  resolveMarker: (markerId: string) => request<any>(`/markers/${markerId}`),
+  createRedemption: (markerId: string, sessionId: string) =>
+    request<any>(`/markers/${markerId}/redemptions`, {
+      method: "POST",
+      body: JSON.stringify({ sessionId }),
+    }),
+  claimReward: (redemptionId: string, body?: any) =>
+    request<any>(`/redemptions/${redemptionId}/claim`, {
+      method: "POST",
+      body: JSON.stringify(body ?? {}),
+    }),
 };

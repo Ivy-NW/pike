@@ -1,44 +1,37 @@
-import { useEffect, useState, useRef } from "react";
-import { View, Text, FlatList, StyleSheet, TouchableOpacity, Platform } from "react-native";
-import { WebView } from "react-native-webview";
+import React, { useRef, useState, useEffect } from "react";
+import { View, Text, StyleSheet, TouchableOpacity, FlatList, Platform } from "react-native";
 import { router } from "expo-router";
+import { WebView } from "react-native-webview";
 import { MaterialIcons } from "@expo/vector-icons";
+import type { UserQuestListItem } from "@pike/shared-types";
 import { api } from "@/lib/api";
 import { useTheme } from "@/theme";
 import { TopNav } from "@/components/TopNav";
 import { NeumorphicView } from "@/components/NeumorphicView";
 
-interface QuestListItem {
-  id: string;
-  name: string;
-  venueId: string;
-  venueName: string;
-  rewardDescription: string;
-  completed: boolean;
-  markerId: string | null;
-}
+// Nairobi Hotspots coordinates (replacing US coordinates per user requirement)
+const NAIROBI_VENUES = [
+  { name: "KICC Sky Deck", lat: -1.2885, lng: 36.8233, sector: "CBD Central" },
+  { name: "Nairobi National Museum", lat: -1.2740, lng: 36.8140, sector: "Museum Hill" },
+  { name: "Upper Hill Cyber Hub", lat: -1.2980, lng: 36.8150, sector: "Upper Hill" },
+  { name: "Sarit Tech Expo", lat: -1.2615, lng: 36.8040, sector: "Westlands" },
+  { name: "Kilimani Node Terminal", lat: -1.2921, lng: 36.7865, sector: "Kilimani" },
+  { name: "The Hub Cyber Plaza", lat: -1.3190, lng: 36.7060, sector: "Karen" },
+  { name: "Village Market Portal", lat: -1.2290, lng: 36.8040, sector: "Gigiri" },
+];
 
-// Generate consistent synthetic coordinates around a city center for venues without fixed GPS
 function getVenueCoordinate(venueId: string, index: number) {
-  const baseLat = 40.7128;
-  const baseLng = -74.006;
-  const offsets = [
-    { lat: 0.0035, lng: -0.0025 },
-    { lat: -0.0042, lng: 0.0051 },
-    { lat: 0.0061, lng: 0.0038 },
-    { lat: -0.0028, lng: -0.0062 },
-    { lat: 0.0075, lng: -0.0045 },
-  ];
-  const offset = offsets[index % offsets.length];
+  const spot = NAIROBI_VENUES[index % NAIROBI_VENUES.length];
   return {
-    lat: baseLat + offset.lat,
-    lng: baseLng + offset.lng,
+    lat: spot.lat,
+    lng: spot.lng,
+    sector: spot.sector,
   };
 }
 
 export default function MapScreen() {
   const theme = useTheme();
-  const [quests, setQuests] = useState<QuestListItem[]>([]);
+  const [quests, setQuests] = useState<UserQuestListItem[]>([]);
   const [favorites, setFavorites] = useState<Set<string>>(new Set());
   const [nodeFilter, setNodeFilter] = useState<"all" | "high" | "exploration">("all");
   const webViewRef = useRef<WebView>(null);
@@ -59,15 +52,19 @@ export default function MapScreen() {
       await (isFav ? api.removeFavorite(venueId) : api.addFavorite(venueId));
     } catch {
       setFavorites((prev) => {
-        const next = new Set(prev);
-        isFav ? next.add(venueId) : next.delete(venueId);
-        return next;
+        const rollback = new Set(prev);
+        isFav ? rollback.add(venueId) : rollback.delete(venueId);
+        return rollback;
       });
     }
   };
 
-  const venueMarkers = quests.map((q, idx) => {
-    const coords = getVenueCoordinate(q.venueId, idx);
+  const c = theme.colors;
+  const isDark = theme.mode === "dark";
+
+  // Build markers JSON for Nairobi locations
+  const markersData = quests.map((q, i) => {
+    const coords = getVenueCoordinate(q.venueId, i);
     return {
       id: q.id,
       venueId: q.venueId,
@@ -77,136 +74,162 @@ export default function MapScreen() {
       completed: q.completed,
       lat: coords.lat,
       lng: coords.lng,
+      sector: coords.sector,
     };
   });
 
-  const c = theme.colors;
-
+  // CARTO Dark Matter map tiles (identical to omni project at C:\Users\user\Desktop\Ken\omni)
   const mapHtml = `
     <!DOCTYPE html>
     <html>
     <head>
+      <meta charset="utf-8" />
       <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
       <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
       <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
       <style>
         * { box-sizing: border-box; margin: 0; padding: 0; }
-        body, html { width: 100%; height: 100%; background: #0b1329; overflow: hidden; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
+        body, html { width: 100%; height: 100%; background: #141314; overflow: hidden; font-family: -apple-system, BlinkMacSystemFont, "Space Grotesk", sans-serif; }
         #map { width: 100%; height: 100%; }
         
-        /* Smooth custom pins */
+        /* Neumorphic Cyan Glow Pins matching omni / Stitch design */
         .pin-wrapper {
           display: flex;
           align-items: center;
           justify-content: center;
         }
         .custom-pin {
-          background: linear-gradient(135deg, #2563eb, #1d4ed8);
-          color: #fff;
-          border: 2.5px solid #ffffff;
+          background: #141314;
+          color: #00f0ff;
+          border: 2px solid #00f0ff;
           border-radius: 50%;
-          width: 38px;
-          height: 38px;
+          width: 36px;
+          height: 36px;
           display: flex;
           align-items: center;
           justify-content: center;
-          font-size: 18px;
-          box-shadow: 0 4px 16px rgba(37, 99, 235, 0.6), 0 0 0 3px rgba(37, 99, 235, 0.25);
-          transition: transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
+          font-size: 16px;
+          box-shadow: 0 0 15px rgba(0, 240, 255, 0.6), inset 0 0 8px rgba(0, 240, 255, 0.3);
+          transition: transform 0.2s ease;
           cursor: pointer;
         }
         .custom-pin:hover, .custom-pin:active {
-          transform: scale(1.18);
+          transform: scale(1.2);
         }
         .custom-pin.completed {
-          background: linear-gradient(135deg, #f59e0b, #d97706);
-          border-color: #fef3c7;
-          box-shadow: 0 4px 16px rgba(245, 158, 11, 0.6), 0 0 0 3px rgba(245, 158, 11, 0.25);
+          color: #10B981;
+          border-color: #10B981;
+          box-shadow: 0 0 15px rgba(16, 185, 129, 0.6), inset 0 0 8px rgba(16, 185, 129, 0.3);
         }
         
-        /* Glassmorphism popups */
+        /* Dark Glassmorphism Popup */
         .leaflet-popup-content-wrapper {
-          background: rgba(15, 23, 42, 0.95);
-          backdrop-filter: blur(16px);
-          -webkit-backdrop-filter: blur(16px);
-          color: #f8fafc;
-          border: 1px solid rgba(255, 255, 255, 0.15);
-          border-radius: 16px;
-          box-shadow: 0 16px 36px rgba(0,0,0,0.5);
-          padding: 6px 4px;
+          background: rgba(20, 19, 20, 0.95);
+          backdrop-filter: blur(12px);
+          -webkit-backdrop-filter: blur(12px);
+          color: #e5e2e2;
+          border: 1px solid rgba(0, 240, 255, 0.3);
+          border-radius: 18px;
+          box-shadow: 0 16px 36px rgba(0,0,0,0.8);
+          padding: 8px 6px;
         }
         .leaflet-popup-tip {
-          background: rgba(15, 23, 42, 0.95);
+          background: rgba(20, 19, 20, 0.95);
         }
         .popup-title {
-          font-size: 15px;
+          font-size: 14px;
           font-weight: 700;
-          color: #93c5fd;
-          margin-bottom: 3px;
+          color: #00f0ff;
+          margin-bottom: 2px;
         }
-        .popup-sub {
+        .popup-quest {
           font-size: 12px;
-          color: #cbd5e1;
+          color: #e5e2e2;
           margin-bottom: 6px;
         }
         .popup-reward {
           font-size: 11px;
-          color: #fbbf24;
-          font-weight: 600;
-          background: rgba(251, 191, 36, 0.15);
-          padding: 3px 8px;
-          border-radius: 6px;
-          display: inline-block;
-          border: 1px solid rgba(251, 191, 36, 0.25);
+          font-weight: 700;
+          color: #f59e0b;
+          display: flex;
+          align-items: center;
+          gap: 4px;
+        }
+        .leaflet-control-attribution {
+          background: rgba(20, 19, 20, 0.7) !important;
+          color: #64748b !important;
+          font-size: 9px !important;
+        }
+        .leaflet-control-attribution a {
+          color: #00dbe9 !important;
         }
       </style>
     </head>
     <body>
       <div id="map"></div>
       <script>
-        var map = L.map('map', { zoomControl: false, attributionControl: false }).setView([40.7128, -74.0060], 14);
+        var map = L.map('map', {
+          center: [-1.286389, 36.817223], // Nairobi CBD Hub
+          zoom: 13,
+          zoomControl: false,
+          attributionControl: true
+        });
 
-        // Smooth Google Maps Roadmap / Terrain in Leaflet
-        L.tileLayer('https://mt1.google.com/vt/lyrs=m&x={x}&y={y}&z={z}', {
-          maxZoom: 20,
-          subdomains: ['mt0', 'mt1', 'mt2', 'mt3']
+        L.control.zoom({ position: 'topright' }).addTo(map);
+
+        // Dark CartoDB Tiles matching C:\\Users\\user\\Desktop\\Ken\\omni
+        L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
+          subdomains: 'abc',
+          maxZoom: 19,
+          attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> &copy; <a href="https://carto.com/attributions">CARTO</a>'
         }).addTo(map);
 
-        var markers = ${JSON.stringify(venueMarkers)};
-        if (markers.length > 0) {
-          var group = [];
-          markers.forEach(function(m) {
-            var iconClass = m.completed ? 'custom-pin completed' : 'custom-pin';
-            var icon = L.divIcon({
-              className: 'pin-wrapper',
-              html: '<div class="' + iconClass + '">' + (m.completed ? '🏆' : '📍') + '</div>',
-              iconSize: [38, 38],
-              iconAnchor: [19, 19]
-            });
-            var marker = L.marker([m.lat, m.lng], { icon: icon }).addTo(map);
-            marker.bindPopup('<div class="popup-title">' + m.name + '</div><div class="popup-sub">' + m.questName + '</div><div class="popup-reward">🎁 ' + m.reward + '</div>');
-            group.push([m.lat, m.lng]);
+        var markers = ${JSON.stringify(markersData)};
+
+        markers.forEach(function(m) {
+          var iconHtml = '<div class="pin-wrapper"><div class="custom-pin ' + (m.completed ? 'completed' : '') + '">' +
+            (m.completed ? '✓' : '⬡') +
+            '</div></div>';
+
+          var icon = L.divIcon({
+            html: iconHtml,
+            className: '',
+            iconSize: [36, 36],
+            iconAnchor: [18, 18],
+            popupAnchor: [0, -20]
           });
-          if (group.length > 1) {
-            map.fitBounds(group, { padding: [45, 45] });
-          } else if (group.length === 1) {
-            map.setView(group[0], 15);
-          }
+
+          var popupContent = '<div style="min-width: 140px;">' +
+            '<div class="popup-title">' + m.name + '</div>' +
+            '<div class="popup-quest">' + m.questName + '</div>' +
+            '<div class="popup-reward">🎁 ' + m.reward + '</div>' +
+            '</div>';
+
+          L.marker([m.lat, m.lng], { icon: icon })
+            .bindPopup(popupContent)
+            .addTo(map);
+        });
+
+        // Fit bounds if markers exist
+        if (markers.length > 0) {
+          var group = new L.featureGroup(markers.map(function(m) {
+            return L.marker([m.lat, m.lng]);
+          }));
+          map.fitBounds(group.getBounds().pad(0.15));
         }
       </script>
     </body>
     </html>
   `;
 
-  const isDark = theme.mode === "dark";
   const styles = StyleSheet.create({
-    container: { flex: 1, backgroundColor: c.surface },
+    container: { flex: 1, backgroundColor: isDark ? "#141314" : c.surface },
     mapContainer: {
       height: "44%",
       width: "100%",
-      backgroundColor: c.surfaceContainerLowest,
+      backgroundColor: "#141314",
       borderBottomWidth: 1,
-      borderBottomColor: c.neumorphBorder,
+      borderBottomColor: "rgba(255, 255, 255, 0.05)",
       overflow: "hidden",
     },
     sheet: {
@@ -218,10 +241,10 @@ export default function MapScreen() {
       paddingHorizontal: theme.spacing.containerPadding,
       marginTop: -20,
       borderTopWidth: 1,
-      borderTopColor: c.neumorphBorder,
+      borderTopColor: "rgba(255, 255, 255, 0.06)",
       shadowColor: isDark ? "#000000" : "#a3b1c6",
       shadowOffset: { width: 0, height: -6 },
-      shadowOpacity: isDark ? 0.7 : 0.2,
+      shadowOpacity: isDark ? 0.75 : 0.2,
       shadowRadius: 10,
       elevation: 8,
     },
@@ -255,26 +278,26 @@ export default function MapScreen() {
 
   return (
     <View style={styles.container}>
-      <TopNav title="Explore" showLogo={false} subtitle="Detected Nodes & Anomalies" />
+      <TopNav title="Explore" showLogo={false} subtitle="Nairobi Sector Nodes" />
       <View style={styles.mapContainer}>
         {Platform.OS === "web" ? (
           <iframe
             srcDoc={mapHtml}
             style={{ width: "100%", height: "100%", border: "none" }}
-            title="Google Maps"
+            title="Carto Dark Maps"
           />
         ) : (
           <WebView
             ref={webViewRef}
             source={{ html: mapHtml }}
-            style={{ flex: 1, backgroundColor: "#060e20" }}
+            style={{ flex: 1, backgroundColor: "#141314" }}
             scrollEnabled={false}
           />
         )}
       </View>
       <View style={styles.sheet}>
         <View style={styles.sheetHeaderRow}>
-          <Text style={styles.sheetTitle}>DETECTED NODES</Text>
+          <Text style={styles.sheetTitle}>DETECTED NODES (NAIROBI)</Text>
           <Text style={styles.sheetCount}>{quests.length} active</Text>
         </View>
 
@@ -316,45 +339,48 @@ export default function MapScreen() {
           contentContainerStyle={{ paddingBottom: 130 }}
           showsVerticalScrollIndicator={false}
           ListEmptyComponent={<Text style={styles.empty}>No nodes detected in this filter category.</Text>}
-          renderItem={({ item }) => (
-            <NeumorphicView
-              variant="raised"
-              radius={20}
-              style={styles.card}
-              onPress={() =>
-                router.push({
-                  pathname: "/quest/[id]",
-                  params: {
-                    id: item.id,
-                    name: item.name,
-                    venueName: item.venueName,
-                    rewardDescription: item.rewardDescription,
-                    completed: String(item.completed),
-                    markerId: item.markerId ?? "",
-                  },
-                })
-              }
-            >
-              <NeumorphicView variant="inset" radius={14} style={styles.nodeIconWell}>
-                <MaterialIcons name={item.completed ? "memory" : "explore"} size={22} color={item.completed ? "#10B981" : "#00f0ff"} />
-              </NeumorphicView>
-              <View style={{ flex: 1 }}>
-                <Text style={styles.cardTitle}>{item.venueName}</Text>
-                <Text style={styles.cardSub} numberOfLines={1}>{item.name}</Text>
-                <NeumorphicView variant="inset" radius={8} style={styles.distanceTag}>
-                  <Text style={styles.distanceText}>0.8 KM • +150 XP</Text>
+          renderItem={({ item, index }) => {
+            const coords = getVenueCoordinate(item.venueId, index);
+            return (
+              <NeumorphicView
+                variant="raised"
+                radius={20}
+                style={styles.card}
+                onPress={() =>
+                  router.push({
+                    pathname: "/quest/[id]",
+                    params: {
+                      id: item.id,
+                      name: item.name,
+                      venueName: item.venueName,
+                      rewardDescription: item.rewardDescription,
+                      completed: String(item.completed),
+                      markerId: item.markerId ?? "",
+                    },
+                  })
+                }
+              >
+                <NeumorphicView variant="inset" radius={14} style={styles.nodeIconWell}>
+                  <MaterialIcons name={item.completed ? "memory" : "explore"} size={22} color={item.completed ? "#10B981" : "#00f0ff"} />
                 </NeumorphicView>
-              </View>
-              <TouchableOpacity onPress={() => toggleFavorite(item.venueId)} hitSlop={8} style={styles.favBtn}>
-                <MaterialIcons
-                  name={favorites.has(item.venueId) ? "favorite" : "favorite-border"}
-                  size={20}
-                  color={favorites.has(item.venueId) ? "#00f0ff" : c.onSurfaceVariant}
-                />
-              </TouchableOpacity>
-              <MaterialIcons name="chevron-right" size={22} color={c.onSurfaceVariant} />
-            </NeumorphicView>
-          )}
+                <View style={{ flex: 1 }}>
+                  <Text style={styles.cardTitle}>{item.venueName}</Text>
+                  <Text style={styles.cardSub} numberOfLines={1}>{item.name}</Text>
+                  <NeumorphicView variant="inset" radius={8} style={styles.distanceTag}>
+                    <Text style={styles.distanceText}>{coords.sector} • +150 XP</Text>
+                  </NeumorphicView>
+                </View>
+                <TouchableOpacity onPress={() => toggleFavorite(item.venueId)} hitSlop={8} style={styles.favBtn}>
+                  <MaterialIcons
+                    name={favorites.has(item.venueId) ? "favorite" : "favorite-border"}
+                    size={20}
+                    color={favorites.has(item.venueId) ? "#00f0ff" : c.onSurfaceVariant}
+                  />
+                </TouchableOpacity>
+                <MaterialIcons name="chevron-right" size={22} color={c.onSurfaceVariant} />
+              </NeumorphicView>
+            );
+          }}
         />
       </View>
     </View>
