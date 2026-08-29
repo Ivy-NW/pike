@@ -197,6 +197,7 @@ export default function MapScreen() {
     </html>
   `;
 
+  const isDark = theme.mode === "dark";
   const styles = StyleSheet.create({
     container: { flex: 1, backgroundColor: c.surface },
     mapContainer: {
@@ -209,17 +210,17 @@ export default function MapScreen() {
     },
     sheet: {
       flex: 1,
-      backgroundColor: c.surfaceContainerLow,
+      backgroundColor: isDark ? "#141314" : c.surfaceContainerLow,
       borderTopLeftRadius: 28,
       borderTopRightRadius: 28,
-      paddingTop: theme.spacing.stackMd + 2,
+      paddingTop: 16,
       paddingHorizontal: theme.spacing.containerPadding,
       marginTop: -20,
       borderTopWidth: 1,
       borderTopColor: c.neumorphBorder,
-      shadowColor: theme.mode === "dark" ? "#000000" : "#a3b1c6",
+      shadowColor: isDark ? "#000000" : "#a3b1c6",
       shadowOffset: { width: 0, height: -6 },
-      shadowOpacity: theme.mode === "dark" ? 0.6 : 0.2,
+      shadowOpacity: isDark ? 0.7 : 0.2,
       shadowRadius: 10,
       elevation: 8,
     },
@@ -227,27 +228,33 @@ export default function MapScreen() {
       flexDirection: "row",
       justifyContent: "space-between",
       alignItems: "center",
-      marginBottom: theme.spacing.stackMd,
+      marginBottom: 10,
     },
-    sheetTitle: { ...theme.font(theme.type.labelCaps), color: c.onSurfaceVariant, letterSpacing: 1 },
-    sheetCount: { ...theme.font(theme.type.bodyLg), color: c.primary },
+    sheetTitle: { ...theme.font(theme.type.labelCaps), color: c.onSurfaceVariant, letterSpacing: 1.5 },
+    sheetCount: { ...theme.font(theme.type.bodyLg), color: "#00f0ff" },
+    filterRow: { flexDirection: "row", gap: 8, marginBottom: 14 },
+    filterPill: { paddingHorizontal: 12, paddingVertical: 6 },
+    filterPillActive: { ...theme.font(theme.type.labelCaps), color: "#00f0ff", fontSize: 10 },
+    filterPillInactive: { ...theme.font(theme.type.labelCaps), color: c.onSurfaceVariant, fontSize: 10 },
     card: {
-      padding: theme.spacing.stackMd + 2,
-      marginBottom: theme.spacing.stackSm + 4,
+      padding: 16,
+      marginBottom: 12,
       flexDirection: "row",
       alignItems: "center",
       gap: 12,
     },
-    dot: { width: 10, height: 10, borderRadius: 5 },
+    nodeIconWell: { width: 44, height: 44, borderRadius: 14, alignItems: "center", justifyContent: "center" },
     favBtn: { padding: 6 },
-    cardTitle: { ...theme.font(theme.type.headlineSm), color: c.onSurface },
-    cardSub: { ...theme.font(theme.type.bodyMd), color: c.onSurfaceVariant, marginTop: 2 },
+    cardTitle: { ...theme.font(theme.type.headlineSm), color: c.primary, fontSize: 17 },
+    cardSub: { ...theme.font(theme.type.bodyMd), color: c.onSurfaceVariant, marginTop: 2, fontSize: 13 },
+    distanceTag: { flexDirection: "row", alignItems: "center", gap: 4, paddingHorizontal: 8, paddingVertical: 3, marginTop: 4 },
+    distanceText: { ...theme.font(theme.type.labelCaps), color: "#00f0ff", fontSize: 9 },
     empty: { ...theme.font(theme.type.bodyMd), color: c.onSurfaceVariant, textAlign: "center", marginTop: 24 },
   });
 
   return (
     <View style={styles.container}>
-      <TopNav title="Explore" showLogo={false} subtitle="Interactive Quest Map" />
+      <TopNav title="Explore" showLogo={false} subtitle="Detected Nodes & Anomalies" />
       <View style={styles.mapContainer}>
         {Platform.OS === "web" ? (
           <iframe
@@ -266,19 +273,33 @@ export default function MapScreen() {
       </View>
       <View style={styles.sheet}>
         <View style={styles.sheetHeaderRow}>
-          <Text style={styles.sheetTitle}>NEARBY VENUES & QUESTS</Text>
-          <Text style={styles.sheetCount}>{quests.length} venues</Text>
+          <Text style={styles.sheetTitle}>DETECTED NODES</Text>
+          <Text style={styles.sheetCount}>{quests.length} active</Text>
         </View>
+
+        {/* Quick Filter Pills */}
+        <View style={styles.filterRow}>
+          <NeumorphicView variant="inset" radius={12} style={styles.filterPill}>
+            <Text style={styles.filterPillActive}>● ALL NODES</Text>
+          </NeumorphicView>
+          <NeumorphicView variant="raised" radius={12} style={styles.filterPill}>
+            <Text style={styles.filterPillInactive}>HIGH YIELD</Text>
+          </NeumorphicView>
+          <NeumorphicView variant="raised" radius={12} style={styles.filterPill}>
+            <Text style={styles.filterPillInactive}>EXPLORATION</Text>
+          </NeumorphicView>
+        </View>
+
         <FlatList
           data={quests}
           keyExtractor={(q) => q.id}
-          contentContainerStyle={{ paddingBottom: 110 }}
+          contentContainerStyle={{ paddingBottom: 120 }}
           showsVerticalScrollIndicator={false}
-          ListEmptyComponent={<Text style={styles.empty}>No quests available right now.</Text>}
+          ListEmptyComponent={<Text style={styles.empty}>No nodes detected in this sector.</Text>}
           renderItem={({ item }) => (
             <NeumorphicView
               variant="raised"
-              radius={16}
+              radius={20}
               style={styles.card}
               onPress={() =>
                 router.push({
@@ -294,16 +315,21 @@ export default function MapScreen() {
                 })
               }
             >
-              <View style={[styles.dot, { backgroundColor: item.completed ? c.secondaryContainer : c.primaryContainer }]} />
+              <NeumorphicView variant="inset" radius={14} style={styles.nodeIconWell}>
+                <MaterialIcons name={item.completed ? "memory" : "explore"} size={22} color={item.completed ? "#10B981" : "#00f0ff"} />
+              </NeumorphicView>
               <View style={{ flex: 1 }}>
                 <Text style={styles.cardTitle}>{item.venueName}</Text>
-                <Text style={styles.cardSub}>{item.name}</Text>
+                <Text style={styles.cardSub} numberOfLines={1}>{item.name}</Text>
+                <NeumorphicView variant="inset" radius={8} style={styles.distanceTag}>
+                  <Text style={styles.distanceText}>0.8 KM • +150 XP</Text>
+                </NeumorphicView>
               </View>
               <TouchableOpacity onPress={() => toggleFavorite(item.venueId)} hitSlop={8} style={styles.favBtn}>
                 <MaterialIcons
                   name={favorites.has(item.venueId) ? "favorite" : "favorite-border"}
                   size={20}
-                  color={favorites.has(item.venueId) ? c.primary : c.onSurfaceVariant}
+                  color={favorites.has(item.venueId) ? "#00f0ff" : c.onSurfaceVariant}
                 />
               </TouchableOpacity>
               <MaterialIcons name="chevron-right" size={22} color={c.onSurfaceVariant} />

@@ -9,7 +9,7 @@ import { useTheme } from "@/theme";
 import { TopNav } from "@/components/TopNav";
 import { NeumorphicView } from "@/components/NeumorphicView";
 
-/** UI doc 7.5 — identity, history, and settings. */
+/** Stitch Neumorphic Explorer Profile */
 export default function ProfileScreen() {
   const theme = useTheme();
   const [me, setMe] = useState<UserProfile | null>(null);
@@ -24,7 +24,6 @@ export default function ProfileScreen() {
     api.favorites().then(setFavorites).catch(() => {});
   }, []);
 
-  // FR-6: remove a favorite from the Profile list (optimistic, reverts on failure).
   const unfavorite = async (venueId: string) => {
     const prev = favorites;
     setFavorites((list) => list.filter((v) => v.id !== venueId));
@@ -40,9 +39,6 @@ export default function ProfileScreen() {
     router.replace("/login");
   };
 
-  // App Store guideline 5.1.1(v): real in-app account deletion, gated behind an explicit
-  // destructive confirmation. On success the account (XP/streak/badges) is gone server-side,
-  // so we clear the local token and send the user back to login.
   const deleteAccount = () => {
     Alert.alert(
       "Delete account?",
@@ -67,168 +63,244 @@ export default function ProfileScreen() {
   };
 
   const c = theme.colors;
+  const isDark = theme.mode === "dark";
+  const xpProgress = me ? me.xpIntoLevel / me.xpForNextLevel : 0.65;
+  const initial = (me?.name ?? me?.username ?? "Explorer").charAt(0).toUpperCase();
+
   const styles = StyleSheet.create({
-    container: { flex: 1, backgroundColor: c.surface },
-    content: { padding: theme.spacing.containerPadding, paddingTop: 16, paddingBottom: 110 },
-    avatarWrap: { alignItems: "center", marginBottom: theme.spacing.sectionMargin, marginTop: 8 },
-    avatarRing: {
-      width: 88,
-      height: 88,
-      borderRadius: 44,
+    container: { flex: 1, backgroundColor: isDark ? "#141314" : c.surface },
+    content: { padding: theme.spacing.containerPadding, paddingTop: 16, paddingBottom: 120 },
+    headerSection: { alignItems: "center", marginBottom: 28, marginTop: 4 },
+    avatarOuterRing: {
+      width: 128,
+      height: 128,
+      borderRadius: 64,
+      padding: 6,
       alignItems: "center",
       justifyContent: "center",
+      position: "relative",
     },
-    avatarInitial: { ...theme.font(theme.type.displayXl), color: c.primary, fontSize: 36 },
-    name: { ...theme.font(theme.type.headlineLg), color: c.onSurface, marginTop: 14 },
-    tierPill: {
-      flexDirection: "row",
+    avatarInnerRing: {
+      width: "100%",
+      height: "100%",
+      borderRadius: 60,
       alignItems: "center",
-      gap: 6,
-      paddingHorizontal: 14,
-      paddingVertical: 6,
-      marginTop: 10,
+      justifyContent: "center",
+      borderWidth: 2,
+      borderColor: "rgba(0, 240, 255, 0.4)",
     },
-    tierText: { ...theme.font(theme.type.labelCaps), color: c.primary, letterSpacing: 0.8 },
-    statsRow: { flexDirection: "row", flexWrap: "wrap", gap: theme.spacing.elementGap, marginBottom: theme.spacing.sectionMargin },
-    statCard: {
-      width: "47%",
-      padding: theme.spacing.stackMd + 2,
-    },
-    statLabel: { ...theme.font(theme.type.labelCaps), color: c.onSurfaceVariant, marginBottom: 8, letterSpacing: 0.8 },
-    statNumber: { ...theme.font(theme.type.displayXl), color: c.onSurface },
-    statNumberGold: { ...theme.font(theme.type.displayXl), color: c.secondary },
-    card: {
-      padding: theme.spacing.stackMd + 2,
-      marginBottom: theme.spacing.stackMd + 4,
-    },
-    cardTitleRow: { flexDirection: "row", justifyContent: "space-between", alignItems: "center", marginBottom: 14 },
-    cardTitle: { ...theme.font(theme.type.headlineSm), color: c.onSurface },
-    viewAll: { ...theme.font(theme.type.labelCaps), color: c.primary, fontSize: 11 },
-    badgeSlot: { flex: 1 / 3, alignItems: "center", marginBottom: 14 },
-    badgeIcon: {
-      width: 58,
-      height: 58,
+    avatarInitial: { ...theme.font(theme.type.displayXl), color: "#00f0ff", fontSize: 44 },
+    fireBadge: {
+      position: "absolute",
+      bottom: -2,
+      right: -2,
+      width: 36,
+      height: 36,
       borderRadius: 18,
       alignItems: "center",
       justifyContent: "center",
-      marginBottom: 6,
     },
-    badgeName: { ...theme.font(theme.type.labelSm), color: c.onSurfaceVariant, textAlign: "center" },
-    dangerButton: {
-      padding: 14,
+    fireInner: {
+      width: 28,
+      height: 28,
+      borderRadius: 14,
+      backgroundColor: "#00eefc",
       alignItems: "center",
-      marginTop: 8,
+      justifyContent: "center",
     },
-    dangerButtonText: { ...theme.font(theme.type.labelCaps), color: c.error, letterSpacing: 0.8 },
-    linkButton: { padding: 14, alignItems: "center" },
-    linkText: { ...theme.font(theme.type.labelSm), color: c.outline },
-    navRow: {
-      flexDirection: "row",
-      alignItems: "center",
-      gap: 12,
-      padding: theme.spacing.stackMd + 2,
-      marginBottom: theme.spacing.stackMd + 4,
-    },
+    name: { ...theme.font(theme.type.headlineLgMobile), color: c.onSurface, marginTop: 14 },
+    handle: { ...theme.font(theme.type.bodyMd), color: "#00dbe9", marginTop: 2, letterSpacing: 1 },
+    actionRow: { flexDirection: "row", gap: 12, marginTop: 14 },
+    pillButton: { paddingHorizontal: 20, paddingVertical: 10, alignItems: "center", justifyContent: "center" },
+    pillButtonText: { ...theme.font(theme.type.labelCaps), color: c.primary, letterSpacing: 1 },
+    iconButton: { width: 42, height: 42, borderRadius: 21, alignItems: "center", justifyContent: "center" },
+    
+    // Bento Stats Grid
+    bentoGrid: { flexDirection: "row", flexWrap: "wrap", gap: 12, marginBottom: 24 },
+    xpCard: { width: "100%", padding: 18 },
+    xpTopRow: { flexDirection: "row", justifyContent: "space-between", alignItems: "center", marginBottom: 12 },
+    cardLabel: { ...theme.font(theme.type.labelCaps), color: c.onSurfaceVariant, letterSpacing: 1.5 },
+    starIconWell: { width: 34, height: 34, borderRadius: 17, alignItems: "center", justifyContent: "center" },
+    xpNumber: { ...theme.font(theme.type.displayXl), color: c.primary, fontSize: 38 },
+    xpProgressTrack: { width: "100%", height: 10, borderRadius: 5, padding: 2, marginTop: 12 },
+    xpProgressFill: { height: "100%", backgroundColor: "#00eefc", borderRadius: 4 },
+    lvlIndicator: { ...theme.font(theme.type.labelSm), color: c.onSurfaceVariant, textAlign: "right", marginTop: 6 },
+    
+    halfTile: { width: "48%", padding: 16, justifyContent: "space-between" },
+    tileHeader: { flexDirection: "row", justifyContent: "space-between", alignItems: "center", marginBottom: 10 },
+    tileWell: { padding: 10, borderRadius: 12, alignItems: "center", justifyContent: "center", marginTop: 8 },
+    tileValue: { ...theme.font(theme.type.headlineSm), color: c.primary, fontSize: 22 },
+
+    // Earned Badges Molded Slots
+    sectionTitle: { ...theme.font(theme.type.headlineSm), color: c.primary, marginBottom: 14, flexDirection: "row", alignItems: "center", gap: 8 },
+    moldedContainer: { padding: 18, borderRadius: 28, marginBottom: 24 },
+    badgesGrid: { flexDirection: "row", flexWrap: "wrap", gap: 14, justifyContent: "space-between" },
+    badgeSlot: { width: "30%", alignItems: "center", marginBottom: 10 },
+    badgeOuterRing: { width: 68, height: 68, borderRadius: 34, padding: 4, alignItems: "center", justifyContent: "center" },
+    badgeInnerWell: { width: "100%", height: "100%", borderRadius: 30, alignItems: "center", justifyContent: "center" },
+    badgeLabel: { ...theme.font(theme.type.labelSm), color: c.primary, fontSize: 10, marginTop: 6, textAlign: "center" },
+
+    // Additional Actions
+    navRow: { flexDirection: "row", alignItems: "center", gap: 12, padding: 16, marginBottom: 14 },
     navRowText: { ...theme.font(theme.type.headlineSm), color: c.onSurface, flex: 1 },
-    favRow: { flexDirection: "row", alignItems: "center", gap: 12, paddingVertical: 10, borderTopWidth: 1, borderTopColor: c.neumorphBorder },
+    favCard: { padding: 16, marginBottom: 14 },
+    favRow: { flexDirection: "row", alignItems: "center", gap: 12, paddingVertical: 10, borderTopWidth: 1, borderTopColor: "rgba(255,255,255,0.05)" },
     favName: { ...theme.font(theme.type.bodyMd), color: c.onSurface, flex: 1 },
     favEmpty: { ...theme.font(theme.type.bodyMd), color: c.onSurfaceVariant },
+    dangerButton: { padding: 14, alignItems: "center", marginTop: 8 },
+    dangerButtonText: { ...theme.font(theme.type.labelCaps), color: c.error, letterSpacing: 1 },
+    linkButton: { padding: 14, alignItems: "center" },
+    linkText: { ...theme.font(theme.type.labelSm), color: c.outline },
   });
-
-  const initial = (me?.name ?? me?.username ?? "?").charAt(0).toUpperCase();
 
   return (
     <View style={styles.container}>
-      <TopNav title="Profile" showLogo={false} subtitle={me?.username ? `@${me.username}` : undefined} />
+      <TopNav title="PIKE" showLogo={false} subtitle="Explorer Profile" />
       <ScrollView contentContainerStyle={styles.content} showsVerticalScrollIndicator={false}>
-        <View style={styles.avatarWrap}>
-          <NeumorphicView variant="raised" glow="blue" radius={44} style={styles.avatarRing}>
-            <Text style={styles.avatarInitial}>{initial}</Text>
-          </NeumorphicView>
-          <Text style={styles.name}>{me?.name ?? me?.username ?? "PIKE explorer"}</Text>
-          {me && (
-            <NeumorphicView variant="inset" radius={theme.radius.full} style={styles.tierPill}>
-              <Text style={styles.tierText}>LEVEL {me.level}</Text>
+        {/* Profile Header */}
+        <View style={styles.headerSection}>
+          <NeumorphicView variant="raised" radius={64} style={styles.avatarOuterRing}>
+            <NeumorphicView variant="inset" radius={60} style={styles.avatarInnerRing}>
+              <Text style={styles.avatarInitial}>{initial}</Text>
             </NeumorphicView>
-          )}
+            <NeumorphicView variant="raised" radius={18} style={styles.fireBadge}>
+              <View style={styles.fireInner}>
+                <MaterialIcons name="local-fire-department" size={18} color="#00363a" />
+              </View>
+            </NeumorphicView>
+          </NeumorphicView>
+
+          <Text style={styles.name}>{me?.name ?? me?.username ?? "Alex Vance"}</Text>
+          <Text style={styles.handle}>@{me?.username ? me.username.toUpperCase() : "AV_EXPLORER"}</Text>
+
+          <View style={styles.actionRow}>
+            <NeumorphicView variant="raised" radius={24} style={styles.pillButton}>
+              <Text style={styles.pillButtonText}>EDIT PROFILE</Text>
+            </NeumorphicView>
+            <NeumorphicView variant="raised" radius={21} style={styles.iconButton}>
+              <MaterialIcons name="settings" size={20} color={c.primary} />
+            </NeumorphicView>
+          </View>
         </View>
 
-        <View style={styles.statsRow}>
-          <NeumorphicView variant="raised" radius={20} style={styles.statCard}>
-            <Text style={styles.statLabel}>QUESTS</Text>
-            <Text style={styles.statNumber}>{questsCompleted ?? "-"}</Text>
-          </NeumorphicView>
-          <NeumorphicView variant="raised" radius={20} style={styles.statCard}>
-            <Text style={styles.statLabel}>REWARDS</Text>
-            <Text style={styles.statNumber}>{rewardsClaimed ?? "-"}</Text>
-          </NeumorphicView>
-          <NeumorphicView variant="raised" radius={20} style={styles.statCard}>
-            <Text style={styles.statLabel}>STREAK</Text>
-            <Text style={styles.statNumberGold}>{me?.currentStreak ?? "-"}</Text>
-          </NeumorphicView>
-          <NeumorphicView variant="raised" radius={20} style={styles.statCard}>
-            <Text style={styles.statLabel}>TOTAL XP</Text>
-            <Text style={styles.statNumber}>{me?.xp ?? "-"}</Text>
-          </NeumorphicView>
-        </View>
-
-        {me && (
-          <NeumorphicView variant="raised" radius={20} style={styles.card}>
-            <View style={styles.cardTitleRow}>
-              <Text style={styles.cardTitle}>Earned badges</Text>
-              <Text style={styles.viewAll}>VIEW ALL</Text>
+        {/* Bento Stats Grid */}
+        <View style={styles.bentoGrid}>
+          {/* XP Tile */}
+          <NeumorphicView variant="raised" radius={24} style={styles.xpCard}>
+            <View style={styles.xpTopRow}>
+              <Text style={styles.cardLabel}>TOTAL XP</Text>
+              <NeumorphicView variant="inset" radius={17} style={styles.starIconWell}>
+                <MaterialIcons name="star" size={18} color="#00f0ff" />
+              </NeumorphicView>
             </View>
-            <FlatList
-              data={me.badges}
-              numColumns={3}
-              scrollEnabled={false}
-              keyExtractor={(b) => b.key}
-              renderItem={({ item }) => {
-                const earned = !!item.earnedAt;
-                return (
-                  <View style={styles.badgeSlot}>
-                    <NeumorphicView
-                      variant={earned ? "raised" : "inset"}
-                      glow={earned ? "gold" : "none"}
-                      radius={18}
-                      style={styles.badgeIcon}
-                    >
-                      <MaterialIcons
-                        name="stars"
-                        size={26}
-                        color={earned ? c.secondary : c.outline}
-                        style={{ opacity: earned ? 1 : 0.35 }}
-                      />
-                    </NeumorphicView>
-                    <Text style={styles.badgeName} numberOfLines={2}>
-                      {item.name}
-                    </Text>
-                  </View>
-                );
-              }}
-            />
+            <Text style={styles.xpNumber}>{me?.xp ?? "42.8"}<Text style={{ fontSize: 24, color: c.onSurfaceVariant }}>K</Text></Text>
+            <NeumorphicView variant="inset" radius={5} style={styles.xpProgressTrack}>
+              <View style={[styles.xpProgressFill, { width: `${Math.round(xpProgress * 100)}%` }]} />
+            </NeumorphicView>
+            <Text style={styles.lvlIndicator}>Lvl {me?.level ?? 42} → {(me?.level ?? 42) + 1}</Text>
           </NeumorphicView>
-        )}
 
-        {/* Phase 3 — FR-7: reputational leaderboard access */}
+          {/* Quests Tile */}
+          <NeumorphicView variant="raised" radius={24} style={styles.halfTile}>
+            <View style={styles.tileHeader}>
+              <Text style={styles.cardLabel}>QUESTS</Text>
+              <MaterialIcons name="flag" size={20} color={c.onSurfaceVariant} />
+            </View>
+            <NeumorphicView variant="inset" radius={14} style={styles.tileWell}>
+              <Text style={styles.tileValue}>{questsCompleted ?? 156}</Text>
+            </NeumorphicView>
+          </NeumorphicView>
+
+          {/* Streak Tile */}
+          <NeumorphicView variant="raised" radius={24} style={styles.halfTile}>
+            <View style={styles.tileHeader}>
+              <Text style={styles.cardLabel}>STREAK</Text>
+              <MaterialIcons name="local-fire-department" size={20} color="#00dbe9" />
+            </View>
+            <NeumorphicView variant="inset" radius={14} style={styles.tileWell}>
+              <Text style={styles.tileValue}>{me?.currentStreak ?? 14} <Text style={{ fontSize: 13, color: "#00dbe9" }}>days</Text></Text>
+            </NeumorphicView>
+          </NeumorphicView>
+        </View>
+
+        {/* Earned Badges Molded Slots */}
+        <View style={{ flexDirection: "row", alignItems: "center", gap: 8, marginBottom: 12 }}>
+          <MaterialIcons name="military-tech" size={24} color={c.onSurfaceVariant} />
+          <Text style={{ ...theme.font(theme.type.headlineSm), color: c.primary }}>EARNED BADGES</Text>
+        </View>
+        <NeumorphicView variant="inset" radius={28} style={styles.moldedContainer}>
+          <View style={styles.badgesGrid}>
+            {/* Slot 1: Alpine Master */}
+            <View style={styles.badgeSlot}>
+              <NeumorphicView variant="raised" radius={34} style={styles.badgeOuterRing}>
+                <NeumorphicView variant="inset" radius={30} style={styles.badgeInnerWell}>
+                  <MaterialIcons name="terrain" size={24} color="#e1d2ff" />
+                </NeumorphicView>
+              </NeumorphicView>
+              <Text style={styles.badgeLabel}>ALPINE</Text>
+            </View>
+
+            {/* Slot 2: Pathfinder */}
+            <View style={styles.badgeSlot}>
+              <NeumorphicView variant="raised" radius={34} style={styles.badgeOuterRing}>
+                <NeumorphicView variant="inset" radius={30} style={styles.badgeInnerWell}>
+                  <MaterialIcons name="explore" size={24} color="#00eefc" />
+                </NeumorphicView>
+              </NeumorphicView>
+              <Text style={styles.badgeLabel}>PATHFINDER</Text>
+            </View>
+
+            {/* Slot 3: 100K Steps */}
+            <View style={styles.badgeSlot}>
+              <NeumorphicView variant="raised" radius={34} style={styles.badgeOuterRing}>
+                <NeumorphicView variant="inset" radius={30} style={styles.badgeInnerWell}>
+                  <MaterialIcons name="directions-walk" size={24} color="#cfc5ba" />
+                </NeumorphicView>
+              </NeumorphicView>
+              <Text style={styles.badgeLabel}>100K STEPS</Text>
+            </View>
+
+            {/* Slot 4: Locked Mold */}
+            <View style={styles.badgeSlot}>
+              <NeumorphicView variant="raised" radius={34} style={styles.badgeOuterRing}>
+                <NeumorphicView variant="inset" radius={30} style={styles.badgeInnerWell}>
+                  <MaterialIcons name="lock" size={22} color="#353435" />
+                </NeumorphicView>
+              </NeumorphicView>
+              <Text style={[styles.badgeLabel, { color: "#353435" }]}>LOCKED</Text>
+            </View>
+
+            {/* Slot 5: Locked Mold */}
+            <View style={styles.badgeSlot}>
+              <NeumorphicView variant="raised" radius={34} style={styles.badgeOuterRing}>
+                <NeumorphicView variant="inset" radius={30} style={styles.badgeInnerWell}>
+                  <MaterialIcons name="lock" size={22} color="#353435" />
+                </NeumorphicView>
+              </NeumorphicView>
+              <Text style={[styles.badgeLabel, { color: "#353435" }]}>LOCKED</Text>
+            </View>
+          </View>
+        </NeumorphicView>
+
+        {/* Leaderboard link */}
         <NeumorphicView variant="raised" radius={20} style={styles.navRow} onPress={() => router.push("/leaderboard")}>
-          <MaterialIcons name="leaderboard" size={22} color={c.primary} />
-          <Text style={styles.navRowText}>Leaderboard</Text>
+          <MaterialIcons name="leaderboard" size={22} color="#00f0ff" />
+          <Text style={styles.navRowText}>Reputational Leaderboard</Text>
           <MaterialIcons name="chevron-right" size={22} color={c.onSurfaceVariant} />
         </NeumorphicView>
 
-        {/* FR-6: favorited venues */}
-        <NeumorphicView variant="raised" radius={20} style={styles.card}>
-          <Text style={styles.cardTitle}>Favorite venues</Text>
+        {/* Favorite venues */}
+        <NeumorphicView variant="raised" radius={20} style={styles.favCard}>
+          <Text style={{ ...theme.font(theme.type.headlineSm), color: c.onSurface, marginBottom: 10 }}>Favorite Venues</Text>
           {favorites.length === 0 ? (
-            <Text style={[styles.favEmpty, { marginTop: 8 }]}>Tap the heart on a venue in the Map tab to save it here.</Text>
+            <Text style={styles.favEmpty}>Tap the heart on a venue in Explore to save it here.</Text>
           ) : (
             favorites.map((v) => (
               <View key={v.id} style={styles.favRow}>
-                <MaterialIcons name="place" size={18} color={c.primary} />
+                <MaterialIcons name="place" size={18} color="#00f0ff" />
                 <Text style={styles.favName} numberOfLines={1}>{v.name}</Text>
                 <TouchableOpacity onPress={() => unfavorite(v.id)} hitSlop={8}>
-                  <MaterialIcons name="favorite" size={18} color={c.primary} />
+                  <MaterialIcons name="favorite" size={18} color="#00f0ff" />
                 </TouchableOpacity>
               </View>
             ))
@@ -239,7 +311,6 @@ export default function ProfileScreen() {
           <Text style={styles.dangerButtonText}>LOG OUT</Text>
         </NeumorphicView>
 
-        {/* App Store guideline 5.1.1(v): in-app account deletion */}
         <TouchableOpacity style={styles.linkButton} onPress={deleteAccount}>
           <Text style={styles.linkText}>Delete my account</Text>
         </TouchableOpacity>
