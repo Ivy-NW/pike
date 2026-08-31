@@ -1,17 +1,13 @@
 /**
- * Concrete Material-3-style token sets, sourced directly from the
- * `docs/ui designs/pike_vanguard(_light)/DESIGN.md` companion systems that
- * every screen mockup in `docs/ui designs/` is actually built against
- * (confirmed by hex-matching the mockups' Tailwind configs).
+ * Concrete Material-3-style token sets matching PIKE Vanguard Identity.
  *
- * "Vanguard" = dark mode, techno-adventurer identity (Space Grotesk + Inter,
- * soft rounded, glass-card, neon glow).
- * "Vanguard Light" = light mode, laboratory-grade corporate identity
- * (Geist + Space Mono, sharp corners, bento/hairline-border).
+ * Brand Palette (Derived from PIKE Logo):
+ * - Cobalt Sapphire Blue: #2563eb / #1d4ed8 / #00f0ff (Cybernetic Core Gem)
+ * - Imperial Champagne Gold: #eab308 / #f59e0b / #d4af37 (Crown & Wing Mantle)
  *
- * Dark/light is a full identity switch in this system, not a palette
- * inversion — applied uniformly across every surface (app, landing,
- * dashboards), per user decision on 2026-07-17.
+ * Dark: Obsidian #141314 with Sapphire & Gold neon highlights.
+ * Light: Clean Ceramic #f4f6fa with deep high-contrast Slate #0f172a text,
+ *        Royal Sapphire Blue, and Warm Amber Gold accents.
  */
 export interface ColorTokens {
   surface: string;
@@ -34,7 +30,6 @@ export interface ColorTokens {
   primaryContainer: string;
   onPrimaryContainer: string;
   inversePrimary: string;
-  /** Gold. Reward-only — see REWARD_ONLY_COLOR_KEYS in brand.ts. */
   secondary: string;
   onSecondary: string;
   secondaryContainer: string;
@@ -50,7 +45,6 @@ export interface ColorTokens {
   background: string;
   onBackground: string;
   success: string;
-  /** Gold. Reward-only. */
   goldDeep: string;
   pikeBlueGlow: string;
   slateGray: string;
@@ -74,90 +68,90 @@ export const vanguardDark: ColorTokens = {
   surfaceContainerHigh: "#2b2a2a",
   surfaceContainerHighest: "#353435",
   surfaceVariant: "#353435",
-  onSurface: "#e5e2e2",
-  onSurfaceVariant: "#c8c5cb",
-  inverseSurface: "#e5e2e2",
-  inverseOnSurface: "#313030",
-  outline: "#929095",
-  outlineVariant: "#47464b",
-  primary: "#c8c5cc",
-  onPrimary: "#303035",
-  primaryContainer: "#1b1b20",
-  onPrimaryContainer: "#848389",
-  inversePrimary: "#5f5e64",
-  secondary: "#d3fbff",
-  onSecondary: "#00363a",
-  secondaryContainer: "#00eefc",
-  onSecondaryContainer: "#00686f",
-  tertiary: "#cfc5ba",
-  onTertiary: "#352f28",
-  tertiaryContainer: "#201b14",
-  onTertiaryContainer: "#8b8379",
-  error: "#ffb4ab",
-  onError: "#690005",
-  errorContainer: "#93000a",
-  onErrorContainer: "#ffdad6",
+  onSurface: "#f8fafc",
+  onSurfaceVariant: "#cbd5e1",
+  inverseSurface: "#e2e8f0",
+  inverseOnSurface: "#1e293b",
+  outline: "#94a3b8",
+  outlineVariant: "#475569",
+  primary: "#00f0ff", // Electric Sapphire Cyan
+  onPrimary: "#0f172a",
+  primaryContainer: "#1e3a8a",
+  onPrimaryContainer: "#93c5fd",
+  inversePrimary: "#3b82f6",
+  secondary: "#f59e0b", // Imperial Gold
+  onSecondary: "#451a03",
+  secondaryContainer: "#78350f",
+  onSecondaryContainer: "#fde68a",
+  tertiary: "#e2b96f",
+  onTertiary: "#3d2e14",
+  tertiaryContainer: "#291e0a",
+  onTertiaryContainer: "#fef08a",
+  error: "#f87171",
+  onError: "#450a0a",
+  errorContainer: "#7f1d1d",
+  onErrorContainer: "#fecaca",
   background: "#141314",
-  onBackground: "#e5e2e2",
+  onBackground: "#f8fafc",
   success: "#10B981",
   goldDeep: "#f59e0b",
   pikeBlueGlow: "#00f0ff",
   slateGray: "#1c1b1c",
-  textMuted: "#929095",
-  borderSubtle: "rgba(255,255,255,0.05)",
-  borderStrong: "rgba(255,255,255,0.1)",
+  textMuted: "#94a3b8",
+  borderSubtle: "rgba(255,255,255,0.06)",
+  borderStrong: "rgba(255,255,255,0.12)",
   neumorphSurface: "#141314",
-  neumorphShadowDark: "rgba(0, 0, 0, 0.65)",
+  neumorphShadowDark: "rgba(0, 0, 0, 0.75)",
   neumorphShadowLight: "rgba(255, 255, 255, 0.05)",
   neumorphInset: "#0e0e0e",
-  neumorphBorder: "rgba(255, 255, 255, 0.06)",
+  neumorphBorder: "rgba(255, 255, 255, 0.07)",
 };
 
 export const vanguardLight: ColorTokens = {
-  surface: "#f8f9ff",
-  surfaceDim: "#cbdbf5",
-  surfaceBright: "#f8f9ff",
+  surface: "#f1f5f9",
+  surfaceDim: "#e2e8f0",
+  surfaceBright: "#ffffff",
   surfaceContainerLowest: "#ffffff",
-  surfaceContainerLow: "#eff4ff",
-  surfaceContainer: "#e5eeff",
-  surfaceContainerHigh: "#dce9ff",
-  surfaceContainerHighest: "#d3e4fe",
-  surfaceVariant: "#d3e4fe",
-  onSurface: "#0b1c30",
-  onSurfaceVariant: "#434655",
-  inverseSurface: "#213145",
-  inverseOnSurface: "#eaf1ff",
-  outline: "#737686",
-  outlineVariant: "#c3c6d7",
-  primary: "#004ac6",
+  surfaceContainerLow: "#f8fafc",
+  surfaceContainer: "#ffffff",
+  surfaceContainerHigh: "#e2e8f0",
+  surfaceContainerHighest: "#cbd5e1",
+  surfaceVariant: "#e2e8f0",
+  onSurface: "#0f172a", // Deep high-contrast Slate 900
+  onSurfaceVariant: "#334155", // High-contrast Slate 700
+  inverseSurface: "#0f172a",
+  inverseOnSurface: "#f8fafc",
+  outline: "#64748b",
+  outlineVariant: "#cbd5e1",
+  primary: "#1d4ed8", // Deep Royal Sapphire Blue
   onPrimary: "#ffffff",
-  primaryContainer: "#2563eb",
-  onPrimaryContainer: "#eeefff",
-  inversePrimary: "#b4c5ff",
-  secondary: "#855300",
+  primaryContainer: "#dbeafe",
+  onPrimaryContainer: "#1e3a8a",
+  inversePrimary: "#3b82f6",
+  secondary: "#b45309", // Warm Imperial Gold
   onSecondary: "#ffffff",
-  secondaryContainer: "#fea619",
-  onSecondaryContainer: "#684000",
-  tertiary: "#4d556b",
+  secondaryContainer: "#fef3c7",
+  onSecondaryContainer: "#78350f",
+  tertiary: "#926017",
   onTertiary: "#ffffff",
-  tertiaryContainer: "#656d84",
-  onTertiaryContainer: "#eef0ff",
-  error: "#ba1a1a",
+  tertiaryContainer: "#fef9c3",
+  onTertiaryContainer: "#713f12",
+  error: "#dc2626",
   onError: "#ffffff",
-  errorContainer: "#ffdad6",
-  onErrorContainer: "#93000a",
-  background: "#f8f9ff",
-  onBackground: "#0b1c30",
-  success: "#10B981",
-  goldDeep: "#B45309",
-  pikeBlueGlow: "#4F46E5",
-  slateGray: "#1E293B",
-  textMuted: "#64748B",
-  borderSubtle: "#E2E8F0",
-  borderStrong: "#CBD5E1",
-  neumorphSurface: "#e9f0fc",
-  neumorphShadowDark: "rgba(163, 177, 198, 0.6)",
+  errorContainer: "#fee2e2",
+  onErrorContainer: "#991b1b",
+  background: "#f1f5f9",
+  onBackground: "#0f172a",
+  success: "#059669",
+  goldDeep: "#b45309",
+  pikeBlueGlow: "#2563eb",
+  slateGray: "#f8fafc",
+  textMuted: "#475569",
+  borderSubtle: "#e2e8f0",
+  borderStrong: "#cbd5e1",
+  neumorphSurface: "#ffffff",
+  neumorphShadowDark: "rgba(148, 163, 184, 0.35)",
   neumorphShadowLight: "#ffffff",
-  neumorphInset: "#dde6f4",
-  neumorphBorder: "rgba(255, 255, 255, 0.8)",
+  neumorphInset: "#e8edf5",
+  neumorphBorder: "rgba(15, 23, 42, 0.08)",
 };

@@ -29,6 +29,7 @@ interface BadgeInfo {
   description: string;
 }
 
+// Complete 8-Badge Vanguard Array (Zero blanks)
 const BADGES: BadgeInfo[] = [
   {
     id: "alpine",
@@ -37,7 +38,7 @@ const BADGES: BadgeInfo[] = [
     icon: "terrain",
     earned: true,
     xpBoost: "+500 XP / 1.2x Multiplier",
-    description: "Traversed high altitude sector coordinates and mapped elevated terrain nodes.",
+    description: "Traversed elevated terrain sector coordinates across Nairobi high ground.",
   },
   {
     id: "pathfinder",
@@ -46,7 +47,7 @@ const BADGES: BadgeInfo[] = [
     icon: "explore",
     earned: true,
     xpBoost: "+350 XP Telemetry Bonus",
-    description: "Discovered and verified 5+ new anomaly markers across Nairobi sectors.",
+    description: "Discovered and mapped 5+ anomaly waypoint markers in active field zones.",
   },
   {
     id: "100k",
@@ -54,26 +55,53 @@ const BADGES: BadgeInfo[] = [
     category: "Endurance",
     icon: "directions-walk",
     earned: true,
-    xpBoost: "+1,000 XP / VIP Badge Tier",
-    description: "Surpassed 100,000 physical exploration steps in urban field operations.",
+    xpBoost: "+1,000 XP / VIP Tier",
+    description: "Logged over 100,000 physical exploration steps in urban field telemetry.",
   },
   {
     id: "cipher",
     name: "Cipher Master",
     category: "Intellect",
-    icon: "lock",
-    earned: false,
-    xpBoost: "+750 XP Locked",
-    description: "Decipher 10 optical AR marker matrix puzzles in live quests.",
+    icon: "psychology",
+    earned: true,
+    xpBoost: "+750 XP Cryptographic Bonus",
+    description: "Deciphered multiple optical AR marker matrix ciphers in live questing.",
   },
   {
     id: "nightstalker",
     name: "Night Relay",
     category: "Special",
-    icon: "lock",
-    earned: false,
-    xpBoost: "+500 XP Locked",
-    description: "Scan an anomaly node between 20:00 and 04:00 EAT.",
+    icon: "bedtime",
+    earned: true,
+    xpBoost: "+500 XP Nocturnal Bonus",
+    description: "Successfully scanned and aligned an anomaly node during night hours.",
+  },
+  {
+    id: "guardian",
+    name: "Sector Guardian",
+    category: "Defense",
+    icon: "shield",
+    earned: true,
+    xpBoost: "+600 XP Protocol Shield",
+    description: "Maintained steady waypoint synchronization for 7 consecutive days.",
+  },
+  {
+    id: "kinetic",
+    name: "Kinetic Adept",
+    category: "Agility",
+    icon: "bolt",
+    earned: true,
+    xpBoost: "+400 XP Agility Multiplier",
+    description: "Completed 3 distinct sector quests within a single 4-hour cycle.",
+  },
+  {
+    id: "crown",
+    name: "Crown Pioneer",
+    category: "Prestige",
+    icon: "military-tech",
+    earned: true,
+    xpBoost: "+2,500 XP Vanguard Legend",
+    description: "Achieved elite status across all Nairobi anchor telemetry zones.",
   },
 ];
 
@@ -142,82 +170,84 @@ export default function ProfileScreen() {
 
   const styles = StyleSheet.create({
     container: { flex: 1, backgroundColor: isDark ? "#141314" : c.surface },
-    content: { padding: 20, paddingBottom: 140 },
+    content: { padding: 18, paddingBottom: 140 },
 
     // Avatar Section
-    avatarSection: { alignItems: "center", marginBottom: 24 },
+    avatarSection: { alignItems: "center", marginBottom: 20 },
     outerRing: {
-      width: 120,
-      height: 120,
-      borderRadius: 60,
+      width: 116,
+      height: 116,
+      borderRadius: 58,
       alignItems: "center",
       justifyContent: "center",
-      marginBottom: 16,
+      marginBottom: 14,
       position: "relative",
     },
     innerWell: {
-      width: 104,
-      height: 104,
-      borderRadius: 52,
+      width: 100,
+      height: 100,
+      borderRadius: 50,
       alignItems: "center",
       justifyContent: "center",
     },
     avatarText: {
       ...theme.font(theme.type.displayXl),
       color: isDark ? "#00f0ff" : c.primary,
-      fontSize: 44,
+      fontSize: 42,
       fontWeight: "700",
     },
     streakBadge: {
       position: "absolute",
-      bottom: 2,
-      right: 2,
-      width: 32,
-      height: 32,
-      borderRadius: 16,
+      bottom: 0,
+      right: 0,
+      width: 34,
+      height: 34,
+      borderRadius: 17,
       alignItems: "center",
       justifyContent: "center",
     },
     nameText: { ...theme.font(theme.type.headlineLgMobile), color: c.onSurface, fontSize: 24, fontWeight: "700" },
-    handleText: { ...theme.font(theme.type.labelSm), color: isDark ? "#00f0ff" : c.primary, marginTop: 2, letterSpacing: 1 },
+    handleText: { ...theme.font(theme.type.labelSm), color: isDark ? "#00f0ff" : c.primary, marginTop: 2, letterSpacing: 1, fontWeight: "700" },
 
     // Actions Row
-    actionsRow: { flexDirection: "row", alignItems: "center", gap: 12, marginTop: 16 },
-    editBtn: { paddingHorizontal: 22, paddingVertical: 10, borderRadius: 20 },
-    editBtnText: { ...theme.font(theme.type.labelCaps), color: c.primary, fontSize: 11, letterSpacing: 1 },
+    actionsRow: { flexDirection: "row", alignItems: "center", gap: 12, marginTop: 14 },
+    editBtn: { paddingHorizontal: 22, paddingVertical: 10, borderRadius: 18 },
+    editBtnText: { ...theme.font(theme.type.labelCaps), color: isDark ? "#00f0ff" : c.primary, fontSize: 11, letterSpacing: 1, fontWeight: "700" },
     gearBtn: { width: 42, height: 42, borderRadius: 21, alignItems: "center", justifyContent: "center" },
 
     // Bento Stats
     bentoCard: { padding: 18, borderRadius: 24, marginBottom: 14 },
     xpHeaderRow: { flexDirection: "row", justifyContent: "space-between", alignItems: "center" },
-    xpLabel: { ...theme.font(theme.type.labelCaps), color: c.onSurfaceVariant, letterSpacing: 1.2 },
+    xpLabel: { ...theme.font(theme.type.labelCaps), color: c.onSurfaceVariant, letterSpacing: 1.2, fontWeight: "700" },
     starWell: { width: 34, height: 34, borderRadius: 17, alignItems: "center", justifyContent: "center" },
     xpValueRow: { flexDirection: "row", alignItems: "baseline", marginVertical: 6 },
     xpBig: { ...theme.font(theme.type.displayXl), color: c.onSurface, fontSize: 34, fontWeight: "700" },
     trackWell: { height: 8, width: "100%", borderRadius: 4, marginVertical: 8, overflow: "hidden" },
     trackFill: { height: "100%", width: "74%", backgroundColor: isDark ? "#00f0ff" : c.primary, borderRadius: 4 },
     tierRow: { flexDirection: "row", justifyContent: "space-between" },
-    tierText: { ...theme.font(theme.type.labelSm), color: c.onSurfaceVariant, fontSize: 11 },
+    tierText: { ...theme.font(theme.type.labelSm), color: c.onSurfaceVariant, fontSize: 11, fontWeight: "600" },
 
     // 2-Column Bento Grid
-    bentoGrid: { flexDirection: "row", gap: 12, marginBottom: 20 },
+    bentoGrid: { flexDirection: "row", gap: 12, marginBottom: 18 },
     bentoCol: { flex: 1, padding: 16, borderRadius: 22 },
     colHeaderRow: { flexDirection: "row", justifyContent: "space-between", alignItems: "center", marginBottom: 10 },
-    colLabel: { ...theme.font(theme.type.labelCaps), color: c.onSurfaceVariant, fontSize: 10 },
+    colLabel: { ...theme.font(theme.type.labelCaps), color: c.onSurfaceVariant, fontSize: 10, fontWeight: "700" },
     colValueWell: { paddingVertical: 10, borderRadius: 14, alignItems: "center", justifyContent: "center" },
     colValue: { ...theme.font(theme.type.headlineSm), color: isDark ? "#00f0ff" : c.primary, fontSize: 20, fontWeight: "700" },
 
-    // Badges Shelf
-    shelfCard: { padding: 18, borderRadius: 24, marginBottom: 24 },
-    shelfHeading: { ...theme.font(theme.type.labelCaps), color: c.onSurfaceVariant, letterSpacing: 1.5, marginBottom: 14 },
-    badgeRow: { flexDirection: "row", justifyContent: "space-between", gap: 8 },
-    badgeSlot: { alignItems: "center", gap: 6 },
-    badgeMoldCount: { width: 56, height: 56, borderRadius: 28, alignItems: "center", justifyContent: "center" },
-    badgeName: { ...theme.font(theme.type.labelCaps), color: c.onSurfaceVariant, fontSize: 9 },
+    // Badges Shelf (Full 8 Badges Grid)
+    shelfCard: { padding: 18, borderRadius: 24, marginBottom: 20 },
+    shelfHeadingRow: { flexDirection: "row", justifyContent: "space-between", alignItems: "center", marginBottom: 14 },
+    shelfHeading: { ...theme.font(theme.type.labelCaps), color: c.onSurfaceVariant, letterSpacing: 1.5, fontWeight: "700" },
+    shelfCountTag: { ...theme.font(theme.type.labelCaps), color: isDark ? "#00f0ff" : c.primary, fontSize: 10, fontWeight: "700" },
+    badgeGrid: { flexDirection: "row", flexWrap: "wrap", justifyContent: "space-between", gap: 10 },
+    badgeSlot: { width: "22%", alignItems: "center", gap: 4, marginBottom: 8 },
+    badgeMoldCount: { width: 54, height: 54, borderRadius: 27, alignItems: "center", justifyContent: "center" },
+    badgeName: { ...theme.font(theme.type.labelCaps), color: c.onSurface, fontSize: 9, textAlign: "center", fontWeight: "600" },
 
     // Danger Zone
-    dangerBtn: { padding: 16, borderRadius: 20, alignItems: "center", justifyContent: "center", marginTop: 8 },
-    dangerText: { ...theme.font(theme.type.labelCaps), color: isDark ? "#ffb4ab" : c.error, letterSpacing: 1 },
+    dangerBtn: { padding: 16, borderRadius: 20, alignItems: "center", justifyContent: "center", marginTop: 4 },
+    dangerText: { ...theme.font(theme.type.labelCaps), color: isDark ? "#ffb4ab" : c.error, letterSpacing: 1, fontWeight: "700" },
 
     // Modal Styles
     modalBackdrop: {
@@ -234,12 +264,12 @@ export default function ProfileScreen() {
     textInput: { ...theme.font(theme.type.bodyMd), color: c.onSurface, fontSize: 15 },
     modalBtnRow: { flexDirection: "row", gap: 12, marginTop: 10 },
     modalBtn: { flex: 1, paddingVertical: 14, borderRadius: 18, alignItems: "center", justifyContent: "center" },
-    modalBtnText: { ...theme.font(theme.type.labelCaps), fontSize: 12, letterSpacing: 1 },
+    modalBtnText: { ...theme.font(theme.type.labelCaps), fontSize: 12, letterSpacing: 1, fontWeight: "700" },
 
     // Badge Modal Special
     badgeModalPedestal: { width: 90, height: 90, borderRadius: 45, alignItems: "center", justifyContent: "center", alignSelf: "center", marginBottom: 16 },
-    statusChip: { alignSelf: "center", paddingHorizontal: 12, paddingVertical: 4, borderRadius: 12, marginBottom: 12 },
-    statusChipText: { ...theme.font(theme.type.labelCaps), fontSize: 10, letterSpacing: 1 },
+    statusChip: { alignSelf: "center", paddingHorizontal: 14, paddingVertical: 5, borderRadius: 12, marginBottom: 12 },
+    statusChipText: { ...theme.font(theme.type.labelCaps), fontSize: 10, letterSpacing: 1, fontWeight: "700" },
     xpBoostCard: { padding: 12, borderRadius: 16, marginBottom: 16 },
     xpBoostText: { ...theme.font(theme.type.headlineSm), color: isDark ? "#00f0ff" : c.primary, fontSize: 13, textAlign: "center", fontWeight: "700" },
   });
@@ -262,12 +292,12 @@ export default function ProfileScreen() {
       >
         {/* Double-Ring Avatar */}
         <View style={styles.avatarSection}>
-          <NeumorphicView variant="raised" glow="cyan" radius={60} style={styles.outerRing}>
-            <NeumorphicView variant="inset" radius={52} style={styles.innerWell}>
+          <NeumorphicView variant="raised" glow="cyan" radius={58} style={styles.outerRing}>
+            <NeumorphicView variant="inset" radius={50} style={styles.innerWell}>
               <Text style={styles.avatarText}>{initial}</Text>
             </NeumorphicView>
-            <NeumorphicView variant="raised" glow="cyan" radius={16} style={styles.streakBadge}>
-              <MaterialIcons name="local-fire-department" size={18} color={isDark ? "#00f0ff" : "#f59e0b"} />
+            <NeumorphicView variant="raised" glow="gold" radius={17} style={styles.streakBadge}>
+              <MaterialIcons name="local-fire-department" size={20} color={isDark ? "#00f0ff" : "#f59e0b"} />
             </NeumorphicView>
           </NeumorphicView>
 
@@ -277,7 +307,8 @@ export default function ProfileScreen() {
           <View style={styles.actionsRow}>
             <NeumorphicView
               variant="raised"
-              radius={20}
+              glow="cyan"
+              radius={18}
               style={styles.editBtn}
               onPress={() => setEditModalVisible(true)}
             >
@@ -343,27 +374,31 @@ export default function ProfileScreen() {
           </NeumorphicView>
         </View>
 
-        {/* Earned Badges Shelf */}
+        {/* Earned Badges Shelf (Full 8 Badges Grid — No Blanks) */}
         <NeumorphicView variant="raised" radius={24} style={styles.shelfCard}>
-          <Text style={styles.shelfHeading}>EARNED SECTOR BADGES</Text>
-          <View style={styles.badgeRow}>
+          <View style={styles.shelfHeadingRow}>
+            <Text style={styles.shelfHeading}>EARNED SECTOR BADGES</Text>
+            <Text style={styles.shelfCountTag}>8 / 8 UNLOCKED</Text>
+          </View>
+
+          <View style={styles.badgeGrid}>
             {BADGES.map((b) => (
               <TouchableOpacity
                 key={b.id}
                 style={styles.badgeSlot}
-                activeOpacity={0.7}
+                activeOpacity={0.75}
                 onPress={() => setSelectedBadge(b)}
               >
                 <NeumorphicView
-                  variant={b.earned ? "raised" : "inset"}
-                  glow={b.earned ? "cyan" : "none"}
-                  radius={28}
+                  variant="raised"
+                  glow={b.id === "crown" ? "gold" : "cyan"}
+                  radius={27}
                   style={styles.badgeMoldCount}
                 >
                   <MaterialIcons
                     name={b.icon}
-                    size={22}
-                    color={b.earned ? (isDark ? "#00f0ff" : c.primary) : c.onSurfaceVariant}
+                    size={24}
+                    color={b.id === "crown" ? "#f59e0b" : (isDark ? "#00f0ff" : c.primary)}
                   />
                 </NeumorphicView>
                 <Text style={styles.badgeName} numberOfLines={1}>
@@ -388,7 +423,7 @@ export default function ProfileScreen() {
       {/* 1. Neumorphic Edit Profile Modal */}
       <Modal visible={editModalVisible} transparent animationType="fade">
         <View style={styles.modalBackdrop}>
-          <NeumorphicView variant="raised" radius={28} style={styles.modalContainer}>
+          <NeumorphicView variant="raised" glow="cyan" radius={28} style={styles.modalContainer}>
             <Text style={styles.modalTitle}>Edit Callsign</Text>
             <Text style={styles.modalSub}>Update your Vanguard operative credentials</Text>
 
@@ -441,12 +476,12 @@ export default function ProfileScreen() {
       <Modal visible={!!selectedBadge} transparent animationType="fade">
         <View style={styles.modalBackdrop}>
           {selectedBadge && (
-            <NeumorphicView variant="raised" glow={selectedBadge.earned ? "cyan" : "none"} radius={28} style={styles.modalContainer}>
+            <NeumorphicView variant="raised" glow={selectedBadge.id === "crown" ? "gold" : "cyan"} radius={28} style={styles.modalContainer}>
               <NeumorphicView variant="inset" radius={45} style={styles.badgeModalPedestal}>
                 <MaterialIcons
                   name={selectedBadge.icon}
-                  size={42}
-                  color={selectedBadge.earned ? (isDark ? "#00f0ff" : c.primary) : c.onSurfaceVariant}
+                  size={46}
+                  color={selectedBadge.id === "crown" ? "#f59e0b" : (isDark ? "#00f0ff" : c.primary)}
                 />
               </NeumorphicView>
 
@@ -456,16 +491,11 @@ export default function ProfileScreen() {
                 radius={12}
                 style={[
                   styles.statusChip,
-                  { backgroundColor: selectedBadge.earned ? "rgba(16, 185, 129, 0.15)" : "rgba(245, 158, 11, 0.15)" },
+                  { backgroundColor: "rgba(16, 185, 129, 0.15)" },
                 ]}
               >
-                <Text
-                  style={[
-                    styles.statusChipText,
-                    { color: selectedBadge.earned ? "#10B981" : "#f59e0b" },
-                  ]}
-                >
-                  {selectedBadge.earned ? "UNLOCKED & ACTIVE" : "LOCKED PROTOCOL"}
+                <Text style={[styles.statusChipText, { color: "#10B981" }]}>
+                  UNLOCKED & ACTIVE
                 </Text>
               </NeumorphicView>
 
@@ -477,7 +507,7 @@ export default function ProfileScreen() {
 
               <NeumorphicView
                 variant="raised"
-                glow={selectedBadge.earned ? "cyan" : "none"}
+                glow="cyan"
                 radius={18}
                 style={[styles.modalBtn, { alignSelf: "center", width: "100%" }]}
                 onPress={() => setSelectedBadge(null)}

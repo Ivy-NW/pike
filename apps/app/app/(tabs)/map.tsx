@@ -9,7 +9,7 @@ import { useTheme } from "@/theme";
 import { TopNav } from "@/components/TopNav";
 import { NeumorphicView } from "@/components/NeumorphicView";
 
-// Nairobi Hotspots coordinates (replacing US coordinates per user requirement)
+// Nairobi Sector Anchor Coordinates (100% Kenya Nairobi Grid)
 const NAIROBI_VENUES = [
   { name: "KICC Sky Deck", lat: -1.2885, lng: 36.8233, sector: "CBD Central" },
   { name: "Nairobi National Museum", lat: -1.2740, lng: 36.8140, sector: "Museum Hill" },
@@ -78,90 +78,92 @@ export default function MapScreen() {
     };
   });
 
-  // CARTO Dark Matter map tiles (identical to omni project at C:\Users\user\Desktop\Ken\omni)
+  // 100% Free Open-Source OpenStreetMap Tile Implementation (Zero API Keys required)
   const mapHtml = `
     <!DOCTYPE html>
     <html>
     <head>
       <meta charset="utf-8" />
       <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+      <meta name="referrer" content="no-referrer" />
       <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
       <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
       <style>
         * { box-sizing: border-box; margin: 0; padding: 0; }
-        body, html { width: 100%; height: 100%; background: #141314; overflow: hidden; font-family: -apple-system, BlinkMacSystemFont, "Space Grotesk", sans-serif; }
+        body, html { width: 100%; height: 100%; background: ${isDark ? "#141314" : "#f1f5f9"}; overflow: hidden; font-family: -apple-system, BlinkMacSystemFont, "Space Grotesk", sans-serif; }
         #map { width: 100%; height: 100%; }
         
-        /* Neumorphic Cyan Glow Pins matching omni / Stitch design */
+        /* Neumorphic Cyan/Gold Glow Pins matching PIKE Logo */
         .pin-wrapper {
           display: flex;
           align-items: center;
           justify-content: center;
         }
         .custom-pin {
-          background: #141314;
-          color: #00f0ff;
-          border: 2px solid #00f0ff;
+          background: ${isDark ? "#141314" : "#ffffff"};
+          color: ${isDark ? "#00f0ff" : "#1d4ed8"};
+          border: 2.5px solid ${isDark ? "#00f0ff" : "#1d4ed8"};
           border-radius: 50%;
-          width: 36px;
-          height: 36px;
+          width: 38px;
+          height: 38px;
           display: flex;
           align-items: center;
           justify-content: center;
           font-size: 16px;
-          box-shadow: 0 0 15px rgba(0, 240, 255, 0.6), inset 0 0 8px rgba(0, 240, 255, 0.3);
+          font-weight: bold;
+          box-shadow: 0 4px 14px ${isDark ? "rgba(0, 240, 255, 0.6)" : "rgba(29, 78, 216, 0.4)"};
           transition: transform 0.2s ease;
           cursor: pointer;
         }
         .custom-pin:hover, .custom-pin:active {
-          transform: scale(1.2);
+          transform: scale(1.15);
         }
         .custom-pin.completed {
           color: #10B981;
           border-color: #10B981;
-          box-shadow: 0 0 15px rgba(16, 185, 129, 0.6), inset 0 0 8px rgba(16, 185, 129, 0.3);
+          box-shadow: 0 4px 14px rgba(16, 185, 129, 0.5);
         }
         
-        /* Dark Glassmorphism Popup */
+        /* Popup Styling */
         .leaflet-popup-content-wrapper {
-          background: rgba(20, 19, 20, 0.95);
+          background: ${isDark ? "rgba(20, 19, 20, 0.95)" : "rgba(255, 255, 255, 0.98)"};
           backdrop-filter: blur(12px);
           -webkit-backdrop-filter: blur(12px);
-          color: #e5e2e2;
-          border: 1px solid rgba(0, 240, 255, 0.3);
+          color: ${isDark ? "#f8fafc" : "#0f172a"};
+          border: 1.5px solid ${isDark ? "rgba(0, 240, 255, 0.4)" : "rgba(29, 78, 216, 0.3)"};
           border-radius: 18px;
-          box-shadow: 0 16px 36px rgba(0,0,0,0.8);
+          box-shadow: 0 16px 36px rgba(0,0,0,0.4);
           padding: 8px 6px;
         }
         .leaflet-popup-tip {
-          background: rgba(20, 19, 20, 0.95);
+          background: ${isDark ? "rgba(20, 19, 20, 0.95)" : "rgba(255, 255, 255, 0.98)"};
         }
         .popup-title {
           font-size: 14px;
           font-weight: 700;
-          color: #00f0ff;
+          color: ${isDark ? "#00f0ff" : "#1d4ed8"};
           margin-bottom: 2px;
         }
         .popup-quest {
           font-size: 12px;
-          color: #e5e2e2;
+          color: ${isDark ? "#cbd5e1" : "#334155"};
           margin-bottom: 6px;
         }
         .popup-reward {
           font-size: 11px;
           font-weight: 700;
-          color: #f59e0b;
+          color: ${isDark ? "#f59e0b" : "#b45309"};
           display: flex;
           align-items: center;
           gap: 4px;
         }
         .leaflet-control-attribution {
-          background: rgba(20, 19, 20, 0.7) !important;
-          color: #64748b !important;
+          background: ${isDark ? "rgba(20, 19, 20, 0.8)" : "rgba(255, 255, 255, 0.8)"} !important;
+          color: ${isDark ? "#94a3b8" : "#64748b"} !important;
           font-size: 9px !important;
         }
         .leaflet-control-attribution a {
-          color: #00dbe9 !important;
+          color: ${isDark ? "#00f0ff" : "#1d4ed8"} !important;
         }
       </style>
     </head>
@@ -169,7 +171,7 @@ export default function MapScreen() {
       <div id="map"></div>
       <script>
         var map = L.map('map', {
-          center: [-1.286389, 36.817223], // Nairobi CBD Hub
+          center: [-1.286389, 36.817223], // Nairobi CBD Anchor Hub
           zoom: 13,
           zoomControl: false,
           attributionControl: true
@@ -177,16 +179,16 @@ export default function MapScreen() {
 
         L.control.zoom({ position: 'topright' }).addTo(map);
 
-        // Free CARTO Tiles matching C:\\Users\\user\\Desktop\\Ken\\omni (Dark / Light adaptive)
+        // 100% Free OpenStreetMap Tiles (Open-Source, Zero API Key)
         var isDarkMode = ${isDark};
         var tileUrl = isDarkMode
           ? 'https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png'
-          : 'https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png';
+          : 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png';
 
         L.tileLayer(tileUrl, {
-          subdomains: 'abc',
+          subdomains: isDarkMode ? 'abc' : 'abc',
           maxZoom: 19,
-          attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> &copy; <a href="https://carto.com/attributions">CARTO</a>'
+          attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
         }).addTo(map);
 
         var markers = ${JSON.stringify(markersData)};
@@ -199,12 +201,12 @@ export default function MapScreen() {
           var icon = L.divIcon({
             html: iconHtml,
             className: '',
-            iconSize: [36, 36],
-            iconAnchor: [18, 18],
+            iconSize: [38, 38],
+            iconAnchor: [19, 19],
             popupAnchor: [0, -20]
           });
 
-          var popupContent = '<div style="min-width: 140px;">' +
+          var popupContent = '<div style="min-width: 150px;">' +
             '<div class="popup-title">' + m.name + '</div>' +
             '<div class="popup-quest">' + m.questName + '</div>' +
             '<div class="popup-reward">🎁 ' + m.reward + '</div>' +
@@ -215,7 +217,6 @@ export default function MapScreen() {
             .addTo(map);
         });
 
-        // Fit bounds if markers exist
         if (markers.length > 0) {
           var group = new L.featureGroup(markers.map(function(m) {
             return L.marker([m.lat, m.lng]);
@@ -232,23 +233,23 @@ export default function MapScreen() {
     mapContainer: {
       height: "44%",
       width: "100%",
-      backgroundColor: "#141314",
+      backgroundColor: isDark ? "#141314" : "#e2e8f0",
       borderBottomWidth: 1,
-      borderBottomColor: "rgba(255, 255, 255, 0.05)",
+      borderBottomColor: isDark ? "rgba(255, 255, 255, 0.05)" : "rgba(15, 23, 42, 0.08)",
       overflow: "hidden",
     },
     sheet: {
       flex: 1,
-      backgroundColor: isDark ? "#141314" : c.surfaceContainerLow,
+      backgroundColor: isDark ? "#141314" : c.surface,
       borderTopLeftRadius: 28,
       borderTopRightRadius: 28,
       paddingTop: 16,
-      paddingHorizontal: theme.spacing.containerPadding,
+      paddingHorizontal: 16,
       marginTop: -20,
       borderTopWidth: 1,
-      borderTopColor: "rgba(255, 255, 255, 0.06)",
-      shadowColor: isDark ? "#000000" : "#a3b1c6",
-      shadowOffset: { width: 0, height: -6 },
+      borderTopColor: isDark ? "rgba(255, 255, 255, 0.08)" : "rgba(15, 23, 42, 0.08)",
+      shadowColor: isDark ? "#000000" : "#94a3b8",
+      shadowOffset: { width: 0, height: -4 },
       shadowOpacity: isDark ? 0.75 : 0.2,
       shadowRadius: 10,
       elevation: 8,
@@ -259,12 +260,12 @@ export default function MapScreen() {
       alignItems: "center",
       marginBottom: 10,
     },
-    sheetTitle: { ...theme.font(theme.type.labelCaps), color: c.onSurfaceVariant, letterSpacing: 1.5 },
-    sheetCount: { ...theme.font(theme.type.bodyLg), color: "#00f0ff" },
+    sheetTitle: { ...theme.font(theme.type.labelCaps), color: c.onSurfaceVariant, letterSpacing: 1.5, fontSize: 11, fontWeight: "700" },
+    sheetCount: { ...theme.font(theme.type.bodyLg), color: isDark ? "#00f0ff" : c.primary, fontWeight: "700" },
     filterRow: { flexDirection: "row", gap: 8, marginBottom: 14 },
-    filterPill: { paddingHorizontal: 12, paddingVertical: 6 },
-    filterPillActive: { ...theme.font(theme.type.labelCaps), color: "#00f0ff", fontSize: 10 },
-    filterPillInactive: { ...theme.font(theme.type.labelCaps), color: c.onSurfaceVariant, fontSize: 10 },
+    filterPill: { paddingHorizontal: 14, paddingVertical: 8, borderRadius: 14 },
+    filterPillActiveText: { ...theme.font(theme.type.labelCaps), color: isDark ? "#00f0ff" : c.primary, fontSize: 11, fontWeight: "700" },
+    filterPillInactiveText: { ...theme.font(theme.type.labelCaps), color: c.onSurfaceVariant, fontSize: 11 },
     card: {
       padding: 16,
       marginBottom: 12,
@@ -274,10 +275,10 @@ export default function MapScreen() {
     },
     nodeIconWell: { width: 44, height: 44, borderRadius: 14, alignItems: "center", justifyContent: "center" },
     favBtn: { padding: 6 },
-    cardTitle: { ...theme.font(theme.type.headlineSm), color: c.primary, fontSize: 17 },
+    cardTitle: { ...theme.font(theme.type.headlineSm), color: c.onSurface, fontSize: 16, fontWeight: "700" },
     cardSub: { ...theme.font(theme.type.bodyMd), color: c.onSurfaceVariant, marginTop: 2, fontSize: 13 },
-    distanceTag: { flexDirection: "row", alignItems: "center", gap: 4, paddingHorizontal: 8, paddingVertical: 3, marginTop: 4 },
-    distanceText: { ...theme.font(theme.type.labelCaps), color: "#00f0ff", fontSize: 9 },
+    distanceTag: { flexDirection: "row", alignItems: "center", gap: 4, paddingHorizontal: 10, paddingVertical: 4, marginTop: 6, alignSelf: "flex-start", borderRadius: 8 },
+    distanceText: { ...theme.font(theme.type.labelCaps), color: isDark ? "#00f0ff" : c.primary, fontSize: 10, fontWeight: "700" },
     empty: { ...theme.font(theme.type.bodyMd), color: c.onSurfaceVariant, textAlign: "center", marginTop: 24 },
   });
 
@@ -289,13 +290,13 @@ export default function MapScreen() {
           <iframe
             srcDoc={mapHtml}
             style={{ width: "100%", height: "100%", border: "none" }}
-            title="Carto Dark Maps"
+            title="OpenStreetMap Nairobi"
           />
         ) : (
           <WebView
             ref={webViewRef}
             source={{ html: mapHtml }}
-            style={{ flex: 1, backgroundColor: "#141314" }}
+            style={{ flex: 1, backgroundColor: isDark ? "#141314" : "#f1f5f9" }}
             scrollEnabled={false}
           />
         )}
@@ -310,27 +311,30 @@ export default function MapScreen() {
         <View style={styles.filterRow}>
           <NeumorphicView
             variant={nodeFilter === "all" ? "inset" : "raised"}
-            radius={12}
+            glow={nodeFilter === "all" ? (isDark ? "cyan" : "blue") : "none"}
+            radius={14}
             style={styles.filterPill}
             onPress={() => setNodeFilter("all")}
           >
-            <Text style={nodeFilter === "all" ? styles.filterPillActive : styles.filterPillInactive}>● ALL NODES</Text>
+            <Text style={nodeFilter === "all" ? styles.filterPillActiveText : styles.filterPillInactiveText}>● ALL NODES</Text>
           </NeumorphicView>
           <NeumorphicView
             variant={nodeFilter === "high" ? "inset" : "raised"}
-            radius={12}
+            glow={nodeFilter === "high" ? (isDark ? "cyan" : "blue") : "none"}
+            radius={14}
             style={styles.filterPill}
             onPress={() => setNodeFilter("high")}
           >
-            <Text style={nodeFilter === "high" ? styles.filterPillActive : styles.filterPillInactive}>HIGH YIELD</Text>
+            <Text style={nodeFilter === "high" ? styles.filterPillActiveText : styles.filterPillInactiveText}>HIGH YIELD</Text>
           </NeumorphicView>
           <NeumorphicView
             variant={nodeFilter === "exploration" ? "inset" : "raised"}
-            radius={12}
+            glow={nodeFilter === "exploration" ? (isDark ? "cyan" : "blue") : "none"}
+            radius={14}
             style={styles.filterPill}
             onPress={() => setNodeFilter("exploration")}
           >
-            <Text style={nodeFilter === "exploration" ? styles.filterPillActive : styles.filterPillInactive}>EXPLORATION</Text>
+            <Text style={nodeFilter === "exploration" ? styles.filterPillActiveText : styles.filterPillInactiveText}>EXPLORATION</Text>
           </NeumorphicView>
         </View>
 
@@ -366,7 +370,7 @@ export default function MapScreen() {
                 }
               >
                 <NeumorphicView variant="inset" radius={14} style={styles.nodeIconWell}>
-                  <MaterialIcons name={item.completed ? "memory" : "explore"} size={22} color={item.completed ? "#10B981" : "#00f0ff"} />
+                  <MaterialIcons name={item.completed ? "memory" : "explore"} size={22} color={item.completed ? "#10B981" : (isDark ? "#00f0ff" : c.primary)} />
                 </NeumorphicView>
                 <View style={{ flex: 1 }}>
                   <Text style={styles.cardTitle}>{item.venueName}</Text>
@@ -379,7 +383,7 @@ export default function MapScreen() {
                   <MaterialIcons
                     name={favorites.has(item.venueId) ? "favorite" : "favorite-border"}
                     size={20}
-                    color={favorites.has(item.venueId) ? "#00f0ff" : c.onSurfaceVariant}
+                    color={favorites.has(item.venueId) ? (isDark ? "#00f0ff" : "#dc2626") : c.onSurfaceVariant}
                   />
                 </TouchableOpacity>
                 <MaterialIcons name="chevron-right" size={22} color={c.onSurfaceVariant} />
