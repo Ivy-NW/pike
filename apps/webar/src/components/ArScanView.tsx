@@ -43,11 +43,14 @@ export function ArScanView({ questName, imageTargetData, onRecognized }: Props) 
   const [recognizing, setRecognizing] = useState(false);
   const recognizedRef = useRef(false);
 
+  // Detect whether we are embedded inside the React Native App
+  const isEmbeddedApp = typeof window !== "undefined" && window.location.search.includes("channel=app");
+
   const fireRecognized = () => {
     if (recognizedRef.current) return;
     recognizedRef.current = true;
     setRecognizing(true);
-    setTimeout(onRecognized, 500);
+    setTimeout(onRecognized, 400);
   };
 
   useEffect(() => {
@@ -78,7 +81,7 @@ export function ArScanView({ questName, imageTargetData, onRecognized }: Props) 
       })
       .catch((err: Error) => !cancelled && setEngineError(err.message));
 
-  return () => {
+    return () => {
       cancelled = true;
       try {
         window.XR8?.stop?.();
@@ -94,12 +97,12 @@ export function ArScanView({ questName, imageTargetData, onRecognized }: Props) 
       style={{
         position: "fixed",
         inset: 0,
-        background: "#0e0e0e",
+        background: "#0c0c0e",
         display: "flex",
         flexDirection: "column",
         alignItems: "center",
         justifyContent: "space-between",
-        padding: "24px 20px 40px 20px",
+        padding: isEmbeddedApp ? "0px" : "24px 20px 36px 20px",
         overflow: "hidden",
         boxSizing: "border-box",
       }}
@@ -112,105 +115,120 @@ export function ArScanView({ questName, imageTargetData, onRecognized }: Props) 
         style={{
           position: "absolute",
           inset: 0,
-          background: recognizing ? "rgba(0, 240, 255, 0.25)" : "transparent",
+          background: recognizing ? "rgba(245, 158, 11, 0.25)" : "transparent",
           transition: "background 0.3s ease",
           pointerEvents: "none",
         }}
       />
 
-      {/* Top HUD Badge */}
-      <div
-        style={{
-          position: "relative",
-          zIndex: 10,
-          background: "rgba(20, 19, 20, 0.85)",
-          backdropFilter: "blur(12px)",
-          border: "1px solid rgba(0, 240, 255, 0.3)",
-          borderRadius: 16,
-          padding: "8px 16px",
-          color: "#00f0ff",
-          fontFamily: "Space Grotesk, sans-serif",
-          fontSize: 13,
-          fontWeight: 700,
-          letterSpacing: "0.08em",
-          boxShadow: "0 4px 16px rgba(0,0,0,0.6)",
-        }}
-      >
-        OPTICAL SCANNER ACTIVE
-      </div>
+      {/* When running in standalone Web browser (not inside React Native app), show standalone HUD */}
+      {!isEmbeddedApp && (
+        <>
+          {/* Top HUD Badge */}
+          <div
+            style={{
+              position: "relative",
+              zIndex: 10,
+              background: "rgba(12, 12, 14, 0.88)",
+              backdropFilter: "blur(16px)",
+              border: "1px solid rgba(245, 158, 11, 0.35)",
+              borderRadius: 18,
+              padding: "10px 20px",
+              color: "#f59e0b",
+              fontFamily: "Space Grotesk, sans-serif",
+              fontSize: 13,
+              fontWeight: 700,
+              letterSpacing: "0.1em",
+              boxShadow: "0 8px 24px rgba(0,0,0,0.7)",
+              display: "flex",
+              alignItems: "center",
+              gap: 8,
+            }}
+          >
+            <span style={{ width: 8, height: 8, borderRadius: "50%", background: "#f59e0b", display: "inline-block" }} />
+            OPTICAL SCANNER ACTIVE
+          </div>
 
-      {/* Central Reticle Target */}
-      <div
-        style={{
-          position: "relative",
-          zIndex: 10,
-          width: 240,
-          height: 240,
-          border: `2px solid ${recognizing ? "#00f0ff" : "rgba(0, 240, 255, 0.6)"}`,
-          borderRadius: 24,
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "center",
-          boxShadow: recognizing ? "0 0 30px rgba(0, 240, 255, 0.8)" : "0 0 15px rgba(0, 240, 255, 0.2)",
-          transition: "all 0.3s ease",
-          pointerEvents: "none",
-        }}
-      >
-        <div style={{ width: 12, height: 12, borderRadius: "50%", background: "#00f0ff", opacity: 0.6 }} />
-      </div>
+          {/* Central Reticle Target */}
+          <div
+            style={{
+              position: "relative",
+              zIndex: 10,
+              width: 240,
+              height: 240,
+              border: `2px solid ${recognizing ? "#f59e0b" : "rgba(245, 158, 11, 0.6)"}`,
+              borderRadius: 28,
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              boxShadow: recognizing ? "0 0 35px rgba(245, 158, 11, 0.85)" : "0 0 16px rgba(245, 158, 11, 0.2)",
+              transition: "all 0.3s ease",
+              pointerEvents: "none",
+            }}
+          >
+            <div style={{ width: 12, height: 12, borderRadius: "50%", background: "#f59e0b", opacity: 0.8 }} />
+          </div>
 
-      {/* Bottom Control & Simulation HUD */}
-      <div
-        style={{
-          position: "relative",
-          zIndex: 10,
-          width: "100%",
-          maxWidth: 360,
-          display: "flex",
-          flexDirection: "column",
-          alignItems: "center",
-          gap: 12,
-        }}
-      >
-        <p
-          style={{
-            color: "#f8fafc",
-            fontFamily: "Space Grotesk, system-ui, sans-serif",
-            fontSize: 13,
-            textAlign: "center",
-            margin: 0,
-            textShadow: "0 2px 4px rgba(0,0,0,0.8)",
-          }}
-        >
-          {engineError
-            ? "AR Optical Engine ready. Align marker or verify below."
-            : `Point optical lens at the ${questName} physical marker`}
-        </p>
+          {/* Bottom Control HUD */}
+          <div
+            style={{
+              position: "relative",
+              zIndex: 10,
+              width: "100%",
+              maxWidth: 380,
+              display: "flex",
+              flexDirection: "column",
+              alignItems: "center",
+              gap: 12,
+              background: "rgba(12, 12, 14, 0.88)",
+              backdropFilter: "blur(16px)",
+              padding: "16px 20px",
+              borderRadius: 24,
+              border: "1px solid rgba(245, 158, 11, 0.2)",
+              boxShadow: "0 8px 32px rgba(0,0,0,0.8)",
+            }}
+          >
+            <p
+              style={{
+                color: "#fbfaf8",
+                fontFamily: "Space Grotesk, system-ui, sans-serif",
+                fontSize: 13,
+                fontWeight: 600,
+                textAlign: "center",
+                margin: 0,
+              }}
+            >
+              {engineError
+                ? "AR Optical Engine ready. Align marker or tap verify below."
+                : `Point camera lens at the ${questName} marker`}
+            </p>
 
-        <button
-          onClick={fireRecognized}
-          disabled={recognizing}
-          style={{
-            width: "100%",
-            padding: "16px 20px",
-            background: recognizing
-              ? "#10B981"
-              : "linear-gradient(135deg, #1e3a8a 0%, #00f0ff 100%)",
-            color: "#ffffff",
-            fontFamily: "Space Grotesk, sans-serif",
-            fontSize: 14,
-            fontWeight: 700,
-            letterSpacing: "0.08em",
-            border: "none",
-            borderRadius: 20,
-            cursor: "pointer",
-            boxShadow: "0 8px 24px rgba(0, 240, 255, 0.4)",
-            transition: "transform 0.15s ease",
-          }}
-        >
-          {recognizing ? "VERIFYING CIPHER..." : "VERIFY & CLAIM REWARD"}
-        </button>
-      </div>
+            <button
+              onClick={fireRecognized}
+              disabled={recognizing}
+              style={{
+                width: "100%",
+                padding: "16px 20px",
+                background: recognizing
+                  ? "#10B981"
+                  : "linear-gradient(135deg, #d97706 0%, #f59e0b 100%)",
+                color: "#0c0c0e",
+                fontFamily: "Space Grotesk, sans-serif",
+                fontSize: 14,
+                fontWeight: 800,
+                letterSpacing: "0.08em",
+                border: "none",
+                borderRadius: 18,
+                cursor: "pointer",
+                boxShadow: "0 6px 20px rgba(245, 158, 11, 0.4)",
+                transition: "transform 0.15s ease",
+              }}
+            >
+              {recognizing ? "CIPHER DECRYPTED!" : "VERIFY & CLAIM REWARD"}
+            </button>
+          </div>
+        </>
+      )}
     </div>
   );
 }

@@ -1,5 +1,14 @@
 import { useState, useEffect } from "react";
-import { View, Text, StyleSheet, Platform, ActivityIndicator, Alert, TouchableOpacity, StatusBar } from "react-native";
+import {
+  View,
+  Text,
+  StyleSheet,
+  Platform,
+  ActivityIndicator,
+  Alert,
+  TouchableOpacity,
+  StatusBar,
+} from "react-native";
 import { router, useLocalSearchParams } from "expo-router";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { WebView } from "react-native-webview";
@@ -23,9 +32,6 @@ export default function ScanScreen() {
   const [token, setToken] = useState<string | null>(null);
   const [claiming, setClaiming] = useState(false);
 
-  const c = theme.colors;
-  const isDark = theme.mode === "dark";
-
   useEffect(() => {
     getIdentityToken().then(setToken);
   }, []);
@@ -34,6 +40,9 @@ export default function ScanScreen() {
     insets.top,
     Platform.OS === "android" ? (StatusBar.currentHeight ?? 24) : 16
   ) + 8;
+
+  const bottomPadding = Math.max(insets.bottom, 16) + 12;
+
   const webArUrl = `${WEBAR_BASE_URL}/scan/${markerId ?? "demo-kicc-marker"}?channel=app&appToken=${encodeURIComponent(token ?? "")}`;
 
   const handleSimulateRecognize = async () => {
@@ -84,6 +93,8 @@ export default function ScanScreen() {
 
   const styles = StyleSheet.create({
     container: { flex: 1, backgroundColor: "#0c0c0e" },
+
+    // Top Navigation Header
     header: {
       position: "absolute",
       top: 0,
@@ -96,7 +107,7 @@ export default function ScanScreen() {
       paddingTop: topPadding,
       paddingBottom: 14,
       paddingHorizontal: 16,
-      backgroundColor: "rgba(12, 12, 14, 0.85)",
+      backgroundColor: "rgba(12, 12, 14, 0.94)",
       borderBottomWidth: 1,
       borderBottomColor: "rgba(212, 175, 55, 0.2)",
     },
@@ -105,36 +116,103 @@ export default function ScanScreen() {
     headerTitle: { ...theme.font(theme.type.headlineLgMobile), color: "#f59e0b", fontSize: 20, fontWeight: "700" },
     headerSub: { ...theme.font(theme.type.labelSm), color: "#d4af37", fontSize: 10, fontWeight: "600" },
 
-    // Reticle & HUD Overlay
-    hudContainer: {
+    // Central Reticle Box
+    centerOverlay: {
       position: "absolute",
-      bottom: 30,
+      top: 0,
+      left: 0,
+      right: 0,
+      bottom: 0,
+      alignItems: "center",
+      justifyContent: "center",
+      zIndex: 50,
+      pointerEvents: "none",
+    },
+    reticleFrame: {
+      width: 240,
+      height: 240,
+      borderRadius: 28,
+      borderWidth: 2,
+      borderColor: "rgba(245, 158, 11, 0.6)",
+      alignItems: "center",
+      justifyContent: "center",
+      backgroundColor: "rgba(12, 12, 14, 0.15)",
+    },
+    reticleCenterDot: {
+      width: 14,
+      height: 14,
+      borderRadius: 7,
+      backgroundColor: "#f59e0b",
+      shadowColor: "#f59e0b",
+      shadowOffset: { width: 0, height: 0 },
+      shadowOpacity: 0.9,
+      shadowRadius: 10,
+    },
+    reticleInstruction: {
+      marginTop: 18,
+      paddingHorizontal: 14,
+      paddingVertical: 6,
+      borderRadius: 12,
+      backgroundColor: "rgba(12, 12, 14, 0.85)",
+      borderWidth: 1,
+      borderColor: "rgba(212, 175, 55, 0.3)",
+    },
+    reticleInstructionText: {
+      ...theme.font(theme.type.labelCaps),
+      color: "#fbfaf8",
+      fontSize: 10,
+      fontWeight: "700",
+      letterSpacing: 1,
+    },
+
+    // Bottom Tactical HUD (Non-overlapping)
+    bottomHud: {
+      position: "absolute",
+      bottom: bottomPadding,
       left: 16,
       right: 16,
       zIndex: 100,
       alignItems: "center",
-      gap: 12,
+      backgroundColor: "rgba(18, 18, 21, 0.95)",
+      borderRadius: 24,
+      padding: 16,
+      borderWidth: 1,
+      borderColor: "rgba(212, 175, 55, 0.3)",
+      shadowColor: "#000000",
+      shadowOffset: { width: 0, height: 8 },
+      shadowOpacity: 0.8,
+      shadowRadius: 16,
+      elevation: 12,
+      gap: 10,
     },
-    reticleCard: {
-      paddingHorizontal: 20,
-      paddingVertical: 10,
-      borderRadius: 20,
-      flexDirection: "row",
-      alignItems: "center",
-      gap: 8,
-      backgroundColor: "rgba(12, 12, 14, 0.9)",
+    hudPrompt: {
+      ...theme.font(theme.type.bodyMd),
+      color: "#a1a1aa",
+      fontSize: 12,
+      textAlign: "center",
     },
-    reticleText: { ...theme.font(theme.type.labelCaps), color: "#f59e0b", fontSize: 11, fontWeight: "700" },
     simBtn: {
       width: "100%",
-      paddingVertical: 16,
-      borderRadius: 22,
+      paddingVertical: 14,
+      borderRadius: 18,
+      backgroundColor: "#f59e0b",
       flexDirection: "row",
       alignItems: "center",
       justifyContent: "center",
       gap: 8,
+      shadowColor: "#f59e0b",
+      shadowOffset: { width: 0, height: 4 },
+      shadowOpacity: 0.4,
+      shadowRadius: 10,
+      elevation: 6,
     },
-    simBtnText: { ...theme.font(theme.type.labelCaps), color: isDark ? "#f59e0b" : "#ffffff", fontSize: 13, letterSpacing: 1, fontWeight: "700" },
+    simBtnText: {
+      ...theme.font(theme.type.labelCaps),
+      color: "#0c0c0e",
+      fontSize: 13,
+      letterSpacing: 1.2,
+      fontWeight: "800",
+    },
 
     loading: { flex: 1, alignItems: "center", justifyContent: "center", backgroundColor: "#0c0c0e", gap: 12 },
     loadingText: { ...theme.font(theme.type.labelCaps), color: "#f59e0b", letterSpacing: 1.5, fontWeight: "700" },
@@ -162,7 +240,7 @@ export default function ScanScreen() {
         <MaterialIcons name="view-in-ar" size={24} color="#f59e0b" />
       </View>
 
-      {/* Embedded 8th Wall WebAR with Hardware Acceleration */}
+      {/* Embedded WebAR Camera Feed with Hardware Acceleration */}
       <WebView
         source={{ uri: webArUrl }}
         style={{ flex: 1, backgroundColor: "#0c0c0e" }}
@@ -181,29 +259,36 @@ export default function ScanScreen() {
         )}
       />
 
-      {/* Floating Tactical HUD */}
-      <View style={styles.hudContainer}>
-        <NeumorphicView variant="raised" glow="gold" radius={20} style={styles.reticleCard}>
-          <MaterialIcons name="filter-center-focus" size={18} color="#f59e0b" />
-          <Text style={styles.reticleText}>ALIGN RETICLE WITH PHYSICAL MARKER</Text>
-        </NeumorphicView>
+      {/* Center Reticle Overlay */}
+      <View style={styles.centerOverlay}>
+        <View style={styles.reticleFrame}>
+          <View style={styles.reticleCenterDot} />
+        </View>
+        <View style={styles.reticleInstruction}>
+          <Text style={styles.reticleInstructionText}>TARGET ANOMALY NODE</Text>
+        </View>
+      </View>
 
-        <NeumorphicView
-          variant="raised"
-          glow="gold"
-          radius={22}
+      {/* Floating Tactical Bottom HUD */}
+      <View style={styles.bottomHud}>
+        <Text style={styles.hudPrompt}>
+          Point camera lens at the physical marker, or verify below:
+        </Text>
+        <TouchableOpacity
           style={styles.simBtn}
+          activeOpacity={0.85}
           onPress={handleSimulateRecognize}
+          disabled={claiming}
         >
           {claiming ? (
-            <ActivityIndicator size="small" color="#f59e0b" />
+            <ActivityIndicator size="small" color="#0c0c0e" />
           ) : (
             <>
-              <MaterialIcons name="auto-awesome" size={20} color={isDark ? "#f59e0b" : "#ffffff"} />
+              <MaterialIcons name="auto-awesome" size={20} color="#0c0c0e" />
               <Text style={styles.simBtnText}>VERIFY & CLAIM REWARD</Text>
             </>
           )}
-        </NeumorphicView>
+        </TouchableOpacity>
       </View>
     </View>
   );
