@@ -24,7 +24,7 @@ export default function QuestDetailScreen() {
   const topPadding = Platform.OS === "web" ? 14 : Math.max(insets.top, 14) + 6;
 
   const styles = StyleSheet.create({
-    container: { flex: 1, backgroundColor: isDark ? "#141314" : c.surface },
+    container: { flex: 1, backgroundColor: isDark ? "#0c0c0e" : c.surface },
     header: {
       flexDirection: "row",
       alignItems: "center",
@@ -32,14 +32,14 @@ export default function QuestDetailScreen() {
       paddingTop: topPadding,
       paddingBottom: 14,
       paddingHorizontal: 16,
-      backgroundColor: isDark ? "#141314" : c.surface,
+      backgroundColor: isDark ? "#0c0c0e" : c.surface,
       borderBottomWidth: 1,
-      borderBottomColor: "rgba(255, 255, 255, 0.04)",
+      borderBottomColor: isDark ? "rgba(212, 175, 55, 0.12)" : "rgba(15, 23, 42, 0.06)",
       zIndex: 100,
     },
     headerLeft: { flexDirection: "row", alignItems: "center", gap: 12 },
     backBtn: { width: 38, height: 38, borderRadius: 19, alignItems: "center", justifyContent: "center" },
-    headerTitle: { ...theme.font(theme.type.headlineLgMobile), color: c.primary, fontSize: 22, fontWeight: "700" },
+    headerTitle: { ...theme.font(theme.type.headlineLgMobile), color: c.onSurface, fontSize: 22, fontWeight: "700" },
     content: { padding: 18, paddingBottom: 60 },
 
     // Hero Mission Card
@@ -60,34 +60,34 @@ export default function QuestDetailScreen() {
       justifyContent: "center",
       marginBottom: 8,
     },
-    heroSub: { ...theme.font(theme.type.labelCaps), color: "#00f0ff", letterSpacing: 1.5 },
+    heroSub: { ...theme.font(theme.type.labelCaps), color: isDark ? "#f59e0b" : c.primary, letterSpacing: 1.5, fontWeight: "700" },
 
     // Chips Row
     chipRow: { flexDirection: "row", flexWrap: "wrap", gap: 10, marginBottom: 20 },
-    chip: { flexDirection: "row", alignItems: "center", gap: 6, paddingHorizontal: 14, paddingVertical: 8 },
-    chipText: { ...theme.font(theme.type.labelCaps), color: c.onSurface, fontSize: 11 },
-    chipGoldText: { ...theme.font(theme.type.labelCaps), color: "#f59e0b", fontSize: 11 },
+    chip: { flexDirection: "row", alignItems: "center", gap: 6, paddingHorizontal: 14, paddingVertical: 8, borderRadius: 14 },
+    chipText: { ...theme.font(theme.type.labelCaps), color: c.onSurface, fontSize: 11, fontWeight: "600" },
+    chipGoldText: { ...theme.font(theme.type.labelCaps), color: isDark ? "#f59e0b" : "#b45309", fontSize: 11, fontWeight: "700" },
 
     // Brief Section
     section: { marginBottom: 24 },
     sectionHeader: { flexDirection: "row", justifyContent: "space-between", alignItems: "center", marginBottom: 12 },
-    sectionTitle: { ...theme.font(theme.type.headlineSm), color: c.primary, fontSize: 18 },
-    activeBadge: { flexDirection: "row", alignItems: "center", gap: 6, paddingHorizontal: 10, paddingVertical: 4 },
-    activeBadgeText: { ...theme.font(theme.type.labelCaps), color: "#00f0ff", fontSize: 10 },
-    completedBadgeText: { ...theme.font(theme.type.labelCaps), color: "#10B981", fontSize: 10 },
-    dot: { width: 6, height: 6, borderRadius: 3, backgroundColor: "#00f0ff" },
+    sectionTitle: { ...theme.font(theme.type.headlineSm), color: c.onSurface, fontSize: 18, fontWeight: "700" },
+    activeBadge: { flexDirection: "row", alignItems: "center", gap: 6, paddingHorizontal: 10, paddingVertical: 4, borderRadius: 10 },
+    activeBadgeText: { ...theme.font(theme.type.labelCaps), color: isDark ? "#f59e0b" : c.primary, fontSize: 10, fontWeight: "700" },
+    completedBadgeText: { ...theme.font(theme.type.labelCaps), color: "#10B981", fontSize: 10, fontWeight: "700" },
+    dot: { width: 6, height: 6, borderRadius: 3, backgroundColor: isDark ? "#f59e0b" : c.primary },
     dotCompleted: { width: 6, height: 6, borderRadius: 3, backgroundColor: "#10B981" },
 
     briefCard: { padding: 18, borderRadius: 22 },
-    questHeading: { ...theme.font(theme.type.headlineSm), color: c.onSurface, fontSize: 19, marginBottom: 8 },
+    questHeading: { ...theme.font(theme.type.headlineSm), color: c.onSurface, fontSize: 19, marginBottom: 8, fontWeight: "700" },
     briefBody: { ...theme.font(theme.type.bodyMd), color: c.onSurfaceVariant, lineHeight: 22 },
 
     // Rewards Breakdown Card
     rewardCard: { padding: 18, borderRadius: 22, marginBottom: 24 },
     rewardRow: { flexDirection: "row", alignItems: "center", justifyContent: "space-between", marginBottom: 10 },
-    rewardLabel: { ...theme.font(theme.type.labelCaps), color: c.onSurfaceVariant },
-    rewardValue: { ...theme.font(theme.type.headlineSm), color: "#f59e0b", fontSize: 16 },
-    xpValue: { ...theme.font(theme.type.headlineSm), color: "#00f0ff", fontSize: 16 },
+    rewardLabel: { ...theme.font(theme.type.labelCaps), color: c.onSurfaceVariant, fontWeight: "600" },
+    rewardValue: { ...theme.font(theme.type.headlineSm), color: isDark ? "#f59e0b" : "#b45309", fontSize: 16, fontWeight: "700" },
+    xpValue: { ...theme.font(theme.type.headlineSm), color: isDark ? "#f59e0b" : c.primary, fontSize: 16, fontWeight: "700" },
 
     // Action CTA
     ctaBtn: {
@@ -98,7 +98,7 @@ export default function QuestDetailScreen() {
       paddingVertical: 18,
       borderRadius: 24,
     },
-    ctaText: { ...theme.font(theme.type.headlineSm), fontSize: 16, letterSpacing: 1 },
+    ctaBtnText: { ...theme.font(theme.type.headlineSm), color: isDark ? "#f59e0b" : "#ffffff", fontSize: 15, letterSpacing: 1.5, fontWeight: "700" },
   });
 
   return (
@@ -107,100 +107,104 @@ export default function QuestDetailScreen() {
       <View style={styles.header}>
         <View style={styles.headerLeft}>
           <NeumorphicView variant="raised" radius={19} style={styles.backBtn} onPress={() => router.back()}>
-            <MaterialIcons name="arrow-back" size={20} color={c.primary} />
+            <MaterialIcons name="arrow-back" size={20} color={isDark ? "#f59e0b" : c.primary} />
           </NeumorphicView>
           <Text style={styles.headerTitle}>Mission Intel</Text>
         </View>
-        <MaterialIcons name="radar" size={24} color="#00f0ff" />
+        <MaterialIcons name="share" size={20} color={c.onSurfaceVariant} />
       </View>
 
       <ScrollView contentContainerStyle={styles.content} showsVerticalScrollIndicator={false}>
-        {/* Hologram Hero */}
-        <NeumorphicView variant="raised" glow={completed ? "success" : "cyan"} radius={28} style={styles.heroCard}>
+        {/* Holographic AR Quest Hero Card */}
+        <NeumorphicView variant="raised" glow="gold" radius={28} style={styles.heroCard}>
           <NeumorphicView variant="inset" radius={40} style={styles.hologramWell}>
             <MaterialIcons
-              name={completed ? "verified" : "qr-code-scanner"}
+              name={completed ? "check-circle" : "view-in-ar"}
               size={42}
-              color={completed ? "#10B981" : "#00f0ff"}
+              color={completed ? "#10B981" : (isDark ? "#f59e0b" : c.primary)}
             />
           </NeumorphicView>
-          <Text style={styles.heroSub}>{completed ? "SECTOR PROTOCOL COMPLETED" : "AR SPATIAL NODE READY"}</Text>
+          <Text style={styles.heroSub}>
+            {completed ? "MISSION ACCOMPLISHED" : "SECTOR ANOMALY DETECTED"}
+          </Text>
         </NeumorphicView>
 
-        {/* Chips Row */}
+        {/* Metadata Chips */}
         <View style={styles.chipRow}>
-          <NeumorphicView variant="raised" radius={20} style={styles.chip}>
-            <MaterialIcons name="place" size={16} color="#00f0ff" />
-            <Text style={styles.chipText} numberOfLines={1}>{params.venueName || "Nairobi Sector"}</Text>
+          <NeumorphicView variant="inset" radius={14} style={styles.chip}>
+            <MaterialIcons name="place" size={16} color={isDark ? "#f59e0b" : c.primary} />
+            <Text style={styles.chipText}>{params.venueName || "Nairobi Anchor Node"}</Text>
           </NeumorphicView>
 
-          <NeumorphicView variant="raised" glow="gold" radius={20} style={styles.chip}>
-            <MaterialIcons name="emoji-events" size={16} color="#f59e0b" />
-            <Text style={styles.chipGoldText}>{params.rewardDescription || "Special Voucher"}</Text>
+          <NeumorphicView variant="inset" radius={14} style={styles.chip}>
+            <MaterialIcons name="military-tech" size={16} color={isDark ? "#f59e0b" : "#b45309"} />
+            <Text style={styles.chipGoldText}>Tier 1 Anomaly</Text>
           </NeumorphicView>
         </View>
 
-        {/* Mission Briefing */}
+        {/* Tactical Briefing */}
         <View style={styles.section}>
           <View style={styles.sectionHeader}>
-            <Text style={styles.sectionTitle}>Tactical Objectives</Text>
-            <NeumorphicView variant="inset" radius={12} style={styles.activeBadge}>
+            <Text style={styles.sectionTitle}>TACTICAL BRIEF</Text>
+            <NeumorphicView variant="inset" radius={10} style={styles.activeBadge}>
               <View style={completed ? styles.dotCompleted : styles.dot} />
               <Text style={completed ? styles.completedBadgeText : styles.activeBadgeText}>
-                {completed ? "COMPLETED" : "IN PROGRESS"}
+                {completed ? "COMPLETED" : "OPTICAL READY"}
               </Text>
             </NeumorphicView>
           </View>
 
-          <NeumorphicView variant="inset" radius={22} style={styles.briefCard}>
-            <Text style={styles.questHeading}>{params.name}</Text>
+          <NeumorphicView variant="raised" radius={22} style={styles.briefCard}>
+            <Text style={styles.questHeading}>{params.name || "Decipher the Sector Anomaly"}</Text>
             <Text style={styles.briefBody}>
-              Traverse to {params.venueName || "the anchor venue"} in Nairobi. Align your optical scanner with the designated AR physical marker to decipher the cipher and unlock the associated rewards into your PIKE wallet.
+              Deploy to {params.venueName || "the anchor node"} in Nairobi. Align your optical scanner lens with the
+              physical holographic target on site to synchronize telemetry and decrypt the sector vault cipher.
             </Text>
           </NeumorphicView>
         </View>
 
-        {/* Reward Yield Breakdown */}
-        <NeumorphicView variant="raised" radius={22} style={styles.rewardCard}>
-          <Text style={[styles.sectionTitle, { marginBottom: 14 }]}>Mission Yield</Text>
-          <View style={styles.rewardRow}>
-            <Text style={styles.rewardLabel}>SECTOR XP</Text>
-            <Text style={styles.xpValue}>+250 XP</Text>
-          </View>
-          <View style={[styles.rewardRow, { marginBottom: 0 }]}>
-            <Text style={styles.rewardLabel}>REWARD VOUCHER</Text>
-            <Text style={styles.rewardValue}>{params.rewardDescription}</Text>
-          </View>
-        </NeumorphicView>
+        {/* Reward Payload */}
+        <View style={styles.section}>
+          <Text style={[styles.sectionTitle, { marginBottom: 12 }]}>REWARD PAYLOAD</Text>
+          <NeumorphicView variant="raised" radius={22} style={styles.rewardCard}>
+            <View style={styles.rewardRow}>
+              <Text style={styles.rewardLabel}>PERK VOUCHER</Text>
+              <Text style={styles.rewardValue}>{params.rewardDescription || "20% off at Venue"}</Text>
+            </View>
+            <View style={styles.rewardRow}>
+              <Text style={styles.rewardLabel}>EXPEDITION XP</Text>
+              <Text style={styles.xpValue}>+250 XP</Text>
+            </View>
+            <View style={[styles.rewardRow, { marginBottom: 0 }]}>
+              <Text style={styles.rewardLabel}>SECTOR BADGE</Text>
+              <Text style={styles.rewardValue}>Progress +1</Text>
+            </View>
+          </NeumorphicView>
+        </View>
 
-        {/* Action Button */}
-        <NeumorphicView
-          variant="raised"
-          glow={completed ? "none" : "cyan"}
-          radius={24}
-          style={styles.ctaBtn}
-          onPress={() => {
-            if (!completed && params.markerId) {
-              router.push(`/scan/${params.markerId}`);
-            } else {
-              router.push("/(tabs)/rewards");
-            }
-          }}
-        >
-          <MaterialIcons
-            name={completed ? "card-giftcard" : "photo-camera"}
-            size={22}
-            color={completed ? "#10B981" : "#00f0ff"}
-          />
-          <Text
-            style={[
-              styles.ctaText,
-              { color: completed ? "#10B981" : "#00f0ff" },
-            ]}
+        {/* Deploy & Scan CTA */}
+        {!completed ? (
+          <NeumorphicView
+            variant="raised"
+            glow="gold"
+            radius={24}
+            style={styles.ctaBtn}
+            onPress={() => router.push(`/scan/${params.markerId || params.id}`)}
           >
-            {completed ? "VIEW IN REWARDS WALLET" : "SCAN MARKER (AR)"}
-          </Text>
-        </NeumorphicView>
+            <MaterialIcons name="qr-code-scanner" size={22} color={isDark ? "#f59e0b" : "#ffffff"} />
+            <Text style={styles.ctaBtnText}>ENGAGE OPTICAL SCANNER</Text>
+          </NeumorphicView>
+        ) : (
+          <NeumorphicView
+            variant="flat"
+            radius={24}
+            style={styles.ctaBtn}
+            onPress={() => router.push("/(tabs)/rewards")}
+          >
+            <MaterialIcons name="card-giftcard" size={22} color="#10B981" />
+            <Text style={[styles.ctaBtnText, { color: "#10B981" }]}>VIEW IN VAULT</Text>
+          </NeumorphicView>
+        )}
       </ScrollView>
     </View>
   );

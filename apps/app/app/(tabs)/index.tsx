@@ -9,7 +9,7 @@ import { TopNav } from "@/components/TopNav";
 import { PwaInstallBanner } from "@/components/PwaInstallBanner";
 import { NeumorphicView } from "@/components/NeumorphicView";
 
-/** Stitch PIKE Home - Neumorphic Bento Dashboard */
+/** Stitch PIKE Home - PIKE Logo Imperial Gold & Sapphire Dashboard */
 export default function HomeScreen() {
   const theme = useTheme();
   const [me, setMe] = useState<UserProfile | null>(null);
@@ -54,48 +54,48 @@ export default function HomeScreen() {
   const isDark = theme.mode === "dark";
 
   const styles = StyleSheet.create({
-    container: { flex: 1, backgroundColor: isDark ? "#141314" : c.surface },
+    container: { flex: 1, backgroundColor: isDark ? "#0c0c0e" : c.surface },
     content: { padding: 18, paddingTop: 16, paddingBottom: 130 },
     welcomeSection: { marginBottom: 18 },
     welcomeTitle: { ...theme.font(theme.type.headlineLgMobile), color: c.onSurface, fontSize: 24, fontWeight: "700" },
-    welcomeCyan: { color: isDark ? "#00f0ff" : c.primary },
+    welcomeGold: { color: isDark ? "#f59e0b" : "#1d4ed8" },
     welcomeSub: { ...theme.font(theme.type.bodyMd), color: c.onSurfaceVariant, marginTop: 4, fontSize: 14 },
     streakBadge: {
       flexDirection: "row",
       alignItems: "center",
       gap: 5,
       paddingHorizontal: 12,
-      paddingVertical: 5,
+      paddingVertical: 6,
       borderRadius: 16,
     },
-    streakCount: { ...theme.font(theme.type.headlineSm), color: isDark ? "#00f0ff" : "#f59e0b", fontSize: 13, fontWeight: "700" },
+    streakCount: { ...theme.font(theme.type.headlineSm), color: isDark ? "#f59e0b" : "#b45309", fontSize: 13, fontWeight: "700" },
     
     // XP Progress Card
     xpCard: { padding: 20, marginBottom: 16, borderRadius: 24 },
     tierRow: { flexDirection: "row", justifyContent: "space-between", alignItems: "flex-end", marginBottom: 14 },
     labelCaps: { ...theme.font(theme.type.labelCaps), color: c.onSurfaceVariant, letterSpacing: 1, fontWeight: "700" },
-    tierName: { ...theme.font(theme.type.headlineSm), color: isDark ? "#00f0ff" : c.primary, marginTop: 2, fontWeight: "700" },
+    tierName: { ...theme.font(theme.type.headlineSm), color: isDark ? "#f59e0b" : c.primary, marginTop: 2, fontWeight: "700" },
     xpValue: { ...theme.font(theme.type.headlineSm), color: c.onSurface, marginTop: 2, fontWeight: "700" },
     xpTrack: { width: "100%", height: 10, borderRadius: 5, padding: 2 },
-    xpFill: { height: "100%", backgroundColor: isDark ? "#00f0ff" : c.primary, borderRadius: 4 },
+    xpFill: { height: "100%", backgroundColor: isDark ? "#f59e0b" : c.primary, borderRadius: 4 },
 
     // Identity Modules Bento Grid
     moduleGrid: { flexDirection: "row", gap: 12, marginBottom: 16 },
     moduleCard: { flex: 1, padding: 18, alignItems: "center", justifyContent: "center", gap: 10, borderRadius: 22 },
     moduleWell: { width: 56, height: 56, borderRadius: 28, alignItems: "center", justifyContent: "center" },
     moduleTitle: { ...theme.font(theme.type.bodyLg), color: c.onSurface, fontWeight: "700" },
-    moduleSub: { ...theme.font(theme.type.bodyMd), color: isDark ? "#00f0ff" : c.primary, fontSize: 12, fontWeight: "600" },
+    moduleSub: { ...theme.font(theme.type.bodyMd), color: isDark ? "#f59e0b" : c.primary, fontSize: 12, fontWeight: "600" },
 
     // Active Quests / Transmissions Card
     questsCard: { padding: 20, marginBottom: 16, borderRadius: 24 },
-    questsHeader: { flexDirection: "row", alignItems: "center", gap: 8, paddingBottom: 12, borderBottomWidth: 1, borderBottomColor: isDark ? "rgba(255,255,255,0.06)" : "rgba(15,23,42,0.06)", marginBottom: 14 },
+    questsHeader: { flexDirection: "row", alignItems: "center", gap: 8, paddingBottom: 12, borderBottomWidth: 1, borderBottomColor: isDark ? "rgba(212,175,55,0.1)" : "rgba(15,23,42,0.06)", marginBottom: 14 },
     questsTitle: { ...theme.font(theme.type.headlineSm), color: c.onSurface, fontWeight: "700" },
     questItemWell: { flexDirection: "row", justifyContent: "space-between", alignItems: "center", padding: 14, borderRadius: 16, marginBottom: 10 },
     questName: { ...theme.font(theme.type.bodyMd), color: c.onSurface, fontWeight: "700" },
     questVenue: { ...theme.font(theme.type.labelCaps), color: c.onSurfaceVariant, fontSize: 10, marginTop: 2, fontWeight: "600" },
-    questXpTag: { ...theme.font(theme.type.labelCaps), color: isDark ? "#00f0ff" : c.primary, fontSize: 11, fontWeight: "700" },
+    questXpTag: { ...theme.font(theme.type.labelCaps), color: isDark ? "#f59e0b" : c.primary, fontSize: 11, fontWeight: "700" },
     viewAllButton: { padding: 14, alignItems: "center", justifyContent: "center", flexDirection: "row", gap: 8, marginTop: 6, borderRadius: 16 },
-    viewAllText: { ...theme.font(theme.type.labelCaps), color: isDark ? "#00f0ff" : c.primary, letterSpacing: 1, fontWeight: "700" },
+    viewAllText: { ...theme.font(theme.type.labelCaps), color: isDark ? "#f59e0b" : c.primary, letterSpacing: 1, fontWeight: "700" },
 
     // Macro Quest Card
     macroDots: { flexDirection: "row", gap: 6, marginTop: 14, flexWrap: "wrap" },
@@ -103,7 +103,7 @@ export default function HomeScreen() {
     macroDotLabel: { ...theme.font(theme.type.labelSm), color: c.onSurfaceVariant },
     macroHint: { ...theme.font(theme.type.labelSm), color: c.onSurfaceVariant, marginTop: 12 },
     rewardRow: { flexDirection: "row", alignItems: "center", gap: 6, marginTop: 12 },
-    rewardText: { ...theme.font(theme.type.labelSm), color: "#f59e0b", flex: 1, fontWeight: "700" },
+    rewardText: { ...theme.font(theme.type.labelSm), color: isDark ? "#f59e0b" : "#b45309", flex: 1, fontWeight: "700" },
 
     // Modals
     modalBackdrop: { flex: 1, backgroundColor: "rgba(0, 0, 0, 0.75)", justifyContent: "center", alignItems: "center", padding: 20 },
@@ -111,17 +111,17 @@ export default function HomeScreen() {
     modalPedestal: { width: 84, height: 84, borderRadius: 42, alignItems: "center", justifyContent: "center", alignSelf: "center", marginBottom: 16 },
     modalTitle: { ...theme.font(theme.type.headlineLgMobile), color: c.onSurface, fontSize: 22, fontWeight: "700", textAlign: "center", marginBottom: 6 },
     modalSub: { ...theme.font(theme.type.bodyMd), color: c.onSurfaceVariant, textAlign: "center", marginBottom: 18 },
-    statRow: { flexDirection: "row", justifyContent: "space-between", alignItems: "center", paddingVertical: 10, borderBottomWidth: 1, borderBottomColor: isDark ? "rgba(255,255,255,0.06)" : "rgba(15,23,42,0.06)" },
+    statRow: { flexDirection: "row", justifyContent: "space-between", alignItems: "center", paddingVertical: 10, borderBottomWidth: 1, borderBottomColor: isDark ? "rgba(212,175,55,0.12)" : "rgba(15,23,42,0.06)" },
     statLabel: { ...theme.font(theme.type.labelCaps), color: c.onSurfaceVariant, fontSize: 11, fontWeight: "600" },
-    statVal: { ...theme.font(theme.type.headlineSm), color: isDark ? "#00f0ff" : c.primary, fontSize: 14, fontWeight: "700" },
+    statVal: { ...theme.font(theme.type.headlineSm), color: isDark ? "#f59e0b" : c.primary, fontSize: 14, fontWeight: "700" },
     modalBtn: { width: "100%", paddingVertical: 14, borderRadius: 18, alignItems: "center", justifyContent: "center", marginTop: 20 },
-    modalBtnText: { ...theme.font(theme.type.labelCaps), color: isDark ? "#00f0ff" : c.primary, fontSize: 12, letterSpacing: 1, fontWeight: "700" },
+    modalBtnText: { ...theme.font(theme.type.labelCaps), color: isDark ? "#f59e0b" : c.primary, fontSize: 12, letterSpacing: 1, fontWeight: "700" },
   });
 
   const rightAction =
     me && me.currentStreak > 0 ? (
-      <NeumorphicView variant="raised" glow="cyan" radius={16} style={styles.streakBadge}>
-        <MaterialIcons name="local-fire-department" size={16} color={isDark ? "#00f0ff" : "#f59e0b"} />
+      <NeumorphicView variant="raised" glow="gold" radius={16} style={styles.streakBadge}>
+        <MaterialIcons name="local-fire-department" size={18} color={isDark ? "#f59e0b" : "#b45309"} />
         <Text style={styles.streakCount}>{me.currentStreak}d</Text>
       </NeumorphicView>
     ) : undefined;
@@ -138,8 +138,8 @@ export default function HomeScreen() {
           <RefreshControl
             refreshing={refreshing}
             onRefresh={onRefresh}
-            tintColor={isDark ? "#00f0ff" : c.primary}
-            colors={[isDark ? "#00f0ff" : c.primary]}
+            tintColor={isDark ? "#f59e0b" : c.primary}
+            colors={[isDark ? "#f59e0b" : c.primary]}
           />
         }
       >
@@ -147,12 +147,12 @@ export default function HomeScreen() {
 
         {/* Welcome Section */}
         <View style={styles.welcomeSection}>
-          <Text style={styles.welcomeTitle}>Welcome back, <Text style={styles.welcomeCyan}>Vanguard</Text></Text>
+          <Text style={styles.welcomeTitle}>Welcome back, <Text style={styles.welcomeGold}>Vanguard</Text></Text>
           <Text style={styles.welcomeSub}>Your physical realm sync is 84% complete.</Text>
         </View>
 
         {/* XP Progress Card */}
-        <NeumorphicView variant="raised" radius={24} style={styles.xpCard}>
+        <NeumorphicView variant="raised" glow={isDark ? "gold" : "none"} radius={24} style={styles.xpCard}>
           <View style={styles.tierRow}>
             <View>
               <Text style={styles.labelCaps}>CURRENT TIER</Text>
@@ -172,7 +172,7 @@ export default function HomeScreen() {
         <View style={styles.moduleGrid}>
           <NeumorphicView variant="raised" radius={22} style={styles.moduleCard} onPress={() => setMobilityModalVisible(true)}>
             <NeumorphicView variant="inset" radius={28} style={styles.moduleWell}>
-              <MaterialIcons name="directions-run" size={28} color={isDark ? "#00f0ff" : c.primary} />
+              <MaterialIcons name="directions-run" size={28} color={isDark ? "#f59e0b" : c.primary} />
             </NeumorphicView>
             <View style={{ alignItems: "center" }}>
               <Text style={styles.moduleTitle}>Mobility</Text>
@@ -182,7 +182,7 @@ export default function HomeScreen() {
 
           <NeumorphicView variant="raised" radius={22} style={styles.moduleCard} onPress={() => setIntellectModalVisible(true)}>
             <NeumorphicView variant="inset" radius={28} style={styles.moduleWell}>
-              <MaterialIcons name="psychology" size={28} color={isDark ? "#00f0ff" : c.primary} />
+              <MaterialIcons name="psychology" size={28} color={isDark ? "#3b82f6" : "#1d4ed8"} />
             </NeumorphicView>
             <View style={{ alignItems: "center" }}>
               <Text style={styles.moduleTitle}>Intellect</Text>
@@ -194,7 +194,7 @@ export default function HomeScreen() {
         {/* Active Quests Card */}
         <NeumorphicView variant="raised" radius={24} style={styles.questsCard}>
           <View style={styles.questsHeader}>
-            <MaterialIcons name="radar" size={20} color={isDark ? "#00f0ff" : c.primary} />
+            <MaterialIcons name="radar" size={20} color={isDark ? "#f59e0b" : c.primary} />
             <Text style={styles.questsTitle}>Active Quests</Text>
           </View>
 
@@ -226,13 +226,13 @@ export default function HomeScreen() {
 
           <NeumorphicView
             variant="raised"
-            glow="cyan"
+            glow={isDark ? "gold" : "blue"}
             radius={16}
             style={styles.viewAllButton}
             onPress={() => router.push("/(tabs)/quests")}
           >
             <Text style={styles.viewAllText}>VIEW ALL TRANSMISSIONS</Text>
-            <MaterialIcons name="arrow-forward" size={18} color={isDark ? "#00f0ff" : c.primary} />
+            <MaterialIcons name="arrow-forward" size={18} color={isDark ? "#f59e0b" : c.primary} />
           </NeumorphicView>
         </NeumorphicView>
 
@@ -253,7 +253,7 @@ export default function HomeScreen() {
                   <MaterialIcons
                     name={v.visited ? "check-circle" : "radio-button-unchecked"}
                     size={14}
-                    color={v.visited ? (isDark ? "#00f0ff" : "#10B981") : c.outline}
+                    color={v.visited ? (isDark ? "#f59e0b" : "#10B981") : c.outline}
                   />
                   <Text style={styles.macroDotLabel}>{v.name}</Text>
                 </View>
@@ -276,9 +276,9 @@ export default function HomeScreen() {
       {/* 1. Neumorphic Mobility Track Modal */}
       <Modal visible={mobilityModalVisible} transparent animationType="fade">
         <View style={styles.modalBackdrop}>
-          <NeumorphicView variant="raised" glow="cyan" radius={28} style={styles.modalCard}>
+          <NeumorphicView variant="raised" glow="gold" radius={28} style={styles.modalCard}>
             <NeumorphicView variant="inset" radius={42} style={styles.modalPedestal}>
-              <MaterialIcons name="directions-run" size={42} color={isDark ? "#00f0ff" : c.primary} />
+              <MaterialIcons name="directions-run" size={42} color={isDark ? "#f59e0b" : c.primary} />
             </NeumorphicView>
 
             <Text style={styles.modalTitle}>Mobility Track: Adept</Text>
@@ -297,7 +297,7 @@ export default function HomeScreen() {
               <Text style={styles.statVal}>42.8 KM</Text>
             </View>
 
-            <NeumorphicView variant="raised" glow="cyan" radius={18} style={styles.modalBtn} onPress={() => setMobilityModalVisible(false)}>
+            <NeumorphicView variant="raised" glow="gold" radius={18} style={styles.modalBtn} onPress={() => setMobilityModalVisible(false)}>
               <Text style={styles.modalBtnText}>ACKNOWLEDGE</Text>
             </NeumorphicView>
           </NeumorphicView>
@@ -307,9 +307,9 @@ export default function HomeScreen() {
       {/* 2. Neumorphic Intellect Track Modal */}
       <Modal visible={intellectModalVisible} transparent animationType="fade">
         <View style={styles.modalBackdrop}>
-          <NeumorphicView variant="raised" glow="cyan" radius={28} style={styles.modalCard}>
+          <NeumorphicView variant="raised" glow="blue" radius={28} style={styles.modalCard}>
             <NeumorphicView variant="inset" radius={42} style={styles.modalPedestal}>
-              <MaterialIcons name="psychology" size={42} color={isDark ? "#00f0ff" : c.primary} />
+              <MaterialIcons name="psychology" size={42} color={isDark ? "#3b82f6" : "#1d4ed8"} />
             </NeumorphicView>
 
             <Text style={styles.modalTitle}>Intellect Track: Savant</Text>
@@ -328,7 +328,7 @@ export default function HomeScreen() {
               <Text style={styles.statVal}>Level 4 Savant Rank</Text>
             </View>
 
-            <NeumorphicView variant="raised" glow="cyan" radius={18} style={styles.modalBtn} onPress={() => setIntellectModalVisible(false)}>
+            <NeumorphicView variant="raised" glow="blue" radius={18} style={styles.modalBtn} onPress={() => setIntellectModalVisible(false)}>
               <Text style={styles.modalBtnText}>ACKNOWLEDGE</Text>
             </NeumorphicView>
           </NeumorphicView>

@@ -3,7 +3,7 @@ import { View, type ViewStyle, type StyleProp, TouchableOpacity } from "react-na
 import { useTheme } from "@/theme";
 
 export type NeumorphVariant = "raised" | "flat" | "inset" | "pill";
-export type NeumorphGlow = "none" | "cyan" | "gold" | "premium" | "blue" | "success";
+export type NeumorphGlow = "none" | "gold" | "blue" | "sapphire" | "premium" | "success" | "cyan";
 
 export interface NeumorphicViewProps {
   children?: any;
@@ -28,47 +28,47 @@ export function NeumorphicView({
   const c = theme.colors;
   const isDark = theme.mode === "dark";
 
-  let backgroundColor = isDark ? "#141314" : "#ffffff";
-  let borderColor = isDark ? "rgba(255, 255, 255, 0.07)" : "rgba(15, 23, 42, 0.08)";
-  let shadowColor = isDark ? "#000000" : "#94a3b8";
-  let shadowOffset = { width: 3, height: 4 };
-  let shadowOpacity = isDark ? 0.75 : 0.25;
+  let backgroundColor = isDark ? "#141417" : "#ffffff";
+  let borderColor = isDark ? "rgba(212, 175, 55, 0.15)" : "rgba(15, 23, 42, 0.08)";
+  let shadowColor = isDark ? "#000000" : "#0f172a";
+  let shadowOffset = { width: 0, height: 4 };
+  let shadowOpacity = isDark ? 0.75 : 0.08;
   let shadowRadius = 8;
   let elevation = 4;
 
   if (variant === "inset") {
-    backgroundColor = isDark ? "#0e0e0e" : "#e8edf5";
-    borderColor = isDark ? "rgba(0, 0, 0, 0.6)" : "rgba(148, 163, 184, 0.35)";
+    backgroundColor = isDark ? "#0a0a0c" : "#e8edf5";
+    borderColor = isDark ? "rgba(0, 0, 0, 0.7)" : "rgba(15, 23, 42, 0.06)";
     shadowOpacity = 0;
     elevation = 0;
   } else if (variant === "flat") {
-    shadowOffset = { width: 1, height: 2 };
-    shadowOpacity = isDark ? 0.4 : 0.15;
+    shadowOffset = { width: 0, height: 2 };
+    shadowOpacity = isDark ? 0.35 : 0.05;
     shadowRadius = 4;
     elevation = 2;
   }
 
-  // Glow Variants (Sapphire Blue & Imperial Gold from Logo)
-  if (glow === "cyan" || glow === "blue") {
-    borderColor = isDark ? "rgba(0, 240, 255, 0.5)" : "rgba(29, 78, 216, 0.4)";
-    shadowColor = isDark ? "#00f0ff" : "#1d4ed8";
-    shadowOpacity = isDark ? 0.45 : 0.25;
-    shadowRadius = 12;
-  } else if (glow === "gold") {
-    borderColor = isDark ? "rgba(245, 158, 11, 0.5)" : "rgba(180, 83, 9, 0.4)";
+  // Glow Variants (PIKE Logo: Imperial Gold & Cobalt Sapphire)
+  if (glow === "gold") {
+    borderColor = isDark ? "rgba(245, 158, 11, 0.6)" : "rgba(180, 83, 9, 0.45)";
     shadowColor = isDark ? "#f59e0b" : "#b45309";
-    shadowOpacity = isDark ? 0.45 : 0.25;
+    shadowOpacity = isDark ? 0.45 : 0.18;
+    shadowRadius = 12;
+  } else if (glow === "blue" || glow === "sapphire" || glow === "cyan") {
+    borderColor = isDark ? "rgba(59, 130, 246, 0.6)" : "rgba(29, 78, 216, 0.45)";
+    shadowColor = isDark ? "#3b82f6" : "#1d4ed8";
+    shadowOpacity = isDark ? 0.45 : 0.18;
     shadowRadius = 12;
   } else if (glow === "premium") {
-    borderColor = isDark ? "rgba(225, 210, 255, 0.4)" : "rgba(147, 51, 234, 0.35)";
-    shadowColor = isDark ? "#e1d2ff" : "#9333ea";
+    borderColor = isDark ? "rgba(245, 158, 11, 0.65)" : "rgba(180, 83, 9, 0.5)";
+    shadowColor = isDark ? "#d4af37" : "#b45309";
     shadowOpacity = 0.35;
     shadowRadius = 10;
   } else if (glow === "success") {
-    borderColor = isDark ? "rgba(16, 185, 129, 0.5)" : "rgba(5, 150, 105, 0.4)";
+    borderColor = isDark ? "rgba(16, 185, 129, 0.6)" : "rgba(5, 150, 105, 0.45)";
     shadowColor = isDark ? "#10B981" : "#059669";
-    shadowOpacity = 0.35;
-    shadowRadius = 10;
+    shadowOpacity = 0.3;
+    shadowRadius = 8;
   }
 
   const containerStyle: ViewStyle = {

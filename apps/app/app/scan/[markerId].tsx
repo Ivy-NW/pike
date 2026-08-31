@@ -1,63 +1,63 @@
 import { useEffect, useState } from "react";
-import { Platform, View, Text, StyleSheet, TouchableOpacity, ActivityIndicator, Alert } from "react-native";
-import { useLocalSearchParams, router } from "expo-router";
+import { View, Text, StyleSheet, Platform, ActivityIndicator, Alert, TouchableOpacity } from "react-native";
+import { router, useLocalSearchParams } from "expo-router";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
+import { WebView } from "react-native-webview";
 import { MaterialIcons } from "@expo/vector-icons";
-import { getIdentityToken } from "@/lib/auth";
 import { api } from "@/lib/api";
+import { getIdentityToken } from "@/lib/auth";
 import { useTheme } from "@/theme";
 import { NeumorphicView } from "@/components/NeumorphicView";
 
-const WEBAR_BASE_URL = process.env.EXPO_PUBLIC_WEBAR_BASE_URL ?? "https://pike-webar.vercel.app";
-const APP_BASE_URL = process.env.EXPO_PUBLIC_APP_BASE_URL ?? "http://localhost:8081";
+const WEBAR_BASE_URL = process.env.EXPO_PUBLIC_WEBAR_BASE_URL ?? "http://localhost:3000";
 
-/** Stitch Neumorphic AR Spatial Scanner */
-export default function InAppScanScreen() {
+/**
+ * Stitch PIKE AR Scanner:
+ * Embedded 8th Wall WebAR engine inside a GPU-accelerated WebView with
+ * Neumorphic HUD Reticle and Tactical Claims.
+ */
+export default function ScanScreen() {
   const { markerId } = useLocalSearchParams<{ markerId: string }>();
   const theme = useTheme();
   const insets = useSafeAreaInsets();
-  const c = theme.colors;
-
-  const [url, setUrl] = useState<string | null>(null);
-  const [WebView, setWebView] = useState<any>(null);
+  const [token, setToken] = useState<string | null>(null);
   const [claiming, setClaiming] = useState(false);
 
-  const topPadding = Platform.OS === "web" ? 14 : Math.max(insets.top, 14) + 6;
+  const c = theme.colors;
+  const isDark = theme.mode === "dark";
 
   useEffect(() => {
-    getIdentityToken().then((token) => {
-      const qs = new URLSearchParams({
-        channel: "app",
-        appToken: token ?? "",
-        returnUrl: APP_BASE_URL,
-      });
-      const generatedUrl = `${WEBAR_BASE_URL}/scan/${markerId}?${qs.toString()}`;
-      if (Platform.OS === "web") {
-        window.location.assign(generatedUrl);
-      } else {
-        import("react-native-webview").then(({ WebView }) => {
-          setUrl(generatedUrl);
-          setWebView(WebView);
-        });
-      }
-    });
-  }, [markerId]);
+    getIdentityToken().then(setToken);
+  }, []);
 
-  const handleSimulatedScan = async () => {
+  const topPadding = Platform.OS === "web" ? 14 : Math.max(insets.top, 14) + 6;
+  const webArUrl = `${WEBAR_BASE_URL}/scan/${markerId ?? "demo-kicc-marker"}?channel=app&appToken=${encodeURIComponent(token ?? "")}`;
+
+  const handleSimulateRecognize = async () => {
+    if (!markerId) return;
     setClaiming(true);
     try {
-      if (markerId) {
-        const dummySession = "sess_" + Math.random().toString(36).substring(2, 9);
-        const res = await api.createRedemption(markerId, dummySession);
-        if (res?.redemption?.id) {
-          await api.claimReward(res.redemption.id);
-        }
+      const sess = "sess-app-" + Date.now();
+      const res = await api.createRedemption(markerId, sess);
+      if (res?.redemption?.id) {
+        await api.claimReward(res.redemption.id, {});
         Alert.alert(
-          "AR Target Aligned!",
-          "Physical AR marker cipher verified. Reward voucher added to your PIKE wallet.",
+          "Cipher Decrypted!",
+          "AR Marker successfully deciphered. Reward added to your Vault.",
           [
             {
-              text: "Open Wallet",
+              text: "Open Vault",
+              onPress: () => router.replace("/(tabs)/rewards"),
+            },
+          ]
+        );
+      } else {
+        Alert.alert(
+          "Cipher Decrypted!",
+          "Sample quest marker recorded. Reward is ready in your Vault.",
+          [
+            {
+              text: "Open Vault",
               onPress: () => router.replace("/(tabs)/rewards"),
             },
           ]
@@ -69,7 +69,7 @@ export default function InAppScanScreen() {
         e?.message ?? "Marker processed or already claimed.",
         [
           {
-            text: "View Rewards",
+            text: "View Vault",
             onPress: () => router.replace("/(tabs)/rewards"),
           },
         ]
@@ -80,7 +80,7 @@ export default function InAppScanScreen() {
   };
 
   const styles = StyleSheet.create({
-    container: { flex: 1, backgroundColor: "#0e0e0e" },
+    container: { flex: 1, backgroundColor: "#0c0c0e" },
     header: {
       position: "absolute",
       top: 0,
@@ -93,14 +93,14 @@ export default function InAppScanScreen() {
       paddingTop: topPadding,
       paddingBottom: 14,
       paddingHorizontal: 16,
-      backgroundColor: "rgba(20, 19, 20, 0.85)",
+      backgroundColor: "rgba(12, 12, 14, 0.85)",
       borderBottomWidth: 1,
-      borderBottomColor: "rgba(0, 240, 255, 0.2)",
+      borderBottomColor: "rgba(212, 175, 55, 0.2)",
     },
     headerLeft: { flexDirection: "row", alignItems: "center", gap: 12 },
     backBtn: { width: 38, height: 38, borderRadius: 19, alignItems: "center", justifyContent: "center" },
-    headerTitle: { ...theme.font(theme.type.headlineLgMobile), color: c.primary, fontSize: 20, fontWeight: "700" },
-    headerSub: { ...theme.font(theme.type.labelSm), color: "#00f0ff", fontSize: 10 },
+    headerTitle: { ...theme.font(theme.type.headlineLgMobile), color: "#f59e0b", fontSize: 20, fontWeight: "700" },
+    headerSub: { ...theme.font(theme.type.labelSm), color: "#d4af37", fontSize: 10, fontWeight: "600" },
 
     // Reticle & HUD Overlay
     hudContainer: {
@@ -119,9 +119,9 @@ export default function InAppScanScreen() {
       flexDirection: "row",
       alignItems: "center",
       gap: 8,
-      backgroundColor: "rgba(20, 19, 20, 0.9)",
+      backgroundColor: "rgba(12, 12, 14, 0.9)",
     },
-    reticleText: { ...theme.font(theme.type.labelCaps), color: "#00f0ff", fontSize: 11 },
+    reticleText: { ...theme.font(theme.type.labelCaps), color: "#f59e0b", fontSize: 11, fontWeight: "700" },
     simBtn: {
       width: "100%",
       paddingVertical: 16,
@@ -131,66 +131,72 @@ export default function InAppScanScreen() {
       justifyContent: "center",
       gap: 8,
     },
-    simBtnText: { ...theme.font(theme.type.labelCaps), color: "#00f0ff", fontSize: 13, letterSpacing: 1 },
+    simBtnText: { ...theme.font(theme.type.labelCaps), color: isDark ? "#f59e0b" : "#ffffff", fontSize: 13, letterSpacing: 1, fontWeight: "700" },
 
-    loading: { flex: 1, alignItems: "center", justifyContent: "center", backgroundColor: "#0e0e0e", gap: 12 },
-    loadingText: { ...theme.font(theme.type.labelCaps), color: "#00f0ff", letterSpacing: 1.5 },
+    loading: { flex: 1, alignItems: "center", justifyContent: "center", backgroundColor: "#0c0c0e", gap: 12 },
+    loadingText: { ...theme.font(theme.type.labelCaps), color: "#f59e0b", letterSpacing: 1.5, fontWeight: "700" },
   });
 
   return (
     <View style={styles.container}>
-      {/* Top HUD Header */}
+      {/* Top Header */}
       <View style={styles.header}>
         <View style={styles.headerLeft}>
-          <NeumorphicView variant="raised" radius={19} style={styles.backBtn} onPress={() => router.back()}>
-            <MaterialIcons name="arrow-back" size={20} color={c.primary} />
+          <NeumorphicView
+            variant="raised"
+            glow="gold"
+            radius={19}
+            style={styles.backBtn}
+            onPress={() => router.back()}
+          >
+            <MaterialIcons name="arrow-back" size={20} color="#f59e0b" />
           </NeumorphicView>
           <View>
-            <Text style={styles.headerTitle}>AR Spatial Scanner</Text>
-            <Text style={styles.headerSub}>Node: {markerId || "8th Wall Optical Grid"}</Text>
+            <Text style={styles.headerTitle}>Optical Scanner</Text>
+            <Text style={styles.headerSub}>8th Wall WebAR • 6-DOF Spatial Engine</Text>
           </View>
         </View>
-        <MaterialIcons name="view-in-ar" size={24} color="#00f0ff" />
+        <MaterialIcons name="view-in-ar" size={24} color="#f59e0b" />
       </View>
 
-      {/* WebAR Camera View / WebView */}
-      {!url || !WebView ? (
-        <View style={styles.loading}>
-          <ActivityIndicator size="large" color="#00f0ff" />
-          <Text style={styles.loadingText}>INITIALIZING OPTICAL AR MATRIX...</Text>
-        </View>
-      ) : (
-        <WebView
-          source={{ uri: url }}
-          style={{ flex: 1, backgroundColor: "#000" }}
-          javaScriptEnabled={true}
-          domStorageEnabled={true}
-          allowsInlineMediaPlayback={true}
-          mediaPlaybackRequiresUserAction={false}
-          originWhitelist={["*"]}
-          geolocationEnabled={true}
-        />
-      )}
+      {/* Embedded 8th Wall WebAR with Hardware Acceleration */}
+      <WebView
+        source={{ uri: webArUrl }}
+        style={{ flex: 1, backgroundColor: "#0c0c0e" }}
+        allowsInlineMediaPlayback
+        mediaPlaybackRequiresUserAction={false}
+        androidHardwareAccelerationDisabled={false}
+        androidLayerType="hardware"
+        javaScriptEnabled
+        domStorageEnabled
+        startInLoadingState
+        renderLoading={() => (
+          <View style={styles.loading}>
+            <ActivityIndicator size="large" color="#f59e0b" />
+            <Text style={styles.loadingText}>INITIALIZING AR OPTICS...</Text>
+          </View>
+        )}
+      />
 
-      {/* Bottom HUD Reticle & Fallback Trigger */}
+      {/* Floating Tactical HUD */}
       <View style={styles.hudContainer}>
-        <NeumorphicView variant="inset" radius={20} style={styles.reticleCard}>
-          <MaterialIcons name="camera" size={16} color="#00f0ff" />
-          <Text style={styles.reticleText}>POINT CAMERA AT AR PHYSICAL MARKER</Text>
+        <NeumorphicView variant="raised" glow="gold" radius={20} style={styles.reticleCard}>
+          <MaterialIcons name="filter-center-focus" size={18} color="#f59e0b" />
+          <Text style={styles.reticleText}>ALIGN RETICLE WITH PHYSICAL MARKER</Text>
         </NeumorphicView>
 
         <NeumorphicView
           variant="raised"
-          glow="cyan"
+          glow="gold"
           radius={22}
           style={styles.simBtn}
-          onPress={handleSimulatedScan}
+          onPress={handleSimulateRecognize}
         >
           {claiming ? (
-            <ActivityIndicator size="small" color="#00f0ff" />
+            <ActivityIndicator size="small" color="#f59e0b" />
           ) : (
             <>
-              <MaterialIcons name="qr-code-scanner" size={20} color="#00f0ff" />
+              <MaterialIcons name="auto-awesome" size={20} color={isDark ? "#f59e0b" : "#ffffff"} />
               <Text style={styles.simBtnText}>VERIFY & CLAIM REWARD</Text>
             </>
           )}

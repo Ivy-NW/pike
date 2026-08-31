@@ -10,7 +10,7 @@ import { NeumorphicView } from "@/components/NeumorphicView";
 
 type FilterType = "all" | "active" | "completed";
 
-/** Stitch Quests List (Neumorphic & Buttery Smooth) */
+/** Stitch Quests List (PIKE Gold & Sapphire Blue Neumorphic) */
 export default function QuestsScreen() {
   const theme = useTheme();
   const [quests, setQuests] = useState<UserQuestListItem[]>([]);
@@ -46,44 +46,44 @@ export default function QuestsScreen() {
   });
 
   const styles = StyleSheet.create({
-    container: { flex: 1, backgroundColor: isDark ? "#141314" : c.surface },
-    content: { padding: theme.spacing.containerPadding, paddingTop: 16, paddingBottom: 130 },
-    headerTitle: { ...theme.font(theme.type.headlineLgMobile), color: c.onSurface, fontSize: 26 },
+    container: { flex: 1, backgroundColor: isDark ? "#0c0c0e" : c.surface },
+    content: { padding: 18, paddingTop: 16, paddingBottom: 130 },
+    headerTitle: { ...theme.font(theme.type.headlineLgMobile), color: c.onSurface, fontSize: 26, fontWeight: "700" },
     headerSub: { ...theme.font(theme.type.bodyMd), color: c.onSurfaceVariant, marginTop: 4, marginBottom: 16 },
     
     // Filter Pills
     filterRow: { flexDirection: "row", gap: 10, marginBottom: 18 },
-    filterPill: { paddingHorizontal: 16, paddingVertical: 8 },
-    filterPillText: { ...theme.font(theme.type.labelCaps), fontSize: 11, letterSpacing: 0.8 },
+    filterPill: { paddingHorizontal: 16, paddingVertical: 8, borderRadius: 14 },
+    filterPillActiveText: { ...theme.font(theme.type.labelCaps), color: isDark ? "#f59e0b" : c.primary, fontSize: 11, fontWeight: "700" },
+    filterPillInactiveText: { ...theme.font(theme.type.labelCaps), color: c.onSurfaceVariant, fontSize: 11 },
 
     // Feature Quest Card
-    featureCard: { padding: 20, borderRadius: 24, marginBottom: 20, borderWidth: 1, borderColor: "rgba(207, 197, 186, 0.25)" },
-    premiumBadge: { flexDirection: "row", alignItems: "center", gap: 5, paddingHorizontal: 10, paddingVertical: 4, alignSelf: "flex-start", marginBottom: 12 },
-    premiumText: { ...theme.font(theme.type.labelCaps), color: "#cfc5ba", fontSize: 10 },
-    featureTitle: { ...theme.font(theme.type.headlineSm), color: c.onSurface, fontSize: 20 },
+    featureCard: { padding: 20, borderRadius: 24, marginBottom: 20 },
+    premiumBadge: { flexDirection: "row", alignItems: "center", gap: 5, paddingHorizontal: 10, paddingVertical: 4, alignSelf: "flex-start", marginBottom: 12, borderRadius: 10 },
+    premiumText: { ...theme.font(theme.type.labelCaps), color: isDark ? "#f59e0b" : "#b45309", fontSize: 10, fontWeight: "700" },
+    featureTitle: { ...theme.font(theme.type.headlineSm), color: c.onSurface, fontSize: 20, fontWeight: "700" },
     featureDesc: { ...theme.font(theme.type.bodyMd), color: c.onSurfaceVariant, marginTop: 4, marginBottom: 16 },
     featureFooter: { flexDirection: "row", justifyContent: "space-between", alignItems: "center" },
     featureReward: { flexDirection: "row", alignItems: "center", gap: 6 },
-    featureRewardText: { ...theme.font(theme.type.bodyMd), color: "#cfc5ba", fontWeight: "700" },
-    initiateBtn: { flexDirection: "row", alignItems: "center", gap: 6, paddingHorizontal: 16, paddingVertical: 8 },
-    initiateBtnText: { ...theme.font(theme.type.labelCaps), color: "#cfc5ba" },
+    featureRewardText: { ...theme.font(theme.type.bodyMd), color: isDark ? "#f59e0b" : "#b45309", fontWeight: "700" },
+    initiateBtn: { flexDirection: "row", alignItems: "center", gap: 6, paddingHorizontal: 16, paddingVertical: 8, borderRadius: 14 },
+    initiateBtnText: { ...theme.font(theme.type.labelCaps), color: isDark ? "#f59e0b" : c.primary, fontWeight: "700" },
 
     // Standard Quest Card
     card: { padding: 18, borderRadius: 24, marginBottom: 14 },
     cardTopRow: { flexDirection: "row", justifyContent: "space-between", alignItems: "flex-start", marginBottom: 12 },
     iconSquare: { width: 48, height: 48, borderRadius: 16, alignItems: "center", justifyContent: "center" },
-    statusBadge: { flexDirection: "row", alignItems: "center", gap: 5, paddingHorizontal: 10, paddingVertical: 4 },
-    statusActive: { ...theme.font(theme.type.labelCaps), color: "#00f0ff", fontSize: 10 },
-    statusCompleted: { ...theme.font(theme.type.labelCaps), color: "#10B981", fontSize: 10 },
-    pulsingDot: { width: 6, height: 6, borderRadius: 3, backgroundColor: "#00f0ff" },
-    cardTitle: { ...theme.font(theme.type.headlineSm), color: c.onSurface, fontSize: 18 },
-    cardVenue: { ...theme.font(theme.type.bodyMd), color: c.onSurfaceVariant, marginTop: 2 },
-    cardBottomRow: { flexDirection: "row", justifyContent: "space-between", alignItems: "center", marginTop: 14, paddingTop: 12, borderTopWidth: 1, borderTopColor: "rgba(255,255,255,0.05)" },
+    statusBadge: { flexDirection: "row", alignItems: "center", gap: 5, paddingHorizontal: 10, paddingVertical: 4, borderRadius: 10 },
+    statusActive: { ...theme.font(theme.type.labelCaps), color: isDark ? "#f59e0b" : c.primary, fontSize: 10, fontWeight: "700" },
+    statusCompleted: { ...theme.font(theme.type.labelCaps), color: "#10B981", fontSize: 10, fontWeight: "700" },
+    pulsingDot: { width: 6, height: 6, borderRadius: 3, backgroundColor: isDark ? "#f59e0b" : c.primary },
+    cardTitle: { ...theme.font(theme.type.headlineSm), color: c.onSurface, fontSize: 18, fontWeight: "700" },
+    cardVenue: { ...theme.font(theme.type.bodyMd), color: c.onSurfaceVariant, marginTop: 2, fontSize: 13 },
+    cardBottomRow: { flexDirection: "row", justifyContent: "space-between", alignItems: "center", marginTop: 14, paddingTop: 12, borderTopWidth: 1, borderTopColor: isDark ? "rgba(212,175,55,0.1)" : "rgba(15,23,42,0.06)" },
     xpTag: { flexDirection: "row", alignItems: "center", gap: 4 },
-    xpText: { ...theme.font(theme.type.bodyMd), color: "#00eefc", fontWeight: "700" },
-    scanBtn: { flexDirection: "row", alignItems: "center", gap: 6, paddingHorizontal: 16, paddingVertical: 8 },
-    scanBtnText: { ...theme.font(theme.type.labelCaps), color: "#00f0ff", fontSize: 11 },
-    startBtnText: { ...theme.font(theme.type.labelCaps), color: c.onSurface, fontSize: 11 },
+    xpText: { ...theme.font(theme.type.bodyMd), color: isDark ? "#f59e0b" : c.primary, fontWeight: "700" },
+    scanBtn: { flexDirection: "row", alignItems: "center", gap: 6, paddingHorizontal: 16, paddingVertical: 8, borderRadius: 14 },
+    scanBtnText: { ...theme.font(theme.type.labelCaps), color: isDark ? "#f59e0b" : c.primary, fontSize: 11, fontWeight: "700" },
     emptyText: { ...theme.font(theme.type.bodyMd), color: c.onSurfaceVariant, textAlign: "center", marginTop: 32 },
   });
 
@@ -99,82 +99,77 @@ export default function QuestsScreen() {
           <RefreshControl
             refreshing={refreshing}
             onRefresh={onRefresh}
-            tintColor="#00f0ff"
-            colors={["#00f0ff"]}
+            tintColor={isDark ? "#f59e0b" : c.primary}
+            colors={[isDark ? "#f59e0b" : c.primary]}
           />
         }
         ListHeaderComponent={
           <>
-            <Text style={styles.headerTitle}>Available Quests</Text>
-            <Text style={styles.headerSub}>Complete missions to earn XP and unlock new sectors.</Text>
-
-            {/* Filter Tabs */}
+            {/* Filter Pills */}
             <View style={styles.filterRow}>
               <NeumorphicView
                 variant={filter === "all" ? "inset" : "raised"}
-                radius={16}
+                glow={filter === "all" ? (isDark ? "gold" : "blue") : "none"}
+                radius={14}
                 style={styles.filterPill}
                 onPress={() => setFilter("all")}
               >
-                <Text style={[styles.filterPillText, { color: filter === "all" ? "#00f0ff" : c.onSurfaceVariant }]}>
-                  ALL ({quests.length})
-                </Text>
+                <Text style={filter === "all" ? styles.filterPillActiveText : styles.filterPillInactiveText}>ALL MISSIONS</Text>
               </NeumorphicView>
+
               <NeumorphicView
                 variant={filter === "active" ? "inset" : "raised"}
-                radius={16}
+                glow={filter === "active" ? (isDark ? "gold" : "blue") : "none"}
+                radius={14}
                 style={styles.filterPill}
                 onPress={() => setFilter("active")}
               >
-                <Text style={[styles.filterPillText, { color: filter === "active" ? "#00f0ff" : c.onSurfaceVariant }]}>
-                  ACTIVE ({quests.filter((q) => !q.completed).length})
-                </Text>
+                <Text style={filter === "active" ? styles.filterPillActiveText : styles.filterPillInactiveText}>ACTIVE (LIVE)</Text>
               </NeumorphicView>
+
               <NeumorphicView
                 variant={filter === "completed" ? "inset" : "raised"}
-                radius={16}
+                glow={filter === "completed" ? (isDark ? "gold" : "blue") : "none"}
+                radius={14}
                 style={styles.filterPill}
                 onPress={() => setFilter("completed")}
               >
-                <Text style={[styles.filterPillText, { color: filter === "completed" ? "#10B981" : c.onSurfaceVariant }]}>
-                  COMPLETED ({quests.filter((q) => q.completed).length})
-                </Text>
+                <Text style={filter === "completed" ? styles.filterPillActiveText : styles.filterPillInactiveText}>COMPLETED</Text>
               </NeumorphicView>
             </View>
 
-            {/* Feature Premium Quest (Only shown in 'all' or 'active') */}
+            {/* Featured Vanguard Mission Card */}
             {filter !== "completed" && (
-              <NeumorphicView variant="raised" glow="premium" radius={24} style={styles.featureCard}>
-                <NeumorphicView variant="inset" radius={12} style={styles.premiumBadge}>
-                  <MaterialIcons name="star" size={12} color="#cfc5ba" />
-                  <Text style={styles.premiumText}>PREMIUM QUEST</Text>
+              <NeumorphicView variant="raised" glow="gold" radius={24} style={styles.featureCard}>
+                <NeumorphicView variant="inset" radius={10} style={styles.premiumBadge}>
+                  <MaterialIcons name="stars" size={14} color={isDark ? "#f59e0b" : "#b45309"} />
+                  <Text style={styles.premiumText}>HIGH-YIELD SECTOR ANOMALY</Text>
                 </NeumorphicView>
-                <Text style={styles.featureTitle}>The Golden Node</Text>
-                <Text style={styles.featureDesc}>Locate and interface with the legendary mainframe cluster. High risk, high reward.</Text>
+                <Text style={styles.featureTitle}>Decipher the KICC Anomaly</Text>
+                <Text style={styles.featureDesc}>
+                  Align 6-DOF optical camera telemetry at KICC Sky Deck Lounge to unlock the VIP Vanguard tier.
+                </Text>
                 <View style={styles.featureFooter}>
                   <View style={styles.featureReward}>
-                    <MaterialIcons name="stars" size={18} color="#cfc5ba" />
-                    <Text style={styles.featureRewardText}>+2500 XP</Text>
+                    <MaterialIcons name="card-giftcard" size={18} color={isDark ? "#f59e0b" : "#b45309"} />
+                    <Text style={styles.featureRewardText}>20% off + 500 PTS</Text>
                   </View>
                   <NeumorphicView
                     variant="raised"
-                    radius={18}
+                    glow="gold"
+                    radius={14}
                     style={styles.initiateBtn}
-                    onPress={() => router.push("/(tabs)/map")}
+                    onPress={() => router.push("/quest/q-nbo-1")}
                   >
-                    <MaterialIcons name="rocket-launch" size={16} color="#cfc5ba" />
-                    <Text style={styles.initiateBtnText}>INITIATE</Text>
+                    <Text style={styles.initiateBtnText}>DEPLOY</Text>
+                    <MaterialIcons name="arrow-forward" size={16} color={isDark ? "#f59e0b" : c.primary} />
                   </NeumorphicView>
                 </View>
               </NeumorphicView>
             )}
           </>
         }
-        ListEmptyComponent={
-          <Text style={styles.emptyText}>
-            {filter === "completed" ? "No completed quests yet." : "No quests found in this category."}
-          </Text>
-        }
+        ListEmptyComponent={<Text style={styles.emptyText}>No missions found in this category.</Text>}
         renderItem={({ item }) => (
           <NeumorphicView
             variant="raised"
@@ -196,13 +191,24 @@ export default function QuestsScreen() {
           >
             <View style={styles.cardTopRow}>
               <NeumorphicView variant="inset" radius={16} style={styles.iconSquare}>
-                <MaterialIcons name={item.completed ? "verified" : "explore"} size={26} color={item.completed ? "#10B981" : "#00f0ff"} />
+                <MaterialIcons
+                  name={item.completed ? "verified" : "memory"}
+                  size={24}
+                  color={item.completed ? "#10B981" : (isDark ? "#f59e0b" : c.primary)}
+                />
               </NeumorphicView>
-              <NeumorphicView variant="inset" radius={12} style={styles.statusBadge}>
-                {!item.completed && <View style={styles.pulsingDot} />}
-                <Text style={item.completed ? styles.statusCompleted : styles.statusActive}>
-                  {item.completed ? "COMPLETED" : "ACTIVE"}
-                </Text>
+              <NeumorphicView variant="inset" radius={10} style={styles.statusBadge}>
+                {item.completed ? (
+                  <>
+                    <MaterialIcons name="check-circle" size={12} color="#10B981" />
+                    <Text style={styles.statusCompleted}>RESOLVED</Text>
+                  </>
+                ) : (
+                  <>
+                    <View style={styles.pulsingDot} />
+                    <Text style={styles.statusActive}>OPTICAL READY</Text>
+                  </>
+                )}
               </NeumorphicView>
             </View>
 
@@ -211,24 +217,20 @@ export default function QuestsScreen() {
 
             <View style={styles.cardBottomRow}>
               <View style={styles.xpTag}>
-                <MaterialIcons name="stars" size={18} color="#00eefc" />
-                <Text style={styles.xpText}>+250 XP</Text>
+                <MaterialIcons name="military-tech" size={18} color={isDark ? "#f59e0b" : "#b45309"} />
+                <Text style={styles.xpText}>+250 PTS • {item.rewardDescription}</Text>
               </View>
 
-              {!item.completed && item.markerId ? (
+              {!item.completed && (
                 <NeumorphicView
                   variant="raised"
-                  glow="cyan"
-                  radius={16}
+                  glow="gold"
+                  radius={14}
                   style={styles.scanBtn}
-                  onPress={() => router.push(`/scan/${item.markerId}`)}
+                  onPress={() => router.push(`/scan/${item.markerId || item.id}`)}
                 >
-                  <MaterialIcons name="qr-code-scanner" size={16} color="#00f0ff" />
-                  <Text style={styles.scanBtnText}>SCAN (AR)</Text>
-                </NeumorphicView>
-              ) : (
-                <NeumorphicView variant="flat" radius={16} style={styles.scanBtn}>
-                  <Text style={styles.startBtnText}>{item.completed ? "VIEW" : "DETAILS"}</Text>
+                  <MaterialIcons name="qr-code-scanner" size={16} color={isDark ? "#f59e0b" : c.primary} />
+                  <Text style={styles.scanBtnText}>SCAN</Text>
                 </NeumorphicView>
               )}
             </View>

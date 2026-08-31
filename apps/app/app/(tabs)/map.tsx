@@ -78,7 +78,7 @@ export default function MapScreen() {
     };
   });
 
-  // 100% Free Open-Source OpenStreetMap Tile Implementation (Zero API Keys required)
+  // 100% Free OpenStreetMap Pure Implementation (Zero Tokens, Zero API Keys, Pure OSM)
   const mapHtml = `
     <!DOCTYPE html>
     <html>
@@ -90,19 +90,30 @@ export default function MapScreen() {
       <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
       <style>
         * { box-sizing: border-box; margin: 0; padding: 0; }
-        body, html { width: 100%; height: 100%; background: ${isDark ? "#141314" : "#f1f5f9"}; overflow: hidden; font-family: -apple-system, BlinkMacSystemFont, "Space Grotesk", sans-serif; }
+        body, html { width: 100%; height: 100%; background: ${isDark ? "#0c0c0e" : "#f4f6fa"}; overflow: hidden; font-family: -apple-system, BlinkMacSystemFont, "Space Grotesk", sans-serif; }
         #map { width: 100%; height: 100%; }
         
-        /* Neumorphic Cyan/Gold Glow Pins matching PIKE Logo */
+        /* Dark Theme OSM Tile Filter — Gives OpenStreetMap a rich dark titanium aesthetic without any external API keys! */
+        ${
+          isDark
+            ? `
+        .leaflet-tile-pane {
+          filter: brightness(0.65) invert(1) contrast(3.5) hue-rotate(200deg) saturate(0.2) brightness(0.75);
+        }
+        `
+            : ""
+        }
+        
+        /* Neumorphic Gold / Sapphire Glow Pins matching PIKE Logo */
         .pin-wrapper {
           display: flex;
           align-items: center;
           justify-content: center;
         }
         .custom-pin {
-          background: ${isDark ? "#141314" : "#ffffff"};
-          color: ${isDark ? "#00f0ff" : "#1d4ed8"};
-          border: 2.5px solid ${isDark ? "#00f0ff" : "#1d4ed8"};
+          background: ${isDark ? "#141417" : "#ffffff"};
+          color: ${isDark ? "#f59e0b" : "#1d4ed8"};
+          border: 2.5px solid ${isDark ? "#f59e0b" : "#1d4ed8"};
           border-radius: 50%;
           width: 38px;
           height: 38px;
@@ -111,7 +122,7 @@ export default function MapScreen() {
           justify-content: center;
           font-size: 16px;
           font-weight: bold;
-          box-shadow: 0 4px 14px ${isDark ? "rgba(0, 240, 255, 0.6)" : "rgba(29, 78, 216, 0.4)"};
+          box-shadow: 0 4px 14px ${isDark ? "rgba(245, 158, 11, 0.6)" : "rgba(29, 78, 216, 0.35)"};
           transition: transform 0.2s ease;
           cursor: pointer;
         }
@@ -126,44 +137,41 @@ export default function MapScreen() {
         
         /* Popup Styling */
         .leaflet-popup-content-wrapper {
-          background: ${isDark ? "rgba(20, 19, 20, 0.95)" : "rgba(255, 255, 255, 0.98)"};
+          background: ${isDark ? "rgba(20, 20, 24, 0.95)" : "rgba(255, 255, 255, 0.98)"};
           backdrop-filter: blur(12px);
           -webkit-backdrop-filter: blur(12px);
-          color: ${isDark ? "#f8fafc" : "#0f172a"};
-          border: 1.5px solid ${isDark ? "rgba(0, 240, 255, 0.4)" : "rgba(29, 78, 216, 0.3)"};
+          color: ${isDark ? "#fbfaf8" : "#0f172a"};
+          border: 1.5px solid ${isDark ? "rgba(245, 158, 11, 0.4)" : "rgba(29, 78, 216, 0.25)"};
           border-radius: 18px;
-          box-shadow: 0 16px 36px rgba(0,0,0,0.4);
+          box-shadow: 0 16px 36px rgba(0,0,0,0.3);
           padding: 8px 6px;
         }
         .leaflet-popup-tip {
-          background: ${isDark ? "rgba(20, 19, 20, 0.95)" : "rgba(255, 255, 255, 0.98)"};
+          background: ${isDark ? "rgba(20, 20, 24, 0.95)" : "rgba(255, 255, 255, 0.98)"};
         }
         .popup-title {
           font-size: 14px;
           font-weight: 700;
-          color: ${isDark ? "#00f0ff" : "#1d4ed8"};
+          color: ${isDark ? "#f59e0b" : "#1d4ed8"};
           margin-bottom: 2px;
         }
         .popup-quest {
           font-size: 12px;
-          color: ${isDark ? "#cbd5e1" : "#334155"};
+          color: ${isDark ? "#a1a1aa" : "#334155"};
           margin-bottom: 6px;
         }
         .popup-reward {
           font-size: 11px;
           font-weight: 700;
-          color: ${isDark ? "#f59e0b" : "#b45309"};
+          color: #f59e0b;
           display: flex;
           align-items: center;
           gap: 4px;
         }
         .leaflet-control-attribution {
-          background: ${isDark ? "rgba(20, 19, 20, 0.8)" : "rgba(255, 255, 255, 0.8)"} !important;
-          color: ${isDark ? "#94a3b8" : "#64748b"} !important;
+          background: ${isDark ? "rgba(12, 12, 14, 0.8)" : "rgba(255, 255, 255, 0.8)"} !important;
+          color: ${isDark ? "#71717a" : "#64748b"} !important;
           font-size: 9px !important;
-        }
-        .leaflet-control-attribution a {
-          color: ${isDark ? "#00f0ff" : "#1d4ed8"} !important;
         }
       </style>
     </head>
@@ -179,14 +187,8 @@ export default function MapScreen() {
 
         L.control.zoom({ position: 'topright' }).addTo(map);
 
-        // 100% Free OpenStreetMap Tiles (Open-Source, Zero API Key)
-        var isDarkMode = ${isDark};
-        var tileUrl = isDarkMode
-          ? 'https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png'
-          : 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png';
-
-        L.tileLayer(tileUrl, {
-          subdomains: isDarkMode ? 'abc' : 'abc',
+        // Standard 100% Free OpenStreetMap Tiles (Open-Source, Zero Keys, Zero Limits)
+        L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
           maxZoom: 19,
           attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
         }).addTo(map);
@@ -229,28 +231,28 @@ export default function MapScreen() {
   `;
 
   const styles = StyleSheet.create({
-    container: { flex: 1, backgroundColor: isDark ? "#141314" : c.surface },
+    container: { flex: 1, backgroundColor: isDark ? "#0c0c0e" : c.surface },
     mapContainer: {
       height: "44%",
       width: "100%",
-      backgroundColor: isDark ? "#141314" : "#e2e8f0",
+      backgroundColor: isDark ? "#0c0c0e" : "#e2e8f0",
       borderBottomWidth: 1,
-      borderBottomColor: isDark ? "rgba(255, 255, 255, 0.05)" : "rgba(15, 23, 42, 0.08)",
+      borderBottomColor: isDark ? "rgba(212, 175, 55, 0.15)" : "rgba(15, 23, 42, 0.08)",
       overflow: "hidden",
     },
     sheet: {
       flex: 1,
-      backgroundColor: isDark ? "#141314" : c.surface,
+      backgroundColor: isDark ? "#0c0c0e" : c.surface,
       borderTopLeftRadius: 28,
       borderTopRightRadius: 28,
       paddingTop: 16,
       paddingHorizontal: 16,
       marginTop: -20,
       borderTopWidth: 1,
-      borderTopColor: isDark ? "rgba(255, 255, 255, 0.08)" : "rgba(15, 23, 42, 0.08)",
-      shadowColor: isDark ? "#000000" : "#94a3b8",
+      borderTopColor: isDark ? "rgba(212, 175, 55, 0.18)" : "rgba(15, 23, 42, 0.08)",
+      shadowColor: isDark ? "#000000" : "#0f172a",
       shadowOffset: { width: 0, height: -4 },
-      shadowOpacity: isDark ? 0.75 : 0.2,
+      shadowOpacity: isDark ? 0.75 : 0.08,
       shadowRadius: 10,
       elevation: 8,
     },
@@ -261,10 +263,10 @@ export default function MapScreen() {
       marginBottom: 10,
     },
     sheetTitle: { ...theme.font(theme.type.labelCaps), color: c.onSurfaceVariant, letterSpacing: 1.5, fontSize: 11, fontWeight: "700" },
-    sheetCount: { ...theme.font(theme.type.bodyLg), color: isDark ? "#00f0ff" : c.primary, fontWeight: "700" },
+    sheetCount: { ...theme.font(theme.type.bodyLg), color: isDark ? "#f59e0b" : c.primary, fontWeight: "700" },
     filterRow: { flexDirection: "row", gap: 8, marginBottom: 14 },
     filterPill: { paddingHorizontal: 14, paddingVertical: 8, borderRadius: 14 },
-    filterPillActiveText: { ...theme.font(theme.type.labelCaps), color: isDark ? "#00f0ff" : c.primary, fontSize: 11, fontWeight: "700" },
+    filterPillActiveText: { ...theme.font(theme.type.labelCaps), color: isDark ? "#f59e0b" : c.primary, fontSize: 11, fontWeight: "700" },
     filterPillInactiveText: { ...theme.font(theme.type.labelCaps), color: c.onSurfaceVariant, fontSize: 11 },
     card: {
       padding: 16,
@@ -278,7 +280,7 @@ export default function MapScreen() {
     cardTitle: { ...theme.font(theme.type.headlineSm), color: c.onSurface, fontSize: 16, fontWeight: "700" },
     cardSub: { ...theme.font(theme.type.bodyMd), color: c.onSurfaceVariant, marginTop: 2, fontSize: 13 },
     distanceTag: { flexDirection: "row", alignItems: "center", gap: 4, paddingHorizontal: 10, paddingVertical: 4, marginTop: 6, alignSelf: "flex-start", borderRadius: 8 },
-    distanceText: { ...theme.font(theme.type.labelCaps), color: isDark ? "#00f0ff" : c.primary, fontSize: 10, fontWeight: "700" },
+    distanceText: { ...theme.font(theme.type.labelCaps), color: isDark ? "#f59e0b" : c.primary, fontSize: 10, fontWeight: "700" },
     empty: { ...theme.font(theme.type.bodyMd), color: c.onSurfaceVariant, textAlign: "center", marginTop: 24 },
   });
 
@@ -296,7 +298,7 @@ export default function MapScreen() {
           <WebView
             ref={webViewRef}
             source={{ html: mapHtml }}
-            style={{ flex: 1, backgroundColor: isDark ? "#141314" : "#f1f5f9" }}
+            style={{ flex: 1, backgroundColor: isDark ? "#0c0c0e" : "#f4f6fa" }}
             scrollEnabled={false}
           />
         )}
@@ -311,7 +313,7 @@ export default function MapScreen() {
         <View style={styles.filterRow}>
           <NeumorphicView
             variant={nodeFilter === "all" ? "inset" : "raised"}
-            glow={nodeFilter === "all" ? (isDark ? "cyan" : "blue") : "none"}
+            glow={nodeFilter === "all" ? (isDark ? "gold" : "blue") : "none"}
             radius={14}
             style={styles.filterPill}
             onPress={() => setNodeFilter("all")}
@@ -320,7 +322,7 @@ export default function MapScreen() {
           </NeumorphicView>
           <NeumorphicView
             variant={nodeFilter === "high" ? "inset" : "raised"}
-            glow={nodeFilter === "high" ? (isDark ? "cyan" : "blue") : "none"}
+            glow={nodeFilter === "high" ? (isDark ? "gold" : "blue") : "none"}
             radius={14}
             style={styles.filterPill}
             onPress={() => setNodeFilter("high")}
@@ -329,7 +331,7 @@ export default function MapScreen() {
           </NeumorphicView>
           <NeumorphicView
             variant={nodeFilter === "exploration" ? "inset" : "raised"}
-            glow={nodeFilter === "exploration" ? (isDark ? "cyan" : "blue") : "none"}
+            glow={nodeFilter === "exploration" ? (isDark ? "gold" : "blue") : "none"}
             radius={14}
             style={styles.filterPill}
             onPress={() => setNodeFilter("exploration")}
@@ -370,7 +372,7 @@ export default function MapScreen() {
                 }
               >
                 <NeumorphicView variant="inset" radius={14} style={styles.nodeIconWell}>
-                  <MaterialIcons name={item.completed ? "memory" : "explore"} size={22} color={item.completed ? "#10B981" : (isDark ? "#00f0ff" : c.primary)} />
+                  <MaterialIcons name={item.completed ? "military-tech" : "explore"} size={22} color={item.completed ? "#10B981" : (isDark ? "#f59e0b" : c.primary)} />
                 </NeumorphicView>
                 <View style={{ flex: 1 }}>
                   <Text style={styles.cardTitle}>{item.venueName}</Text>
@@ -383,7 +385,7 @@ export default function MapScreen() {
                   <MaterialIcons
                     name={favorites.has(item.venueId) ? "favorite" : "favorite-border"}
                     size={20}
-                    color={favorites.has(item.venueId) ? (isDark ? "#00f0ff" : "#dc2626") : c.onSurfaceVariant}
+                    color={favorites.has(item.venueId) ? "#ef4444" : c.onSurfaceVariant}
                   />
                 </TouchableOpacity>
                 <MaterialIcons name="chevron-right" size={22} color={c.onSurfaceVariant} />

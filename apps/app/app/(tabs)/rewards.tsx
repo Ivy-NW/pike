@@ -26,7 +26,7 @@ const SAMPLE_HISTORY: LedgerItem[] = [
   { id: "4", title: "Nairobi Cyber-Circuit Step Bonus", subtitle: "10K Steps Sync", points: "+500 PTS", type: "earned", date: "Aug 27, 2026" },
 ];
 
-/** Stitch Reward Wallet (Neumorphic) */
+/** Stitch Reward Wallet (PIKE Gold & Sapphire Blue) */
 export default function RewardsScreen() {
   const theme = useTheme();
   const [wallet, setWallet] = useState<UserWalletItem[]>([]);
@@ -77,68 +77,68 @@ export default function RewardsScreen() {
   const expired = wallet.filter((w) => w.isExpired);
 
   const styles = StyleSheet.create({
-    container: { flex: 1, backgroundColor: isDark ? "#141314" : c.surface },
+    container: { flex: 1, backgroundColor: isDark ? "#0c0c0e" : c.surface },
     content: { padding: 18, paddingTop: 16, paddingBottom: 130 },
 
     // Total Balance Card
     balanceCard: { padding: 24, borderRadius: 28, alignItems: "center", justifyContent: "center", marginBottom: 24, position: "relative" },
-    balanceLabel: { ...theme.font(theme.type.labelCaps), color: c.onSurfaceVariant, letterSpacing: 2, marginBottom: 6 },
+    balanceLabel: { ...theme.font(theme.type.labelCaps), color: c.onSurfaceVariant, letterSpacing: 2, marginBottom: 6, fontWeight: "700" },
     balanceRow: { flexDirection: "row", alignItems: "baseline", gap: 6 },
-    balanceValue: { ...theme.font(theme.type.displayXl), color: c.primary, fontSize: 44, fontWeight: "700" },
-    balanceUnit: { ...theme.font(theme.type.headlineSm), color: isDark ? "#00f0ff" : c.primary },
+    balanceValue: { ...theme.font(theme.type.displayXl), color: isDark ? "#f59e0b" : c.primary, fontSize: 44, fontWeight: "700" },
+    balanceUnit: { ...theme.font(theme.type.headlineSm), color: isDark ? "#f59e0b" : c.primary, fontWeight: "700" },
     balanceBtnRow: { flexDirection: "row", gap: 12, marginTop: 18 },
     balanceBtn: { flexDirection: "row", alignItems: "center", gap: 6, paddingHorizontal: 18, paddingVertical: 10, borderRadius: 18 },
-    balanceBtnText: { ...theme.font(theme.type.labelCaps), color: c.primary, letterSpacing: 1 },
+    balanceBtnText: { ...theme.font(theme.type.labelCaps), color: isDark ? "#f59e0b" : c.primary, letterSpacing: 1, fontWeight: "700" },
 
     // Rewards Section
     sectionHeader: { flexDirection: "row", justifyContent: "space-between", alignItems: "center", marginBottom: 16 },
-    sectionTitle: { ...theme.font(theme.type.headlineSm), color: c.primary },
+    sectionTitle: { ...theme.font(theme.type.headlineSm), color: c.onSurface, fontWeight: "700" },
     newTag: { paddingHorizontal: 12, paddingVertical: 4, borderRadius: 12 },
-    newTagText: { ...theme.font(theme.type.labelCaps), color: isDark ? "#00f0ff" : c.primary, fontSize: 10 },
+    newTagText: { ...theme.font(theme.type.labelCaps), color: isDark ? "#f59e0b" : c.primary, fontSize: 10, fontWeight: "700" },
 
     // Reward Cards
     card: { padding: 18, borderRadius: 24, marginBottom: 14 },
     cardTopRow: { flexDirection: "row", justifyContent: "space-between", alignItems: "flex-start", marginBottom: 12 },
     iconWell: { width: 48, height: 48, borderRadius: 16, alignItems: "center", justifyContent: "center" },
-    premiumTag: { paddingHorizontal: 10, paddingVertical: 3, borderRadius: 10, borderWidth: 1, borderColor: "rgba(0,240,255,0.3)" },
-    premiumTagText: { ...theme.font(theme.type.labelCaps), color: isDark ? "#00dbe9" : c.primary, fontSize: 10 },
-    cardTitle: { ...theme.font(theme.type.headlineSm), color: c.primary, fontSize: 18 },
-    cardVenue: { ...theme.font(theme.type.bodyMd), color: c.onSurfaceVariant, marginTop: 2, marginBottom: 16 },
-    cardFooter: { flexDirection: "row", justifyContent: "space-between", alignItems: "center", paddingTop: 12, borderTopWidth: 1, borderTopColor: "rgba(255,255,255,0.05)" },
-    pointsText: { ...theme.font(theme.type.bodyMd), color: c.onSurface, fontWeight: "700" },
-    redeemBtn: { paddingHorizontal: 20, paddingVertical: 8, borderRadius: 14, borderWidth: 1, borderColor: "rgba(0,240,255,0.25)" },
-    redeemBtnText: { ...theme.font(theme.type.labelCaps), color: isDark ? "#00f0ff" : c.primary, fontSize: 11 },
+    premiumTag: { paddingHorizontal: 10, paddingVertical: 3, borderRadius: 10 },
+    premiumTagText: { ...theme.font(theme.type.labelCaps), color: isDark ? "#f59e0b" : "#b45309", fontSize: 10, fontWeight: "700" },
+    cardTitle: { ...theme.font(theme.type.headlineSm), color: c.onSurface, fontSize: 18, fontWeight: "700" },
+    cardVenue: { ...theme.font(theme.type.bodyMd), color: c.onSurfaceVariant, marginTop: 2, marginBottom: 16, fontSize: 13 },
+    cardFooter: { flexDirection: "row", justifyContent: "space-between", alignItems: "center", paddingTop: 12, borderTopWidth: 1, borderTopColor: isDark ? "rgba(212,175,55,0.1)" : "rgba(15,23,42,0.06)" },
+    pointsText: { ...theme.font(theme.type.bodyMd), color: isDark ? "#f59e0b" : c.primary, fontWeight: "700" },
+    redeemBtn: { paddingHorizontal: 20, paddingVertical: 8, borderRadius: 14 },
+    redeemBtnText: { ...theme.font(theme.type.labelCaps), color: isDark ? "#f59e0b" : c.primary, fontSize: 11, fontWeight: "700" },
 
     // Modal Styles
     modalBackdrop: { flex: 1, backgroundColor: "rgba(0, 0, 0, 0.75)", justifyContent: "center", alignItems: "center", padding: 20 },
     modalCard: { width: "100%", maxWidth: 380, padding: 24, borderRadius: 28 },
-    modalTitle: { ...theme.font(theme.type.headlineLgMobile), color: c.primary, fontSize: 22, fontWeight: "700", textAlign: "center", marginBottom: 6 },
+    modalTitle: { ...theme.font(theme.type.headlineLgMobile), color: c.onSurface, fontSize: 22, fontWeight: "700", textAlign: "center", marginBottom: 6 },
     modalSub: { ...theme.font(theme.type.bodyMd), color: c.onSurfaceVariant, textAlign: "center", marginBottom: 20 },
     packsGrid: { flexDirection: "row", flexWrap: "wrap", gap: 10, marginBottom: 16 },
     packPill: { flexBasis: "47%", paddingVertical: 12, alignItems: "center", justifyContent: "center", borderRadius: 16 },
-    packPillText: { ...theme.font(theme.type.labelCaps), fontSize: 12, letterSpacing: 1 },
+    packPillText: { ...theme.font(theme.type.labelCaps), fontSize: 12, letterSpacing: 1, fontWeight: "700" },
     inputWell: { paddingHorizontal: 16, paddingVertical: 12, borderRadius: 16, marginBottom: 18 },
     textInput: { ...theme.font(theme.type.bodyMd), color: c.onSurface, fontSize: 15 },
-    modalBtnRow: { flexDirection: "row", gap: 12, marginTop: 8 },
+    modalBtnRow: { flexDirection: "row", gap: 12 },
     modalBtn: { flex: 1, paddingVertical: 14, borderRadius: 18, alignItems: "center", justifyContent: "center" },
-    modalBtnText: { ...theme.font(theme.type.labelCaps), fontSize: 12, letterSpacing: 1 },
+    modalBtnText: { ...theme.font(theme.type.labelCaps), fontSize: 12, letterSpacing: 1, fontWeight: "700" },
 
-    // History Item
-    historyRow: { padding: 14, borderRadius: 18, marginBottom: 10, flexDirection: "row", alignItems: "center", justifyContent: "space-between" },
-    historyLeft: { flex: 1 },
-    historyTitle: { ...theme.font(theme.type.bodyMd), color: c.onSurface, fontWeight: "600" },
-    historyDate: { ...theme.font(theme.type.labelSm), color: c.onSurfaceVariant, marginTop: 2, fontSize: 11 },
-    historyPoints: { ...theme.font(theme.type.headlineSm), fontSize: 15, fontWeight: "700" },
+    // History Ledger List
+    ledgerItem: { padding: 14, borderRadius: 18, marginBottom: 10, flexDirection: "row", alignItems: "center", gap: 12 },
+    ledgerIcon: { width: 38, height: 38, borderRadius: 19, alignItems: "center", justifyContent: "center" },
+    ledgerTitle: { ...theme.font(theme.type.bodyMd), color: c.onSurface, fontWeight: "700" },
+    ledgerSub: { ...theme.font(theme.type.labelSm), color: c.onSurfaceVariant, marginTop: 1 },
+    ledgerPoints: { ...theme.font(theme.type.headlineSm), fontSize: 14, fontWeight: "700" },
 
-    // Voucher Reveal Modal
-    voucherWell: { padding: 20, borderRadius: 20, alignItems: "center", justifyContent: "center", marginVertical: 16, borderStyle: "dashed", borderWidth: 1, borderColor: "rgba(0,240,255,0.4)" },
-    voucherCode: { ...theme.font(theme.type.displayXl), color: isDark ? "#00f0ff" : c.primary, letterSpacing: 4, fontSize: 24, fontWeight: "700" },
-    barcodeLines: { height: 36, width: 220, backgroundColor: isDark ? "#00f0ff" : c.primary, opacity: 0.8, marginVertical: 12, borderRadius: 4 },
+    // Redeem Barcode
+    barcodeWell: { padding: 20, borderRadius: 20, alignItems: "center", justifyContent: "center", marginVertical: 18 },
+    barcodeText: { ...theme.font(theme.type.headlineSm), color: isDark ? "#f59e0b" : c.primary, letterSpacing: 4, fontSize: 20, fontWeight: "700" },
+    barcodeSub: { ...theme.font(theme.type.labelCaps), color: c.onSurfaceVariant, fontSize: 10, marginTop: 4, letterSpacing: 1 },
   });
 
   return (
     <View style={styles.container}>
-      <TopNav title="Rewards" showLogo={false} subtitle={`${wallet.length > 0 ? wallet.length : 2} vouchers available`} />
+      <TopNav title="Vault" showLogo={false} subtitle="Explorer Rewards & Points" />
 
       <ScrollView
         contentContainerStyle={styles.content}
@@ -147,57 +147,98 @@ export default function RewardsScreen() {
           <RefreshControl
             refreshing={refreshing}
             onRefresh={onRefresh}
-            tintColor={isDark ? "#00f0ff" : c.primary}
-            colors={[isDark ? "#00f0ff" : c.primary]}
+            tintColor={isDark ? "#f59e0b" : c.primary}
+            colors={[isDark ? "#f59e0b" : c.primary]}
           />
         }
       >
         {/* Total Balance Card */}
-        <NeumorphicView variant="raised" glow="cyan" radius={28} style={styles.balanceCard}>
-          <Text style={styles.balanceLabel}>TOTAL BALANCE</Text>
+        <NeumorphicView variant="raised" glow="gold" radius={28} style={styles.balanceCard}>
+          <Text style={styles.balanceLabel}>VAULT EXPLORER POINTS</Text>
           <View style={styles.balanceRow}>
             <Text style={styles.balanceValue}>{balance.toLocaleString()}</Text>
-            <Text style={styles.balanceUnit}>PTS</Text>
+            <Text style={styles.balanceUnit}> PTS</Text>
           </View>
+
           <View style={styles.balanceBtnRow}>
-            <NeumorphicView variant="raised" radius={18} style={styles.balanceBtn} onPress={() => setAddFundsVisible(true)}>
-              <MaterialIcons name="add" size={16} color={c.primary} />
-              <Text style={styles.balanceBtnText}>ADD FUNDS</Text>
+            <NeumorphicView
+              variant="raised"
+              glow="gold"
+              radius={18}
+              style={styles.balanceBtn}
+              onPress={() => setAddFundsVisible(true)}
+            >
+              <MaterialIcons name="add-circle-outline" size={18} color={isDark ? "#f59e0b" : c.primary} />
+              <Text style={styles.balanceBtnText}>ADD POINTS</Text>
             </NeumorphicView>
-            <NeumorphicView variant="raised" radius={18} style={styles.balanceBtn} onPress={() => setHistoryVisible(true)}>
-              <MaterialIcons name="history" size={16} color={c.primary} />
-              <Text style={styles.balanceBtnText}>HISTORY</Text>
+
+            <NeumorphicView
+              variant="raised"
+              radius={18}
+              style={styles.balanceBtn}
+              onPress={() => setHistoryVisible(true)}
+            >
+              <MaterialIcons name="receipt-long" size={18} color={c.onSurfaceVariant} />
+              <Text style={[styles.balanceBtnText, { color: c.onSurfaceVariant }]}>HISTORY</Text>
             </NeumorphicView>
           </View>
         </NeumorphicView>
 
-        {/* Available Rewards Header */}
+        {/* Section Header */}
         <View style={styles.sectionHeader}>
-          <Text style={styles.sectionTitle}>Available Rewards</Text>
+          <Text style={styles.sectionTitle}>UNLOCKED PERKS & REWARDS</Text>
           <NeumorphicView variant="inset" radius={12} style={styles.newTag}>
-            <Text style={styles.newTagText}>{unredeemed.length > 0 ? unredeemed.length : 2} ACTIVE</Text>
+            <Text style={styles.newTagText}>SECTOR READY</Text>
           </NeumorphicView>
         </View>
 
-        {/* Reward Cards */}
-        {wallet.length === 0 ? (
+        {/* Wallet Items List */}
+        {unredeemed.length > 0 ? (
+          unredeemed.map((item, i) => (
+            <NeumorphicView key={i} variant="raised" radius={24} style={styles.card}>
+              <View style={styles.cardTopRow}>
+                <NeumorphicView variant="inset" radius={16} style={styles.iconWell}>
+                  <MaterialIcons name="card-giftcard" size={24} color={isDark ? "#f59e0b" : c.primary} />
+                </NeumorphicView>
+                <NeumorphicView variant="raised" glow="gold" radius={10} style={styles.premiumTag}>
+                  <Text style={styles.premiumTagText}>CLAIMABLE</Text>
+                </NeumorphicView>
+              </View>
+              <Text style={styles.cardTitle}>{titleOf(item)}</Text>
+              <Text style={styles.cardVenue}>{subtitleOf(item)}</Text>
+              <View style={styles.cardFooter}>
+                <Text style={styles.pointsText}>READY IN NAIROBI</Text>
+                <NeumorphicView
+                  variant="raised"
+                  glow="gold"
+                  radius={14}
+                  style={styles.redeemBtn}
+                  onPress={() => setRedeemItem(item)}
+                >
+                  <Text style={styles.redeemBtnText}>REDEEM</Text>
+                </NeumorphicView>
+              </View>
+            </NeumorphicView>
+          ))
+        ) : (
           <>
+            {/* Sample Claimable Perks */}
             <NeumorphicView variant="raised" radius={24} style={styles.card}>
               <View style={styles.cardTopRow}>
                 <NeumorphicView variant="inset" radius={16} style={styles.iconWell}>
-                  <MaterialIcons name="local-cafe" size={24} color={isDark ? "#00f0ff" : c.primary} />
+                  <MaterialIcons name="local-cafe" size={24} color={isDark ? "#f59e0b" : c.primary} />
                 </NeumorphicView>
-                <NeumorphicView variant="raised" glow="cyan" radius={10} style={styles.premiumTag}>
-                  <Text style={styles.premiumTagText}>PREMIUM</Text>
+                <NeumorphicView variant="raised" glow="gold" radius={10} style={styles.premiumTag}>
+                  <Text style={styles.premiumTagText}>FEATURED</Text>
                 </NeumorphicView>
               </View>
               <Text style={styles.cardTitle}>20% off at KICC Sky Lounge</Text>
-              <Text style={styles.cardVenue}>KICC Sky Deck Lounge • Nairobi CBD</Text>
+              <Text style={styles.cardVenue}>KICC Sky Deck Lounge • CBD</Text>
               <View style={styles.cardFooter}>
-                <Text style={styles.pointsText}>1,500 PTS</Text>
+                <Text style={styles.pointsText}>500 PTS</Text>
                 <NeumorphicView
                   variant="raised"
-                  glow="cyan"
+                  glow="gold"
                   radius={14}
                   style={styles.redeemBtn}
                   onPress={() =>
@@ -220,10 +261,10 @@ export default function RewardsScreen() {
             <NeumorphicView variant="raised" radius={24} style={styles.card}>
               <View style={styles.cardTopRow}>
                 <NeumorphicView variant="inset" radius={16} style={styles.iconWell}>
-                  <MaterialIcons name="sports-esports" size={24} color={isDark ? "#00f0ff" : c.primary} />
+                  <MaterialIcons name="sports-esports" size={24} color={isDark ? "#3b82f6" : "#1d4ed8"} />
                 </NeumorphicView>
-                <NeumorphicView variant="raised" glow="cyan" radius={10} style={styles.premiumTag}>
-                  <Text style={styles.premiumTagText}>PREMIUM</Text>
+                <NeumorphicView variant="raised" glow="blue" radius={10} style={styles.premiumTag}>
+                  <Text style={[styles.premiumTagText, { color: isDark ? "#3b82f6" : "#1d4ed8" }]}>PREMIUM</Text>
                 </NeumorphicView>
               </View>
               <Text style={styles.cardTitle}>Free VR Simulator Pass</Text>
@@ -232,7 +273,7 @@ export default function RewardsScreen() {
                 <Text style={styles.pointsText}>2,500 PTS</Text>
                 <NeumorphicView
                   variant="raised"
-                  glow="cyan"
+                  glow="blue"
                   radius={14}
                   style={styles.redeemBtn}
                   onPress={() =>
@@ -247,69 +288,48 @@ export default function RewardsScreen() {
                     })
                   }
                 >
-                  <Text style={styles.redeemBtnText}>REDEEM</Text>
+                  <Text style={[styles.redeemBtnText, { color: isDark ? "#3b82f6" : "#1d4ed8" }]}>REDEEM</Text>
                 </NeumorphicView>
               </View>
             </NeumorphicView>
           </>
-        ) : (
-          wallet.map((item) => (
-            <NeumorphicView key={item.kind === "quest" ? item.redemptionId : item.macroQuestId} variant="raised" radius={24} style={styles.card}>
-              <View style={styles.cardTopRow}>
-                <NeumorphicView variant="inset" radius={16} style={styles.iconWell}>
-                  <MaterialIcons name="redeem" size={24} color={isDark ? "#00f0ff" : c.primary} />
-                </NeumorphicView>
-                <NeumorphicView variant="raised" glow="cyan" radius={10} style={styles.premiumTag}>
-                  <Text style={styles.premiumTagText}>VOUCHER</Text>
-                </NeumorphicView>
-              </View>
-              <Text style={styles.cardTitle}>{titleOf(item)}</Text>
-              <Text style={styles.cardVenue}>{subtitleOf(item)}</Text>
-              <View style={styles.cardFooter}>
-                <Text style={styles.pointsText}>{item.isExpired ? "EXPIRED" : "READY"}</Text>
-                <NeumorphicView
-                  variant="raised"
-                  glow={item.isExpired ? "none" : "cyan"}
-                  radius={14}
-                  style={styles.redeemBtn}
-                  onPress={() => !item.isExpired && setRedeemItem(item)}
-                >
-                  <Text style={styles.redeemBtnText}>{item.isExpired ? "USED" : "REDEEM"}</Text>
-                </NeumorphicView>
-              </View>
-            </NeumorphicView>
-          ))
         )}
       </ScrollView>
 
       {/* 1. Neumorphic Add Points Modal */}
       <Modal visible={addFundsVisible} transparent animationType="fade">
         <View style={styles.modalBackdrop}>
-          <NeumorphicView variant="raised" glow="cyan" radius={28} style={styles.modalCard}>
-            <Text style={styles.modalTitle}>Add Explorer Points</Text>
-            <Text style={styles.modalSub}>Select an XP telemetry pack to top up your balance</Text>
+          <NeumorphicView variant="raised" glow="gold" radius={28} style={styles.modalCard}>
+            <Text style={styles.modalTitle}>Acquire Explorer Points</Text>
+            <Text style={styles.modalSub}>Select a preset or enter custom point amount</Text>
 
             <View style={styles.packsGrid}>
-              {[500, 1000, 2500, 5000].map((p) => (
-                <NeumorphicView
-                  key={p}
-                  variant={selectedPack === p && !customAmount ? "inset" : "raised"}
-                  glow={selectedPack === p && !customAmount ? "cyan" : "none"}
-                  radius={16}
-                  style={styles.packPill}
-                  onPress={() => { setSelectedPack(p); setCustomAmount(""); }}
-                >
-                  <Text style={[styles.packPillText, { color: selectedPack === p && !customAmount ? (isDark ? "#00f0ff" : c.primary) : c.onSurfaceVariant }]}>
-                    +{p.toLocaleString()} PTS
-                  </Text>
-                </NeumorphicView>
-              ))}
+              {[500, 1000, 2500, 5000].map((amt) => {
+                const active = selectedPack === amt && !customAmount;
+                return (
+                  <NeumorphicView
+                    key={amt}
+                    variant={active ? "inset" : "raised"}
+                    glow={active ? "gold" : "none"}
+                    radius={16}
+                    style={styles.packPill}
+                    onPress={() => {
+                      setSelectedPack(amt);
+                      setCustomAmount("");
+                    }}
+                  >
+                    <Text style={[styles.packPillText, { color: active ? (isDark ? "#f59e0b" : c.primary) : c.onSurface }]}>
+                      +{amt.toLocaleString()} PTS
+                    </Text>
+                  </NeumorphicView>
+                );
+              })}
             </View>
 
             <NeumorphicView variant="inset" radius={16} style={styles.inputWell}>
               <TextInput
                 value={customAmount}
-                onChangeText={(val) => { setCustomAmount(val); setSelectedPack(0); }}
+                onChangeText={setCustomAmount}
                 placeholder="Or custom amount (e.g. 7500)"
                 placeholderTextColor={c.onSurfaceVariant}
                 keyboardType="numeric"
@@ -321,74 +341,76 @@ export default function RewardsScreen() {
               <NeumorphicView variant="flat" radius={18} style={styles.modalBtn} onPress={() => setAddFundsVisible(false)}>
                 <Text style={[styles.modalBtnText, { color: c.onSurfaceVariant }]}>CANCEL</Text>
               </NeumorphicView>
-
-              <NeumorphicView variant="raised" glow="cyan" radius={18} style={styles.modalBtn} onPress={handleConfirmAddFunds}>
-                <Text style={[styles.modalBtnText, { color: isDark ? "#00f0ff" : c.primary }]}>ACQUIRE POINTS</Text>
+              <NeumorphicView variant="raised" glow="gold" radius={18} style={styles.modalBtn} onPress={handleConfirmAddFunds}>
+                <Text style={[styles.modalBtnText, { color: isDark ? "#f59e0b" : c.primary }]}>ACQUIRE POINTS</Text>
               </NeumorphicView>
             </View>
           </NeumorphicView>
         </View>
       </Modal>
 
-      {/* 2. Neumorphic Transaction History Modal */}
+      {/* 2. Neumorphic History Ledger Modal */}
       <Modal visible={historyVisible} transparent animationType="fade">
         <View style={styles.modalBackdrop}>
-          <NeumorphicView variant="raised" radius={28} style={styles.modalCard}>
-            <Text style={styles.modalTitle}>Ledger & History</Text>
-            <Text style={styles.modalSub}>Recent telemetry claims and point redemptions</Text>
+          <NeumorphicView variant="raised" glow="gold" radius={28} style={[styles.modalCard, { maxHeight: "80%" }]}>
+            <Text style={styles.modalTitle}>Transaction Ledger</Text>
+            <Text style={styles.modalSub}>Recent points awards, claims, and telemetry sync</Text>
 
-            <ScrollView style={{ maxHeight: 260 }} showsVerticalScrollIndicator={false}>
-              {SAMPLE_HISTORY.map((h) => (
-                <NeumorphicView key={h.id} variant="inset" radius={18} style={styles.historyRow}>
-                  <View style={styles.historyLeft}>
-                    <Text style={styles.historyTitle}>{h.title}</Text>
-                    <Text style={styles.historyDate}>{h.subtitle} • {h.date}</Text>
+            <ScrollView showsVerticalScrollIndicator={false} style={{ marginBottom: 16 }}>
+              {SAMPLE_HISTORY.map((item) => (
+                <NeumorphicView key={item.id} variant="inset" radius={18} style={styles.ledgerItem}>
+                  <View style={[styles.ledgerIcon, { backgroundColor: item.type === "earned" ? "rgba(16, 185, 129, 0.15)" : item.type === "redeemed" ? "rgba(239, 68, 68, 0.15)" : "rgba(245, 158, 11, 0.15)" }]}>
+                    <MaterialIcons
+                      name={item.type === "earned" ? "arrow-downward" : item.type === "redeemed" ? "arrow-upward" : "stars"}
+                      size={20}
+                      color={item.type === "earned" ? "#10B981" : item.type === "redeemed" ? "#ef4444" : "#f59e0b"}
+                    />
                   </View>
-                  <Text style={[styles.historyPoints, { color: h.points.startsWith("+") ? "#10B981" : "#f59e0b" }]}>
-                    {h.points}
+                  <View style={{ flex: 1 }}>
+                    <Text style={styles.ledgerTitle}>{item.title}</Text>
+                    <Text style={styles.ledgerSub}>{item.subtitle} • {item.date}</Text>
+                  </View>
+                  <Text style={[styles.ledgerPoints, { color: item.points.startsWith("+") ? "#10B981" : "#ef4444" }]}>
+                    {item.points}
                   </Text>
                 </NeumorphicView>
               ))}
             </ScrollView>
 
-            <NeumorphicView variant="raised" radius={18} style={[styles.modalBtn, { marginTop: 16 }]} onPress={() => setHistoryVisible(false)}>
-              <Text style={[styles.modalBtnText, { color: c.primary }]}>CLOSE</Text>
+            <NeumorphicView variant="raised" radius={18} style={[styles.modalBtn, { width: "100%" }]} onPress={() => setHistoryVisible(false)}>
+              <Text style={[styles.modalBtnText, { color: c.onSurfaceVariant }]}>CLOSE LEDGER</Text>
             </NeumorphicView>
           </NeumorphicView>
         </View>
       </Modal>
 
-      {/* 3. Neumorphic Voucher Reveal & Redeem Modal */}
+      {/* 3. Neumorphic Redeem / Reveal Modal */}
       <Modal visible={!!redeemItem} transparent animationType="fade">
         <View style={styles.modalBackdrop}>
           {redeemItem && (
             <NeumorphicView variant="raised" glow="gold" radius={28} style={styles.modalCard}>
-              <Text style={styles.modalTitle}>Redeem Voucher</Text>
-              <Text style={styles.modalSub}>{subtitleOf(redeemItem)}</Text>
+              <Text style={styles.modalTitle}>Redeem Vanguard Perk</Text>
+              <Text style={styles.modalSub}>Present this optical cipher to venue staff at checkout</Text>
 
-              <NeumorphicView variant="inset" radius={20} style={styles.voucherWell}>
-                <Text style={{ ...theme.font(theme.type.labelCaps), color: c.onSurfaceVariant, fontSize: 10 }}>SCAN AT COUNTER</Text>
-                <View style={styles.barcodeLines} />
-                <Text style={styles.voucherCode}>PIKE-9842-KE</Text>
+              <Text style={{ ...theme.font(theme.type.headlineSm), color: c.onSurface, textAlign: "center", fontSize: 18, fontWeight: "700" }}>
+                {titleOf(redeemItem)}
+              </Text>
+              <Text style={{ ...theme.font(theme.type.bodyMd), color: c.onSurfaceVariant, textAlign: "center", marginTop: 2 }}>
+                {subtitleOf(redeemItem)}
+              </Text>
+
+              <NeumorphicView variant="inset" radius={20} style={styles.barcodeWell}>
+                <MaterialIcons name="qr-code-2" size={90} color={isDark ? "#f59e0b" : c.primary} />
+                <Text style={styles.barcodeText}>PIKE-9842-KE</Text>
+                <Text style={styles.barcodeSub}>VALID IN NAIROBI SECTOR</Text>
               </NeumorphicView>
-
-              <Text style={[styles.cardTitle, { textAlign: "center", marginBottom: 16 }]}>{titleOf(redeemItem)}</Text>
 
               <View style={styles.modalBtnRow}>
                 <NeumorphicView variant="flat" radius={18} style={styles.modalBtn} onPress={() => setRedeemItem(null)}>
                   <Text style={[styles.modalBtnText, { color: c.onSurfaceVariant }]}>CLOSE</Text>
                 </NeumorphicView>
-
-                <NeumorphicView
-                  variant="raised"
-                  glow="gold"
-                  radius={18}
-                  style={styles.modalBtn}
-                  onPress={() => {
-                    setRedeemItem(null);
-                  }}
-                >
-                  <Text style={[styles.modalBtnText, { color: "#f59e0b" }]}>MARK REDEEMED</Text>
+                <NeumorphicView variant="raised" glow="gold" radius={18} style={styles.modalBtn} onPress={() => setRedeemItem(null)}>
+                  <Text style={[styles.modalBtnText, { color: isDark ? "#f59e0b" : c.primary }]}>MARK REDEEMED</Text>
                 </NeumorphicView>
               </View>
             </NeumorphicView>

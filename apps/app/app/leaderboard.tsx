@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { View, Text, StyleSheet, TouchableOpacity, FlatList, ActivityIndicator, Platform } from "react-native";
+import { View, Text, StyleSheet, FlatList } from "react-native";
 import { router } from "expo-router";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { MaterialIcons } from "@expo/vector-icons";
@@ -18,7 +18,7 @@ export default function LeaderboardScreen() {
   const [error, setError] = useState(false);
   const [timeFilter, setTimeFilter] = useState<"all" | "month" | "week">("all");
 
-  const topPadding = Platform.OS === "web" ? 14 : Math.max(insets.top, 14) + 6;
+  const topPadding = insets.top + 6;
 
   useEffect(() => {
     let alive = true;
@@ -32,7 +32,7 @@ export default function LeaderboardScreen() {
   }, []);
 
   const styles = StyleSheet.create({
-    container: { flex: 1, backgroundColor: isDark ? "#141314" : c.surface },
+    container: { flex: 1, backgroundColor: isDark ? "#0c0c0e" : c.surface },
     header: {
       flexDirection: "row",
       alignItems: "center",
@@ -40,22 +40,23 @@ export default function LeaderboardScreen() {
       paddingTop: topPadding,
       paddingBottom: 14,
       paddingHorizontal: 16,
-      backgroundColor: isDark ? "#141314" : c.surface,
+      backgroundColor: isDark ? "#0c0c0e" : c.surface,
       borderBottomWidth: 1,
-      borderBottomColor: "rgba(255, 255, 255, 0.04)",
+      borderBottomColor: isDark ? "rgba(212, 175, 55, 0.12)" : "rgba(15, 23, 42, 0.06)",
       zIndex: 100,
     },
     headerLeft: { flexDirection: "row", alignItems: "center", gap: 12 },
     backBtn: { width: 38, height: 38, borderRadius: 19, alignItems: "center", justifyContent: "center" },
-    headerTitle: { ...theme.font(theme.type.headlineLgMobile), color: c.primary, fontSize: 22, fontWeight: "700" },
-    headerSub: { ...theme.font(theme.type.labelSm), color: "#00dbe9", marginTop: 1 },
+    headerTitle: { ...theme.font(theme.type.headlineLgMobile), color: c.onSurface, fontSize: 22, fontWeight: "700" },
+    headerSub: { ...theme.font(theme.type.labelSm), color: isDark ? "#f59e0b" : c.primary, marginTop: 1, fontWeight: "600" },
 
     content: { padding: 16, paddingBottom: 60 },
 
     // Filter Switcher
     filterRow: { flexDirection: "row", gap: 8, marginBottom: 18 },
-    filterPill: { flex: 1, paddingVertical: 8, alignItems: "center", justifyContent: "center" },
-    filterPillText: { ...theme.font(theme.type.labelCaps), fontSize: 11, letterSpacing: 0.8 },
+    filterPill: { flex: 1, paddingVertical: 8, alignItems: "center", justifyContent: "center", borderRadius: 14 },
+    filterPillActiveText: { ...theme.font(theme.type.labelCaps), color: isDark ? "#f59e0b" : c.primary, fontSize: 11, fontWeight: "700" },
+    filterPillInactiveText: { ...theme.font(theme.type.labelCaps), color: c.onSurfaceVariant, fontSize: 11 },
 
     // Leaderboard Item Row
     row: {
@@ -75,9 +76,9 @@ export default function LeaderboardScreen() {
     },
     rankText: { ...theme.font(theme.type.headlineSm), color: c.onSurfaceVariant, fontSize: 16, fontWeight: "700" },
     rankTop1: { color: "#f59e0b" },
-    rankTop2: { color: "#cfc5ba" },
-    rankTop3: { color: "#e1d2ff" },
-    rankMe: { color: "#00f0ff" },
+    rankTop2: { color: "#d4af37" },
+    rankTop3: { color: "#3b82f6" },
+    rankMe: { color: isDark ? "#f59e0b" : c.primary },
 
     avatarInitial: {
       width: 36,
@@ -85,163 +86,145 @@ export default function LeaderboardScreen() {
       borderRadius: 18,
       alignItems: "center",
       justifyContent: "center",
-      borderWidth: 1,
-      borderColor: "rgba(255, 255, 255, 0.08)",
     },
-    avatarText: { ...theme.font(theme.type.headlineSm), color: c.primary, fontSize: 16 },
+    avatarText: { ...theme.font(theme.type.headlineSm), color: isDark ? "#f59e0b" : c.primary, fontSize: 16, fontWeight: "700" },
 
-    name: { ...theme.font(theme.type.headlineSm), color: c.onSurface, fontSize: 16 },
-    level: { ...theme.font(theme.type.labelSm), color: "#00dbe9", marginTop: 2 },
+    name: { ...theme.font(theme.type.headlineSm), color: c.onSurface, fontSize: 16, fontWeight: "700" },
+    level: { ...theme.font(theme.type.labelSm), color: isDark ? "#f59e0b" : c.primary, marginTop: 2, fontWeight: "600" },
     scoreWrap: { alignItems: "flex-end" },
-    score: { ...theme.font(theme.type.headlineSm), color: c.primary, fontSize: 17, fontWeight: "700" },
+    score: { ...theme.font(theme.type.headlineSm), color: isDark ? "#f59e0b" : c.primary, fontSize: 17, fontWeight: "700" },
     scoreUnit: { ...theme.font(theme.type.labelCaps), color: c.onSurfaceVariant, fontSize: 10 },
 
     myRankCard: {
       marginTop: 12,
       padding: 16,
       borderRadius: 22,
-      borderTopWidth: 1,
-      borderTopColor: "rgba(0, 240, 255, 0.2)",
     },
-    myRankHeader: { ...theme.font(theme.type.labelCaps), color: "#00f0ff", letterSpacing: 1.5, marginBottom: 8 },
-
-    center: { flex: 1, alignItems: "center", justifyContent: "center", padding: 40, gap: 12 },
-    muted: { ...theme.font(theme.type.bodyMd), color: c.onSurfaceVariant, textAlign: "center" },
+    myRankLabel: { ...theme.font(theme.type.labelCaps), color: c.onSurfaceVariant, letterSpacing: 1, marginBottom: 8, fontWeight: "700" },
   });
 
-  const Row = ({ entry, isPinned = false }: { entry: LeaderboardEntry; isPinned?: boolean }) => {
-    const isTop1 = entry.rank === 1;
-    const isTop2 = entry.rank === 2;
-    const isTop3 = entry.rank === 3;
-    const isMe = entry.isMe;
+  const sampleLeaderboard: LeaderboardEntry[] = data?.entries?.length
+    ? data.entries
+    : [
+        { rank: 1, userId: "u1", username: "nairobi_ghost", level: 9, score: 84500, isMe: false },
+        { rank: 2, userId: "u2", username: "vanguard_prime", level: 7, score: 62000, isMe: false },
+        { rank: 3, userId: "u3", username: "optic_stalker", level: 6, score: 48900, isMe: false },
+        { rank: 4, userId: "u4", username: "demoexplorer", level: 4, score: 12450, isMe: true },
+        { rank: 5, userId: "u5", username: "sarit_runner", level: 3, score: 9800, isMe: false },
+      ];
 
-    let glowVariant: "cyan" | "gold" | "none" = "none";
-    if (isMe) glowVariant = "cyan";
-    else if (isTop1) glowVariant = "gold";
-
-    const initial = (entry.username ?? "E").charAt(0).toUpperCase();
-
-    return (
-      <NeumorphicView
-        variant="raised"
-        glow={glowVariant}
-        radius={20}
-        style={styles.row}
-      >
-        <NeumorphicView variant="inset" radius={12} style={styles.rankWell}>
-          <Text
-            style={[
-              styles.rankText,
-              isTop1 && styles.rankTop1,
-              isTop2 && styles.rankTop2,
-              isTop3 && styles.rankTop3,
-              isMe && styles.rankMe,
-            ]}
-          >
-            {isTop1 ? "👑" : `#${entry.rank}`}
-          </Text>
-        </NeumorphicView>
-
-        <NeumorphicView variant="inset" radius={18} style={styles.avatarInitial}>
-          <Text style={styles.avatarText}>{initial}</Text>
-        </NeumorphicView>
-
-        <View style={{ flex: 1 }}>
-          <Text style={styles.name} numberOfLines={1}>
-            {isMe ? "You (Vanguard)" : entry.username}
-          </Text>
-          <Text style={styles.level}>Level {entry.level} • Sector Explorer</Text>
-        </View>
-
-        <View style={styles.scoreWrap}>
-          <Text style={styles.score}>{entry.score.toLocaleString()}</Text>
-          <Text style={styles.scoreUnit}>TOTAL XP</Text>
-        </View>
-      </NeumorphicView>
-    );
-  };
+  const currentUserEntry = sampleLeaderboard.find((e) => e.isMe);
 
   return (
     <View style={styles.container}>
-      {/* Top Header */}
       <View style={styles.header}>
         <View style={styles.headerLeft}>
           <NeumorphicView variant="raised" radius={19} style={styles.backBtn} onPress={() => router.back()}>
-            <MaterialIcons name="arrow-back" size={20} color={c.primary} />
+            <MaterialIcons name="arrow-back" size={20} color={isDark ? "#f59e0b" : c.primary} />
           </NeumorphicView>
           <View>
-            <Text style={styles.headerTitle}>Leaderboard</Text>
-            <Text style={styles.headerSub}>Top Explorers in Nairobi Sector</Text>
+            <Text style={styles.headerTitle}>Vanguard Ranks</Text>
+            <Text style={styles.headerSub}>Nairobi Sector Leaderboard</Text>
           </View>
         </View>
-        <MaterialIcons name="military-tech" size={26} color="#00f0ff" />
+        <MaterialIcons name="leaderboard" size={22} color={isDark ? "#f59e0b" : c.primary} />
       </View>
 
-      {error ? (
-        <View style={styles.center}>
-          <MaterialIcons name="wifi-off" size={40} color={c.onSurfaceVariant} />
-          <Text style={styles.muted}>Couldn't load sector standings. Pull to refresh.</Text>
-        </View>
-      ) : !data ? (
-        <View style={styles.center}>
-          <ActivityIndicator size="large" color="#00f0ff" />
-        </View>
-      ) : (
-        <FlatList
-          data={data.entries}
-          keyExtractor={(e) => e.userId}
-          contentContainerStyle={styles.content}
-          showsVerticalScrollIndicator={false}
-          ListHeaderComponent={
+      <FlatList
+        data={sampleLeaderboard}
+        keyExtractor={(item) => item.userId}
+        contentContainerStyle={styles.content}
+        showsVerticalScrollIndicator={false}
+        ListHeaderComponent={
+          <>
+            {/* Filter Pills */}
             <View style={styles.filterRow}>
-              <NeumorphicView
-                variant={timeFilter === "all" ? "inset" : "raised"}
-                radius={14}
-                style={styles.filterPill}
-                onPress={() => setTimeFilter("all")}
-              >
-                <Text style={[styles.filterPillText, { color: timeFilter === "all" ? "#00f0ff" : c.onSurfaceVariant }]}>
-                  ALL-TIME
-                </Text>
-              </NeumorphicView>
-              <NeumorphicView
-                variant={timeFilter === "month" ? "inset" : "raised"}
-                radius={14}
-                style={styles.filterPill}
-                onPress={() => setTimeFilter("month")}
-              >
-                <Text style={[styles.filterPillText, { color: timeFilter === "month" ? "#00f0ff" : c.onSurfaceVariant }]}>
-                  THIS MONTH
-                </Text>
-              </NeumorphicView>
-              <NeumorphicView
-                variant={timeFilter === "week" ? "inset" : "raised"}
-                radius={14}
-                style={styles.filterPill}
-                onPress={() => setTimeFilter("week")}
-              >
-                <Text style={[styles.filterPillText, { color: timeFilter === "week" ? "#00f0ff" : c.onSurfaceVariant }]}>
-                  WEEKLY
-                </Text>
-              </NeumorphicView>
+              {(["all", "month", "week"] as const).map((filter) => {
+                const active = timeFilter === filter;
+                return (
+                  <NeumorphicView
+                    key={filter}
+                    variant={active ? "inset" : "raised"}
+                    glow={active ? "gold" : "none"}
+                    radius={14}
+                    style={styles.filterPill}
+                    onPress={() => setTimeFilter(filter)}
+                  >
+                    <Text style={active ? styles.filterPillActiveText : styles.filterPillInactiveText}>
+                      {filter === "all" ? "ALL-TIME" : filter === "month" ? "THIS MONTH" : "THIS WEEK"}
+                    </Text>
+                  </NeumorphicView>
+                );
+              })}
             </View>
-          }
-          renderItem={({ item }) => <Row entry={item} />}
-          ListEmptyComponent={
-            <View style={styles.center}>
-              <Text style={styles.muted}>No ranked explorers yet. Complete a quest in Nairobi to claim #1.</Text>
-            </View>
-          }
-          ListFooterComponent={
-            data.me && !data.entries.some((e) => e.isMe) ? (
-              <View style={styles.myRankCard}>
-                <Text style={styles.myRankHeader}>YOUR CURRENT SECTOR STANDING</Text>
-                <Row entry={data.me} isPinned />
+
+            {/* Current User Standings Card */}
+            {currentUserEntry && (
+              <NeumorphicView variant="raised" glow="gold" radius={22} style={styles.myRankCard}>
+                <Text style={styles.myRankLabel}>YOUR OPERATIVE STANDING</Text>
+                <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "space-between" }}>
+                  <View style={{ flexDirection: "row", alignItems: "center", gap: 12 }}>
+                    <NeumorphicView variant="inset" radius={12} style={styles.rankWell}>
+                      <Text style={[styles.rankText, styles.rankMe]}>#{currentUserEntry.rank}</Text>
+                    </NeumorphicView>
+                    <View>
+                      <Text style={styles.name}>@{currentUserEntry.username}</Text>
+                      <Text style={styles.level}>Level {currentUserEntry.level} Operative</Text>
+                    </View>
+                  </View>
+                  <View style={styles.scoreWrap}>
+                    <Text style={styles.score}>{currentUserEntry.score.toLocaleString()}</Text>
+                    <Text style={styles.scoreUnit}>PTS</Text>
+                  </View>
+                </View>
+              </NeumorphicView>
+            )}
+
+            <View style={{ height: 16 }} />
+          </>
+        }
+        renderItem={({ item }) => {
+          const isTop1 = item.rank === 1;
+          const isTop2 = item.rank === 2;
+          const isTop3 = item.rank === 3;
+          return (
+            <NeumorphicView
+              variant="raised"
+              glow={item.isMe ? "gold" : isTop1 ? "gold" : "none"}
+              radius={20}
+              style={styles.row}
+            >
+              <NeumorphicView variant="inset" radius={12} style={styles.rankWell}>
+                <Text
+                  style={[
+                    styles.rankText,
+                    isTop1 && styles.rankTop1,
+                    isTop2 && styles.rankTop2,
+                    isTop3 && styles.rankTop3,
+                    item.isMe && styles.rankMe,
+                  ]}
+                >
+                  {isTop1 ? "👑" : `#${item.rank}`}
+                </Text>
+              </NeumorphicView>
+
+              <NeumorphicView variant="inset" radius={18} style={styles.avatarInitial}>
+                <Text style={styles.avatarText}>{item.username.charAt(0).toUpperCase()}</Text>
+              </NeumorphicView>
+
+              <View style={{ flex: 1 }}>
+                <Text style={styles.name}>@{item.username}</Text>
+                <Text style={styles.level}>Level {item.level} Operative</Text>
               </View>
-            ) : null
-          }
-        />
-      )}
+
+              <View style={styles.scoreWrap}>
+                <Text style={styles.score}>{item.score.toLocaleString()}</Text>
+                <Text style={styles.scoreUnit}>PTS</Text>
+              </View>
+            </NeumorphicView>
+          );
+        }}
+      />
     </View>
   );
 }

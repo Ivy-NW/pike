@@ -31,7 +31,7 @@ function CustomTabBar({ state, descriptors, navigation }: any) {
       bottom: 16,
       left: 16,
       right: 16,
-      backgroundColor: isDark ? "rgba(20, 19, 20, 0.96)" : "rgba(240, 240, 243, 0.96)",
+      backgroundColor: isDark ? "rgba(18, 18, 21, 0.96)" : "#ffffff",
       borderRadius: 28,
       height: 68,
       paddingHorizontal: 8,
@@ -39,10 +39,10 @@ function CustomTabBar({ state, descriptors, navigation }: any) {
       alignItems: "center",
       justifyContent: "space-around",
       borderWidth: 1,
-      borderColor: "rgba(255, 255, 255, 0.06)",
-      shadowColor: isDark ? "#000000" : "#a3b1c6",
+      borderColor: isDark ? "rgba(212, 175, 55, 0.2)" : "rgba(15, 23, 42, 0.08)",
+      shadowColor: isDark ? "#000000" : "#0f172a",
       shadowOffset: { width: 0, height: 6 },
-      shadowOpacity: isDark ? 0.75 : 0.25,
+      shadowOpacity: isDark ? 0.75 : 0.12,
       shadowRadius: 14,
       elevation: 10,
     },
@@ -100,15 +100,23 @@ function CustomTabBar({ state, descriptors, navigation }: any) {
             {isFocused ? (
               <NeumorphicView
                 variant="inset"
-                glow="cyan"
+                glow={isDark ? "gold" : "blue"}
                 radius={16}
                 style={styles.activeWell}
               >
-                <MaterialIcons name={tab.icon} size={24} color="#00f0ff" />
+                <MaterialIcons
+                  name={tab.icon}
+                  size={24}
+                  color={isDark ? "#f59e0b" : "#1d4ed8"}
+                />
               </NeumorphicView>
             ) : (
               <View style={styles.inactiveContainer}>
-                <MaterialIcons name={tab.icon} size={24} color={c.onSurfaceVariant} />
+                <MaterialIcons
+                  name={tab.icon}
+                  size={24}
+                  color={isDark ? "#71717a" : "#64748b"}
+                />
               </View>
             )}
           </TouchableOpacity>
@@ -118,19 +126,15 @@ function CustomTabBar({ state, descriptors, navigation }: any) {
   );
 }
 
-export default function TabsLayout() {
-  const [checked, setChecked] = useState(false);
-  const [authed, setAuthed] = useState(false);
+export default function TabLayout() {
+  const [token, setToken] = useState<string | null | undefined>(undefined);
 
   useEffect(() => {
-    getIdentityToken().then((token) => {
-      setAuthed(Boolean(token));
-      setChecked(true);
-    });
+    getIdentityToken().then(setToken);
   }, []);
 
-  if (!checked) return null;
-  if (!authed) return <Redirect href="/login" />;
+  if (token === undefined) return null;
+  if (token === null) return <Redirect href="/login" />;
 
   return (
     <Tabs

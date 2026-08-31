@@ -1,122 +1,97 @@
 import React from "react";
-import { View, Text, StyleSheet, Platform } from "react-native";
-import { useSafeAreaInsets } from "react-native-safe-area-context";
+import { View, Text, StyleSheet } from "react-native";
 import { MaterialIcons } from "@expo/vector-icons";
 import { useTheme } from "@/theme";
 import { Logo } from "./Logo";
 import { NeumorphicView } from "./NeumorphicView";
-import { router } from "expo-router";
 
-interface TopNavProps {
-  title?: string;
-  showLogo?: boolean;
+export function TopNav({
+  title,
+  subtitle,
+  showLogo = true,
+  rightAction,
+}: {
+  title: string;
   subtitle?: string;
-  rightAction?: React.ReactElement | null;
-}
-
-export function TopNav({ title = "PIKE", showLogo = true, subtitle, rightAction }: TopNavProps) {
+  showLogo?: boolean;
+  rightAction?: any;
+}) {
   const theme = useTheme();
-  const insets = useSafeAreaInsets();
   const c = theme.colors;
   const isDark = theme.mode === "dark";
 
-  const topPadding = Platform.OS === "web" ? 14 : Math.max(insets.top, 14) + 4;
-
-  const handleNotificationPress = () => {
-    router.push("/notifications");
-  };
-
   const styles = StyleSheet.create({
-    header: {
-      backgroundColor: isDark ? "#141314" : c.surface,
-      borderBottomWidth: 1,
-      borderBottomColor: isDark ? "rgba(255, 255, 255, 0.04)" : "rgba(0, 0, 0, 0.06)",
-      paddingTop: topPadding,
-      paddingBottom: 12,
+    container: {
       paddingHorizontal: 16,
+      paddingTop: 14,
+      paddingBottom: 12,
       flexDirection: "row",
       alignItems: "center",
       justifyContent: "space-between",
-      zIndex: 100,
-      shadowColor: isDark ? "#000000" : "#a3b1c6",
-      shadowOffset: { width: 0, height: 4 },
-      shadowOpacity: isDark ? 0.5 : 0.15,
-      shadowRadius: 8,
-      elevation: 4,
+      backgroundColor: isDark ? "#0c0c0e" : c.surface,
+      borderBottomWidth: 1,
+      borderBottomColor: isDark ? "rgba(212, 175, 55, 0.12)" : "rgba(15, 23, 42, 0.06)",
     },
     left: {
       flexDirection: "row",
       alignItems: "center",
-      gap: 10,
-    },
-    titleCol: {
-      justifyContent: "center",
+      gap: 12,
     },
     title: {
       ...theme.font(theme.type.headlineLgMobile),
-      color: c.primary,
-      fontWeight: "700",
-      letterSpacing: -0.5,
+      color: c.onSurface,
       fontSize: 22,
+      fontWeight: "700",
     },
     subtitle: {
-      ...theme.font(theme.type.labelSm),
-      color: isDark ? "#00dbe9" : c.primary,
-      fontSize: 11,
-      marginTop: 1,
+      ...theme.font(theme.type.labelCaps),
+      color: isDark ? "#f59e0b" : "#1d4ed8",
+      fontSize: 10,
+      letterSpacing: 1.2,
+      fontWeight: "700",
+      marginTop: 2,
     },
-    right: {
+    actions: {
       flexDirection: "row",
       alignItems: "center",
       gap: 10,
     },
-    iconButton: {
-      width: 38,
-      height: 38,
-      borderRadius: 19,
+    themeToggleBtn: {
+      width: 40,
+      height: 40,
+      borderRadius: 20,
       alignItems: "center",
       justifyContent: "center",
     },
   });
 
   return (
-    <View style={styles.header}>
+    <View style={styles.container}>
       <View style={styles.left}>
-        {showLogo ? <Logo size={26} /> : null}
-        <View style={styles.titleCol}>
+        {showLogo && <Logo size={32} />}
+        <View>
           <Text style={styles.title}>{title}</Text>
-          {subtitle ? <Text style={styles.subtitle}>{subtitle}</Text> : null}
+          {subtitle && <Text style={styles.subtitle}>{subtitle}</Text>}
         </View>
       </View>
-      <View style={styles.right}>
-        {/* Creative Day/Night Quantum Theme Toggle */}
+
+      <View style={styles.actions}>
+        {rightAction}
+
+        {/* Day / Night Mode Quantum Neumorphic Toggle */}
         <NeumorphicView
           variant="raised"
-          glow={isDark ? "none" : "gold"}
-          radius={19}
-          style={styles.iconButton}
+          glow={isDark ? "gold" : "blue"}
+          radius={20}
+          style={styles.themeToggleBtn}
           onPress={theme.toggleTheme}
         >
           <MaterialIcons
-            name={isDark ? "nightlight-round" : "wb-sunny"}
-            size={18}
-            color={isDark ? "#00f0ff" : "#f59e0b"}
+            name={isDark ? "wb-sunny" : "nightlight-round"}
+            size={20}
+            color={isDark ? "#f59e0b" : "#1d4ed8"}
           />
         </NeumorphicView>
-
-        {/* Notifications Bell or Custom Right Action */}
-        {rightAction ? (
-          rightAction
-        ) : (
-          <NeumorphicView
-            variant="raised"
-            radius={19}
-            style={styles.iconButton}
-            onPress={handleNotificationPress}
-          >
-            <MaterialIcons name="notifications-none" size={20} color={c.primary} />
-          </NeumorphicView>
-        )}
       </View>
     </View>
   );

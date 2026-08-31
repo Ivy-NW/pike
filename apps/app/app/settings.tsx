@@ -51,7 +51,7 @@ export default function SettingsScreen() {
   };
 
   const styles = StyleSheet.create({
-    container: { flex: 1, backgroundColor: isDark ? "#141314" : c.surface },
+    container: { flex: 1, backgroundColor: isDark ? "#0c0c0e" : c.surface },
     header: {
       flexDirection: "row",
       alignItems: "center",
@@ -59,37 +59,37 @@ export default function SettingsScreen() {
       paddingTop: topPadding,
       paddingBottom: 14,
       paddingHorizontal: 16,
-      backgroundColor: isDark ? "#141314" : c.surface,
+      backgroundColor: isDark ? "#0c0c0e" : c.surface,
       borderBottomWidth: 1,
-      borderBottomColor: isDark ? "rgba(255, 255, 255, 0.04)" : "rgba(0, 0, 0, 0.06)",
+      borderBottomColor: isDark ? "rgba(212, 175, 55, 0.12)" : "rgba(15, 23, 42, 0.06)",
       zIndex: 100,
     },
     headerLeft: { flexDirection: "row", alignItems: "center", gap: 12 },
     backBtn: { width: 38, height: 38, borderRadius: 19, alignItems: "center", justifyContent: "center" },
-    headerTitle: { ...theme.font(theme.type.headlineLgMobile), color: c.primary, fontSize: 22, fontWeight: "700" },
+    headerTitle: { ...theme.font(theme.type.headlineLgMobile), color: c.onSurface, fontSize: 22, fontWeight: "700" },
     content: { padding: 18, paddingBottom: 60 },
 
     // Profile Summary Card
     profileCard: { padding: 18, borderRadius: 24, marginBottom: 24, flexDirection: "row", alignItems: "center", gap: 14 },
     avatarWell: { width: 52, height: 52, borderRadius: 26, alignItems: "center", justifyContent: "center" },
-    avatarText: { ...theme.font(theme.type.displayXl), color: isDark ? "#00f0ff" : c.primary, fontSize: 22 },
-    profileName: { ...theme.font(theme.type.headlineSm), color: c.onSurface, fontSize: 18 },
-    profileSub: { ...theme.font(theme.type.labelSm), color: isDark ? "#00dbe9" : c.primary, marginTop: 2 },
+    avatarText: { ...theme.font(theme.type.displayXl), color: isDark ? "#f59e0b" : c.primary, fontSize: 22, fontWeight: "700" },
+    profileName: { ...theme.font(theme.type.headlineSm), color: c.onSurface, fontSize: 18, fontWeight: "700" },
+    profileSub: { ...theme.font(theme.type.labelSm), color: isDark ? "#f59e0b" : c.primary, marginTop: 2, fontWeight: "600" },
 
     // Section
-    sectionHeading: { ...theme.font(theme.type.labelCaps), color: c.onSurfaceVariant, letterSpacing: 1.5, marginBottom: 12, marginLeft: 4 },
+    sectionHeading: { ...theme.font(theme.type.labelCaps), color: c.onSurfaceVariant, letterSpacing: 1.5, marginBottom: 12, marginLeft: 4, fontWeight: "700" },
     settingsCard: { padding: 16, borderRadius: 24, marginBottom: 24 },
     settingRow: { flexDirection: "row", alignItems: "center", justifyContent: "space-between", paddingVertical: 12 },
-    settingDivider: { borderBottomWidth: 1, borderBottomColor: isDark ? "rgba(255, 255, 255, 0.04)" : "rgba(0, 0, 0, 0.05)" },
+    settingDivider: { borderBottomWidth: 1, borderBottomColor: isDark ? "rgba(212, 175, 55, 0.08)" : "rgba(15, 23, 42, 0.05)" },
     settingLeft: { flexDirection: "row", alignItems: "center", gap: 12, flex: 1 },
     iconWell: { width: 36, height: 36, borderRadius: 12, alignItems: "center", justifyContent: "center" },
-    settingTitle: { ...theme.font(theme.type.bodyMd), color: c.onSurface, fontWeight: "600" },
+    settingTitle: { ...theme.font(theme.type.bodyMd), color: c.onSurface, fontWeight: "700" },
     settingDesc: { ...theme.font(theme.type.labelSm), color: c.onSurfaceVariant, marginTop: 2 },
 
     // Action Buttons
     actionButton: { padding: 16, borderRadius: 20, alignItems: "center", justifyContent: "center", marginBottom: 12 },
-    actionButtonText: { ...theme.font(theme.type.labelCaps), color: c.primary, letterSpacing: 1 },
-    dangerButtonText: { ...theme.font(theme.type.labelCaps), color: isDark ? "#ffb4ab" : c.error, letterSpacing: 1 },
+    actionButtonText: { ...theme.font(theme.type.labelCaps), color: isDark ? "#f59e0b" : c.primary, letterSpacing: 1, fontWeight: "700" },
+    dangerButtonText: { ...theme.font(theme.type.labelCaps), color: isDark ? "#ffb4ab" : c.error, letterSpacing: 1, fontWeight: "700" },
 
     versionText: { ...theme.font(theme.type.labelSm), color: c.onSurfaceVariant, textAlign: "center", marginTop: 12 },
 
@@ -100,10 +100,10 @@ export default function SettingsScreen() {
     modalSub: { ...theme.font(theme.type.bodyMd), color: c.onSurfaceVariant, textAlign: "center", marginBottom: 20 },
     modalBtnRow: { flexDirection: "row", gap: 12, marginTop: 10 },
     modalBtn: { flex: 1, paddingVertical: 14, borderRadius: 18, alignItems: "center", justifyContent: "center" },
-    modalBtnText: { ...theme.font(theme.type.labelCaps), fontSize: 12, letterSpacing: 1 },
+    modalBtnText: { ...theme.font(theme.type.labelCaps), fontSize: 12, letterSpacing: 1, fontWeight: "700" },
   });
 
-  const initial = (me?.name ?? me?.username ?? "Explorer").charAt(0).toUpperCase();
+  const initial = (me?.name ?? me?.username ?? "Alex").charAt(0).toUpperCase();
 
   return (
     <View style={styles.container}>
@@ -111,21 +111,21 @@ export default function SettingsScreen() {
       <View style={styles.header}>
         <View style={styles.headerLeft}>
           <NeumorphicView variant="raised" radius={19} style={styles.backBtn} onPress={() => router.back()}>
-            <MaterialIcons name="arrow-back" size={20} color={c.primary} />
+            <MaterialIcons name="arrow-back" size={20} color={isDark ? "#f59e0b" : c.primary} />
           </NeumorphicView>
           <Text style={styles.headerTitle}>Settings</Text>
         </View>
-        <MaterialIcons name="settings" size={24} color={isDark ? "#00f0ff" : c.primary} />
+        <MaterialIcons name="settings" size={24} color={isDark ? "#f59e0b" : c.primary} />
       </View>
 
       <ScrollView contentContainerStyle={styles.content} showsVerticalScrollIndicator={false}>
         {/* Explorer Identity Card */}
-        <NeumorphicView variant="raised" radius={24} style={styles.profileCard}>
+        <NeumorphicView variant="raised" glow="gold" radius={24} style={styles.profileCard}>
           <NeumorphicView variant="inset" radius={26} style={styles.avatarWell}>
             <Text style={styles.avatarText}>{initial}</Text>
           </NeumorphicView>
           <View style={{ flex: 1 }}>
-            <Text style={styles.profileName}>{me?.name ?? me?.username ?? "Demo Explorer"}</Text>
+            <Text style={styles.profileName}>{me?.name ?? "Alex Vance"}</Text>
             <Text style={styles.profileSub}>Level {me?.level ?? 2} • Nairobi Vanguard Operative</Text>
           </View>
         </NeumorphicView>
@@ -137,18 +137,18 @@ export default function SettingsScreen() {
           <View style={[styles.settingRow, styles.settingDivider]}>
             <View style={styles.settingLeft}>
               <NeumorphicView variant="inset" radius={12} style={styles.iconWell}>
-                <MaterialIcons name={isDark ? "nightlight-round" : "wb-sunny"} size={20} color={isDark ? "#00f0ff" : "#f59e0b"} />
+                <MaterialIcons name={isDark ? "wb-sunny" : "nightlight-round"} size={20} color={isDark ? "#f59e0b" : "#1d4ed8"} />
               </NeumorphicView>
               <View>
-                <Text style={styles.settingTitle}>{isDark ? "Obsidian Dark Palette" : "Porcelain Ceramic Light"}</Text>
-                <Text style={styles.settingDesc}>Quantum Neumorphic dynamic identity</Text>
+                <Text style={styles.settingTitle}>{isDark ? "Obsidian Gold Palette (Dark)" : "Porcelain Ceramic (Light)"}</Text>
+                <Text style={styles.settingDesc}>PIKE Logo Dynamic Identity</Text>
               </View>
             </View>
             <Switch
               value={!isDark}
               onValueChange={theme.toggleTheme}
-              trackColor={{ false: "#2b2a2a", true: "rgba(245, 158, 11, 0.4)" }}
-              thumbColor={!isDark ? "#f59e0b" : "#00f0ff"}
+              trackColor={{ false: "#202025", true: "rgba(29, 78, 216, 0.3)" }}
+              thumbColor={!isDark ? "#1d4ed8" : "#f59e0b"}
             />
           </View>
 
@@ -156,7 +156,7 @@ export default function SettingsScreen() {
           <View style={[styles.settingRow, styles.settingDivider]}>
             <View style={styles.settingLeft}>
               <NeumorphicView variant="inset" radius={12} style={styles.iconWell}>
-                <MaterialIcons name="view-in-ar" size={20} color={isDark ? "#00f0ff" : c.primary} />
+                <MaterialIcons name="view-in-ar" size={20} color={isDark ? "#3b82f6" : c.primary} />
               </NeumorphicView>
               <View>
                 <Text style={styles.settingTitle}>8th Wall AR Engine</Text>
@@ -166,8 +166,8 @@ export default function SettingsScreen() {
             <Switch
               value={arEnabled}
               onValueChange={setArEnabled}
-              trackColor={{ false: "#2b2a2a", true: "rgba(0, 240, 255, 0.4)" }}
-              thumbColor={arEnabled ? (isDark ? "#00f0ff" : c.primary) : "#848389"}
+              trackColor={{ false: "#202025", true: "rgba(245, 158, 11, 0.4)" }}
+              thumbColor={arEnabled ? (isDark ? "#f59e0b" : c.primary) : "#71717a"}
             />
           </View>
 
@@ -175,7 +175,7 @@ export default function SettingsScreen() {
           <View style={[styles.settingRow, styles.settingDivider]}>
             <View style={styles.settingLeft}>
               <NeumorphicView variant="inset" radius={12} style={styles.iconWell}>
-                <MaterialIcons name="vibration" size={20} color={isDark ? "#00dbe9" : c.primary} />
+                <MaterialIcons name="vibration" size={20} color={isDark ? "#f59e0b" : c.primary} />
               </NeumorphicView>
               <View>
                 <Text style={styles.settingTitle}>Haptic Tactile Feedback</Text>
@@ -185,8 +185,8 @@ export default function SettingsScreen() {
             <Switch
               value={hapticsEnabled}
               onValueChange={setHapticsEnabled}
-              trackColor={{ false: "#2b2a2a", true: "rgba(0, 240, 255, 0.4)" }}
-              thumbColor={hapticsEnabled ? (isDark ? "#00f0ff" : c.primary) : "#848389"}
+              trackColor={{ false: "#202025", true: "rgba(245, 158, 11, 0.4)" }}
+              thumbColor={hapticsEnabled ? (isDark ? "#f59e0b" : c.primary) : "#71717a"}
             />
           </View>
 
@@ -204,8 +204,8 @@ export default function SettingsScreen() {
             <Switch
               value={notificationsEnabled}
               onValueChange={setNotificationsEnabled}
-              trackColor={{ false: "#2b2a2a", true: "rgba(0, 240, 255, 0.4)" }}
-              thumbColor={notificationsEnabled ? (isDark ? "#00f0ff" : c.primary) : "#848389"}
+              trackColor={{ false: "#202025", true: "rgba(245, 158, 11, 0.4)" }}
+              thumbColor={notificationsEnabled ? (isDark ? "#f59e0b" : c.primary) : "#71717a"}
             />
           </View>
 
@@ -213,7 +213,7 @@ export default function SettingsScreen() {
           <View style={styles.settingRow}>
             <View style={styles.settingLeft}>
               <NeumorphicView variant="inset" radius={12} style={styles.iconWell}>
-                <MaterialIcons name="volume-up" size={20} color={isDark ? "#cfc5ba" : c.primary} />
+                <MaterialIcons name="volume-up" size={20} color={isDark ? "#d4af37" : c.primary} />
               </NeumorphicView>
               <View>
                 <Text style={styles.settingTitle}>Cybernetic Audio Cues</Text>
@@ -223,8 +223,8 @@ export default function SettingsScreen() {
             <Switch
               value={soundEnabled}
               onValueChange={setSoundEnabled}
-              trackColor={{ false: "#2b2a2a", true: "rgba(0, 240, 255, 0.4)" }}
-              thumbColor={soundEnabled ? (isDark ? "#00f0ff" : c.primary) : "#848389"}
+              trackColor={{ false: "#202025", true: "rgba(245, 158, 11, 0.4)" }}
+              thumbColor={soundEnabled ? (isDark ? "#f59e0b" : c.primary) : "#71717a"}
             />
           </View>
         </NeumorphicView>
@@ -245,7 +245,7 @@ export default function SettingsScreen() {
           <Text style={[styles.dangerButtonText, { color: isDark ? "#ffb4ab" : c.error }]}>DELETE ACCOUNT PERMANENTLY</Text>
         </NeumorphicView>
 
-        <Text style={styles.versionText}>PIKE Vanguard • v2.0-neu (Build 2026.08)</Text>
+        <Text style={styles.versionText}>PIKE Vanguard • v2.0-gold (Build 2026.08)</Text>
       </ScrollView>
 
       {/* Neumorphic Delete Account Modal */}
