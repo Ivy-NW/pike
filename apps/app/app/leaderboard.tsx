@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { View, Text, StyleSheet, FlatList } from "react-native";
+import { View, Text, StyleSheet, FlatList, Platform, StatusBar } from "react-native";
 import { router } from "expo-router";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { MaterialIcons } from "@expo/vector-icons";
@@ -18,7 +18,10 @@ export default function LeaderboardScreen() {
   const [error, setError] = useState(false);
   const [timeFilter, setTimeFilter] = useState<"all" | "month" | "week">("all");
 
-  const topPadding = insets.top + 6;
+  const topPadding = Math.max(
+    insets.top,
+    Platform.OS === "android" ? (StatusBar.currentHeight ?? 24) : 16
+  ) + 8;
 
   useEffect(() => {
     let alive = true;

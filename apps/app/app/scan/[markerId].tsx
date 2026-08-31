@@ -1,5 +1,5 @@
-import { useEffect, useState } from "react";
-import { View, Text, StyleSheet, Platform, ActivityIndicator, Alert, TouchableOpacity } from "react-native";
+import { useState, useEffect } from "react";
+import { View, Text, StyleSheet, Platform, ActivityIndicator, Alert, TouchableOpacity, StatusBar } from "react-native";
 import { router, useLocalSearchParams } from "expo-router";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { WebView } from "react-native-webview";
@@ -30,7 +30,10 @@ export default function ScanScreen() {
     getIdentityToken().then(setToken);
   }, []);
 
-  const topPadding = Platform.OS === "web" ? 14 : Math.max(insets.top, 14) + 6;
+  const topPadding = Math.max(
+    insets.top,
+    Platform.OS === "android" ? (StatusBar.currentHeight ?? 24) : 16
+  ) + 8;
   const webArUrl = `${WEBAR_BASE_URL}/scan/${markerId ?? "demo-kicc-marker"}?channel=app&appToken=${encodeURIComponent(token ?? "")}`;
 
   const handleSimulateRecognize = async () => {

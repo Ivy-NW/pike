@@ -1,13 +1,17 @@
 /**
  * Concrete Material-3-style token sets matching PIKE Logo Identity.
  *
- * Brand Palette (Directly extracted from PIKE Logo):
- * - Imperial Champagne Gold: #d4af37 / #f59e0b / #eab308 (Crown & Wing Mantle)
- * - Cobalt Sapphire Blue: #2563eb / #1d4ed8 / #3b82f6 (Central Diamond Gem)
+ * Unified Brand Signature (Consistent across Dark and Light mode):
+ * - Imperial Champagne Gold (Hero Brand Accent):
+ *   Dark: #f59e0b / #d4af37
+ *   Light: #d97706 / #b45309 (Rich High-Contrast Gold)
+ * - Cobalt Sapphire Blue (Diamond Crystal Accent):
+ *   Dark: #3b82f6
+ *   Light: #2563eb
  *
  * Dark: Obsidian Titanium #0c0c0e with Imperial Gold & Sapphire Blue glow.
- * Light: Clean Ceramic #f4f6fa with Pure White cards, Deep Slate #0f172a text,
- *        and Sapphire & Gold tactile accents.
+ * Light: Porcelain Ceramic #f4f6fa with Pure White cards, Deep Slate #0f172a text,
+ *        and Imperial Gold & Sapphire Blue glow.
  */
 export interface ColorTokens {
   surface: string;
@@ -123,16 +127,16 @@ export const vanguardLight: ColorTokens = {
   inverseOnSurface: "#f8fafc",
   outline: "#64748b",
   outlineVariant: "#cbd5e1",
-  primary: "#1d4ed8", // Deep Royal Sapphire Blue
+  primary: "#d97706", // Imperial Gold (Rich & High-Contrast for Light mode)
   onPrimary: "#ffffff",
-  primaryContainer: "#dbeafe",
-  onPrimaryContainer: "#1e3a8a",
-  inversePrimary: "#3b82f6",
-  secondary: "#b45309", // Warm Imperial Gold
+  primaryContainer: "#fef3c7",
+  onPrimaryContainer: "#78350f",
+  inversePrimary: "#f59e0b",
+  secondary: "#2563eb", // Sapphire Gem Blue
   onSecondary: "#ffffff",
-  secondaryContainer: "#fef3c7",
-  onSecondaryContainer: "#78350f",
-  tertiary: "#926017",
+  secondaryContainer: "#dbeafe",
+  onSecondaryContainer: "#1e3a8a",
+  tertiary: "#b45309", // Warm Gold
   onTertiary: "#ffffff",
   tertiaryContainer: "#fef9c3",
   onTertiaryContainer: "#713f12",
@@ -144,14 +148,14 @@ export const vanguardLight: ColorTokens = {
   onBackground: "#0f172a",
   success: "#059669",
   goldDeep: "#b45309",
-  pikeBlueGlow: "#1d4ed8",
+  pikeBlueGlow: "#2563eb",
   slateGray: "#ffffff",
   textMuted: "#475569",
-  borderSubtle: "rgba(15, 23, 42, 0.08)",
-  borderStrong: "rgba(15, 23, 42, 0.16)",
+  borderSubtle: "rgba(217, 119, 6, 0.15)",
+  borderStrong: "rgba(217, 119, 6, 0.35)",
   neumorphSurface: "#ffffff",
   neumorphShadowDark: "rgba(15, 23, 42, 0.12)",
   neumorphShadowLight: "#ffffff",
   neumorphInset: "#e8edf5",
-  neumorphBorder: "rgba(15, 23, 42, 0.08)",
+  neumorphBorder: "rgba(217, 119, 6, 0.18)",
 };

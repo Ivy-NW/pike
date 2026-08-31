@@ -1,4 +1,4 @@
-import { View, Text, StyleSheet, TouchableOpacity, ScrollView, Platform } from "react-native";
+import { View, Text, StyleSheet, TouchableOpacity, ScrollView, Platform, StatusBar } from "react-native";
 import { router, useLocalSearchParams } from "expo-router";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { MaterialIcons } from "@expo/vector-icons";
@@ -21,7 +21,10 @@ export default function QuestDetailScreen() {
   const c = theme.colors;
   const isDark = theme.mode === "dark";
 
-  const topPadding = Platform.OS === "web" ? 14 : Math.max(insets.top, 14) + 6;
+  const topPadding = Math.max(
+    insets.top,
+    Platform.OS === "android" ? (StatusBar.currentHeight ?? 24) : 16
+  ) + 8;
 
   const styles = StyleSheet.create({
     container: { flex: 1, backgroundColor: isDark ? "#0c0c0e" : c.surface },

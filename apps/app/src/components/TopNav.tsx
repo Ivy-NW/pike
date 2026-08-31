@@ -1,5 +1,6 @@
 import React from "react";
-import { View, Text, StyleSheet } from "react-native";
+import { View, Text, StyleSheet, Platform, StatusBar } from "react-native";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { MaterialIcons } from "@expo/vector-icons";
 import { useTheme } from "@/theme";
 import { Logo } from "./Logo";
@@ -17,20 +18,27 @@ export function TopNav({
   rightAction?: any;
 }) {
   const theme = useTheme();
+  const insets = useSafeAreaInsets();
   const c = theme.colors;
   const isDark = theme.mode === "dark";
+
+  // Dynamic safe area inset preventing status bar & camera notch collisions on Android / iOS
+  const topInset = Math.max(
+    insets.top,
+    Platform.OS === "android" ? (StatusBar.currentHeight ?? 24) : 16
+  ) + 8;
 
   const styles = StyleSheet.create({
     container: {
       paddingHorizontal: 16,
-      paddingTop: 14,
-      paddingBottom: 12,
+      paddingTop: topInset,
+      paddingBottom: 14,
       flexDirection: "row",
       alignItems: "center",
       justifyContent: "space-between",
       backgroundColor: isDark ? "#0c0c0e" : c.surface,
       borderBottomWidth: 1,
-      borderBottomColor: isDark ? "rgba(212, 175, 55, 0.12)" : "rgba(15, 23, 42, 0.06)",
+      borderBottomColor: isDark ? "rgba(212, 175, 55, 0.15)" : "rgba(217, 119, 6, 0.12)",
     },
     left: {
       flexDirection: "row",
@@ -45,7 +53,7 @@ export function TopNav({
     },
     subtitle: {
       ...theme.font(theme.type.labelCaps),
-      color: isDark ? "#f59e0b" : "#1d4ed8",
+      color: isDark ? "#f59e0b" : "#d97706",
       fontSize: 10,
       letterSpacing: 1.2,
       fontWeight: "700",
@@ -81,7 +89,7 @@ export function TopNav({
         {/* Day / Night Mode Quantum Neumorphic Toggle */}
         <NeumorphicView
           variant="raised"
-          glow={isDark ? "gold" : "blue"}
+          glow="gold"
           radius={20}
           style={styles.themeToggleBtn}
           onPress={theme.toggleTheme}
@@ -89,7 +97,7 @@ export function TopNav({
           <MaterialIcons
             name={isDark ? "wb-sunny" : "nightlight-round"}
             size={20}
-            color={isDark ? "#f59e0b" : "#1d4ed8"}
+            color={isDark ? "#f59e0b" : "#d97706"}
           />
         </NeumorphicView>
       </View>

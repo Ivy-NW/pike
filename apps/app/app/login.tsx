@@ -1,6 +1,7 @@
 import { useState } from "react";
-import { View, Text, TextInput, TouchableOpacity, StyleSheet, ScrollView } from "react-native";
+import { View, Text, TextInput, TouchableOpacity, StyleSheet, ScrollView, Platform, StatusBar } from "react-native";
 import { router } from "expo-router";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { Ionicons } from "@expo/vector-icons";
 import { setIdentityToken } from "@/lib/auth";
 import { api } from "@/lib/api";
@@ -16,6 +17,7 @@ type Mode = "signin" | "signup";
  */
 export default function LoginScreen() {
   const theme = useTheme();
+  const insets = useSafeAreaInsets();
   const [mode, setMode] = useState<Mode>("signin");
   const [identifier, setIdentifier] = useState("");
   const [phone, setPhone] = useState("");
@@ -26,6 +28,11 @@ export default function LoginScreen() {
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+
+  const topPadding = Math.max(
+    insets.top,
+    Platform.OS === "android" ? (StatusBar.currentHeight ?? 24) : 16
+  ) + 16;
 
   const finishLogin = async (token: string) => {
     await setIdentityToken(token);
@@ -75,7 +82,14 @@ export default function LoginScreen() {
   const isDark = theme.mode === "dark";
 
   const styles = StyleSheet.create({
-    container: { flexGrow: 1, backgroundColor: isDark ? "#0c0c0e" : c.surface, justifyContent: "center", padding: 24 },
+    container: {
+      flexGrow: 1,
+      backgroundColor: isDark ? "#0c0c0e" : c.surface,
+      justifyContent: "center",
+      padding: 24,
+      paddingTop: topPadding,
+      paddingBottom: 32,
+    },
     logoRow: { flexDirection: "row", alignItems: "center", gap: 12, marginBottom: 8 },
     title: { ...theme.font(theme.type.displayXl), color: c.onSurface, letterSpacing: 1.5, fontWeight: "700" },
     subtitle: { ...theme.font(theme.type.bodyMd), color: c.onSurfaceVariant, marginBottom: 20, marginTop: 4 },

@@ -39,7 +39,7 @@ function CustomTabBar({ state, descriptors, navigation }: any) {
       alignItems: "center",
       justifyContent: "space-around",
       borderWidth: 1,
-      borderColor: isDark ? "rgba(212, 175, 55, 0.2)" : "rgba(15, 23, 42, 0.08)",
+      borderColor: isDark ? "rgba(212, 175, 55, 0.2)" : "rgba(217, 119, 6, 0.2)",
       shadowColor: isDark ? "#000000" : "#0f172a",
       shadowOffset: { width: 0, height: 6 },
       shadowOpacity: isDark ? 0.75 : 0.12,
@@ -100,14 +100,14 @@ function CustomTabBar({ state, descriptors, navigation }: any) {
             {isFocused ? (
               <NeumorphicView
                 variant="inset"
-                glow={isDark ? "gold" : "blue"}
+                glow="gold"
                 radius={16}
                 style={styles.activeWell}
               >
                 <MaterialIcons
                   name={tab.icon}
                   size={24}
-                  color={isDark ? "#f59e0b" : "#1d4ed8"}
+                  color={isDark ? "#f59e0b" : "#d97706"}
                 />
               </NeumorphicView>
             ) : (

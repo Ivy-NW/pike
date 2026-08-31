@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { View, Text, StyleSheet, ScrollView, Switch, Alert, Platform, Modal } from "react-native";
+import { View, Text, StyleSheet, ScrollView, Switch, Alert, Platform, Modal, StatusBar } from "react-native";
 import { router } from "expo-router";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { MaterialIcons } from "@expo/vector-icons";
@@ -27,7 +27,10 @@ export default function SettingsScreen() {
     api.me().then(setMe).catch(() => {});
   }, []);
 
-  const topPadding = Platform.OS === "web" ? 14 : Math.max(insets.top, 14) + 6;
+  const topPadding = Math.max(
+    insets.top,
+    Platform.OS === "android" ? (StatusBar.currentHeight ?? 24) : 16
+  ) + 8;
 
   const handleClearCache = () => {
     Alert.alert("Telemetry Cache Re-synced", "Local spatial markers and Nairobi map tiles have been refreshed.");
