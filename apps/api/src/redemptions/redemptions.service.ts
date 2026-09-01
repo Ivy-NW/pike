@@ -7,6 +7,7 @@ import { MarkersService } from "../markers/markers.service";
 import { GamificationService } from "../gamification/gamification.service";
 import { AttestationHashService } from "../attestation/attestation-hash.service";
 import { AttestationQueueService } from "../attestation/attestation-queue.service";
+import { TokenQueueService } from "../tokens/token-queue.service";
 
 const REPEAT_SCAN_WINDOW_MS = 5 * 60 * 1000;
 type RedemptionsDb = PrismaService | Prisma.TransactionClient;
@@ -22,6 +23,7 @@ export class RedemptionsService {
     private readonly gamification: GamificationService,
     private readonly attestationHash: AttestationHashService,
     private readonly attestationQueue: AttestationQueueService,
+    private readonly tokenQueue: TokenQueueService,
   ) {}
 
   private hashIp(ip: string): string {
@@ -212,6 +214,13 @@ export class RedemptionsService {
       // Phase 2 — FR-2: XP/streak/badges awarded once, in the same transaction
       // that binds the redemption to the user.
       const { user: awardedUser, ...award } = await this.gamification.awardForClaim(userId, tx);
+
+      // Phase C — FR-T2: enqueue voucher mint for this reward claim.
+      // Redemption ID is the unique reference; rewardId is derived from quest (token ID = questId for simplicity).
+      // Fire-and-forget like attestation — never blocks the claim response.
+      void this.tokenQueue
+        .enqueueMintVoucher(userId, parseInt(redemption.questId, 10), redemption.id)
+        .catch((err) => this.logger.error(`Voucher mint enqueue failed for ${redemption.id}`, err));
 
       return { redemption: updated, user: awardedUser, award };
     }, { timeout: 20000 });

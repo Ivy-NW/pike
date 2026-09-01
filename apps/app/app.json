@@ -28,7 +28,25 @@
       "adaptiveIcon": {
         "foregroundImage": "./assets/logo.png",
         "backgroundColor": "#0F172A"
+      },
+      "googleServicesFile": "./google-services.json"
+    },
+    "extra": {
+      "eas": {
+        "projectId": "your-expo-project-id"
       }
+    },
+    "web": {
+      "name": "PIKE",
+      "shortName": "PIKE",
+      "description": "Turn visits into quests. Earn rewards, XP, and badges at your favourite venues.",
+      "themeColor": "#0F172A",
+      "backgroundColor": "#0F172A",
+      "favicon": "./assets/logo.png",
+      "display": "standalone",
+      "orientation": "portrait",
+      "startUrl": "/",
+      "lang": "en"
     }
   }
 }
