@@ -36,7 +36,7 @@ export function Sidebar({ businessName }: { businessName?: string }) {
         Create quest
       </Link>
 
-      <nav className="sidebar-nav">
+      <nav className="sidebar-nav" aria-label="Business portal">
         {links.map(({ href, label, icon: Icon }) => {
           const active = pathname === href || pathname.startsWith(`${href}/`);
           return (

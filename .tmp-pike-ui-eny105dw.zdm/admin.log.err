@@ -1,0 +1,215 @@
+request to https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&display=swap failed, reason: connect EACCES 172.217.170.170:443
+
+Retrying 1/3...
+request to https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap failed, reason: connect EACCES 172.217.170.170:443
+
+Retrying 1/3...
+request to https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&display=swap failed, reason: connect EACCES 172.217.170.170:443
+
+Retrying 1/3...
+request to https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&display=swap failed, reason: connect EACCES 172.217.170.170:443
+
+Retrying 2/3...
+request to https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap failed, reason: connect EACCES 172.217.170.170:443
+
+Retrying 2/3...
+request to https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&display=swap failed, reason: connect EACCES 172.217.170.170:443
+
+Retrying 2/3...
+request to https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&display=swap failed, reason: connect EACCES 172.217.170.170:443
+
+Retrying 3/3...
+request to https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap failed, reason: connect EACCES 172.217.170.170:443
+
+Retrying 3/3...
+request to https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&display=swap failed, reason: connect EACCES 172.217.170.170:443
+
+Retrying 3/3...
+FetchError: request to https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&display=swap failed, reason: connect EACCES 172.217.170.170:443
+    at ClientRequest.<anonymous> (C:\Users\JINX\Desktop\clones\pike\node_modules\next\dist\compiled\node-fetch\index.js:1:66160)
+    at ClientRequest.emit (node:events:509:28)
+    at emitErrorEvent (node:_http_client:112:11)
+    at TLSSocket.socketErrorListener (node:_http_client:745:5)
+    at TLSSocket.emit (node:events:509:28)
+    at emitErrorNT (node:internal/streams/destroy:170:8)
+    at emitErrorCloseNT (node:internal/streams/destroy:129:3)
+    at process.processTicksAndRejections (node:internal/process/task_queues:90:21) {
+  type: 'system',
+  errno: 'EACCES',
+  code: 'EACCES'
+}
+FetchError: request to https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap failed, reason: connect EACCES 172.217.170.170:443
+    at ClientRequest.<anonymous> (C:\Users\JINX\Desktop\clones\pike\node_modules\next\dist\compiled\node-fetch\index.js:1:66160)
+    at ClientRequest.emit (node:events:509:28)
+    at emitErrorEvent (node:_http_client:112:11)
+    at TLSSocket.socketErrorListener (node:_http_client:745:5)
+    at TLSSocket.emit (node:events:509:28)
+    at emitErrorNT (node:internal/streams/destroy:170:8)
+    at emitErrorCloseNT (node:internal/streams/destroy:129:3)
+    at process.processTicksAndRejections (node:internal/process/task_queues:90:21) {
+  type: 'system',
+  errno: 'EACCES',
+  code: 'EACCES'
+}
+FetchError: request to https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&display=swap failed, reason: connect EACCES 172.217.170.170:443
+    at ClientRequest.<anonymous> (C:\Users\JINX\Desktop\clones\pike\node_modules\next\dist\compiled\node-fetch\index.js:1:66160)
+    at ClientRequest.emit (node:events:509:28)
+    at emitErrorEvent (node:_http_client:112:11)
+    at TLSSocket.socketErrorListener (node:_http_client:745:5)
+    at TLSSocket.emit (node:events:509:28)
+    at emitErrorNT (node:internal/streams/destroy:170:8)
+    at emitErrorCloseNT (node:internal/streams/destroy:129:3)
+    at process.processTicksAndRejections (node:internal/process/task_queues:90:21) {
+  type: 'system',
+  errno: 'EACCES',
+  code: 'EACCES'
+}
+ ⚠ Cross origin request detected from 127.0.0.1 to /_next/* resource. In a future major version of Next.js, you will need to explicitly configure "allowedDevOrigins" in next.config to allow this.
+Read more: https://nextjs.org/docs/app/api-reference/config/next-config-js/allowedDevOrigins
+ ⨯ Error: Cannot find module './926.js'
+Require stack:
+- C:\Users\JINX\Desktop\clones\pike\apps\admin\.next\server\webpack-runtime.js
+- C:\Users\JINX\Desktop\clones\pike\apps\admin\.next\server\pages\_document.js
+- C:\Users\JINX\Desktop\clones\pike\node_modules\next\dist\server\require.js
+- C:\Users\JINX\Desktop\clones\pike\node_modules\next\dist\server\load-components.js
+- C:\Users\JINX\Desktop\clones\pike\node_modules\next\dist\build\utils.js
+- C:\Users\JINX\Desktop\clones\pike\node_modules\next\dist\server\dev\hot-middleware.js
+- C:\Users\JINX\Desktop\clones\pike\node_modules\next\dist\server\dev\hot-reloader-webpack.js
+- C:\Users\JINX\Desktop\clones\pike\node_modules\next\dist\server\lib\router-utils\setup-dev-bundler.js
+- C:\Users\JINX\Desktop\clones\pike\node_modules\next\dist\server\lib\router-server.js
+- C:\Users\JINX\Desktop\clones\pike\node_modules\next\dist\server\lib\start-server.js
+    at Module.<anonymous> (node:internal/modules/cjs/loader:1517:15)
+    at C:\Users\JINX\Desktop\clones\pike\node_modules\next\dist\server\require-hook.js:55:36
+    at wrapResolveFilename (node:internal/modules/cjs/loader:1071:27)
+    at defaultResolveImplForCJSLoading (node:internal/modules/cjs/loader:1095:10)
+    at resolveForCJSWithHooks (node:internal/modules/cjs/loader:1122:12)
+    at Module._load (node:internal/modules/cjs/loader:1294:5)
+    at wrapModuleLoad (node:internal/modules/cjs/loader:255:19)
+    at Module.<anonymous> (node:internal/modules/cjs/loader:1617:12)
+    at mod.require (C:\Users\JINX\Desktop\clones\pike\node_modules\next\dist\server\require-hook.js:65:28)
+    at require (node:internal/modules/helpers:153:16)
+    at __webpack_require__.f.require (C:\Users\JINX\Desktop\clones\pike\apps\admin\.next\server\webpack-runtime.js:198:28)
+    at C:\Users\JINX\Desktop\clones\pike\apps\admin\.next\server\webpack-runtime.js:111:40
+    at Array.reduce (<anonymous>)
+    at __webpack_require__.e (C:\Users\JINX\Desktop\clones\pike\apps\admin\.next\server\webpack-runtime.js:110:67)
+    at Array.map (<anonymous>)
+    at __webpack_require__.X (C:\Users\JINX\Desktop\clones\pike\apps\admin\.next\server\webpack-runtime.js:162:22)
+    at C:\Users\JINX\Desktop\clones\pike\apps\admin\.next\server\app\login\page.js:1:7723
+    at Object.<anonymous> (C:\Users\JINX\Desktop\clones\pike\apps\admin\.next\server\app\login\page.js:1:7768)
+    at Module._compile (node:internal/modules/cjs/loader:1872:14)
+    at Object..js (node:internal/modules/cjs/loader:2003:10)
+    at Module.load (node:internal/modules/cjs/loader:1594:32)
+    at Module._load (node:internal/modules/cjs/loader:1396:12)
+    at wrapModuleLoad (node:internal/modules/cjs/loader:255:19)
+    at Module.<anonymous> (node:internal/modules/cjs/loader:1617:12)
+    at mod.require (C:\Users\JINX\Desktop\clones\pike\node_modules\next\dist\server\require-hook.js:65:28)
+    at require (node:internal/modules/helpers:153:16)
+    at requirePage (C:\Users\JINX\Desktop\clones\pike\node_modules\next\dist\server\require.js:109:84)
+    at C:\Users\JINX\Desktop\clones\pike\node_modules\next\dist\server\load-components.js:103:84
+    at async loadComponentsImpl (C:\Users\JINX\Desktop\clones\pike\node_modules\next\dist\server\load-components.js:103:26)
+    at async DevServer.findPageComponentsImpl (C:\Users\JINX\Desktop\clones\pike\node_modules\next\dist\server\next-server.js:714:36)
+    at async DevServer.findPageComponents (C:\Users\JINX\Desktop\clones\pike\node_modules\next\dist\server\dev\next-dev-server.js:577:20)
+    at async DevServer.renderPageComponent (C:\Users\JINX\Desktop\clones\pike\node_modules\next\dist\server\base-server.js:1910:24)
+    at async DevServer.renderToResponseImpl (C:\Users\JINX\Desktop\clones\pike\node_modules\next\dist\server\base-server.js:1962:32)
+    at async DevServer.pipeImpl (C:\Users\JINX\Desktop\clones\pike\node_modules\next\dist\server\base-server.js:922:25)
+    at async NextNodeServer.handleCatchallRenderRequest (C:\Users\JINX\Desktop\clones\pike\node_modules\next\dist\server\next-server.js:272:17)
+    at async DevServer.handleRequestImpl (C:\Users\JINX\Desktop\clones\pike\node_modules\next\dist\server\base-server.js:818:17)
+    at async C:\Users\JINX\Desktop\clones\pike\node_modules\next\dist\server\dev\next-dev-server.js:339:20
+    at async Span.traceAsyncFn (C:\Users\JINX\Desktop\clones\pike\node_modules\next\dist\trace\trace.js:154:20)
+    at async DevServer.handleRequest (C:\Users\JINX\Desktop\clones\pike\node_modules\next\dist\server\dev\next-dev-server.js:336:24)
+    at async invokeRender (C:\Users\JINX\Desktop\clones\pike\node_modules\next\dist\server\lib\router-server.js:179:21)
+    at async handleRequest (C:\Users\JINX\Desktop\clones\pike\node_modules\next\dist\server\lib\router-server.js:359:24)
+    at async requestHandlerImpl (C:\Users\JINX\Desktop\clones\pike\node_modules\next\dist\server\lib\router-server.js:383:13)
+    at async Server.requestListener (C:\Users\JINX\Desktop\clones\pike\node_modules\next\dist\server\lib\start-server.js:141:13) {
+  code: 'MODULE_NOT_FOUND',
+  requireStack: [
+    'C:\\Users\\JINX\\Desktop\\clones\\pike\\apps\\admin\\.next\\server\\webpack-runtime.js',
+    'C:\\Users\\JINX\\Desktop\\clones\\pike\\apps\\admin\\.next\\server\\pages\\_document.js',
+    'C:\\Users\\JINX\\Desktop\\clones\\pike\\node_modules\\next\\dist\\server\\require.js',
+    'C:\\Users\\JINX\\Desktop\\clones\\pike\\node_modules\\next\\dist\\server\\load-components.js',
+    'C:\\Users\\JINX\\Desktop\\clones\\pike\\node_modules\\next\\dist\\build\\utils.js',
+    'C:\\Users\\JINX\\Desktop\\clones\\pike\\node_modules\\next\\dist\\server\\dev\\hot-middleware.js',
+    'C:\\Users\\JINX\\Desktop\\clones\\pike\\node_modules\\next\\dist\\server\\dev\\hot-reloader-webpack.js',
+    'C:\\Users\\JINX\\Desktop\\clones\\pike\\node_modules\\next\\dist\\server\\lib\\router-utils\\setup-dev-bundler.js',
+    'C:\\Users\\JINX\\Desktop\\clones\\pike\\node_modules\\next\\dist\\server\\lib\\router-server.js',
+    'C:\\Users\\JINX\\Desktop\\clones\\pike\\node_modules\\next\\dist\\server\\lib\\start-server.js'
+  ],
+  page: '/login'
+}
+ ⨯ Error: Cannot find module './926.js'
+Require stack:
+- C:\Users\JINX\Desktop\clones\pike\apps\admin\.next\server\webpack-runtime.js
+- C:\Users\JINX\Desktop\clones\pike\apps\admin\.next\server\app\(app)\redemptions\page.js
+- C:\Users\JINX\Desktop\clones\pike\node_modules\next\dist\server\require.js
+- C:\Users\JINX\Desktop\clones\pike\node_modules\next\dist\server\load-components.js
+- C:\Users\JINX\Desktop\clones\pike\node_modules\next\dist\build\utils.js
+- C:\Users\JINX\Desktop\clones\pike\node_modules\next\dist\server\dev\hot-middleware.js
+- C:\Users\JINX\Desktop\clones\pike\node_modules\next\dist\server\dev\hot-reloader-webpack.js
+- C:\Users\JINX\Desktop\clones\pike\node_modules\next\dist\server\lib\router-utils\setup-dev-bundler.js
+- C:\Users\JINX\Desktop\clones\pike\node_modules\next\dist\server\lib\router-server.js
+- C:\Users\JINX\Desktop\clones\pike\node_modules\next\dist\server\lib\start-server.js
+    at Module.<anonymous> (node:internal/modules/cjs/loader:1517:15)
+    at C:\Users\JINX\Desktop\clones\pike\node_modules\next\dist\server\require-hook.js:55:36
+    at wrapResolveFilename (node:internal/modules/cjs/loader:1071:27)
+    at defaultResolveImplForCJSLoading (node:internal/modules/cjs/loader:1095:10)
+    at resolveForCJSWithHooks (node:internal/modules/cjs/loader:1122:12)
+    at Module._load (node:internal/modules/cjs/loader:1294:5)
+    at wrapModuleLoad (node:internal/modules/cjs/loader:255:19)
+    at Module.<anonymous> (node:internal/modules/cjs/loader:1617:12)
+    at mod.require (C:\Users\JINX\Desktop\clones\pike\node_modules\next\dist\server\require-hook.js:65:28)
+    at require (node:internal/modules/helpers:153:16)
+    at __webpack_require__.f.require (C:\Users\JINX\Desktop\clones\pike\apps\admin\.next\server\webpack-runtime.js:198:28)
+    at C:\Users\JINX\Desktop\clones\pike\apps\admin\.next\server\webpack-runtime.js:111:40
+    at Array.reduce (<anonymous>)
+    at __webpack_require__.e (C:\Users\JINX\Desktop\clones\pike\apps\admin\.next\server\webpack-runtime.js:110:67)
+    at Array.map (<anonymous>)
+    at __webpack_require__.X (C:\Users\JINX\Desktop\clones\pike\apps\admin\.next\server\webpack-runtime.js:162:22)
+    at C:\Users\JINX\Desktop\clones\pike\apps\admin\.next\server\app\login\page.js:1:7723
+    at Object.<anonymous> (C:\Users\JINX\Desktop\clones\pike\apps\admin\.next\server\app\login\page.js:1:7768)
+    at Module._compile (node:internal/modules/cjs/loader:1872:14)
+    at Object..js (node:internal/modules/cjs/loader:2003:10)
+    at Module.load (node:internal/modules/cjs/loader:1594:32)
+    at Module._load (node:internal/modules/cjs/loader:1396:12)
+    at wrapModuleLoad (node:internal/modules/cjs/loader:255:19)
+    at Module.<anonymous> (node:internal/modules/cjs/loader:1617:12)
+    at mod.require (C:\Users\JINX\Desktop\clones\pike\node_modules\next\dist\server\require-hook.js:65:28)
+    at require (node:internal/modules/helpers:153:16)
+    at requirePage (C:\Users\JINX\Desktop\clones\pike\node_modules\next\dist\server\require.js:109:84)
+    at C:\Users\JINX\Desktop\clones\pike\node_modules\next\dist\server\load-components.js:103:84
+    at async loadComponentsImpl (C:\Users\JINX\Desktop\clones\pike\node_modules\next\dist\server\load-components.js:103:26)
+    at async DevServer.findPageComponentsImpl (C:\Users\JINX\Desktop\clones\pike\node_modules\next\dist\server\next-server.js:714:36)
+    at async DevServer.findPageComponents (C:\Users\JINX\Desktop\clones\pike\node_modules\next\dist\server\dev\next-dev-server.js:577:20)
+    at async DevServer.renderPageComponent (C:\Users\JINX\Desktop\clones\pike\node_modules\next\dist\server\base-server.js:1910:24)
+    at async DevServer.renderToResponseImpl (C:\Users\JINX\Desktop\clones\pike\node_modules\next\dist\server\base-server.js:1962:32)
+    at async DevServer.pipeImpl (C:\Users\JINX\Desktop\clones\pike\node_modules\next\dist\server\base-server.js:922:25)
+    at async NextNodeServer.handleCatchallRenderRequest (C:\Users\JINX\Desktop\clones\pike\node_modules\next\dist\server\next-server.js:272:17)
+    at async DevServer.handleRequestImpl (C:\Users\JINX\Desktop\clones\pike\node_modules\next\dist\server\base-server.js:818:17)
+    at async C:\Users\JINX\Desktop\clones\pike\node_modules\next\dist\server\dev\next-dev-server.js:339:20
+    at async Span.traceAsyncFn (C:\Users\JINX\Desktop\clones\pike\node_modules\next\dist\trace\trace.js:154:20)
+    at async DevServer.handleRequest (C:\Users\JINX\Desktop\clones\pike\node_modules\next\dist\server\dev\next-dev-server.js:336:24)
+    at async invokeRender (C:\Users\JINX\Desktop\clones\pike\node_modules\next\dist\server\lib\router-server.js:179:21)
+    at async handleRequest (C:\Users\JINX\Desktop\clones\pike\node_modules\next\dist\server\lib\router-server.js:359:24)
+    at async requestHandlerImpl (C:\Users\JINX\Desktop\clones\pike\node_modules\next\dist\server\lib\router-server.js:383:13)
+    at async Server.requestListener (C:\Users\JINX\Desktop\clones\pike\node_modules\next\dist\server\lib\start-server.js:141:13) {
+  code: 'MODULE_NOT_FOUND',
+  requireStack: [
+    'C:\\Users\\JINX\\Desktop\\clones\\pike\\apps\\admin\\.next\\server\\webpack-runtime.js',
+    'C:\\Users\\JINX\\Desktop\\clones\\pike\\apps\\admin\\.next\\server\\app\\(app)\\redemptions\\page.js',
+    'C:\\Users\\JINX\\Desktop\\clones\\pike\\node_modules\\next\\dist\\server\\require.js',
+    'C:\\Users\\JINX\\Desktop\\clones\\pike\\node_modules\\next\\dist\\server\\load-components.js',
+    'C:\\Users\\JINX\\Desktop\\clones\\pike\\node_modules\\next\\dist\\build\\utils.js',
+    'C:\\Users\\JINX\\Desktop\\clones\\pike\\node_modules\\next\\dist\\server\\dev\\hot-middleware.js',
+    'C:\\Users\\JINX\\Desktop\\clones\\pike\\node_modules\\next\\dist\\server\\dev\\hot-reloader-webpack.js',
+    'C:\\Users\\JINX\\Desktop\\clones\\pike\\node_modules\\next\\dist\\server\\lib\\router-utils\\setup-dev-bundler.js',
+    'C:\\Users\\JINX\\Desktop\\clones\\pike\\node_modules\\next\\dist\\server\\lib\\router-server.js',
+    'C:\\Users\\JINX\\Desktop\\clones\\pike\\node_modules\\next\\dist\\server\\lib\\start-server.js'
+  ],
+  page: '/login'
+}
+npm error Lifecycle script `dev` failed with error:
+npm error code 4294967295
+npm error path C:\Users\JINX\Desktop\clones\pike\apps\admin
+npm error workspace @pike/admin@0.1.0
+npm error location C:\Users\JINX\Desktop\clones\pike\apps\admin
+npm error command failed
+npm error command C:\WINDOWS\system32\cmd.exe /d /s /c next dev -p 3002

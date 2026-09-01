@@ -114,23 +114,14 @@ export function ArScanView({ questName, imageTargetData, onRecognized }: Props) 
   }, [imageTargetData]);
 
   return (
-    <div
-      style={{
-        position: "fixed",
-        inset: 0,
-        background: "#000",
-        display: "flex",
-        flexDirection: "column",
-        alignItems: "center",
-        justifyContent: "center",
-        overflow: "hidden",
-      }}
-    >
+    <div className="scan-hud">
+      <div className="scan-brand">PIKE · LIVE</div>
       <canvas
         ref={canvasRef}
         style={{ position: "absolute", inset: 0, width: "100%", height: "100%" }}
       />
       <div
+        aria-hidden="true"
         style={{
           position: "absolute",
           inset: 0,
@@ -139,25 +130,10 @@ export function ArScanView({ questName, imageTargetData, onRecognized }: Props) 
           pointerEvents: "none",
         }}
       />
-      <div
-        style={{
-          position: "relative",
-          width: 220,
-          height: 220,
-          border: `2px solid ${recognizing ? "#7C3AED" : "rgba(255,255,255,0.7)"}`,
-          borderRadius: 20,
-          transition: "border-color 0.4s ease",
-          pointerEvents: "none",
-        }}
-      />
+      <div className="scan-frame" style={{ borderColor: recognizing ? "var(--tertiary)" : undefined }} />
       <p
+        className="scan-instruction"
         style={{
-          position: "relative",
-          color: "white",
-          fontFamily: "Inter, system-ui, sans-serif",
-          marginTop: 24,
-          textAlign: "center",
-          padding: "0 24px",
         }}
       >
         {engineError
@@ -169,8 +145,7 @@ export function ArScanView({ questName, imageTargetData, onRecognized }: Props) 
       <button
         onClick={fireRecognized}
         disabled={recognizing}
-        className="btn-primary"
-        style={{ position: "absolute", bottom: 48, width: "80%", maxWidth: 320 }}
+        className="btn-primary scan-dev-action"
       >
         {recognizing ? "Recognizing..." : "Simulate marker recognition (dev)"}
       </button>

@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { View, Text, StyleSheet, TouchableOpacity, FlatList, Alert } from "react-native";
+import { View, Text, StyleSheet, TouchableOpacity, ScrollView, Alert } from "react-native";
 import { router } from "expo-router";
 import { MaterialIcons } from "@expo/vector-icons";
 import type { FavoriteVenueItem, UserProfile } from "@pike/shared-types";
@@ -66,8 +66,9 @@ export default function ProfileScreen() {
 
   const c = theme.colors;
   const styles = StyleSheet.create({
-    container: { flex: 1, backgroundColor: c.surface, padding: theme.spacing.containerPadding, paddingTop: 60 },
-    header: { ...theme.font(theme.type.headlineLgMobile), color: c.primary, marginBottom: theme.spacing.sectionMargin },
+    container: { flexGrow: 1, backgroundColor: c.surface, padding: theme.spacing.containerPadding, paddingTop: 60, paddingBottom: 36 },
+    eyebrow: { ...theme.font(theme.type.labelCaps), color: c.primary, marginBottom: 8 },
+    header: { ...theme.font(theme.type.headlineLgMobile), color: c.onSurface, marginBottom: theme.spacing.sectionMargin },
     avatarWrap: { alignItems: "center", marginBottom: theme.spacing.sectionMargin },
     avatarRing: {
       width: 84,
@@ -110,7 +111,8 @@ export default function ProfileScreen() {
     cardTitleRow: { flexDirection: "row", justifyContent: "space-between", alignItems: "center", marginBottom: 12 },
     cardTitle: { ...theme.font(theme.type.headlineSm), color: c.onSurface },
     viewAll: { ...theme.font(theme.type.labelCaps), color: c.primary },
-    badgeSlot: { flex: 1 / 3, alignItems: "center", marginBottom: 14 },
+    badgeGrid: { flexDirection: "row", flexWrap: "wrap" },
+    badgeSlot: { width: "33.333%", alignItems: "center", marginBottom: 14 },
     badgeIcon: {
       width: 56,
       height: 56,
@@ -148,7 +150,8 @@ export default function ProfileScreen() {
   const initial = (me?.name ?? me?.username ?? "?").charAt(0).toUpperCase();
 
   return (
-    <View style={styles.container}>
+    <ScrollView style={{ flex: 1, backgroundColor: c.surface }} contentContainerStyle={styles.container} showsVerticalScrollIndicator={false}>
+      <Text style={styles.eyebrow}>EXPLORER IDENTITY</Text>
       <Text style={styles.header}>Profile</Text>
 
       <View style={styles.avatarWrap}>
@@ -188,15 +191,11 @@ export default function ProfileScreen() {
             <Text style={styles.cardTitle}>Earned badges</Text>
             <Text style={styles.viewAll}>VIEW ALL</Text>
           </View>
-          <FlatList
-            data={me.badges}
-            numColumns={3}
-            scrollEnabled={false}
-            keyExtractor={(b) => b.key}
-            renderItem={({ item }) => {
+          <View style={styles.badgeGrid}>
+            {me.badges.map((item) => {
               const earned = !!item.earnedAt;
               return (
-                <View style={styles.badgeSlot}>
+                <View key={item.key} style={styles.badgeSlot}>
                   <View style={[styles.badgeIcon, !earned && styles.badgeIconLocked]}>
                     <MaterialIcons
                       name="stars"
@@ -210,8 +209,8 @@ export default function ProfileScreen() {
                   </Text>
                 </View>
               );
-            }}
-          />
+            })}
+          </View>
         </View>
       )}
 
@@ -248,6 +247,6 @@ export default function ProfileScreen() {
       <TouchableOpacity style={styles.linkButton} onPress={deleteAccount}>
         <Text style={styles.linkText}>Delete my account</Text>
       </TouchableOpacity>
-    </View>
+    </ScrollView>
   );
 }

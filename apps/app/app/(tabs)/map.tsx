@@ -63,6 +63,9 @@ export default function MapScreen() {
     },
     backdropIcon: { opacity: 0.25 },
     backdropLabel: { ...theme.font(theme.type.labelSm), color: c.onSurfaceVariant, marginTop: 8, opacity: 0.6 },
+    mapHeader: { position: "absolute", top: 54, left: theme.spacing.containerPadding, zIndex: 2 },
+    eyebrow: { ...theme.font(theme.type.labelCaps), color: c.primary, marginBottom: 6 },
+    mapTitle: { ...theme.font(theme.type.headlineLgMobile), color: c.onSurface },
     sheet: {
       flex: 1,
       marginTop: -24,
@@ -95,6 +98,10 @@ export default function MapScreen() {
 
   return (
     <View style={styles.container}>
+      <View style={styles.mapHeader}>
+        <Text style={styles.eyebrow}>DISCOVERY GRID</Text>
+        <Text style={styles.mapTitle}>Explore nearby</Text>
+      </View>
       <View style={styles.backdrop}>
         <MaterialIcons name="map" size={72} color={c.primary} style={styles.backdropIcon} />
         <Text style={styles.backdropLabel}>LIVE MAP VIEW — COMING SOON</Text>

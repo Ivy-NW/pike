@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
+import { View, Text, StyleSheet, TouchableOpacity, ScrollView } from "react-native";
 import { router } from "expo-router";
 import { MaterialIcons } from "@expo/vector-icons";
 import type { MacroQuestProgress, UserProfile } from "@pike/shared-types";
@@ -27,10 +27,11 @@ export default function HomeScreen() {
   const c = theme.colors;
 
   const styles = StyleSheet.create({
-    container: { flex: 1, backgroundColor: c.surface, padding: theme.spacing.containerPadding, paddingTop: 60 },
+    container: { flexGrow: 1, backgroundColor: c.surface, padding: theme.spacing.containerPadding, paddingTop: 60, paddingBottom: 32 },
     headerRow: { flexDirection: "row", alignItems: "center", justifyContent: "space-between", marginBottom: theme.spacing.sectionMargin },
     headerLeft: { flexDirection: "row", alignItems: "center", gap: 10 },
     header: { ...theme.font(theme.type.headlineLgMobile), color: c.primary },
+    context: { ...theme.font(theme.type.labelSm), color: c.onSurfaceVariant },
     streak: { flexDirection: "row", alignItems: "center", gap: 4 },
     streakCount: { ...theme.font(theme.type.headlineSm), color: c.secondary },
     card: {
@@ -71,11 +72,14 @@ export default function HomeScreen() {
   });
 
   return (
-    <View style={styles.container}>
+    <ScrollView style={{ flex: 1, backgroundColor: c.surface }} contentContainerStyle={styles.container} showsVerticalScrollIndicator={false}>
       <View style={styles.headerRow}>
         <View style={styles.headerLeft}>
           <Logo size={28} />
-          <Text style={styles.header}>PIKE</Text>
+          <View>
+            <Text style={styles.header}>PIKE</Text>
+            <Text style={styles.context}>EXPLORER CONSOLE</Text>
+          </View>
         </View>
         {me && me.currentStreak > 0 && (
           <View style={styles.streak}>
@@ -172,6 +176,6 @@ export default function HomeScreen() {
           )}
         </View>
       )}
-    </View>
+    </ScrollView>
   );
 }

@@ -1,27 +1,27 @@
 @import "./theme.css";
 
 :root {
-  --landing-paper: #f7f4ee;
-  --landing-soft: #f0ece4;
-  --landing-ink: #161c28;
-  --landing-muted: #625f59;
-  --landing-line: #d4cec3;
+  --landing-paper: var(--surface);
+  --landing-soft: var(--surface-container-low);
+  --landing-ink: var(--on-surface);
+  --landing-muted: var(--on-surface-variant);
+  --landing-line: var(--outline-variant);
   /* Landing keeps its own type identity (Space Grotesk/Inter) distinct from the app
      shell's Geist — intentional, not a token-generation oversight. Fonts are self-hosted
      via next/font (see layout.tsx), which exposes them as these CSS variables. */
   --font-heading: var(--font-space-grotesk), sans-serif;
   --font-body: var(--font-inter), sans-serif;
-  /* Accent tracks the shared design-token --primary instead of a hardcoded hex so the
+  /* Accent tracks the shared filled-action token instead of a hardcoded hex so the
      landing page's brand blue stays in sync with admin/dashboard/webar. */
-  --landing-accent: var(--primary);
+  --landing-accent: var(--primary-container);
 }
 
 html[data-theme="dark"] {
-  --landing-paper: #121926;
-  --landing-soft: #1b2432;
-  --landing-ink: #eef2f8;
-  --landing-muted: #aeb7c5;
-  --landing-line: #354052;
+  --landing-paper: var(--surface);
+  --landing-soft: var(--surface-container-low);
+  --landing-ink: var(--on-surface);
+  --landing-muted: var(--on-surface-variant);
+  --landing-line: var(--outline-variant);
 }
 
 * {
@@ -128,7 +128,7 @@ button, input {
   min-height: 48px;
   padding: 13px 22px;
   border: 1px solid transparent;
-  border-radius: 10px;
+  border-radius: var(--radius-card);
   font-family: var(--font-body);
   font-size: 14px;
   font-weight: 700;
@@ -143,7 +143,7 @@ button, input {
 
 .btn-primary {
   background: var(--landing-accent);
-  color: var(--on-primary);
+  color: var(--on-primary-container);
 }
 
 .btn-primary:hover {
@@ -198,6 +198,10 @@ main#main-content {
 section[id] {
   scroll-margin-top: 118px;
 }
+
+.legal-page { min-height: calc(100vh - 82px); padding-block: clamp(96px, 12vw, 156px); }
+.legal-page__panel { max-width: 760px; padding: clamp(28px, 5vw, 56px); background: var(--surface-container-lowest); border: 1px solid var(--landing-line); border-top: 4px solid var(--primary-container); border-radius: var(--radius-card); }
+.legal-page__meta { margin-bottom: 18px; color: var(--landing-accent); font-family: var(--font-mono); font-size: 11px; font-weight: 700; letter-spacing: .12em; text-transform: uppercase; }
 
 /* Progressive-enhancement scroll reveal: hidden state only applies once the blocking
    init script in layout.tsx has stamped `data-js` on <html>, so content stays visible

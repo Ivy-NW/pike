@@ -32,6 +32,7 @@ export default function RegisterPage() {
   if (done) {
     return (
       <AuthSplitPanel>
+        <span className="eyebrow">Account created</span>
         <h2 style={{ fontFamily: "var(--font-heading)", fontSize: 26 }}>Check your email</h2>
         <p style={{ color: "var(--on-surface-variant)", marginTop: 12 }}>
           We sent a verification link (logged server-side in dev — no email provider configured yet). Verify, then{" "}
@@ -43,6 +44,7 @@ export default function RegisterPage() {
 
   return (
     <AuthSplitPanel>
+      <span className="eyebrow">Get started</span>
       <h2 style={{ fontFamily: "var(--font-heading)", fontSize: 26, marginBottom: 6 }}>Create your PIKE business account</h2>
       <p style={{ color: "var(--on-surface-variant)", marginBottom: 32 }}>Set up the venue that will host your first quest.</p>
       <form onSubmit={submit} style={{ display: "flex", flexDirection: "column", gap: 16 }}>
@@ -84,7 +86,7 @@ export default function RegisterPage() {
         <button className="primary" style={{ marginTop: 8 }} disabled={loading}>
           {loading ? "Creating..." : "Create account"}
         </button>
-        {error && <p style={{ color: "var(--error)" }}>{error}</p>}
+        {error && <div className="notice notice-error" role="alert"><strong>Account was not created</strong><span>{error}</span></div>}
       </form>
       <p style={{ marginTop: 24, fontSize: 14, color: "var(--on-surface-variant)" }}>
         Already have an account? <Link href="/login" style={{ color: "var(--primary)", fontWeight: 600 }}>Log in</Link>

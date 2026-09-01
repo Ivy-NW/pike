@@ -18,8 +18,10 @@ export default function RedemptionsPage() {
     <>
       <div className="page-header">
         <div>
+          <span className="page-eyebrow">Trust &amp; safety</span>
           <h1>Redemptions</h1>
           <p>Flagged completions surface FR-13&apos;s anti-gaming signal for manual review.</p>
+          <div className="page-meta"><span>{redemptions === null ? "Loading review queue" : `${redemptions.length} ${filter || "total"}`}</span><span>{filter === "flagged" ? "Manual review queue" : "Redemption ledger"}</span></div>
         </div>
         <div className="tab-bar">
           {(["", "claimed", "flagged", "rejected"] as const).map((s) => (
@@ -30,9 +32,9 @@ export default function RedemptionsPage() {
         </div>
       </div>
 
-      {error && <p style={{ color: "var(--error)" }}>{error}</p>}
+      {error && <div className="state-alert" role="alert"><strong>Redemptions could not be loaded.</strong><span>{error}</span></div>}
 
-      <div className="card table-wrap">
+      <div className="card table-wrap responsive-table risk-table" aria-busy={redemptions === null}>
         {redemptions === null ? (
           <SkeletonRows />
         ) : redemptions.length === 0 ? (

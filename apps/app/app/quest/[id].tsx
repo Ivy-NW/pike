@@ -27,11 +27,12 @@ export default function QuestDetailScreen() {
       flexDirection: "row",
       alignItems: "center",
       gap: 12,
-      height: 56,
+      minHeight: 92,
+      paddingTop: 40,
       paddingHorizontal: theme.spacing.containerPadding,
       backgroundColor: c.surfaceContainerLow,
     },
-    headerTitle: { ...theme.font(theme.type.headlineLgMobile), color: c.primary },
+    headerTitle: { ...theme.font(theme.type.labelCaps), color: c.primary },
     hero: {
       height: 180,
       margin: theme.spacing.containerPadding,
@@ -60,6 +61,7 @@ export default function QuestDetailScreen() {
     chipTextGold: { ...theme.font(theme.type.labelCaps), color: c.secondary },
     section: { paddingHorizontal: theme.spacing.containerPadding },
     sectionTitle: { ...theme.font(theme.type.headlineSm), color: c.primary, marginBottom: theme.spacing.stackSm },
+    questTitle: { ...theme.font(theme.type.headlineLg), color: c.onSurface, paddingHorizontal: theme.spacing.containerPadding, marginBottom: theme.spacing.stackMd },
     briefCard: {
       backgroundColor: theme.mode === "dark" ? "rgba(30,41,59,0.7)" : c.surfaceContainerLowest,
       borderWidth: 1,
@@ -94,6 +96,8 @@ export default function QuestDetailScreen() {
         <MaterialIcons name="explore" size={64} color={c.onPrimaryContainer} style={{ opacity: 0.6 }} />
       </View>
 
+      <Text style={styles.questTitle}>{params.name}</Text>
+
       <View style={styles.chipRow}>
         <View style={styles.chip}>
           <MaterialIcons name="location-on" size={16} color={c.onSurfaceVariant} />
@@ -116,7 +120,7 @@ export default function QuestDetailScreen() {
           )}
         </View>
         <View style={styles.briefCard}>
-          <Text style={styles.briefText}>{params.name}</Text>
+          <Text style={styles.briefText}>Find the PIKE marker at {params.venueName}, open the scanner, and keep it centered until verification completes.</Text>
         </View>
       </View>
 

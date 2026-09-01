@@ -19,7 +19,12 @@ export default function AppLayout({ children }: { children: ReactNode }) {
     api.me().then((me) => setBusinessName(me?.name)).catch(() => {});
   }, [router]);
 
-  if (!ready) return null;
+  if (!ready) return (
+    <main className="route-loading" aria-live="polite">
+      <span className="loading-mark" aria-hidden="true" />
+      <p>Verifying your workspace&hellip;</p>
+    </main>
+  );
 
   return (
     <div className="app-shell">

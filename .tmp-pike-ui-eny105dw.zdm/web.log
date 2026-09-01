@@ -1,0 +1,28 @@
+
+> @pike/web@0.1.1 dev
+> next dev -p 3000
+
+  ▲ Next.js 14.2.35
+  - Local:        http://localhost:3000
+  - Environments: .env.local
+
+ ✓ Starting...
+ ✓ Ready in 2.2s
+ ○ Compiling / ...
+ ✓ Compiled / in 4.5s (701 modules)
+ GET / 200 in 4912ms
+ GET / 200 in 5080ms
+ GET / 200 in 19ms
+ GET / 200 in 65ms
+ ✓ Compiled in 186ms (306 modules)
+ ✓ Compiled in 82ms (306 modules)
+ ○ Compiling /_error ...
+ ✓ Compiled /_error in 1025ms (823 modules)
+ GET / 500 in 1431ms
+ ✓ Compiled /privacy in 207ms (827 modules)
+ GET /privacy 200 in 394ms
+ ✓ Compiled /terms in 92ms (829 modules)
+ GET /terms 200 in 187ms
+ ✓ Compiled /coming-soon in 161ms (846 modules)
+ GET /coming-soon 200 in 217ms
+ GET / 500 in 23ms

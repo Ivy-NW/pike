@@ -17,7 +17,9 @@ export default function QuestsScreen() {
   const c = theme.colors;
   const styles = StyleSheet.create({
     container: { flex: 1, backgroundColor: c.surface, padding: theme.spacing.containerPadding, paddingTop: 60 },
-    header: { ...theme.font(theme.type.headlineLgMobile), color: c.primary, marginBottom: theme.spacing.sectionMargin },
+    eyebrow: { ...theme.font(theme.type.labelCaps), color: c.primary, marginBottom: 8 },
+    header: { ...theme.font(theme.type.headlineLgMobile), color: c.onSurface, marginBottom: 4 },
+    intro: { ...theme.font(theme.type.bodyMd), color: c.onSurfaceVariant, marginBottom: theme.spacing.sectionMargin },
     empty: { ...theme.font(theme.type.bodyMd), color: c.onSurfaceVariant },
     card: {
       backgroundColor: theme.mode === "dark" ? "rgba(30,41,59,0.7)" : c.surfaceContainerLowest,
@@ -31,13 +33,16 @@ export default function QuestsScreen() {
     venue: { ...theme.font(theme.type.bodyMd), color: c.onSurfaceVariant, marginTop: 2 },
     reward: { ...theme.font(theme.type.labelCaps), color: c.secondary, marginTop: 10 },
     completed: { ...theme.font(theme.type.labelCaps), color: c.success, marginTop: 10 },
+    metaRow: { flexDirection: "row", alignItems: "center", justifyContent: "space-between", marginTop: 10 },
     scanButton: { backgroundColor: c.primaryContainer, borderRadius: theme.radius.full, padding: 12, alignItems: "center", marginTop: 12 },
     scanButtonText: { ...theme.font(theme.type.labelCaps), color: c.onPrimaryContainer },
   });
 
   return (
     <View style={styles.container}>
-      <Text style={styles.header}>Quests</Text>
+      <Text style={styles.eyebrow}>FIELD OPERATIONS</Text>
+      <Text style={styles.header}>Available quests</Text>
+      <Text style={styles.intro}>Choose a mission, reach the venue, and verify its marker.</Text>
       <FlatList
         data={quests}
         keyExtractor={(q) => q.id}
@@ -62,9 +67,12 @@ export default function QuestsScreen() {
           >
             <Text style={styles.cardTitle}>{item.name}</Text>
             <Text style={styles.venue}>{item.venueName}</Text>
-            <Text style={item.completed ? styles.completed : styles.reward}>
-              {item.completed ? "Completed" : item.rewardDescription}
-            </Text>
+            <View style={styles.metaRow}>
+              <Text style={item.completed ? styles.completed : styles.reward}>
+                {item.completed ? "COMPLETED" : item.rewardDescription}
+              </Text>
+              <Text style={styles.venue}>{item.completed ? "VERIFIED" : "READY"}</Text>
+            </View>
             {!item.completed && item.markerId && (
               <TouchableOpacity style={styles.scanButton} onPress={() => router.push(`/scan/${item.markerId}`)}>
                 <Text style={styles.scanButtonText}>Scan marker</Text>

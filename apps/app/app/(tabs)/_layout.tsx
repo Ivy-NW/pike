@@ -30,7 +30,11 @@ export default function TabsLayout() {
           backgroundColor: theme.colors.surfaceContainerLow,
           borderTopColor: theme.colors.surfaceContainerHighest,
           borderTopWidth: 1,
+          height: 68,
+          paddingTop: 8,
+          paddingBottom: 8,
         },
+        tabBarItemStyle: { borderRadius: theme.radius.md, marginHorizontal: 2 },
         tabBarLabelStyle: { ...theme.font(theme.type.labelSm), marginBottom: 2 },
       }}
     >

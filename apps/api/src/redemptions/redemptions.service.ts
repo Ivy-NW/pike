@@ -214,6 +214,6 @@ export class RedemptionsService {
       const { user: awardedUser, ...award } = await this.gamification.awardForClaim(userId, tx);
 
       return { redemption: updated, user: awardedUser, award };
-    });
+    }, { timeout: 20000 });
   }
 }

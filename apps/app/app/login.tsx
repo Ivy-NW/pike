@@ -65,9 +65,12 @@ export default function LoginScreen() {
   const c = theme.colors;
   const styles = StyleSheet.create({
     container: { flexGrow: 1, backgroundColor: c.surface, justifyContent: "center", padding: 24 },
+    eyebrow: { ...theme.font(theme.type.labelCaps), color: c.primary, marginBottom: 12 },
+    panel: { backgroundColor: c.surfaceContainerLowest, borderWidth: 1, borderColor: c.borderSubtle, borderRadius: theme.radius.card, padding: 18 },
     logoRow: { flexDirection: "row", alignItems: "center", gap: 12, marginBottom: 8 },
     title: { ...theme.font(theme.type.displayXl), color: c.onSurface },
-    subtitle: { ...theme.font(theme.type.bodyMd), color: c.onSurfaceVariant, marginBottom: 24, marginTop: 8 },
+    subtitle: { ...theme.font(theme.type.bodyMd), color: c.onSurfaceVariant, marginBottom: 24, marginTop: 8, maxWidth: 420 },
+    fieldLabel: { ...theme.font(theme.type.labelSm), color: c.onSurfaceVariant, marginBottom: 7, marginTop: 2, textTransform: "uppercase" },
     input: {
       backgroundColor: c.surfaceContainerLow,
       borderRadius: theme.radius.card,
@@ -86,6 +89,7 @@ export default function LoginScreen() {
 
   return (
     <ScrollView contentContainerStyle={styles.container}>
+      <Text style={styles.eyebrow}>EXPLORER ACCESS</Text>
       <View style={styles.logoRow}>
         <Logo size={36} />
         <Text style={styles.title}>PIKE</Text>
@@ -94,8 +98,10 @@ export default function LoginScreen() {
         {mode === "signin" ? "Sign in to your PIKE account." : "Create your PIKE account — same one used to claim rewards."}
       </Text>
 
-      {mode === "signin" ? (
+      <View style={styles.panel}>
+        {mode === "signin" ? (
         <>
+          <Text style={styles.fieldLabel}>Account</Text>
           <TextInput
             style={styles.input}
             placeholder="Username or email"
@@ -104,6 +110,7 @@ export default function LoginScreen() {
             onChangeText={setIdentifier}
             autoCapitalize="none"
           />
+          <Text style={styles.fieldLabel}>Password</Text>
           <TextInput
             style={styles.input}
             placeholder="Password"
@@ -127,6 +134,7 @@ export default function LoginScreen() {
         </>
       ) : (
         <>
+          <Text style={styles.fieldLabel}>Phone</Text>
           <TextInput
             style={styles.input}
             placeholder="Phone number (e.g. +15551234567)"
@@ -135,8 +143,11 @@ export default function LoginScreen() {
             onChangeText={setPhone}
             keyboardType="phone-pad"
           />
-          <TextInput style={styles.input} placeholder="Username" placeholderTextColor={c.onSurfaceVariant} value={username} onChangeText={setUsername} autoCapitalize="none" />
+          <Text style={styles.fieldLabel}>Username</Text>
+          <TextInput style={styles.input} placeholder="Choose a username" placeholderTextColor={c.onSurfaceVariant} value={username} onChangeText={setUsername} autoCapitalize="none" />
+          <Text style={styles.fieldLabel}>Full name</Text>
           <TextInput style={styles.input} placeholder="Full name" placeholderTextColor={c.onSurfaceVariant} value={name} onChangeText={setName} />
+          <Text style={styles.fieldLabel}>Email</Text>
           <TextInput
             style={styles.input}
             placeholder="Email"
@@ -146,6 +157,7 @@ export default function LoginScreen() {
             keyboardType="email-address"
             autoCapitalize="none"
           />
+          <Text style={styles.fieldLabel}>Password</Text>
           <TextInput
             style={styles.input}
             placeholder="Password (min 8 characters)"
@@ -167,9 +179,10 @@ export default function LoginScreen() {
             <Text style={styles.link}>Already have an account? Sign in</Text>
           </TouchableOpacity>
         </>
-      )}
+        )}
 
-      {error && <Text style={styles.error}>{error}</Text>}
+        {error && <Text style={styles.error}>{error}</Text>}
+      </View>
     </ScrollView>
   );
 }

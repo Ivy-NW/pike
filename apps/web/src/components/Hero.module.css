@@ -15,15 +15,15 @@
 .note { margin-top: 22px; font-size: 13px; color: var(--landing-muted); }
 .note span { font-size: 9px; color: var(--success); margin-right: 7px; }
 .visual { position: relative; min-height: 650px; margin-right: max(-24px, calc((1180px - 100vw) / 2)); }
-.visual:before { content: ""; position: absolute; z-index: -1; inset: 8% -8% -7% 10%; background: #d9d0c2; transform: rotate(3deg); }
+.visual:before { content: ""; position: absolute; z-index: -1; inset: 8% -8% -7% 10%; background: var(--surface-container-high); transform: rotate(3deg); }
 .photo { object-fit: cover; object-position: 54% center; }
-.scanCard { position: absolute; left: -32px; top: 12%; width: 190px; padding: 16px; background: rgba(249,247,242,.96); color: #161c28; box-shadow: 0 24px 60px rgba(14,19,29,.2); transform: rotate(-3deg); }
+.scanCard { position: absolute; left: -32px; top: 12%; width: 190px; padding: 16px; background: var(--surface-container-lowest); color: var(--on-surface); border: 1px solid var(--outline-variant); box-shadow: 0 24px 60px rgba(14,19,29,.2); transform: rotate(-3deg); }
 .scanTop { display: flex; justify-content: space-between; align-items: center; text-transform: uppercase; font-size: 9px; letter-spacing: .1em; }
-.scanTop b { font-size: 9px; color: #147a4c; }
-.marker { position: relative; height: 118px; margin: 15px 0 12px; background: #e9e5db; overflow: hidden; }
-.marker span { position: absolute; width: 27px; height: 27px; border-color: #2563eb; border-style: solid; }
+.scanTop b { font-size: 9px; color: var(--success); }
+.marker { position: relative; height: 118px; margin: 15px 0 12px; background: var(--surface-container); overflow: hidden; }
+.marker span { position: absolute; width: 27px; height: 27px; border-color: var(--primary-container); border-style: solid; }
 .marker span:nth-child(1){left:13px;top:13px;border-width:2px 0 0 2px}.marker span:nth-child(2){right:13px;top:13px;border-width:2px 2px 0 0}.marker span:nth-child(3){right:13px;bottom:13px;border-width:0 2px 2px 0}.marker span:nth-child(4){left:13px;bottom:13px;border-width:0 0 2px 2px}
-.marker i { position: absolute; left: 18px; right: 18px; top: 50%; height: 2px; background: #2563eb; box-shadow: 0 0 12px #2563eb; animation: scan 3s ease-in-out infinite; }
+.marker i { position: absolute; left: 18px; right: 18px; top: 50%; height: 2px; background: var(--primary-container); box-shadow: 0 0 12px var(--primary-container); animation: scan 3s ease-in-out infinite; }
 .scanCard p { font-size: 12px; line-height: 1.35; font-weight: 650; }
 .rewardCard { position: absolute; right: 5%; bottom: 9%; min-width: 245px; padding: 17px 20px; background: #111827; color: #fff; display: flex; gap: 14px; align-items: center; box-shadow: 0 24px 60px rgba(14,19,29,.28); animation: float 5s ease-in-out infinite; }
 .spark { color: #f59e0b; font-size: 28px; }

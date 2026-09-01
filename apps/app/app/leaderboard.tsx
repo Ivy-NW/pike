@@ -32,7 +32,8 @@ export default function LeaderboardScreen() {
     container: { flex: 1, backgroundColor: c.surface, paddingTop: 60 },
     headerRow: { flexDirection: "row", alignItems: "center", gap: 8, paddingHorizontal: theme.spacing.containerPadding, marginBottom: theme.spacing.sectionMargin },
     back: { padding: 4 },
-    header: { ...theme.font(theme.type.headlineLgMobile), color: c.primary },
+    header: { ...theme.font(theme.type.headlineLgMobile), color: c.onSurface },
+    eyebrow: { ...theme.font(theme.type.labelCaps), color: c.primary, paddingHorizontal: theme.spacing.containerPadding, marginBottom: 8 },
     subtitle: { ...theme.font(theme.type.labelSm), color: c.onSurfaceVariant, paddingHorizontal: theme.spacing.containerPadding, marginBottom: theme.spacing.sectionMargin },
     row: {
       flexDirection: "row",
@@ -75,6 +76,7 @@ export default function LeaderboardScreen() {
 
   const Header = () => (
     <>
+      <Text style={styles.eyebrow}>GLOBAL STANDINGS</Text>
       <View style={styles.headerRow}>
         <TouchableOpacity style={styles.back} onPress={() => router.back()}>
           <MaterialIcons name="arrow-back" size={24} color={c.onSurface} />

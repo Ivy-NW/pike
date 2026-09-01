@@ -187,10 +187,12 @@ export default function NewQuestPage() {
     <>
       <div className="page-header">
         <div>
+          <span className="eyebrow">Campaign builder</span>
           <h1>New quest</h1>
+          <p>Define the experience, reward, and marker before publishing.</p>
         </div>
       </div>
-      <Suspense fallback={<div className="skeleton-row" />}>
+      <Suspense fallback={<div className="card loading-stack" aria-label="Loading quest builder"><div className="skeleton-row" /><div className="skeleton-row" /><div className="skeleton-row" /></div>}>
         <NewQuestForm />
       </Suspense>
     </>
