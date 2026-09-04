@@ -1,8 +1,10 @@
 import { ForbiddenException, Injectable, NotFoundException } from "@nestjs/common";
+import type { Prisma } from "@prisma/client";
 import { PrismaService } from "../prisma/prisma.service";
 import { RedemptionCapService } from "../redis/redemption-cap.service";
 import { NotificationsService } from "../notifications/notifications.service";
 import { CreateQuestDto } from "./dto/create-quest.dto";
+import { UpdateQuestDto } from "./dto/update-quest.dto";
 
 @Injectable()
 export class QuestsService {
@@ -65,6 +67,57 @@ export class QuestsService {
     // must never fail the publish itself.
     void this.notifications.notifyNewQuestAtVenue(quest.venueId, quest.venue.name, quest.name).catch(() => undefined);
     return updated;
+  }
+
+  /**
+   * Reward-inventory edits from the rewards page. Only the keys actually present in the
+   * payload are written, so patching a cap can never blank an expiry someone else just set.
+   * A lowered cap applies immediately: RedemptionsService compares today's live Redis count
+   * against maxRedemptionsPerDay on every scan, so the new ceiling binds without a reset.
+   */
+  async update(questId: string, businessId: string, dto: UpdateQuestDto) {
+    await this.findOwnedOrThrow(questId, businessId);
+
+    const data: Prisma.QuestUpdateInput = {};
+    if (dto.name !== undefined) data.name = dto.name;
+    if (dto.theme !== undefined) data.theme = dto.theme;
+    if (dto.rewardType !== undefined) data.rewardType = dto.rewardType;
+    if (dto.rewardTier !== undefined) data.rewardTier = dto.rewardTier;
+    if (dto.rewardDescription !== undefined) data.rewardDescription = dto.rewardDescription;
+    if (dto.maxRedemptionsPerDay !== undefined) data.maxRedemptionsPerDay = dto.maxRedemptionsPerDay;
+    if (dto.expiresAt !== undefined) data.expiresAt = dto.expiresAt ? new Date(dto.expiresAt) : null;
+
+    return this.prisma.quest.update({ where: { id: questId }, data });
+  }
+
+  /**
+   * Pulls a reward out of circulation without deleting it. This is enforced, not cosmetic:
+   * RedemptionsService.create() rejects any scan whose quest is not `live`.
+   */
+  async pause(questId: string, businessId: string) {
+    const quest = await this.findOwnedOrThrow(questId, businessId);
+    if (quest.status !== "live") {
+      throw new ForbiddenException("Only a live quest can be paused");
+    }
+    return this.prisma.quest.update({ where: { id: questId }, data: { status: "paused" } });
+  }
+
+  /**
+   * Mirrors publish's marker gate (the payment gate is applied in the controller, as it is for
+   * publish) — resuming puts a reward back into circulation, so it must clear the same bar
+   * rather than becoming a way around it. Deliberately does NOT re-fire the new-quest
+   * notification: favoriters were already told when it first went live, and a pause/resume
+   * cycle is not a new quest.
+   */
+  async resume(questId: string, businessId: string) {
+    const quest = await this.findOwnedOrThrow(questId, businessId);
+    if (quest.status !== "paused") {
+      throw new ForbiddenException("Only a paused quest can be resumed");
+    }
+    if (!quest.markers.some((m) => m.status === "ready")) {
+      throw new ForbiddenException("Generate and finish compiling a marker before resuming");
+    }
+    return this.prisma.quest.update({ where: { id: questId }, data: { status: "live" } });
   }
 
   /** Basic dashboard numbers (PRD section 12): redemption counts and remaining cap — real, not stubbed. */

@@ -554,3 +554,53 @@ button.icon {
     gap: 16px;
   }
 }
+
+/* Reward-edit dialog (rewards page). Deliberately plain: same surface/border tokens as
+   .card, so an overlaid editor reads as the same material as the table underneath. */
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: color-mix(in srgb, var(--surface-dim) 70%, transparent);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  z-index: 50;
+}
+
+.modal {
+  background: var(--surface-container-lowest);
+  border: 1px solid var(--border-strong);
+  border-radius: var(--radius-md);
+  padding: 24px;
+  width: 100%;
+  max-width: 460px;
+  max-height: calc(100vh - 40px);
+  overflow-y: auto;
+}
+
+.modal-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  margin-top: 20px;
+}
+
+.field-label {
+  font-size: 13px;
+  color: var(--on-surface-variant);
+  margin-bottom: 6px;
+  display: block;
+}
+
+/* Keeps the row-level pause/resume/edit controls from stretching to the cell width. */
+.row-actions {
+  display: flex;
+  gap: 8px;
+  justify-content: flex-end;
+}
+
+.row-actions button {
+  padding: 6px 12px;
+  font-size: 13px;
+}
