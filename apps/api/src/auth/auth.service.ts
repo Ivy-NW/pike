@@ -89,8 +89,14 @@ export class AuthService {
   }
 
   async signinConsumer(identifier: string, password: string) {
+    const cleanIdentifier = identifier.trim();
     const user = await this.prisma.user.findFirst({
-      where: { OR: [{ username: identifier }, { email: identifier }] },
+      where: {
+        OR: [
+          { username: { equals: cleanIdentifier, mode: "insensitive" } },
+          { email: { equals: cleanIdentifier, mode: "insensitive" } },
+        ],
+      },
     });
     if (!user || !(await this.passwords.compare(password, user.passwordHash))) {
       throw new UnauthorizedException("Invalid username/email or password");

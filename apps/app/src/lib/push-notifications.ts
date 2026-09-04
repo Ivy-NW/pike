@@ -1,9 +1,26 @@
 import { Platform } from "react-native";
-import * as Notifications from "expo-notifications";
 import * as Device from "expo-device";
+import Constants, { ExecutionEnvironment } from "expo-constants";
 import { api } from "./api";
 
 const isNative = Platform.OS === "ios" || Platform.OS === "android";
+const isAndroidExpoGo =
+  Platform.OS === "android" &&
+  Constants.executionEnvironment === ExecutionEnvironment.StoreClient;
+
+function getNotificationsModule() {
+  if (isAndroidExpoGo) {
+    // Expo Go on Android removed expo-notifications support starting in SDK 53.
+    // Development builds (expo-dev-client) or iOS are required for native push.
+    return null;
+  }
+
+  try {
+    return require("expo-notifications");
+  } catch {
+    return null;
+  }
+}
 
 /**
  * Native push notification setup (Expo + FCM).
@@ -19,6 +36,9 @@ export async function registerNativePushToken(): Promise<void> {
     // Expo push only works on physical devices, not simulators/emulators.
     return;
   }
+
+  const Notifications = getNotificationsModule();
+  if (!Notifications) return;
 
   try {
     const { status: existingStatus } = await Notifications.getPermissionsAsync();
@@ -51,11 +71,20 @@ export async function registerNativePushToken(): Promise<void> {
 export function setupNotificationHandlers(): void {
   if (!isNative) return;
 
-  Notifications.setNotificationHandler({
-    handleNotification: async () => ({
-      shouldShowAlert: true,
-      shouldPlaySound: true,
-      shouldSetBadge: false,
-    }),
-  });
+  const Notifications = getNotificationsModule();
+  if (!Notifications) return;
+
+  try {
+    Notifications.setNotificationHandler({
+      handleNotification: async () => ({
+        shouldShowAlert: true,
+        shouldPlaySound: true,
+        shouldSetBadge: false,
+        shouldShowBanner: true,
+        shouldShowList: true,
+      }),
+    });
+  } catch (err) {
+    console.warn("[push] setNotificationHandler skipped in Expo Go / unsupported environment", err);
+  }
 }

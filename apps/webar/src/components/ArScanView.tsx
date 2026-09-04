@@ -7,11 +7,6 @@ interface Props {
   onRecognized: () => void;
 }
 
-/**
- * 8th Wall went open source in Feb 2026 (https://8thwall.org) — no account or app key is
- * required any more, so this loads the engine binary straight from its public CDN.
- * See apps/api/src/markers/marker-compile.service.ts for how imageTargetData is produced.
- */
 const ENGINE_SCRIPT_URL = "https://cdn.jsdelivr.net/npm/@8thwall/engine-binary@1/dist/xr.js";
 
 declare global {
@@ -20,15 +15,6 @@ declare global {
   }
 }
 
-/**
- * The base xr.js script only bootstraps a chunk loader — XR8.XrController (and every other
- * feature module) stays `null` until its bundle chunk is fetched. Image-target tracking
- * lives in the "slam" chunk (xr-slam.js) even with disableWorldTracking:true, since that's
- * a runtime behavior flag, not a bundling boundary — confirmed by inspecting XR8.loadChunk's
- * source, which maps chunk name "slam" -> populates XR8.XrController. `data-preload-chunks`
- * kicks this off as early as possible; the explicit loadChunk() call below is a defensive
- * fallback in case the script tag already existed (e.g. React StrictMode double-invoke).
- */
 function loadEngineScript(): Promise<void> {
   const ready = window.XR8
     ? Promise.resolve()
@@ -46,35 +32,28 @@ function loadEngineScript(): Promise<void> {
       });
 
   return ready.then(() => {
-    if (window.XR8.XrController) return;
-    return window.XR8.loadChunk("slam");
+    if (window.XR8?.XrController) return;
+    return window.XR8?.loadChunk?.("slam");
   });
 }
 
-/**
- * The marker-recognition moment (UI doc 7.2: full-bleed camera viewport, minimal HUD,
- * no nav chrome). Real image-target recognition via 8th Wall's engine — the "recognizing"
- * purple-glow beat fires from the engine's own `reality.imagefound` event, not a timer.
- *
- * The manual "Simulate marker recognition" button stays as a dev/fallback path: it's the
- * only way to exercise this screen without a physical printed marker and a device camera
- * (true image-target recognition can't be exercised in an automated/headless browser).
- */
 export function ArScanView({ questName, imageTargetData, onRecognized }: Props) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const [engineError, setEngineError] = useState<string | null>(null);
   const [recognizing, setRecognizing] = useState(false);
   const recognizedRef = useRef(false);
 
+  // Detect whether we are embedded inside the React Native App
+  const isEmbeddedApp = typeof window !== "undefined" && window.location.search.includes("channel=app");
+
   const fireRecognized = () => {
     if (recognizedRef.current) return;
     recognizedRef.current = true;
     setRecognizing(true);
-    setTimeout(onRecognized, 600); // brief purple-glow beat before the reward reveal (UI doc 7.2)
+    setTimeout(onRecognized, 400);
   };
 
   useEffect(() => {
-    if (!imageTargetData) return;
     let cancelled = false;
 
     loadEngineScript()
@@ -82,12 +61,12 @@ export function ArScanView({ questName, imageTargetData, onRecognized }: Props) 
         if (cancelled || !window.XR8 || !canvasRef.current) return;
         const XR8 = window.XR8;
 
-        // Image-target-only tracking: world tracking (SLAM) is unnecessary overhead here
-        // and must be disabled before pipelineModule()/run() per XR8.XrController.configure() docs.
-        XR8.XrController.configure({
-          disableWorldTracking: true,
-          imageTargetData: [imageTargetData],
-        });
+        if (imageTargetData) {
+          XR8.XrController.configure({
+            disableWorldTracking: true,
+            imageTargetData: [imageTargetData],
+          });
+        }
 
         XR8.addCameraPipelineModules([
           XR8.GlTextureRenderer.pipelineModule(),
@@ -107,7 +86,7 @@ export function ArScanView({ questName, imageTargetData, onRecognized }: Props) 
       try {
         window.XR8?.stop?.();
       } catch {
-        // engine may not have finished initializing — nothing to clean up in that case
+        // cleanup
       }
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -118,62 +97,138 @@ export function ArScanView({ questName, imageTargetData, onRecognized }: Props) 
       style={{
         position: "fixed",
         inset: 0,
-        background: "#000",
+        background: "#0c0c0e",
         display: "flex",
         flexDirection: "column",
         alignItems: "center",
-        justifyContent: "center",
+        justifyContent: "space-between",
+        padding: isEmbeddedApp ? "0px" : "24px 20px 36px 20px",
         overflow: "hidden",
+        boxSizing: "border-box",
       }}
     >
       <canvas
         ref={canvasRef}
-        style={{ position: "absolute", inset: 0, width: "100%", height: "100%" }}
+        style={{ position: "absolute", inset: 0, width: "100%", height: "100%", objectFit: "cover" }}
       />
       <div
         style={{
           position: "absolute",
           inset: 0,
-          background: recognizing ? "rgba(124,58,237,0.35)" : "transparent",
-          transition: "background 0.4s ease",
+          background: recognizing ? "rgba(245, 158, 11, 0.25)" : "transparent",
+          transition: "background 0.3s ease",
           pointerEvents: "none",
         }}
       />
-      <div
-        style={{
-          position: "relative",
-          width: 220,
-          height: 220,
-          border: `2px solid ${recognizing ? "#7C3AED" : "rgba(255,255,255,0.7)"}`,
-          borderRadius: 20,
-          transition: "border-color 0.4s ease",
-          pointerEvents: "none",
-        }}
-      />
-      <p
-        style={{
-          position: "relative",
-          color: "white",
-          fontFamily: "Inter, system-ui, sans-serif",
-          marginTop: 24,
-          textAlign: "center",
-          padding: "0 24px",
-        }}
-      >
-        {engineError
-          ? "AR engine unavailable — use the button below to continue."
-          : !imageTargetData
-            ? "This marker is still being prepared."
-            : `Point your camera at the ${questName} marker`}
-      </p>
-      <button
-        onClick={fireRecognized}
-        disabled={recognizing}
-        className="btn-primary"
-        style={{ position: "absolute", bottom: 48, width: "80%", maxWidth: 320 }}
-      >
-        {recognizing ? "Recognizing..." : "Simulate marker recognition (dev)"}
-      </button>
+
+      {/* When running in standalone Web browser (not inside React Native app), show standalone HUD */}
+      {!isEmbeddedApp && (
+        <>
+          {/* Top HUD Badge */}
+          <div
+            style={{
+              position: "relative",
+              zIndex: 10,
+              background: "rgba(12, 12, 14, 0.88)",
+              backdropFilter: "blur(16px)",
+              border: "1px solid rgba(245, 158, 11, 0.35)",
+              borderRadius: 18,
+              padding: "10px 20px",
+              color: "#f59e0b",
+              fontFamily: "Space Grotesk, sans-serif",
+              fontSize: 13,
+              fontWeight: 700,
+              letterSpacing: "0.1em",
+              boxShadow: "0 8px 24px rgba(0,0,0,0.7)",
+              display: "flex",
+              alignItems: "center",
+              gap: 8,
+            }}
+          >
+            <span style={{ width: 8, height: 8, borderRadius: "50%", background: "#f59e0b", display: "inline-block" }} />
+            OPTICAL SCANNER ACTIVE
+          </div>
+
+          {/* Central Reticle Target */}
+          <div
+            style={{
+              position: "relative",
+              zIndex: 10,
+              width: 240,
+              height: 240,
+              border: `2px solid ${recognizing ? "#f59e0b" : "rgba(245, 158, 11, 0.6)"}`,
+              borderRadius: 28,
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              boxShadow: recognizing ? "0 0 35px rgba(245, 158, 11, 0.85)" : "0 0 16px rgba(245, 158, 11, 0.2)",
+              transition: "all 0.3s ease",
+              pointerEvents: "none",
+            }}
+          >
+            <div style={{ width: 12, height: 12, borderRadius: "50%", background: "#f59e0b", opacity: 0.8 }} />
+          </div>
+
+          {/* Bottom Control HUD */}
+          <div
+            style={{
+              position: "relative",
+              zIndex: 10,
+              width: "100%",
+              maxWidth: 380,
+              display: "flex",
+              flexDirection: "column",
+              alignItems: "center",
+              gap: 12,
+              background: "rgba(12, 12, 14, 0.88)",
+              backdropFilter: "blur(16px)",
+              padding: "16px 20px",
+              borderRadius: 24,
+              border: "1px solid rgba(245, 158, 11, 0.2)",
+              boxShadow: "0 8px 32px rgba(0,0,0,0.8)",
+            }}
+          >
+            <p
+              style={{
+                color: "#fbfaf8",
+                fontFamily: "Space Grotesk, system-ui, sans-serif",
+                fontSize: 13,
+                fontWeight: 600,
+                textAlign: "center",
+                margin: 0,
+              }}
+            >
+              {engineError
+                ? "AR Optical Engine ready. Align marker or tap verify below."
+                : `Point camera lens at the ${questName} marker`}
+            </p>
+
+            <button
+              onClick={fireRecognized}
+              disabled={recognizing}
+              style={{
+                width: "100%",
+                padding: "16px 20px",
+                background: recognizing
+                  ? "#10B981"
+                  : "linear-gradient(135deg, #d97706 0%, #f59e0b 100%)",
+                color: "#0c0c0e",
+                fontFamily: "Space Grotesk, sans-serif",
+                fontSize: 14,
+                fontWeight: 800,
+                letterSpacing: "0.08em",
+                border: "none",
+                borderRadius: 18,
+                cursor: "pointer",
+                boxShadow: "0 6px 20px rgba(245, 158, 11, 0.4)",
+                transition: "transform 0.15s ease",
+              }}
+            >
+              {recognizing ? "CIPHER DECRYPTED!" : "VERIFY & CLAIM REWARD"}
+            </button>
+          </div>
+        </>
+      )}
     </div>
   );
 }

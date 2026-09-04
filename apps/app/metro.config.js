@@ -1,6 +1,4 @@
-// Expo + npm workspaces monorepo config — prevents Metro from picking up a
-// version-mismatched react-native/babel toolchain hoisted to the workspace root
-// (see https://docs.expo.dev/guides/monorepos/).
+// Expo + npm workspaces monorepo config
 const { getDefaultConfig } = require("expo/metro-config");
 const path = require("path");
 
@@ -9,11 +7,22 @@ const workspaceRoot = path.resolve(projectRoot, "../..");
 
 const config = getDefaultConfig(projectRoot);
 
-config.watchFolders = [workspaceRoot];
+// Watch only app, shared packages, and node_modules — avoids watching dynamic build folders in apps/api
+config.watchFolders = [
+  path.resolve(workspaceRoot, "packages"),
+  path.resolve(workspaceRoot, "node_modules"),
+  projectRoot,
+];
+
 config.resolver.nodeModulesPaths = [
   path.resolve(projectRoot, "node_modules"),
   path.resolve(workspaceRoot, "node_modules"),
 ];
-config.resolver.disableHierarchicalLookup = true;
+
+config.resolver.blockList = [
+  /.*[/\\]apps[/\\]api[/\\].*/,
+  /.*[/\\]apps[/\\]admin[/\\].*/,
+  /.*[/\\]apps[/\\]webar[/\\].*/,
+];
 
 module.exports = config;

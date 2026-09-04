@@ -1,15 +1,14 @@
-import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
+import { View, Text, StyleSheet, TouchableOpacity, ScrollView, Platform, StatusBar } from "react-native";
 import { router, useLocalSearchParams } from "expo-router";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { MaterialIcons } from "@expo/vector-icons";
 import { useTheme } from "@/theme";
+import { NeumorphicView } from "@/components/NeumorphicView";
 
-/**
- * docs/ui designs/quest_detail(_light) — reached by tapping a quest card on the
- * Map/Quests tabs. Params are passed straight from the list tap rather than a
- * second network round-trip, since /users/me/quests already returned this data.
- */
+/** Stitch Neumorphic Quest Details & Mission Brief */
 export default function QuestDetailScreen() {
   const theme = useTheme();
+  const insets = useSafeAreaInsets();
   const params = useLocalSearchParams<{
     id: string;
     name: string;
@@ -20,116 +19,196 @@ export default function QuestDetailScreen() {
   }>();
   const completed = params.completed === "true";
   const c = theme.colors;
+  const isDark = theme.mode === "dark";
+
+  const topPadding = Math.max(
+    insets.top,
+    Platform.OS === "android" ? (StatusBar.currentHeight ?? 24) : 16
+  ) + 8;
 
   const styles = StyleSheet.create({
-    container: { flex: 1, backgroundColor: c.surface },
+    container: { flex: 1, backgroundColor: isDark ? "#0c0c0e" : c.surface },
     header: {
       flexDirection: "row",
       alignItems: "center",
-      gap: 12,
-      height: 56,
-      paddingHorizontal: theme.spacing.containerPadding,
-      backgroundColor: c.surfaceContainerLow,
+      justifyContent: "space-between",
+      paddingTop: topPadding,
+      paddingBottom: 14,
+      paddingHorizontal: 16,
+      backgroundColor: isDark ? "#0c0c0e" : c.surface,
+      borderBottomWidth: 1,
+      borderBottomColor: isDark ? "rgba(212, 175, 55, 0.12)" : "rgba(15, 23, 42, 0.06)",
+      zIndex: 100,
     },
-    headerTitle: { ...theme.font(theme.type.headlineLgMobile), color: c.primary },
-    hero: {
+    headerLeft: { flexDirection: "row", alignItems: "center", gap: 12 },
+    backBtn: { width: 38, height: 38, borderRadius: 19, alignItems: "center", justifyContent: "center" },
+    headerTitle: { ...theme.font(theme.type.headlineLgMobile), color: c.onSurface, fontSize: 22, fontWeight: "700" },
+    content: { padding: 18, paddingBottom: 60 },
+
+    // Hero Mission Card
+    heroCard: {
       height: 180,
-      margin: theme.spacing.containerPadding,
-      borderRadius: theme.radius.card,
-      backgroundColor: c.primaryContainer,
+      borderRadius: 28,
       alignItems: "center",
       justifyContent: "center",
+      marginBottom: 20,
+      position: "relative",
+      overflow: "hidden",
     },
-    chipRow: { flexDirection: "row", gap: 8, paddingHorizontal: theme.spacing.containerPadding, marginBottom: theme.spacing.sectionMargin },
-    chip: {
-      flexDirection: "row",
+    hologramWell: {
+      width: 80,
+      height: 80,
+      borderRadius: 40,
       alignItems: "center",
-      gap: 6,
-      paddingHorizontal: 14,
-      paddingVertical: 8,
-      borderRadius: theme.radius.full,
-      backgroundColor: theme.mode === "dark" ? c.slateGray : c.surfaceContainer,
-      borderWidth: 1,
-      borderColor: c.surfaceContainerHighest,
+      justifyContent: "center",
+      marginBottom: 8,
     },
-    chipGold: {
-      backgroundColor: theme.mode === "dark" ? "rgba(238,152,0,0.15)" : "rgba(254,166,25,0.15)",
-      borderColor: c.secondaryContainer,
-    },
-    chipText: { ...theme.font(theme.type.labelCaps), color: c.onSurface },
-    chipTextGold: { ...theme.font(theme.type.labelCaps), color: c.secondary },
-    section: { paddingHorizontal: theme.spacing.containerPadding },
-    sectionTitle: { ...theme.font(theme.type.headlineSm), color: c.primary, marginBottom: theme.spacing.stackSm },
-    briefCard: {
-      backgroundColor: theme.mode === "dark" ? "rgba(30,41,59,0.7)" : c.surfaceContainerLowest,
-      borderWidth: 1,
-      borderColor: theme.mode === "dark" ? "rgba(255,255,255,0.05)" : c.borderSubtle,
-      borderRadius: theme.radius.card,
-      padding: theme.spacing.stackMd,
-    },
-    briefText: { ...theme.font(theme.type.bodyMd), color: c.onSurfaceVariant, lineHeight: 20 },
-    ctaWrap: { padding: theme.spacing.containerPadding, marginTop: "auto" },
-    cta: {
+    heroSub: { ...theme.font(theme.type.labelCaps), color: isDark ? "#f59e0b" : c.primary, letterSpacing: 1.5, fontWeight: "700" },
+
+    // Chips Row
+    chipRow: { flexDirection: "row", flexWrap: "wrap", gap: 10, marginBottom: 20 },
+    chip: { flexDirection: "row", alignItems: "center", gap: 6, paddingHorizontal: 14, paddingVertical: 8, borderRadius: 14 },
+    chipText: { ...theme.font(theme.type.labelCaps), color: c.onSurface, fontSize: 11, fontWeight: "600" },
+    chipGoldText: { ...theme.font(theme.type.labelCaps), color: isDark ? "#f59e0b" : "#b45309", fontSize: 11, fontWeight: "700" },
+
+    // Brief Section
+    section: { marginBottom: 24 },
+    sectionHeader: { flexDirection: "row", justifyContent: "space-between", alignItems: "center", marginBottom: 12 },
+    sectionTitle: { ...theme.font(theme.type.headlineSm), color: c.onSurface, fontSize: 18, fontWeight: "700" },
+    activeBadge: { flexDirection: "row", alignItems: "center", gap: 6, paddingHorizontal: 10, paddingVertical: 4, borderRadius: 10 },
+    activeBadgeText: { ...theme.font(theme.type.labelCaps), color: isDark ? "#f59e0b" : c.primary, fontSize: 10, fontWeight: "700" },
+    completedBadgeText: { ...theme.font(theme.type.labelCaps), color: "#10B981", fontSize: 10, fontWeight: "700" },
+    dot: { width: 6, height: 6, borderRadius: 3, backgroundColor: isDark ? "#f59e0b" : c.primary },
+    dotCompleted: { width: 6, height: 6, borderRadius: 3, backgroundColor: "#10B981" },
+
+    briefCard: { padding: 18, borderRadius: 22 },
+    questHeading: { ...theme.font(theme.type.headlineSm), color: c.onSurface, fontSize: 19, marginBottom: 8, fontWeight: "700" },
+    briefBody: { ...theme.font(theme.type.bodyMd), color: c.onSurfaceVariant, lineHeight: 22 },
+
+    // Rewards Breakdown Card
+    rewardCard: { padding: 18, borderRadius: 22, marginBottom: 24 },
+    rewardRow: { flexDirection: "row", alignItems: "center", justifyContent: "space-between", marginBottom: 10 },
+    rewardLabel: { ...theme.font(theme.type.labelCaps), color: c.onSurfaceVariant, fontWeight: "600" },
+    rewardValue: { ...theme.font(theme.type.headlineSm), color: isDark ? "#f59e0b" : "#b45309", fontSize: 16, fontWeight: "700" },
+    xpValue: { ...theme.font(theme.type.headlineSm), color: isDark ? "#f59e0b" : c.primary, fontSize: 16, fontWeight: "700" },
+
+    // Action CTA
+    ctaBtn: {
       flexDirection: "row",
       alignItems: "center",
       justifyContent: "center",
-      gap: 8,
-      backgroundColor: completed ? c.surfaceContainerHighest : c.primaryContainer,
-      borderRadius: theme.radius.full,
-      paddingVertical: 16,
+      gap: 10,
+      paddingVertical: 18,
+      borderRadius: 24,
     },
-    ctaText: { ...theme.font(theme.type.headlineSm), color: completed ? c.onSurfaceVariant : c.onPrimaryContainer },
+    ctaBtnText: { ...theme.font(theme.type.headlineSm), color: isDark ? "#f59e0b" : "#ffffff", fontSize: 15, letterSpacing: 1.5, fontWeight: "700" },
   });
 
   return (
     <View style={styles.container}>
+      {/* Top Header */}
       <View style={styles.header}>
-        <TouchableOpacity onPress={() => router.back()}>
-          <MaterialIcons name="arrow-back" size={24} color={c.primary} />
-        </TouchableOpacity>
-        <Text style={styles.headerTitle}>PIKE</Text>
-      </View>
-
-      <View style={styles.hero}>
-        <MaterialIcons name="explore" size={64} color={c.onPrimaryContainer} style={{ opacity: 0.6 }} />
-      </View>
-
-      <View style={styles.chipRow}>
-        <View style={styles.chip}>
-          <MaterialIcons name="location-on" size={16} color={c.onSurfaceVariant} />
-          <Text style={styles.chipText}>{params.venueName}</Text>
+        <View style={styles.headerLeft}>
+          <NeumorphicView variant="raised" radius={19} style={styles.backBtn} onPress={() => router.back()}>
+            <MaterialIcons name="arrow-back" size={20} color={isDark ? "#f59e0b" : c.primary} />
+          </NeumorphicView>
+          <Text style={styles.headerTitle}>Mission Intel</Text>
         </View>
-        <View style={[styles.chip, styles.chipGold]}>
-          <MaterialIcons name="redeem" size={16} color={c.secondary} />
-          <Text style={styles.chipTextGold}>{params.rewardDescription}</Text>
-        </View>
+        <MaterialIcons name="share" size={20} color={c.onSurfaceVariant} />
       </View>
 
-      <View style={styles.section}>
-        <View style={{ flexDirection: "row", justifyContent: "space-between", alignItems: "center", marginBottom: theme.spacing.stackSm }}>
-          <Text style={styles.sectionTitle}>Mission Brief</Text>
-          {!completed && (
-            <View style={{ flexDirection: "row", alignItems: "center", gap: 6 }}>
-              <View style={{ width: 6, height: 6, borderRadius: 3, backgroundColor: c.success }} />
-              <Text style={{ ...theme.font(theme.type.labelSm), color: c.success }}>Quest Active</Text>
+      <ScrollView contentContainerStyle={styles.content} showsVerticalScrollIndicator={false}>
+        {/* Holographic AR Quest Hero Card */}
+        <NeumorphicView variant="raised" glow="gold" radius={28} style={styles.heroCard}>
+          <NeumorphicView variant="inset" radius={40} style={styles.hologramWell}>
+            <MaterialIcons
+              name={completed ? "check-circle" : "view-in-ar"}
+              size={42}
+              color={completed ? "#10B981" : (isDark ? "#f59e0b" : c.primary)}
+            />
+          </NeumorphicView>
+          <Text style={styles.heroSub}>
+            {completed ? "MISSION ACCOMPLISHED" : "SECTOR ANOMALY DETECTED"}
+          </Text>
+        </NeumorphicView>
+
+        {/* Metadata Chips */}
+        <View style={styles.chipRow}>
+          <NeumorphicView variant="inset" radius={14} style={styles.chip}>
+            <MaterialIcons name="place" size={16} color={isDark ? "#f59e0b" : c.primary} />
+            <Text style={styles.chipText}>{params.venueName || "Nairobi Anchor Node"}</Text>
+          </NeumorphicView>
+
+          <NeumorphicView variant="inset" radius={14} style={styles.chip}>
+            <MaterialIcons name="military-tech" size={16} color={isDark ? "#f59e0b" : "#b45309"} />
+            <Text style={styles.chipGoldText}>Tier 1 Anomaly</Text>
+          </NeumorphicView>
+        </View>
+
+        {/* Tactical Briefing */}
+        <View style={styles.section}>
+          <View style={styles.sectionHeader}>
+            <Text style={styles.sectionTitle}>TACTICAL BRIEF</Text>
+            <NeumorphicView variant="inset" radius={10} style={styles.activeBadge}>
+              <View style={completed ? styles.dotCompleted : styles.dot} />
+              <Text style={completed ? styles.completedBadgeText : styles.activeBadgeText}>
+                {completed ? "COMPLETED" : "OPTICAL READY"}
+              </Text>
+            </NeumorphicView>
+          </View>
+
+          <NeumorphicView variant="raised" radius={22} style={styles.briefCard}>
+            <Text style={styles.questHeading}>{params.name || "Decipher the Sector Anomaly"}</Text>
+            <Text style={styles.briefBody}>
+              Deploy to {params.venueName || "the anchor node"} in Nairobi. Align your optical scanner lens with the
+              physical holographic target on site to synchronize telemetry and decrypt the sector vault cipher.
+            </Text>
+          </NeumorphicView>
+        </View>
+
+        {/* Reward Payload */}
+        <View style={styles.section}>
+          <Text style={[styles.sectionTitle, { marginBottom: 12 }]}>REWARD PAYLOAD</Text>
+          <NeumorphicView variant="raised" radius={22} style={styles.rewardCard}>
+            <View style={styles.rewardRow}>
+              <Text style={styles.rewardLabel}>PERK VOUCHER</Text>
+              <Text style={styles.rewardValue}>{params.rewardDescription || "20% off at Venue"}</Text>
             </View>
-          )}
+            <View style={styles.rewardRow}>
+              <Text style={styles.rewardLabel}>EXPEDITION XP</Text>
+              <Text style={styles.xpValue}>+250 XP</Text>
+            </View>
+            <View style={[styles.rewardRow, { marginBottom: 0 }]}>
+              <Text style={styles.rewardLabel}>SECTOR BADGE</Text>
+              <Text style={styles.rewardValue}>Progress +1</Text>
+            </View>
+          </NeumorphicView>
         </View>
-        <View style={styles.briefCard}>
-          <Text style={styles.briefText}>{params.name}</Text>
-        </View>
-      </View>
 
-      <View style={styles.ctaWrap}>
-        <TouchableOpacity
-          style={styles.cta}
-          disabled={completed || !params.markerId}
-          onPress={() => router.push(`/scan/${params.markerId}`)}
-        >
-          <MaterialIcons name={completed ? "check-circle" : "photo-camera"} size={20} color={completed ? c.onSurfaceVariant : c.onPrimaryContainer} />
-          <Text style={styles.ctaText}>{completed ? "Completed" : "Scan marker"}</Text>
-        </TouchableOpacity>
-      </View>
+        {/* Deploy & Scan CTA */}
+        {!completed ? (
+          <NeumorphicView
+            variant="raised"
+            glow="gold"
+            radius={24}
+            style={styles.ctaBtn}
+            onPress={() => router.push(`/scan/${params.markerId || params.id}`)}
+          >
+            <MaterialIcons name="qr-code-scanner" size={22} color={isDark ? "#f59e0b" : "#ffffff"} />
+            <Text style={styles.ctaBtnText}>ENGAGE OPTICAL SCANNER</Text>
+          </NeumorphicView>
+        ) : (
+          <NeumorphicView
+            variant="flat"
+            radius={24}
+            style={styles.ctaBtn}
+            onPress={() => router.push("/(tabs)/rewards")}
+          >
+            <MaterialIcons name="card-giftcard" size={22} color="#10B981" />
+            <Text style={[styles.ctaBtnText, { color: "#10B981" }]}>VIEW IN VAULT</Text>
+          </NeumorphicView>
+        )}
+      </ScrollView>
     </View>
   );
 }
