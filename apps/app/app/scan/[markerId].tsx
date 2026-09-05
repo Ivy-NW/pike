@@ -92,7 +92,7 @@ export default function ScanScreen() {
   };
 
   const styles = StyleSheet.create({
-    container: { flex: 1, backgroundColor: "#0c0c0e" },
+    container: { flex: 1, backgroundColor: "#000000" },
 
     // Top Navigation Header
     header: {
@@ -109,12 +109,12 @@ export default function ScanScreen() {
       paddingHorizontal: 16,
       backgroundColor: "rgba(12, 12, 14, 0.94)",
       borderBottomWidth: 1,
-      borderBottomColor: "rgba(212, 175, 55, 0.2)",
+      borderBottomColor: "rgba(156, 124, 74, 0.2)",
     },
     headerLeft: { flexDirection: "row", alignItems: "center", gap: 12 },
     backBtn: { width: 38, height: 38, borderRadius: 19, alignItems: "center", justifyContent: "center" },
-    headerTitle: { ...theme.font(theme.type.headlineLgMobile), color: "#f59e0b", fontSize: 20, fontWeight: "700" },
-    headerSub: { ...theme.font(theme.type.labelSm), color: "#d4af37", fontSize: 10, fontWeight: "600" },
+    headerTitle: { ...theme.font(theme.type.headlineLgMobile), color: "#9C7C4A", fontSize: 20, fontWeight: "700" },
+    headerSub: { ...theme.font(theme.type.labelSm), color: "#b79a5e", fontSize: 10, fontWeight: "600" },
 
     // Central Reticle Box
     centerOverlay: {
@@ -133,7 +133,7 @@ export default function ScanScreen() {
       height: 240,
       borderRadius: 28,
       borderWidth: 2,
-      borderColor: "rgba(245, 158, 11, 0.6)",
+      borderColor: "rgba(156, 124, 74, 0.6)",
       alignItems: "center",
       justifyContent: "center",
       backgroundColor: "rgba(12, 12, 14, 0.15)",
@@ -142,8 +142,8 @@ export default function ScanScreen() {
       width: 14,
       height: 14,
       borderRadius: 7,
-      backgroundColor: "#f59e0b",
-      shadowColor: "#f59e0b",
+      backgroundColor: "#9C7C4A",
+      shadowColor: "#9C7C4A",
       shadowOffset: { width: 0, height: 0 },
       shadowOpacity: 0.9,
       shadowRadius: 10,
@@ -155,11 +155,11 @@ export default function ScanScreen() {
       borderRadius: 12,
       backgroundColor: "rgba(12, 12, 14, 0.85)",
       borderWidth: 1,
-      borderColor: "rgba(212, 175, 55, 0.3)",
+      borderColor: "rgba(156, 124, 74, 0.3)",
     },
     reticleInstructionText: {
       ...theme.font(theme.type.labelCaps),
-      color: "#fbfaf8",
+      color: "#ece7df",
       fontSize: 10,
       fontWeight: "700",
       letterSpacing: 1,
@@ -177,7 +177,7 @@ export default function ScanScreen() {
       borderRadius: 24,
       padding: 16,
       borderWidth: 1,
-      borderColor: "rgba(212, 175, 55, 0.3)",
+      borderColor: "rgba(156, 124, 74, 0.3)",
       shadowColor: "#000000",
       shadowOffset: { width: 0, height: 8 },
       shadowOpacity: 0.8,
@@ -187,7 +187,7 @@ export default function ScanScreen() {
     },
     hudPrompt: {
       ...theme.font(theme.type.bodyMd),
-      color: "#a1a1aa",
+      color: "#8f867a",
       fontSize: 12,
       textAlign: "center",
     },
@@ -195,12 +195,12 @@ export default function ScanScreen() {
       width: "100%",
       paddingVertical: 14,
       borderRadius: 18,
-      backgroundColor: "#f59e0b",
+      backgroundColor: "#9C7C4A",
       flexDirection: "row",
       alignItems: "center",
       justifyContent: "center",
       gap: 8,
-      shadowColor: "#f59e0b",
+      shadowColor: "#9C7C4A",
       shadowOffset: { width: 0, height: 4 },
       shadowOpacity: 0.4,
       shadowRadius: 10,
@@ -208,14 +208,14 @@ export default function ScanScreen() {
     },
     simBtnText: {
       ...theme.font(theme.type.labelCaps),
-      color: "#0c0c0e",
+      color: "#14100a",
       fontSize: 13,
       letterSpacing: 1.2,
       fontWeight: "800",
     },
 
-    loading: { flex: 1, alignItems: "center", justifyContent: "center", backgroundColor: "#0c0c0e", gap: 12 },
-    loadingText: { ...theme.font(theme.type.labelCaps), color: "#f59e0b", letterSpacing: 1.5, fontWeight: "700" },
+    loading: { flex: 1, alignItems: "center", justifyContent: "center", backgroundColor: "#000000", gap: 12 },
+    loadingText: { ...theme.font(theme.type.labelCaps), color: "#9C7C4A", letterSpacing: 1.5, fontWeight: "700" },
   });
 
   return (
@@ -230,20 +230,20 @@ export default function ScanScreen() {
             style={styles.backBtn}
             onPress={() => router.back()}
           >
-            <MaterialIcons name="arrow-back" size={20} color="#f59e0b" />
+            <MaterialIcons name="arrow-back" size={20} color="#9C7C4A" />
           </NeumorphicView>
           <View>
             <Text style={styles.headerTitle}>Optical Scanner</Text>
             <Text style={styles.headerSub}>8th Wall WebAR • 6-DOF Spatial Engine</Text>
           </View>
         </View>
-        <MaterialIcons name="view-in-ar" size={24} color="#f59e0b" />
+        <MaterialIcons name="view-in-ar" size={24} color="#9C7C4A" />
       </View>
 
       {/* Embedded WebAR Camera Feed with Hardware Acceleration */}
       <WebView
         source={{ uri: webArUrl }}
-        style={{ flex: 1, backgroundColor: "#0c0c0e" }}
+        style={{ flex: 1, backgroundColor: "#000000" }}
         allowsInlineMediaPlayback
         mediaPlaybackRequiresUserAction={false}
         androidHardwareAccelerationDisabled={false}
@@ -253,7 +253,7 @@ export default function ScanScreen() {
         startInLoadingState
         renderLoading={() => (
           <View style={styles.loading}>
-            <ActivityIndicator size="large" color="#f59e0b" />
+            <ActivityIndicator size="large" color="#9C7C4A" />
             <Text style={styles.loadingText}>INITIALIZING AR OPTICS...</Text>
           </View>
         )}
@@ -281,10 +281,10 @@ export default function ScanScreen() {
           disabled={claiming}
         >
           {claiming ? (
-            <ActivityIndicator size="small" color="#0c0c0e" />
+            <ActivityIndicator size="small" color="#14100a" />
           ) : (
             <>
-              <MaterialIcons name="auto-awesome" size={20} color="#0c0c0e" />
+              <MaterialIcons name="auto-awesome" size={20} color="#14100a" />
               <Text style={styles.simBtnText}>VERIFY & CLAIM REWARD</Text>
             </>
           )}

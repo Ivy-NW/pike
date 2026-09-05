@@ -77,37 +77,37 @@ export default function RewardsScreen() {
   const expired = wallet.filter((w) => w.isExpired);
 
   const styles = StyleSheet.create({
-    container: { flex: 1, backgroundColor: isDark ? "#0c0c0e" : c.surface },
+    container: { flex: 1, backgroundColor: isDark ? "#000000" : c.surface },
     content: { padding: 18, paddingTop: 16, paddingBottom: 130 },
 
     // Total Balance Card
     balanceCard: { padding: 24, borderRadius: 28, alignItems: "center", justifyContent: "center", marginBottom: 24, position: "relative" },
     balanceLabel: { ...theme.font(theme.type.labelCaps), color: c.onSurfaceVariant, letterSpacing: 2, marginBottom: 6, fontWeight: "700" },
     balanceRow: { flexDirection: "row", alignItems: "baseline", gap: 6 },
-    balanceValue: { ...theme.font(theme.type.displayXl), color: isDark ? "#f59e0b" : c.primary, fontSize: 44, fontWeight: "700" },
-    balanceUnit: { ...theme.font(theme.type.headlineSm), color: isDark ? "#f59e0b" : c.primary, fontWeight: "700" },
+    balanceValue: { ...theme.font(theme.type.displayXl), color: isDark ? "#9C7C4A" : c.primary, fontSize: 44, fontWeight: "700" },
+    balanceUnit: { ...theme.font(theme.type.headlineSm), color: isDark ? "#9C7C4A" : c.primary, fontWeight: "700" },
     balanceBtnRow: { flexDirection: "row", gap: 12, marginTop: 18 },
     balanceBtn: { flexDirection: "row", alignItems: "center", gap: 6, paddingHorizontal: 18, paddingVertical: 10, borderRadius: 18 },
-    balanceBtnText: { ...theme.font(theme.type.labelCaps), color: isDark ? "#f59e0b" : c.primary, letterSpacing: 1, fontWeight: "700" },
+    balanceBtnText: { ...theme.font(theme.type.labelCaps), color: isDark ? "#9C7C4A" : c.primary, letterSpacing: 1, fontWeight: "700" },
 
     // Rewards Section
     sectionHeader: { flexDirection: "row", justifyContent: "space-between", alignItems: "center", marginBottom: 16 },
     sectionTitle: { ...theme.font(theme.type.headlineSm), color: c.onSurface, fontWeight: "700" },
     newTag: { paddingHorizontal: 12, paddingVertical: 4, borderRadius: 12 },
-    newTagText: { ...theme.font(theme.type.labelCaps), color: isDark ? "#f59e0b" : c.primary, fontSize: 10, fontWeight: "700" },
+    newTagText: { ...theme.font(theme.type.labelCaps), color: isDark ? "#9C7C4A" : c.primary, fontSize: 10, fontWeight: "700" },
 
     // Reward Cards
     card: { padding: 18, borderRadius: 24, marginBottom: 14 },
     cardTopRow: { flexDirection: "row", justifyContent: "space-between", alignItems: "flex-start", marginBottom: 12 },
     iconWell: { width: 48, height: 48, borderRadius: 16, alignItems: "center", justifyContent: "center" },
     premiumTag: { paddingHorizontal: 10, paddingVertical: 3, borderRadius: 10 },
-    premiumTagText: { ...theme.font(theme.type.labelCaps), color: isDark ? "#f59e0b" : "#b45309", fontSize: 10, fontWeight: "700" },
+    premiumTagText: { ...theme.font(theme.type.labelCaps), color: isDark ? "#9C7C4A" : "#8C6B34", fontSize: 10, fontWeight: "700" },
     cardTitle: { ...theme.font(theme.type.headlineSm), color: c.onSurface, fontSize: 18, fontWeight: "700" },
     cardVenue: { ...theme.font(theme.type.bodyMd), color: c.onSurfaceVariant, marginTop: 2, marginBottom: 16, fontSize: 13 },
-    cardFooter: { flexDirection: "row", justifyContent: "space-between", alignItems: "center", paddingTop: 12, borderTopWidth: 1, borderTopColor: isDark ? "rgba(212,175,55,0.1)" : "rgba(15,23,42,0.06)" },
-    pointsText: { ...theme.font(theme.type.bodyMd), color: isDark ? "#f59e0b" : c.primary, fontWeight: "700" },
+    cardFooter: { flexDirection: "row", justifyContent: "space-between", alignItems: "center", paddingTop: 12, borderTopWidth: 1, borderTopColor: isDark ? "rgba(156,124,74,0.1)" : "rgba(15,23,42,0.06)" },
+    pointsText: { ...theme.font(theme.type.bodyMd), color: isDark ? "#9C7C4A" : c.primary, fontWeight: "700" },
     redeemBtn: { paddingHorizontal: 20, paddingVertical: 8, borderRadius: 14 },
-    redeemBtnText: { ...theme.font(theme.type.labelCaps), color: isDark ? "#f59e0b" : c.primary, fontSize: 11, fontWeight: "700" },
+    redeemBtnText: { ...theme.font(theme.type.labelCaps), color: isDark ? "#9C7C4A" : c.primary, fontSize: 11, fontWeight: "700" },
 
     // Modal Styles
     modalBackdrop: { flex: 1, backgroundColor: "rgba(0, 0, 0, 0.75)", justifyContent: "center", alignItems: "center", padding: 20 },
@@ -132,7 +132,7 @@ export default function RewardsScreen() {
 
     // Redeem Barcode
     barcodeWell: { padding: 20, borderRadius: 20, alignItems: "center", justifyContent: "center", marginVertical: 18 },
-    barcodeText: { ...theme.font(theme.type.headlineSm), color: isDark ? "#f59e0b" : c.primary, letterSpacing: 4, fontSize: 20, fontWeight: "700" },
+    barcodeText: { ...theme.font(theme.type.headlineSm), color: isDark ? "#9C7C4A" : c.primary, letterSpacing: 4, fontSize: 20, fontWeight: "700" },
     barcodeSub: { ...theme.font(theme.type.labelCaps), color: c.onSurfaceVariant, fontSize: 10, marginTop: 4, letterSpacing: 1 },
   });
 
@@ -147,8 +147,8 @@ export default function RewardsScreen() {
           <RefreshControl
             refreshing={refreshing}
             onRefresh={onRefresh}
-            tintColor={isDark ? "#f59e0b" : c.primary}
-            colors={[isDark ? "#f59e0b" : c.primary]}
+            tintColor={isDark ? "#9C7C4A" : c.primary}
+            colors={[isDark ? "#9C7C4A" : c.primary]}
           />
         }
       >
@@ -168,7 +168,7 @@ export default function RewardsScreen() {
               style={styles.balanceBtn}
               onPress={() => setAddFundsVisible(true)}
             >
-              <MaterialIcons name="add-circle-outline" size={18} color={isDark ? "#f59e0b" : c.primary} />
+              <MaterialIcons name="add-circle-outline" size={18} color={isDark ? "#9C7C4A" : c.primary} />
               <Text style={styles.balanceBtnText}>ADD POINTS</Text>
             </NeumorphicView>
 
@@ -198,7 +198,7 @@ export default function RewardsScreen() {
             <NeumorphicView key={i} variant="raised" radius={24} style={styles.card}>
               <View style={styles.cardTopRow}>
                 <NeumorphicView variant="inset" radius={16} style={styles.iconWell}>
-                  <MaterialIcons name="card-giftcard" size={24} color={isDark ? "#f59e0b" : c.primary} />
+                  <MaterialIcons name="card-giftcard" size={24} color={isDark ? "#9C7C4A" : c.primary} />
                 </NeumorphicView>
                 <NeumorphicView variant="raised" glow="gold" radius={10} style={styles.premiumTag}>
                   <Text style={styles.premiumTagText}>CLAIMABLE</Text>
@@ -226,7 +226,7 @@ export default function RewardsScreen() {
             <NeumorphicView variant="raised" radius={24} style={styles.card}>
               <View style={styles.cardTopRow}>
                 <NeumorphicView variant="inset" radius={16} style={styles.iconWell}>
-                  <MaterialIcons name="local-cafe" size={24} color={isDark ? "#f59e0b" : c.primary} />
+                  <MaterialIcons name="local-cafe" size={24} color={isDark ? "#9C7C4A" : c.primary} />
                 </NeumorphicView>
                 <NeumorphicView variant="raised" glow="gold" radius={10} style={styles.premiumTag}>
                   <Text style={styles.premiumTagText}>FEATURED</Text>
@@ -318,7 +318,7 @@ export default function RewardsScreen() {
                       setCustomAmount("");
                     }}
                   >
-                    <Text style={[styles.packPillText, { color: active ? (isDark ? "#f59e0b" : c.primary) : c.onSurface }]}>
+                    <Text style={[styles.packPillText, { color: active ? (isDark ? "#9C7C4A" : c.primary) : c.onSurface }]}>
                       +{amt.toLocaleString()} PTS
                     </Text>
                   </NeumorphicView>
@@ -342,7 +342,7 @@ export default function RewardsScreen() {
                 <Text style={[styles.modalBtnText, { color: c.onSurfaceVariant }]}>CANCEL</Text>
               </NeumorphicView>
               <NeumorphicView variant="raised" glow="gold" radius={18} style={styles.modalBtn} onPress={handleConfirmAddFunds}>
-                <Text style={[styles.modalBtnText, { color: isDark ? "#f59e0b" : c.primary }]}>ACQUIRE POINTS</Text>
+                <Text style={[styles.modalBtnText, { color: isDark ? "#9C7C4A" : c.primary }]}>ACQUIRE POINTS</Text>
               </NeumorphicView>
             </View>
           </NeumorphicView>
@@ -359,11 +359,11 @@ export default function RewardsScreen() {
             <ScrollView showsVerticalScrollIndicator={false} style={{ marginBottom: 16 }}>
               {SAMPLE_HISTORY.map((item) => (
                 <NeumorphicView key={item.id} variant="inset" radius={18} style={styles.ledgerItem}>
-                  <View style={[styles.ledgerIcon, { backgroundColor: item.type === "earned" ? "rgba(16, 185, 129, 0.15)" : item.type === "redeemed" ? "rgba(239, 68, 68, 0.15)" : "rgba(245, 158, 11, 0.15)" }]}>
+                  <View style={[styles.ledgerIcon, { backgroundColor: item.type === "earned" ? "rgba(16, 185, 129, 0.15)" : item.type === "redeemed" ? "rgba(239, 68, 68, 0.15)" : "rgba(156, 124, 74, 0.15)" }]}>
                     <MaterialIcons
                       name={item.type === "earned" ? "arrow-downward" : item.type === "redeemed" ? "arrow-upward" : "stars"}
                       size={20}
-                      color={item.type === "earned" ? "#10B981" : item.type === "redeemed" ? "#ef4444" : "#f59e0b"}
+                      color={item.type === "earned" ? "#10B981" : item.type === "redeemed" ? "#ef4444" : "#9C7C4A"}
                     />
                   </View>
                   <View style={{ flex: 1 }}>
@@ -400,7 +400,7 @@ export default function RewardsScreen() {
               </Text>
 
               <NeumorphicView variant="inset" radius={20} style={styles.barcodeWell}>
-                <MaterialIcons name="qr-code-2" size={90} color={isDark ? "#f59e0b" : c.primary} />
+                <MaterialIcons name="qr-code-2" size={90} color={isDark ? "#9C7C4A" : c.primary} />
                 <Text style={styles.barcodeText}>PIKE-9842-KE</Text>
                 <Text style={styles.barcodeSub}>VALID IN NAIROBI SECTOR</Text>
               </NeumorphicView>
@@ -410,7 +410,7 @@ export default function RewardsScreen() {
                   <Text style={[styles.modalBtnText, { color: c.onSurfaceVariant }]}>CLOSE</Text>
                 </NeumorphicView>
                 <NeumorphicView variant="raised" glow="gold" radius={18} style={styles.modalBtn} onPress={() => setRedeemItem(null)}>
-                  <Text style={[styles.modalBtnText, { color: isDark ? "#f59e0b" : c.primary }]}>MARK REDEEMED</Text>
+                  <Text style={[styles.modalBtnText, { color: isDark ? "#9C7C4A" : c.primary }]}>MARK REDEEMED</Text>
                 </NeumorphicView>
               </View>
             </NeumorphicView>

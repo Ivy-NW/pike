@@ -26,7 +26,7 @@
 .marker i { position: absolute; left: 18px; right: 18px; top: 50%; height: 2px; background: var(--primary-container); box-shadow: 0 0 12px var(--primary-container); animation: scan 3s ease-in-out infinite; }
 .scanCard p { font-size: 12px; line-height: 1.35; font-weight: 650; }
 .rewardCard { position: absolute; right: 5%; bottom: 9%; min-width: 245px; padding: 17px 20px; background: #111827; color: #fff; display: flex; gap: 14px; align-items: center; box-shadow: 0 24px 60px rgba(14,19,29,.28); animation: float 5s ease-in-out infinite; }
-.spark { color: #f59e0b; font-size: 28px; }
+.spark { color: #9C7C4A; font-size: 28px; }
 .rewardCard small,.rewardCard strong { display:block}.rewardCard small{color:#aab4c5;font-size:10px;text-transform:uppercase;letter-spacing:.1em}.rewardCard strong{margin-top:3px;font-size:14px}
 .caption { position:absolute; right: -1px; top: 5%; background: #111827; color:white; padding: 13px 15px; font-size:11px; line-height:1.4; letter-spacing:.04em; }
 @keyframes scan { 0%,100%{transform:translateY(-35px);opacity:.55}50%{transform:translateY(35px);opacity:1} }

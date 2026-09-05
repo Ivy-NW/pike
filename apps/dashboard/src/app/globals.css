@@ -5,26 +5,11 @@
 
 /* Fonts are self-hosted via next/font (see layout.tsx) rather than the generated
  * theme.css's literal family names — point the same tokens at those variables.
- * Geist has no next/font/google entry on this Next.js version, so it stays a
- * literal family name backed by the external stylesheet link in layout.tsx. */
-:root, [data-theme="light"] {
-  --font-heading: "Geist", system-ui, sans-serif;
-  --font-body: "Geist", system-ui, sans-serif;
-  --font-mono: var(--font-space-mono), ui-monospace, monospace;
-}
-
-[data-theme="dark"] {
-  --font-heading: var(--font-space-grotesk), system-ui, sans-serif;
+ * Light and dark share one Orbitron/Inter pairing (platform-wide unification). */
+:root, [data-theme="light"], [data-theme="dark"] {
+  --font-heading: var(--font-orbitron), system-ui, sans-serif;
   --font-body: var(--font-inter), system-ui, sans-serif;
-  --font-mono: var(--font-space-grotesk), system-ui, sans-serif;
-}
-
-@media (prefers-color-scheme: dark) {
-  :root:not([data-theme="light"]) {
-    --font-heading: var(--font-space-grotesk), system-ui, sans-serif;
-    --font-body: var(--font-inter), system-ui, sans-serif;
-    --font-mono: var(--font-space-grotesk), system-ui, sans-serif;
-  }
+  --font-mono: var(--font-orbitron), system-ui, sans-serif;
 }
 
 * {

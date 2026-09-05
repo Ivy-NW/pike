@@ -4,25 +4,12 @@
  * Dashboard (see apps/dashboard/src/app/globals.css). */
 
 /* Fonts are self-hosted via next/font (see layout.tsx) rather than the generated
- * theme.css's literal family names — point the same tokens at those variables. */
-:root, [data-theme="light"] {
-  --font-heading: "Geist", system-ui, sans-serif;
-  --font-body: "Geist", system-ui, sans-serif;
-  --font-mono: var(--font-space-mono), ui-monospace, monospace;
-}
-
-[data-theme="dark"] {
-  --font-heading: var(--font-space-grotesk), system-ui, sans-serif;
+ * theme.css's literal family names — point the same tokens at those variables.
+ * Light and dark share one Orbitron/Inter pairing (platform-wide unification). */
+:root, [data-theme="light"], [data-theme="dark"] {
+  --font-heading: var(--font-orbitron), system-ui, sans-serif;
   --font-body: var(--font-inter), system-ui, sans-serif;
-  --font-mono: var(--font-space-grotesk), system-ui, sans-serif;
-}
-
-@media (prefers-color-scheme: dark) {
-  :root:not([data-theme="light"]) {
-    --font-heading: var(--font-space-grotesk), system-ui, sans-serif;
-    --font-body: var(--font-inter), system-ui, sans-serif;
-    --font-mono: var(--font-space-grotesk), system-ui, sans-serif;
-  }
+  --font-mono: var(--font-orbitron), system-ui, sans-serif;
 }
 
 * {

@@ -6,10 +6,9 @@
   --landing-ink: var(--on-surface);
   --landing-muted: var(--on-surface-variant);
   --landing-line: var(--outline-variant);
-  /* Landing keeps its own type identity (Space Grotesk/Inter) distinct from the app
-     shell's Geist — intentional, not a token-generation oversight. Fonts are self-hosted
+  /* Landing shares the platform-wide Orbitron/Inter pairing. Fonts are self-hosted
      via next/font (see layout.tsx), which exposes them as these CSS variables. */
-  --font-heading: var(--font-space-grotesk), sans-serif;
+  --font-heading: var(--font-orbitron), sans-serif;
   --font-body: var(--font-inter), sans-serif;
   /* Accent tracks the shared filled-action token instead of a hardcoded hex so the
      landing page's brand blue stays in sync with admin/dashboard/webar. */

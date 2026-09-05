@@ -84,7 +84,7 @@ export default function LoginScreen() {
   const styles = StyleSheet.create({
     container: {
       flexGrow: 1,
-      backgroundColor: isDark ? "#0c0c0e" : c.surface,
+      backgroundColor: isDark ? "#000000" : c.surface,
       justifyContent: "center",
       padding: 24,
       paddingTop: topPadding,
@@ -114,7 +114,7 @@ export default function LoginScreen() {
       fontWeight: "600",
     },
     modeToggleTextActive: {
-      color: isDark ? "#f59e0b" : c.primary,
+      color: isDark ? "#9C7C4A" : c.primary,
       fontWeight: "700",
     },
     inputWrapper: {
@@ -153,11 +153,11 @@ export default function LoginScreen() {
     },
     primaryButtonText: {
       ...theme.font(theme.type.headlineSm),
-      color: isDark ? "#f59e0b" : "#ffffff",
+      color: isDark ? "#9C7C4A" : "#ffffff",
       letterSpacing: 1,
       fontWeight: "700",
     },
-    link: { ...theme.font(theme.type.bodyMd), color: isDark ? "#f59e0b" : c.primary, textAlign: "center", marginTop: 20, fontWeight: "600" },
+    link: { ...theme.font(theme.type.bodyMd), color: isDark ? "#9C7C4A" : c.primary, textAlign: "center", marginTop: 20, fontWeight: "600" },
     error: { ...theme.font(theme.type.bodyMd), color: isDark ? "#ffb4ab" : c.error, marginTop: 14, textAlign: "center", fontWeight: "600" },
   });
 
