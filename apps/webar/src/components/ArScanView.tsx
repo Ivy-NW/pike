@@ -97,7 +97,7 @@ export function ArScanView({ questName, imageTargetData, onRecognized }: Props) 
       style={{
         position: "fixed",
         inset: 0,
-        background: "#0c0c0e",
+        background: "#000000",
         display: "flex",
         flexDirection: "column",
         alignItems: "center",
@@ -112,10 +112,11 @@ export function ArScanView({ questName, imageTargetData, onRecognized }: Props) 
         style={{ position: "absolute", inset: 0, width: "100%", height: "100%", objectFit: "cover" }}
       />
       <div
+        aria-hidden="true"
         style={{
           position: "absolute",
           inset: 0,
-          background: recognizing ? "rgba(245, 158, 11, 0.25)" : "transparent",
+          background: recognizing ? "rgba(156, 124, 74, 0.25)" : "transparent",
           transition: "background 0.3s ease",
           pointerEvents: "none",
         }}
@@ -129,13 +130,13 @@ export function ArScanView({ questName, imageTargetData, onRecognized }: Props) 
             style={{
               position: "relative",
               zIndex: 10,
-              background: "rgba(12, 12, 14, 0.88)",
+              background: "rgba(0, 0, 0, 0.88)",
               backdropFilter: "blur(16px)",
-              border: "1px solid rgba(245, 158, 11, 0.35)",
+              border: "1px solid rgba(156, 124, 74, 0.35)",
               borderRadius: 18,
               padding: "10px 20px",
-              color: "#f59e0b",
-              fontFamily: "Space Grotesk, sans-serif",
+              color: "#9C7C4A",
+              fontFamily: "Orbitron, sans-serif",
               fontSize: 13,
               fontWeight: 700,
               letterSpacing: "0.1em",
@@ -145,7 +146,7 @@ export function ArScanView({ questName, imageTargetData, onRecognized }: Props) 
               gap: 8,
             }}
           >
-            <span style={{ width: 8, height: 8, borderRadius: "50%", background: "#f59e0b", display: "inline-block" }} />
+            <span style={{ width: 8, height: 8, borderRadius: "50%", background: "#9C7C4A", display: "inline-block" }} />
             OPTICAL SCANNER ACTIVE
           </div>
 
@@ -156,17 +157,17 @@ export function ArScanView({ questName, imageTargetData, onRecognized }: Props) 
               zIndex: 10,
               width: 240,
               height: 240,
-              border: `2px solid ${recognizing ? "#f59e0b" : "rgba(245, 158, 11, 0.6)"}`,
+              border: `2px solid ${recognizing ? "#9C7C4A" : "rgba(156, 124, 74, 0.6)"}`,
               borderRadius: 28,
               display: "flex",
               alignItems: "center",
               justifyContent: "center",
-              boxShadow: recognizing ? "0 0 35px rgba(245, 158, 11, 0.85)" : "0 0 16px rgba(245, 158, 11, 0.2)",
+              boxShadow: recognizing ? "0 0 35px rgba(156, 124, 74, 0.85)" : "0 0 16px rgba(156, 124, 74, 0.2)",
               transition: "all 0.3s ease",
               pointerEvents: "none",
             }}
           >
-            <div style={{ width: 12, height: 12, borderRadius: "50%", background: "#f59e0b", opacity: 0.8 }} />
+            <div style={{ width: 12, height: 12, borderRadius: "50%", background: "#9C7C4A", opacity: 0.8 }} />
           </div>
 
           {/* Bottom Control HUD */}
@@ -180,18 +181,18 @@ export function ArScanView({ questName, imageTargetData, onRecognized }: Props) 
               flexDirection: "column",
               alignItems: "center",
               gap: 12,
-              background: "rgba(12, 12, 14, 0.88)",
+              background: "rgba(0, 0, 0, 0.88)",
               backdropFilter: "blur(16px)",
               padding: "16px 20px",
               borderRadius: 24,
-              border: "1px solid rgba(245, 158, 11, 0.2)",
+              border: "1px solid rgba(156, 124, 74, 0.2)",
               boxShadow: "0 8px 32px rgba(0,0,0,0.8)",
             }}
           >
             <p
               style={{
-                color: "#fbfaf8",
-                fontFamily: "Space Grotesk, system-ui, sans-serif",
+                color: "#ece7df",
+                fontFamily: "Orbitron, system-ui, sans-serif",
                 fontSize: 13,
                 fontWeight: 600,
                 textAlign: "center",
@@ -211,16 +212,16 @@ export function ArScanView({ questName, imageTargetData, onRecognized }: Props) 
                 padding: "16px 20px",
                 background: recognizing
                   ? "#10B981"
-                  : "linear-gradient(135deg, #d97706 0%, #f59e0b 100%)",
-                color: "#0c0c0e",
-                fontFamily: "Space Grotesk, sans-serif",
+                  : "linear-gradient(135deg, #7E6030 0%, #9C7C4A 100%)",
+                color: "#14100a",
+                fontFamily: "Orbitron, sans-serif",
                 fontSize: 14,
                 fontWeight: 800,
                 letterSpacing: "0.08em",
                 border: "none",
                 borderRadius: 18,
                 cursor: "pointer",
-                boxShadow: "0 6px 20px rgba(245, 158, 11, 0.4)",
+                boxShadow: "0 6px 20px rgba(156, 124, 74, 0.4)",
                 transition: "transform 0.15s ease",
               }}
             >

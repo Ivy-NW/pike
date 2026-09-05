@@ -28,17 +28,17 @@ export function NeumorphicView({
   const c = theme.colors;
   const isDark = theme.mode === "dark";
 
-  let backgroundColor = isDark ? "#141417" : "#ffffff";
-  let borderColor = isDark ? "rgba(212, 175, 55, 0.15)" : "rgba(15, 23, 42, 0.08)";
-  let shadowColor = isDark ? "#000000" : "#0f172a";
+  let backgroundColor = isDark ? "#0d0d0d" : "#FFFDF8";
+  let borderColor = isDark ? "rgba(156, 124, 74, 0.15)" : "rgba(31, 26, 20, 0.08)";
+  let shadowColor = isDark ? "#000000" : "#1F1A14";
   let shadowOffset = { width: 0, height: 4 };
   let shadowOpacity = isDark ? 0.75 : 0.08;
   let shadowRadius = 8;
   let elevation = 4;
 
   if (variant === "inset") {
-    backgroundColor = isDark ? "#0a0a0c" : "#e8edf5";
-    borderColor = isDark ? "rgba(0, 0, 0, 0.7)" : "rgba(15, 23, 42, 0.06)";
+    backgroundColor = isDark ? "#000000" : "#EDE8DD";
+    borderColor = isDark ? "rgba(0, 0, 0, 0.7)" : "rgba(31, 26, 20, 0.06)";
     shadowOpacity = 0;
     elevation = 0;
   } else if (variant === "flat") {
@@ -48,10 +48,10 @@ export function NeumorphicView({
     elevation = 2;
   }
 
-  // Glow Variants (PIKE Logo: Imperial Gold & Cobalt Sapphire)
+  // Glow Variants (PIKE Logo: Smoked Gold & Cobalt Sapphire)
   if (glow === "gold") {
-    borderColor = isDark ? "rgba(245, 158, 11, 0.6)" : "rgba(180, 83, 9, 0.45)";
-    shadowColor = isDark ? "#f59e0b" : "#b45309";
+    borderColor = isDark ? "rgba(156, 124, 74, 0.6)" : "rgba(126, 96, 48, 0.45)";
+    shadowColor = isDark ? "#9C7C4A" : "#7E6030";
     shadowOpacity = isDark ? 0.45 : 0.18;
     shadowRadius = 12;
   } else if (glow === "blue" || glow === "sapphire" || glow === "cyan") {
@@ -60,8 +60,8 @@ export function NeumorphicView({
     shadowOpacity = isDark ? 0.45 : 0.18;
     shadowRadius = 12;
   } else if (glow === "premium") {
-    borderColor = isDark ? "rgba(245, 158, 11, 0.65)" : "rgba(180, 83, 9, 0.5)";
-    shadowColor = isDark ? "#d4af37" : "#b45309";
+    borderColor = isDark ? "rgba(183, 154, 94, 0.65)" : "rgba(140, 107, 52, 0.5)";
+    shadowColor = isDark ? "#b79a5e" : "#8C6B34";
     shadowOpacity = 0.35;
     shadowRadius = 10;
   } else if (glow === "success") {

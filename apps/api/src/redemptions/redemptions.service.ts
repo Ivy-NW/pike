@@ -223,6 +223,6 @@ export class RedemptionsService {
         .catch((err) => this.logger.error(`Voucher mint enqueue failed for ${redemption.id}`, err));
 
       return { redemption: updated, user: awardedUser, award };
-    });
+    }, { timeout: 20000 });
   }
 }

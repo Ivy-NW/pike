@@ -116,6 +116,7 @@ export default function AdminLoginPage() {
             <Logo size={26} />
             <span style={{ fontFamily: "var(--font-heading)", fontWeight: 700, fontSize: 18 }}>PIKE</span>
           </div>
+          <span className="page-eyebrow">Restricted access</span>
           <h2 style={{ fontFamily: "var(--font-heading)", fontSize: 26, margin: "18px 0 4px" }}>Welcome back</h2>
           <p style={{ color: "var(--on-surface-variant)", fontSize: 14, marginBottom: 26 }}>Sign in to the global admin portal.</p>
 
@@ -159,7 +160,7 @@ export default function AdminLoginPage() {
             <button className="primary icon" disabled={loading} style={{ justifyContent: "center", padding: "11px 14px", marginTop: 6 }}>
               {loading ? "Signing in…" : "Enter admin portal"}
             </button>
-            {error && <p style={{ color: "var(--error)", fontSize: 13 }}>{error}</p>}
+            {error && <div className="state-alert" role="alert"><strong>Sign-in failed.</strong><span>{error}</span></div>}
           </form>
         </div>
       </div>

@@ -5,7 +5,8 @@
  */
 export const brand = {
   pikeBlue: "#2563EB",
-  pikeGold: "#F59E0B",
+  /** Smoked Gold — dark-theme value; light theme uses the deeper #7E6030 variant of the same hue, same pattern as pikeBlue. */
+  pikeGold: "#9C7C4A",
   deepSlate: "#111827",
   lightGray: "#F8FAFC",
   success: "#10B981",

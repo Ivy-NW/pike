@@ -29,6 +29,7 @@ export default function HomePage() {
     <>
       <div className="page-header">
         <div>
+          <span className="eyebrow">Overview</span>
           <h1>{business?.name ?? "Dashboard"}</h1>
           <p>
             {business ? (
@@ -46,7 +47,7 @@ export default function HomePage() {
         </Link>
       </div>
 
-      {error && <p style={{ color: "var(--error)" }}>{error}</p>}
+      {error && <div className="notice notice-error" role="alert"><strong>Dashboard unavailable</strong><span>{error}</span></div>}
 
       <div className="stat-grid">
         <div className="stat-card">
@@ -72,19 +73,22 @@ export default function HomePage() {
         </div>
       </div>
 
-      <div className="card-title" style={{ marginTop: 8 }}>Your venues</div>
+      <div className="section-heading" style={{ marginTop: 8 }}>
+        <div><span className="eyebrow">Locations</span><h2>Your venues</h2></div>
+        {venues && <span className="section-meta">{venues.length} total</span>}
+      </div>
 
       {venues === null ? (
-        <div className="card"><div className="skeleton-row" /></div>
+        <div className="card loading-stack" aria-label="Loading venues"><div className="skeleton-row" /><div className="skeleton-row" /><div className="skeleton-row" /></div>
       ) : venues.length === 0 ? (
-        <div className="card empty-state">No venues yet — add one to start creating quests.</div>
+        <div className="card empty-state empty-state-panel"><span className="badge badge-info">First step</span><h2>Add your first venue</h2><p>Venues group quests and their redemption activity.</p><Link href="/venues/new" className="primary">Add venue</Link></div>
       ) : (
         venues.map((venue) => (
           <div key={venue.id} className="card" style={{ marginBottom: 16 }}>
             <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
               <div>
                 <h3 style={{ margin: 0, fontFamily: "var(--font-heading)" }}>{venue.name}</h3>
-                <p style={{ margin: "4px 0", color: "var(--on-surface-variant)", fontSize: 14 }}>{venue.venueType}</p>
+                <p style={{ margin: "4px 0", color: "var(--on-surface-variant)", fontSize: 14 }}>{venue.venueType?.replaceAll("_", " ")}</p>
               </div>
               <Link href={`/quests/new?venueId=${venue.id}`} className="primary icon">
                 <PlusIcon size={14} />
@@ -103,7 +107,7 @@ export default function HomePage() {
                   <span className={`badge ${quest.status === "live" ? "badge-verified" : "badge-unverified"}`}>{quest.status}</span>
                 </Link>
               ))}
-              {(questsByVenue[venue.id] ?? []).length === 0 && <p style={{ color: "var(--outline)", fontSize: 14 }}>No quests yet.</p>}
+              {(questsByVenue[venue.id] ?? []).length === 0 && <p className="inline-empty">No quests at this venue yet.</p>}
             </div>
           </div>
         ))

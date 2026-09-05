@@ -46,7 +46,7 @@ export default function QuestsScreen() {
   });
 
   const styles = StyleSheet.create({
-    container: { flex: 1, backgroundColor: isDark ? "#0c0c0e" : c.surface },
+    container: { flex: 1, backgroundColor: isDark ? "#000000" : c.surface },
     content: { padding: 16, paddingTop: 14, paddingBottom: 130 },
     headerTitle: { ...theme.font(theme.type.headlineLgMobile), color: c.onSurface, fontSize: 26, fontWeight: "700" },
     headerSub: { ...theme.font(theme.type.bodyMd), color: c.onSurfaceVariant, marginTop: 4, marginBottom: 16 },
@@ -55,29 +55,29 @@ export default function QuestsScreen() {
     filterScroll: { marginBottom: 16 },
     filterRow: { flexDirection: "row", gap: 8, paddingRight: 16 },
     filterPill: { paddingHorizontal: 14, paddingVertical: 8, borderRadius: 14 },
-    filterPillActiveText: { ...theme.font(theme.type.labelCaps), color: isDark ? "#f59e0b" : "#d97706", fontSize: 11, fontWeight: "700" },
+    filterPillActiveText: { ...theme.font(theme.type.labelCaps), color: isDark ? "#9C7C4A" : "#7E6030", fontSize: 11, fontWeight: "700" },
     filterPillInactiveText: { ...theme.font(theme.type.labelCaps), color: c.onSurfaceVariant, fontSize: 11, fontWeight: "600" },
 
     // Featured Vanguard Mission Card
     featureCard: { padding: 18, borderRadius: 24, marginBottom: 16, width: "100%" },
     premiumBadge: { flexDirection: "row", alignItems: "center", gap: 5, paddingHorizontal: 10, paddingVertical: 4, alignSelf: "flex-start", marginBottom: 10, borderRadius: 10 },
-    premiumText: { ...theme.font(theme.type.labelCaps), color: isDark ? "#f59e0b" : "#d97706", fontSize: 10, fontWeight: "700" },
+    premiumText: { ...theme.font(theme.type.labelCaps), color: isDark ? "#9C7C4A" : "#7E6030", fontSize: 10, fontWeight: "700" },
     featureTitle: { ...theme.font(theme.type.headlineSm), color: c.onSurface, fontSize: 19, fontWeight: "700" },
     featureDesc: { ...theme.font(theme.type.bodyMd), color: c.onSurfaceVariant, marginTop: 4, marginBottom: 14, fontSize: 13, lineHeight: 18 },
     featureFooter: { flexDirection: "row", justifyContent: "space-between", alignItems: "center", gap: 10 },
     featureReward: { flexDirection: "row", alignItems: "center", gap: 6, flex: 1, flexShrink: 1 },
-    featureRewardText: { ...theme.font(theme.type.bodyMd), color: isDark ? "#f59e0b" : "#d97706", fontWeight: "700", fontSize: 13 },
+    featureRewardText: { ...theme.font(theme.type.bodyMd), color: isDark ? "#9C7C4A" : "#7E6030", fontWeight: "700", fontSize: 13 },
     initiateBtn: { flexDirection: "row", alignItems: "center", gap: 6, paddingHorizontal: 14, paddingVertical: 8, borderRadius: 14, flexShrink: 0 },
-    initiateBtnText: { ...theme.font(theme.type.labelCaps), color: isDark ? "#f59e0b" : "#d97706", fontWeight: "700", fontSize: 11 },
+    initiateBtnText: { ...theme.font(theme.type.labelCaps), color: isDark ? "#9C7C4A" : "#7E6030", fontWeight: "700", fontSize: 11 },
 
     // Standard Quest Card (Fully Responsive & Overflow-Proof)
     card: { padding: 16, borderRadius: 24, marginBottom: 14, width: "100%" },
     cardTopRow: { flexDirection: "row", justifyContent: "space-between", alignItems: "center", marginBottom: 10 },
     iconSquare: { width: 44, height: 44, borderRadius: 14, alignItems: "center", justifyContent: "center" },
     statusBadge: { flexDirection: "row", alignItems: "center", gap: 5, paddingHorizontal: 10, paddingVertical: 4, borderRadius: 10 },
-    statusActive: { ...theme.font(theme.type.labelCaps), color: isDark ? "#f59e0b" : "#d97706", fontSize: 10, fontWeight: "700" },
+    statusActive: { ...theme.font(theme.type.labelCaps), color: isDark ? "#9C7C4A" : "#7E6030", fontSize: 10, fontWeight: "700" },
     statusCompleted: { ...theme.font(theme.type.labelCaps), color: "#10B981", fontSize: 10, fontWeight: "700" },
-    pulsingDot: { width: 6, height: 6, borderRadius: 3, backgroundColor: isDark ? "#f59e0b" : "#d97706" },
+    pulsingDot: { width: 6, height: 6, borderRadius: 3, backgroundColor: isDark ? "#9C7C4A" : "#7E6030" },
     cardTitle: { ...theme.font(theme.type.headlineSm), color: c.onSurface, fontSize: 17, fontWeight: "700" },
     cardVenue: { ...theme.font(theme.type.bodyMd), color: c.onSurfaceVariant, marginTop: 2, fontSize: 13 },
     cardBottomRow: {
@@ -87,13 +87,13 @@ export default function QuestsScreen() {
       marginTop: 12,
       paddingTop: 10,
       borderTopWidth: 1,
-      borderTopColor: isDark ? "rgba(212,175,55,0.1)" : "rgba(217,119,6,0.1)",
+      borderTopColor: isDark ? "rgba(156,124,74,0.1)" : "rgba(126,96,48,0.1)",
       gap: 10,
     },
     xpTag: { flexDirection: "row", alignItems: "center", gap: 5, flex: 1, flexShrink: 1 },
     xpText: {
       ...theme.font(theme.type.bodyMd),
-      color: isDark ? "#f59e0b" : "#d97706",
+      color: isDark ? "#9C7C4A" : "#7E6030",
       fontWeight: "700",
       fontSize: 12,
       flex: 1,
@@ -107,7 +107,7 @@ export default function QuestsScreen() {
       borderRadius: 14,
       flexShrink: 0,
     },
-    scanBtnText: { ...theme.font(theme.type.labelCaps), color: isDark ? "#f59e0b" : "#d97706", fontSize: 11, fontWeight: "700" },
+    scanBtnText: { ...theme.font(theme.type.labelCaps), color: isDark ? "#9C7C4A" : "#7E6030", fontSize: 11, fontWeight: "700" },
     emptyText: { ...theme.font(theme.type.bodyMd), color: c.onSurfaceVariant, textAlign: "center", marginTop: 32 },
   });
 
@@ -123,8 +123,8 @@ export default function QuestsScreen() {
           <RefreshControl
             refreshing={refreshing}
             onRefresh={onRefresh}
-            tintColor={isDark ? "#f59e0b" : "#d97706"}
-            colors={[isDark ? "#f59e0b" : "#d97706"]}
+            tintColor={isDark ? "#9C7C4A" : "#7E6030"}
+            colors={[isDark ? "#9C7C4A" : "#7E6030"]}
           />
         }
         ListHeaderComponent={
@@ -171,7 +171,7 @@ export default function QuestsScreen() {
             {filter !== "completed" && (
               <NeumorphicView variant="raised" glow="gold" radius={24} style={styles.featureCard}>
                 <NeumorphicView variant="inset" radius={10} style={styles.premiumBadge}>
-                  <MaterialIcons name="stars" size={14} color={isDark ? "#f59e0b" : "#d97706"} />
+                  <MaterialIcons name="stars" size={14} color={isDark ? "#9C7C4A" : "#7E6030"} />
                   <Text style={styles.premiumText}>HIGH-YIELD SECTOR ANOMALY</Text>
                 </NeumorphicView>
                 <Text style={styles.featureTitle}>Decipher the KICC Anomaly</Text>
@@ -180,7 +180,7 @@ export default function QuestsScreen() {
                 </Text>
                 <View style={styles.featureFooter}>
                   <View style={styles.featureReward}>
-                    <MaterialIcons name="card-giftcard" size={18} color={isDark ? "#f59e0b" : "#d97706"} />
+                    <MaterialIcons name="card-giftcard" size={18} color={isDark ? "#9C7C4A" : "#7E6030"} />
                     <Text style={styles.featureRewardText} numberOfLines={1}>20% off + 500 PTS</Text>
                   </View>
                   <NeumorphicView
@@ -191,7 +191,7 @@ export default function QuestsScreen() {
                     onPress={() => router.push("/quest/q-nbo-1")}
                   >
                     <Text style={styles.initiateBtnText}>DEPLOY</Text>
-                    <MaterialIcons name="arrow-forward" size={16} color={isDark ? "#f59e0b" : "#d97706"} />
+                    <MaterialIcons name="arrow-forward" size={16} color={isDark ? "#9C7C4A" : "#7E6030"} />
                   </NeumorphicView>
                 </View>
               </NeumorphicView>
@@ -223,7 +223,7 @@ export default function QuestsScreen() {
                 <MaterialIcons
                   name={item.completed ? "verified" : "memory"}
                   size={24}
-                  color={item.completed ? "#10B981" : (isDark ? "#f59e0b" : "#d97706")}
+                  color={item.completed ? "#10B981" : (isDark ? "#9C7C4A" : "#7E6030")}
                 />
               </NeumorphicView>
               <NeumorphicView variant="inset" radius={10} style={styles.statusBadge}>
@@ -246,7 +246,7 @@ export default function QuestsScreen() {
 
             <View style={styles.cardBottomRow}>
               <View style={styles.xpTag}>
-                <MaterialIcons name="military-tech" size={18} color={isDark ? "#f59e0b" : "#d97706"} />
+                <MaterialIcons name="military-tech" size={18} color={isDark ? "#9C7C4A" : "#7E6030"} />
                 <Text style={styles.xpText} numberOfLines={1}>
                   +250 PTS • {item.rewardDescription}
                 </Text>
@@ -260,7 +260,7 @@ export default function QuestsScreen() {
                   style={styles.scanBtn}
                   onPress={() => router.push(`/scan/${item.markerId || item.id}`)}
                 >
-                  <MaterialIcons name="qr-code-scanner" size={16} color={isDark ? "#f59e0b" : "#d97706"} />
+                  <MaterialIcons name="qr-code-scanner" size={16} color={isDark ? "#9C7C4A" : "#7E6030"} />
                   <Text style={styles.scanBtnText}>SCAN</Text>
                 </NeumorphicView>
               )}

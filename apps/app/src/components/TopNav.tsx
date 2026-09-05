@@ -36,9 +36,9 @@ export function TopNav({
       flexDirection: "row",
       alignItems: "center",
       justifyContent: "space-between",
-      backgroundColor: isDark ? "#0c0c0e" : c.surface,
+      backgroundColor: isDark ? "#000000" : c.surface,
       borderBottomWidth: 1,
-      borderBottomColor: isDark ? "rgba(212, 175, 55, 0.15)" : "rgba(217, 119, 6, 0.12)",
+      borderBottomColor: isDark ? "rgba(156, 124, 74, 0.15)" : "rgba(126, 96, 48, 0.12)",
     },
     left: {
       flexDirection: "row",
@@ -53,7 +53,7 @@ export function TopNav({
     },
     subtitle: {
       ...theme.font(theme.type.labelCaps),
-      color: isDark ? "#f59e0b" : "#d97706",
+      color: isDark ? "#9C7C4A" : "#7E6030",
       fontSize: 10,
       letterSpacing: 1.2,
       fontWeight: "700",
@@ -97,7 +97,7 @@ export function TopNav({
           <MaterialIcons
             name={isDark ? "wb-sunny" : "nightlight-round"}
             size={20}
-            color={isDark ? "#f59e0b" : "#d97706"}
+            color={isDark ? "#9C7C4A" : "#7E6030"}
           />
         </NeumorphicView>
       </View>

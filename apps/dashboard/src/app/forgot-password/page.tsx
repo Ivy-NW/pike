@@ -9,6 +9,7 @@ import { AuthSplitPanel } from "@/components/AuthSplitPanel";
 export default function ForgotPasswordPage() {
   return (
     <AuthSplitPanel>
+      <span className="eyebrow">Account recovery</span>
       <h2 style={{ fontFamily: "var(--font-heading)", fontSize: 26, marginBottom: 6 }}>Reset your password</h2>
       <p style={{ color: "var(--on-surface-variant)", marginBottom: 24 }}>
         Self-service password reset isn&apos;t available yet. Email us and we&apos;ll verify your

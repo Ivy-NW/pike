@@ -22,9 +22,9 @@ The design has to work across two very different surfaces at once — a zero-ins
 | Color | Hex | Usage |
 |---|---|---|
 | Pike Blue | `#2563EB` | Primary interface color — navigation, maps, core UI |
-| Pike Gold | `#F59E0B` | Reserved for rewards only — coins, achievements, VIP, XP. Never used as a primary UI color |
+| Pike Gold (Smoked Gold) | `#9C7C4A` dark / `#7E6030` light | Reserved for rewards only — coins, achievements, VIP, XP. Never used as a primary UI color. A desaturated brass pulled from the logo's mid-tone, deliberately restrained rather than a bright amber |
 | Deep Slate | `#111827` | Main dark color, dark-mode text |
-| Light Gray | `#F8FAFC` | Cards, backgrounds, spacing |
+| Off-White | `#F6F4EF` | Cards, backgrounds, spacing (warm, not blue-tinted) |
 | Success | `#10B981` | Quest completed, reward unlocked |
 | Danger | `#EF4444` | Expired, failed, warnings |
 | Purple Accent | `#7C3AED` | Reserved for AR interactions and special/legendary events |
@@ -35,12 +35,12 @@ The design has to work across two very different surfaces at once — a zero-ins
 
 ## 3. Typography & Iconography
 
-- **Headings**: Space Grotesk or Sora — modern, friendly, distinctive at large sizes.
+- **Headings**: Orbitron — modern, geometric, gamified-tech display face, distinctive at large sizes and on caps labels.
 - **Body**: Inter, for reliable readability across dense UI.
 - **Icons**: rounded outline sets only (Lucide, Phosphor, Material Symbols Rounded) — no heavy gaming-style icons.
 - **Border radius**: a large, consistent 20px across buttons, cards, bottom sheets, and map elements, so the whole interface reads as soft rather than boxy.
 
-**Open design note**: Space Grotesk/Sora paired with Inter is a strong, legible system, but it's also become a common default across consumer and AI-adjacent apps launched recently. It's usable for v1, but worth revisiting once the brand has room to differentiate further — right now the palette and the signature mark (section 5) are doing more of the distinctive work than the typography is.
+The Orbitron/Inter pairing is shared by both the light and dark identity — one type system across the whole platform, not a per-theme split.
 
 ---
 
@@ -81,12 +81,12 @@ These should stay **purposeful and restrained** — reserved for moments that ma
 
 | Element | Light | Dark |
 |---|---|---|
-| Background | `#F8FAFC` | `#0F172A` |
-| Cards | White | `#1E293B` |
-| Pike Blue | `#2563EB` | `#2563EB` (constant across both modes for brand consistency) |
-| Gold | `#F59E0B` | Reads richer against the dark background |
+| Background | `#F6F4EF` (warm off-white) | `#000000` (true black) |
+| Cards | Warm white | `#0d0d0d`–`#292929` (stepped near-black elevation) |
+| Pike Blue | `#2563EB` | `#3b82f6` |
+| Gold (Smoked Gold) | `#7E6030` | `#9C7C4A` — reads richer against the dark background |
 
-Reward moments (the Reward and Map screens especially) already lean on dark, high-contrast layouts in the mockups below — this works in the platform's favor, since gold has more visual weight against slate than against light gray.
+Both modes share the same warm-neutral (non-blue) gray ramp and the same Smoked Gold hue family, just at different lightness/contrast — the two themes are meant to read as one system, not two different color schemes. Reward moments (the Reward and Map screens especially) already lean on dark, high-contrast layouts in the mockups below — this works in the platform's favor, since gold has more visual weight against true black than against light gray.
 
 ---
 
@@ -146,5 +146,4 @@ Interactive mockups for the Home and Reward screens, and the end-to-end user-jou
 
 - Mock up the Quest/AR Scan and Map screens to match this spec.
 - Produce one Experience Themes reskin (e.g. pirate theme) of the Home screen to visually prove "navigation stays PIKE, flavor changes."
-- Decide on the Space Grotesk/Sora + Inter pairing question raised in section 3 before locking the type system.
 - Define the badge grid's locked-state visual treatment (grayscale vs. outline-only vs. silhouette).

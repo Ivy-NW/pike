@@ -30,7 +30,7 @@ export function Sidebar() {
           <ThemeToggle />
         </div>
       </div>
-      <nav className="sidebar-nav">
+      <nav className="sidebar-nav" aria-label="Admin portal">
         {links.map(({ href, label, icon: Icon }) => {
           const active = pathname === href || pathname.startsWith(`${href}/`);
           return (
