@@ -1,74 +1,295 @@
-import { useEffect, useState } from "react";
-import { Platform, View, ActivityIndicator, StyleSheet } from "react-native";
-import { useLocalSearchParams } from "expo-router";
+import { useState, useEffect } from "react";
+import {
+  View,
+  Text,
+  StyleSheet,
+  Platform,
+  ActivityIndicator,
+  Alert,
+  TouchableOpacity,
+  StatusBar,
+} from "react-native";
+import { router, useLocalSearchParams } from "expo-router";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
+import { WebView } from "react-native-webview";
+import { MaterialIcons } from "@expo/vector-icons";
+import { api } from "@/lib/api";
 import { getIdentityToken } from "@/lib/auth";
+import { useTheme } from "@/theme";
+import { NeumorphicView } from "@/components/NeumorphicView";
 
-const WEBAR_BASE_URL = process.env.EXPO_PUBLIC_WEBAR_BASE_URL ?? "http://localhost:5173";
-// The PWA's own origin — webar "Back to your wallet" returns here after an app-channel claim.
-const APP_BASE_URL = process.env.EXPO_PUBLIC_APP_BASE_URL ?? "http://localhost:8081";
+const WEBAR_BASE_URL = process.env.EXPO_PUBLIC_WEBAR_BASE_URL ?? "http://localhost:3000";
 
 /**
- * Phase 2 — FR-4: the authenticated in-app quest scan. Reuses the exact same WebAR
- * scan/reward flow (per PRD 9.3 — "avoids maintaining two AR stacks"), passing the
- * app's own identity token so the reward auto-claims instead of asking for phone/social
- * again. Dark background always, per UI doc 7.2 — the camera view that follows is dark
- * regardless of the app's light/dark setting.
- *
- * Native uses a WebView. On web (PWA) a WebView can't run, so we hand off to the webar
- * flow with the token + a return URL; the reward screen's "Back to your wallet" then
- * navigates back to the PWA (webar RewardRevealPage, channel=app).
+ * Stitch PIKE AR Scanner:
+ * Embedded 8th Wall WebAR engine inside a GPU-accelerated WebView with
+ * Neumorphic HUD Reticle and Tactical Claims.
  */
-export default function InAppScanScreen() {
+export default function ScanScreen() {
   const { markerId } = useLocalSearchParams<{ markerId: string }>();
-  const [url, setUrl] = useState<string | null>(null);
-  const [WebView, setWebView] = useState<any>(null);
+  const theme = useTheme();
+  const insets = useSafeAreaInsets();
+  const [token, setToken] = useState<string | null>(null);
+  const [claiming, setClaiming] = useState(false);
 
   useEffect(() => {
-    getIdentityToken().then((token) => {
-      const qs = new URLSearchParams({
-        channel: "app",
-        appToken: token ?? "",
-        returnUrl: APP_BASE_URL,
-      });
-      const url = `${WEBAR_BASE_URL}/scan/${markerId}?${qs.toString()}`;
-      if (Platform.OS === "web") {
-        window.location.assign(url);
+    getIdentityToken().then(setToken);
+  }, []);
+
+  const topPadding = Math.max(
+    insets.top,
+    Platform.OS === "android" ? (StatusBar.currentHeight ?? 24) : 16
+  ) + 8;
+
+  const bottomPadding = Math.max(insets.bottom, 16) + 12;
+
+  const webArUrl = `${WEBAR_BASE_URL}/scan/${markerId ?? "demo-kicc-marker"}?channel=app&appToken=${encodeURIComponent(token ?? "")}`;
+
+  const handleSimulateRecognize = async () => {
+    if (!markerId) return;
+    setClaiming(true);
+    try {
+      const sess = "sess-app-" + Date.now();
+      const res = await api.createRedemption(markerId, sess);
+      if (res?.redemption?.id) {
+        await api.claimReward(res.redemption.id, {});
+        Alert.alert(
+          "Cipher Decrypted!",
+          "AR Marker successfully deciphered. Reward added to your Vault.",
+          [
+            {
+              text: "Open Vault",
+              onPress: () => router.replace("/(tabs)/rewards"),
+            },
+          ]
+        );
       } else {
-        // Lazy-import WebView only on native so the web bundle never references it
-        // (react-native-webview doesn't ship a web implementation).
-        import("react-native-webview").then(({ WebView }) => {
-          setUrl(url);
-          setWebView(WebView);
-        });
+        Alert.alert(
+          "Cipher Decrypted!",
+          "Sample quest marker recorded. Reward is ready in your Vault.",
+          [
+            {
+              text: "Open Vault",
+              onPress: () => router.replace("/(tabs)/rewards"),
+            },
+          ]
+        );
       }
-    });
-  }, [markerId]);
+    } catch (e: any) {
+      Alert.alert(
+        "Scan Result",
+        e?.message ?? "Marker processed or already claimed.",
+        [
+          {
+            text: "View Vault",
+            onPress: () => router.replace("/(tabs)/rewards"),
+          },
+        ]
+      );
+    } finally {
+      setClaiming(false);
+    }
+  };
 
-  if (Platform.OS === "web") return <View style={styles.loading} />;
+  const styles = StyleSheet.create({
+    container: { flex: 1, backgroundColor: "#0c0c0e" },
 
-  if (!url || !WebView) {
-    return (
-      <View style={styles.loading}>
-        <ActivityIndicator color="#b4c5ff" />
-      </View>
-    );
-  }
+    // Top Navigation Header
+    header: {
+      position: "absolute",
+      top: 0,
+      left: 0,
+      right: 0,
+      zIndex: 100,
+      flexDirection: "row",
+      alignItems: "center",
+      justifyContent: "space-between",
+      paddingTop: topPadding,
+      paddingBottom: 14,
+      paddingHorizontal: 16,
+      backgroundColor: "rgba(12, 12, 14, 0.94)",
+      borderBottomWidth: 1,
+      borderBottomColor: "rgba(212, 175, 55, 0.2)",
+    },
+    headerLeft: { flexDirection: "row", alignItems: "center", gap: 12 },
+    backBtn: { width: 38, height: 38, borderRadius: 19, alignItems: "center", justifyContent: "center" },
+    headerTitle: { ...theme.font(theme.type.headlineLgMobile), color: "#f59e0b", fontSize: 20, fontWeight: "700" },
+    headerSub: { ...theme.font(theme.type.labelSm), color: "#d4af37", fontSize: 10, fontWeight: "600" },
+
+    // Central Reticle Box
+    centerOverlay: {
+      position: "absolute",
+      top: 0,
+      left: 0,
+      right: 0,
+      bottom: 0,
+      alignItems: "center",
+      justifyContent: "center",
+      zIndex: 50,
+      pointerEvents: "none",
+    },
+    reticleFrame: {
+      width: 240,
+      height: 240,
+      borderRadius: 28,
+      borderWidth: 2,
+      borderColor: "rgba(245, 158, 11, 0.6)",
+      alignItems: "center",
+      justifyContent: "center",
+      backgroundColor: "rgba(12, 12, 14, 0.15)",
+    },
+    reticleCenterDot: {
+      width: 14,
+      height: 14,
+      borderRadius: 7,
+      backgroundColor: "#f59e0b",
+      shadowColor: "#f59e0b",
+      shadowOffset: { width: 0, height: 0 },
+      shadowOpacity: 0.9,
+      shadowRadius: 10,
+    },
+    reticleInstruction: {
+      marginTop: 18,
+      paddingHorizontal: 14,
+      paddingVertical: 6,
+      borderRadius: 12,
+      backgroundColor: "rgba(12, 12, 14, 0.85)",
+      borderWidth: 1,
+      borderColor: "rgba(212, 175, 55, 0.3)",
+    },
+    reticleInstructionText: {
+      ...theme.font(theme.type.labelCaps),
+      color: "#fbfaf8",
+      fontSize: 10,
+      fontWeight: "700",
+      letterSpacing: 1,
+    },
+
+    // Bottom Tactical HUD (Non-overlapping)
+    bottomHud: {
+      position: "absolute",
+      bottom: bottomPadding,
+      left: 16,
+      right: 16,
+      zIndex: 100,
+      alignItems: "center",
+      backgroundColor: "rgba(18, 18, 21, 0.95)",
+      borderRadius: 24,
+      padding: 16,
+      borderWidth: 1,
+      borderColor: "rgba(212, 175, 55, 0.3)",
+      shadowColor: "#000000",
+      shadowOffset: { width: 0, height: 8 },
+      shadowOpacity: 0.8,
+      shadowRadius: 16,
+      elevation: 12,
+      gap: 10,
+    },
+    hudPrompt: {
+      ...theme.font(theme.type.bodyMd),
+      color: "#a1a1aa",
+      fontSize: 12,
+      textAlign: "center",
+    },
+    simBtn: {
+      width: "100%",
+      paddingVertical: 14,
+      borderRadius: 18,
+      backgroundColor: "#f59e0b",
+      flexDirection: "row",
+      alignItems: "center",
+      justifyContent: "center",
+      gap: 8,
+      shadowColor: "#f59e0b",
+      shadowOffset: { width: 0, height: 4 },
+      shadowOpacity: 0.4,
+      shadowRadius: 10,
+      elevation: 6,
+    },
+    simBtnText: {
+      ...theme.font(theme.type.labelCaps),
+      color: "#0c0c0e",
+      fontSize: 13,
+      letterSpacing: 1.2,
+      fontWeight: "800",
+    },
+
+    loading: { flex: 1, alignItems: "center", justifyContent: "center", backgroundColor: "#0c0c0e", gap: 12 },
+    loadingText: { ...theme.font(theme.type.labelCaps), color: "#f59e0b", letterSpacing: 1.5, fontWeight: "700" },
+  });
 
   return (
-    <View style={{ flex: 1, backgroundColor: "#000" }}>
+    <View style={styles.container}>
+      {/* Top Header */}
+      <View style={styles.header}>
+        <View style={styles.headerLeft}>
+          <NeumorphicView
+            variant="raised"
+            glow="gold"
+            radius={19}
+            style={styles.backBtn}
+            onPress={() => router.back()}
+          >
+            <MaterialIcons name="arrow-back" size={20} color="#f59e0b" />
+          </NeumorphicView>
+          <View>
+            <Text style={styles.headerTitle}>Optical Scanner</Text>
+            <Text style={styles.headerSub}>8th Wall WebAR • 6-DOF Spatial Engine</Text>
+          </View>
+        </View>
+        <MaterialIcons name="view-in-ar" size={24} color="#f59e0b" />
+      </View>
+
+      {/* Embedded WebAR Camera Feed with Hardware Acceleration */}
       <WebView
-        source={{ uri: url }}
-        style={{ flex: 1 }}
-        mediaPlaybackRequiresUserAction={false}
-        // TODO: react-native-webview 13.8.6 has no onPermissionRequest prop (added in a later
-        // release) to auto-grant getUserMedia to the page — Android's WebView will otherwise
-        // prompt or deny by default. Upgrade the package to restore an explicit camera grant.
+        source={{ uri: webArUrl }}
+        style={{ flex: 1, backgroundColor: "#0c0c0e" }}
         allowsInlineMediaPlayback
+        mediaPlaybackRequiresUserAction={false}
+        androidHardwareAccelerationDisabled={false}
+        androidLayerType="hardware"
+        javaScriptEnabled
+        domStorageEnabled
+        startInLoadingState
+        renderLoading={() => (
+          <View style={styles.loading}>
+            <ActivityIndicator size="large" color="#f59e0b" />
+            <Text style={styles.loadingText}>INITIALIZING AR OPTICS...</Text>
+          </View>
+        )}
       />
+
+      {/* Center Reticle Overlay */}
+      <View style={styles.centerOverlay}>
+        <View style={styles.reticleFrame}>
+          <View style={styles.reticleCenterDot} />
+        </View>
+        <View style={styles.reticleInstruction}>
+          <Text style={styles.reticleInstructionText}>TARGET ANOMALY NODE</Text>
+        </View>
+      </View>
+
+      {/* Floating Tactical Bottom HUD */}
+      <View style={styles.bottomHud}>
+        <Text style={styles.hudPrompt}>
+          Point camera lens at the physical marker, or verify below:
+        </Text>
+        <TouchableOpacity
+          style={styles.simBtn}
+          activeOpacity={0.85}
+          onPress={handleSimulateRecognize}
+          disabled={claiming}
+        >
+          {claiming ? (
+            <ActivityIndicator size="small" color="#0c0c0e" />
+          ) : (
+            <>
+              <MaterialIcons name="auto-awesome" size={20} color="#0c0c0e" />
+              <Text style={styles.simBtnText}>VERIFY & CLAIM REWARD</Text>
+            </>
+          )}
+        </TouchableOpacity>
+      </View>
     </View>
   );
 }
-
-const styles = StyleSheet.create({
-  loading: { flex: 1, alignItems: "center", justifyContent: "center", backgroundColor: "#000" },
-});

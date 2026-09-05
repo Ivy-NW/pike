@@ -1,17 +1,17 @@
 /**
- * Concrete Material-3-style token sets, sourced directly from the
- * `docs/ui designs/pike_vanguard(_light)/DESIGN.md` companion systems that
- * every screen mockup in `docs/ui designs/` is actually built against
- * (confirmed by hex-matching the mockups' Tailwind configs).
+ * Concrete Material-3-style token sets matching PIKE Logo Identity.
  *
- * "Vanguard" = dark mode, techno-adventurer identity (Space Grotesk + Inter,
- * soft rounded, glass-card, neon glow).
- * "Vanguard Light" = light mode, laboratory-grade corporate identity
- * (Geist + Space Mono, sharp corners, bento/hairline-border).
+ * Unified Brand Signature (Consistent across Dark and Light mode):
+ * - Imperial Champagne Gold (Hero Brand Accent):
+ *   Dark: #f59e0b / #d4af37
+ *   Light: #d97706 / #b45309 (Rich High-Contrast Gold)
+ * - Cobalt Sapphire Blue (Diamond Crystal Accent):
+ *   Dark: #3b82f6
+ *   Light: #2563eb
  *
- * Dark/light is a full identity switch in this system, not a palette
- * inversion — applied uniformly across every surface (app, landing,
- * dashboards), per user decision on 2026-07-17.
+ * Dark: Obsidian Titanium #0c0c0e with Imperial Gold & Sapphire Blue glow.
+ * Light: Porcelain Ceramic #f4f6fa with Pure White cards, Deep Slate #0f172a text,
+ *        and Imperial Gold & Sapphire Blue glow.
  */
 export interface ColorTokens {
   surface: string;
@@ -34,7 +34,6 @@ export interface ColorTokens {
   primaryContainer: string;
   onPrimaryContainer: string;
   inversePrimary: string;
-  /** Gold. Reward-only — see REWARD_ONLY_COLOR_KEYS in brand.ts. */
   secondary: string;
   onSecondary: string;
   secondaryContainer: string;
@@ -50,99 +49,113 @@ export interface ColorTokens {
   background: string;
   onBackground: string;
   success: string;
-  /** Gold. Reward-only. */
   goldDeep: string;
   pikeBlueGlow: string;
   slateGray: string;
   textMuted: string;
   borderSubtle: string;
   borderStrong: string;
+  neumorphSurface: string;
+  neumorphShadowDark: string;
+  neumorphShadowLight: string;
+  neumorphInset: string;
+  neumorphBorder: string;
 }
 
 export const vanguardDark: ColorTokens = {
-  surface: "#0b1326",
-  surfaceDim: "#0b1326",
-  surfaceBright: "#31394d",
-  surfaceContainerLowest: "#060e20",
-  surfaceContainerLow: "#131b2e",
-  surfaceContainer: "#171f33",
-  surfaceContainerHigh: "#222a3d",
-  surfaceContainerHighest: "#2d3449",
-  surfaceVariant: "#2d3449",
-  onSurface: "#dae2fd",
-  onSurfaceVariant: "#c3c6d7",
-  inverseSurface: "#dae2fd",
-  inverseOnSurface: "#283044",
-  outline: "#8d90a0",
-  outlineVariant: "#434655",
-  primary: "#b4c5ff",
-  onPrimary: "#002a78",
-  primaryContainer: "#2563eb",
-  onPrimaryContainer: "#eeefff",
-  inversePrimary: "#0053db",
-  secondary: "#ffb95f",
-  onSecondary: "#472a00",
-  secondaryContainer: "#ee9800",
-  onSecondaryContainer: "#5b3800",
-  tertiary: "#d2bbff",
-  onTertiary: "#3f008e",
-  tertiaryContainer: "#8343f4",
-  onTertiaryContainer: "#f7edff",
-  error: "#ffb4ab",
-  onError: "#690005",
-  errorContainer: "#93000a",
-  onErrorContainer: "#ffdad6",
-  background: "#0b1326",
-  onBackground: "#dae2fd",
+  surface: "#0c0c0e",
+  surfaceDim: "#0c0c0e",
+  surfaceBright: "#232328",
+  surfaceContainerLowest: "#070708",
+  surfaceContainerLow: "#121215",
+  surfaceContainer: "#17171b",
+  surfaceContainerHigh: "#202025",
+  surfaceContainerHighest: "#292930",
+  surfaceVariant: "#202025",
+  onSurface: "#fbfaf8", // Crisp Ivory White
+  onSurfaceVariant: "#a1a1aa", // Refined Slate
+  inverseSurface: "#e4e4e7",
+  inverseOnSurface: "#18181b",
+  outline: "#71717a",
+  outlineVariant: "#3f3f46",
+  primary: "#f59e0b", // Imperial Gold
+  onPrimary: "#18181b",
+  primaryContainer: "#78350f",
+  onPrimaryContainer: "#fde68a",
+  inversePrimary: "#d97706",
+  secondary: "#3b82f6", // Sapphire Gem Blue
+  onSecondary: "#ffffff",
+  secondaryContainer: "#1e3a8a",
+  onSecondaryContainer: "#bfdbfe",
+  tertiary: "#d4af37", // Champagne Gold
+  onTertiary: "#1c1917",
+  tertiaryContainer: "#451a03",
+  onTertiaryContainer: "#fef08a",
+  error: "#f87171",
+  onError: "#450a0a",
+  errorContainer: "#7f1d1d",
+  onErrorContainer: "#fecaca",
+  background: "#0c0c0e",
+  onBackground: "#fbfaf8",
   success: "#10B981",
-  goldDeep: "#B45309",
-  pikeBlueGlow: "#4F46E5",
-  slateGray: "#1E293B",
-  textMuted: "#64748B",
-  borderSubtle: "rgba(255,255,255,0.08)",
-  borderStrong: "#434655",
+  goldDeep: "#f59e0b",
+  pikeBlueGlow: "#3b82f6",
+  slateGray: "#18181b",
+  textMuted: "#a1a1aa",
+  borderSubtle: "rgba(212, 175, 55, 0.15)",
+  borderStrong: "rgba(212, 175, 55, 0.35)",
+  neumorphSurface: "#141417",
+  neumorphShadowDark: "rgba(0, 0, 0, 0.85)",
+  neumorphShadowLight: "rgba(255, 255, 255, 0.04)",
+  neumorphInset: "#0a0a0c",
+  neumorphBorder: "rgba(212, 175, 55, 0.18)",
 };
 
 export const vanguardLight: ColorTokens = {
-  surface: "#f8f9ff",
-  surfaceDim: "#cbdbf5",
-  surfaceBright: "#f8f9ff",
+  surface: "#f4f6fa",
+  surfaceDim: "#e2e8f0",
+  surfaceBright: "#ffffff",
   surfaceContainerLowest: "#ffffff",
-  surfaceContainerLow: "#eff4ff",
-  surfaceContainer: "#e5eeff",
-  surfaceContainerHigh: "#dce9ff",
-  surfaceContainerHighest: "#d3e4fe",
-  surfaceVariant: "#d3e4fe",
-  onSurface: "#0b1c30",
-  onSurfaceVariant: "#434655",
-  inverseSurface: "#213145",
-  inverseOnSurface: "#eaf1ff",
-  outline: "#737686",
-  outlineVariant: "#c3c6d7",
-  primary: "#004ac6",
+  surfaceContainerLow: "#f8fafc",
+  surfaceContainer: "#ffffff",
+  surfaceContainerHigh: "#e8edf5",
+  surfaceContainerHighest: "#cbd5e1",
+  surfaceVariant: "#e8edf5",
+  onSurface: "#0f172a", // Deep high-contrast Slate 900
+  onSurfaceVariant: "#334155", // High-contrast Slate 700
+  inverseSurface: "#0f172a",
+  inverseOnSurface: "#f8fafc",
+  outline: "#64748b",
+  outlineVariant: "#cbd5e1",
+  primary: "#d97706", // Imperial Gold (Rich & High-Contrast for Light mode)
   onPrimary: "#ffffff",
-  primaryContainer: "#2563eb",
-  onPrimaryContainer: "#eeefff",
-  inversePrimary: "#b4c5ff",
-  secondary: "#855300",
+  primaryContainer: "#fef3c7",
+  onPrimaryContainer: "#78350f",
+  inversePrimary: "#f59e0b",
+  secondary: "#2563eb", // Sapphire Gem Blue
   onSecondary: "#ffffff",
-  secondaryContainer: "#fea619",
-  onSecondaryContainer: "#684000",
-  tertiary: "#4d556b",
+  secondaryContainer: "#dbeafe",
+  onSecondaryContainer: "#1e3a8a",
+  tertiary: "#b45309", // Warm Gold
   onTertiary: "#ffffff",
-  tertiaryContainer: "#656d84",
-  onTertiaryContainer: "#eef0ff",
-  error: "#ba1a1a",
+  tertiaryContainer: "#fef9c3",
+  onTertiaryContainer: "#713f12",
+  error: "#dc2626",
   onError: "#ffffff",
-  errorContainer: "#ffdad6",
-  onErrorContainer: "#93000a",
-  background: "#f8f9ff",
-  onBackground: "#0b1c30",
-  success: "#10B981",
-  goldDeep: "#B45309",
-  pikeBlueGlow: "#4F46E5",
-  slateGray: "#1E293B",
-  textMuted: "#64748B",
-  borderSubtle: "#E2E8F0",
-  borderStrong: "#CBD5E1",
+  errorContainer: "#fee2e2",
+  onErrorContainer: "#991b1b",
+  background: "#f4f6fa",
+  onBackground: "#0f172a",
+  success: "#059669",
+  goldDeep: "#b45309",
+  pikeBlueGlow: "#2563eb",
+  slateGray: "#ffffff",
+  textMuted: "#475569",
+  borderSubtle: "rgba(217, 119, 6, 0.15)",
+  borderStrong: "rgba(217, 119, 6, 0.35)",
+  neumorphSurface: "#ffffff",
+  neumorphShadowDark: "rgba(15, 23, 42, 0.12)",
+  neumorphShadowLight: "#ffffff",
+  neumorphInset: "#e8edf5",
+  neumorphBorder: "rgba(217, 119, 6, 0.18)",
 };

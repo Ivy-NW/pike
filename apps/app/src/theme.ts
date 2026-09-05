@@ -1,3 +1,4 @@
+import React, { createContext, useContext, useState, useEffect } from "react";
 import { useColorScheme } from "react-native";
 import { useFonts as useSpaceGrotesk, SpaceGrotesk_400Regular, SpaceGrotesk_500Medium, SpaceGrotesk_600SemiBold, SpaceGrotesk_700Bold } from "@expo-google-fonts/space-grotesk";
 import { useFonts as useInter, Inter_400Regular, Inter_500Medium, Inter_600SemiBold, Inter_700Bold } from "@expo-google-fonts/inter";
@@ -6,6 +7,40 @@ import { useFonts as useSpaceMono, SpaceMono_400Regular, SpaceMono_700Bold } fro
 import { darkTheme, lightTheme, type Theme, type TypeStyle } from "@pike/design-tokens";
 
 export type { Theme, TypeStyle };
+
+interface ThemeContextType {
+  mode: "dark" | "light";
+  toggleTheme: () => void;
+  setThemeMode: (mode: "dark" | "light") => void;
+}
+
+const ThemeContext = createContext<ThemeContextType>({
+  mode: "dark",
+  toggleTheme: () => {},
+  setThemeMode: () => {},
+});
+
+export function ThemeProvider({ children }: { children: React.ReactNode }) {
+  const [mode, setMode] = useState<"dark" | "light">("dark");
+
+  const toggleTheme = () => {
+    setMode((prev) => (prev === "dark" ? "light" : "dark"));
+  };
+
+  const setThemeMode = (newMode: "dark" | "light") => {
+    setMode(newMode);
+  };
+
+  return React.createElement(
+    ThemeContext.Provider,
+    { value: { mode, toggleTheme, setThemeMode } },
+    children
+  );
+}
+
+export function useThemeMode() {
+  return useContext(ThemeContext);
+}
 
 /** Holds the splash screen until every weight used by both theme identities has loaded. */
 export function useAppFonts() {
@@ -17,8 +52,6 @@ export function useAppFonts() {
 }
 
 const WEIGHT_NAME: Record<string, string> = { "400": "Regular", "500": "Medium", "600": "SemiBold", "700": "Bold" };
-
-/** Space Mono only ships 400/700 — snap in-between weights to the nearest available one. */
 const MONO_WEIGHT: Record<string, string> = { "400": "400Regular", "500": "700Bold", "600": "700Bold", "700": "700Bold" };
 
 const FAMILY_PREFIX: Record<string, string> = {
@@ -28,9 +61,6 @@ const FAMILY_PREFIX: Record<string, string> = {
   "Space Mono": "SpaceMono",
 };
 
-/** Converts a cross-platform TypeStyle (see @pike/design-tokens) into RN Text style props —
- * RN has no font-weight synthesis for custom fonts, so family+weight must resolve to one
- * of the exact loaded font names above, and lineHeight must be absolute px, not a multiplier. */
 export function rnFont(style: TypeStyle) {
   const prefix = FAMILY_PREFIX[style.fontFamily] ?? "System";
   const weightSuffix = style.fontFamily === "Space Mono" ? MONO_WEIGHT[style.fontWeight] : `${style.fontWeight}${WEIGHT_NAME[style.fontWeight]}`;
@@ -43,8 +73,8 @@ export function rnFont(style: TypeStyle) {
   };
 }
 
-export function useTheme(): Theme & { font: (s: TypeStyle) => ReturnType<typeof rnFont> } {
-  const scheme = useColorScheme();
-  const theme = scheme === "light" ? lightTheme : darkTheme;
-  return { ...theme, font: rnFont };
+export function useTheme(): Theme & { font: (s: TypeStyle) => ReturnType<typeof rnFont>; toggleTheme: () => void } {
+  const { mode, toggleTheme } = useThemeMode();
+  const baseTheme = mode === "light" ? lightTheme : darkTheme;
+  return { ...baseTheme, mode, font: rnFont, toggleTheme };
 }
