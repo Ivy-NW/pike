@@ -30,6 +30,47 @@ async function request<T>(path: string, init?: RequestInit): Promise<T> {
   return res.json();
 }
 
+export interface RewardRow {
+  questId: string;
+  questName: string;
+  questStatus: "draft" | "live" | "paused";
+  venueId: string;
+  venueName: string;
+  rewardType: string;
+  rewardTier: "low_stakes" | "high_value";
+  rewardDescription: string;
+  maxRedemptionsPerDay: number;
+  expiresAt: string | null;
+  expired: boolean;
+  /** null when the API could not reach Redis, which owns the daily cap counters. */
+  redeemedToday: number | null;
+  capRemainingToday: number | null;
+  totalRedemptions: number;
+  claimed: number;
+  flagged: number;
+  rejected: number;
+}
+
+export interface RewardInventory {
+  summary: {
+    totalRewards: number;
+    liveRewards: number;
+    redeemedToday: number | null;
+    capToday: number;
+    totalClaimed: number;
+  };
+  rewards: RewardRow[];
+}
+
+export interface QuestPatch {
+  rewardType?: string;
+  rewardTier?: "low_stakes" | "high_value";
+  rewardDescription?: string;
+  maxRedemptionsPerDay?: number;
+  /** null clears the expiry. */
+  expiresAt?: string | null;
+}
+
 export const api = {
   registerBusiness: (name: string, email: string, password: string) =>
     request("/auth/business/register", { method: "POST", body: JSON.stringify({ name, email, password }) }),
@@ -55,4 +96,9 @@ export const api = {
   createMarker: (questId: string, sourceImageBase64: string) =>
     request(`/quests/${questId}/markers`, { method: "POST", body: JSON.stringify({ sourceImageBase64 }) }),
   publishQuest: (questId: string) => request(`/quests/${questId}/publish`, { method: "POST" }),
+  listRewards: () => request<RewardInventory>("/businesses/me/rewards"),
+  updateQuest: (questId: string, patch: QuestPatch) =>
+    request<any>(`/quests/${questId}`, { method: "PATCH", body: JSON.stringify(patch) }),
+  pauseQuest: (questId: string) => request<any>(`/quests/${questId}/pause`, { method: "POST" }),
+  resumeQuest: (questId: string) => request<any>(`/quests/${questId}/resume`, { method: "POST" }),
 };

@@ -13,7 +13,7 @@ Phase 1 is functionally implemented in the current codebase:
 | Shared backend | Complete | NestJS API with Prisma, Postgres, Redis integration, auth, venues, quests, markers, redemptions, admin, and waitlist |
 | WebAR | Complete for dev | Marker resolve, scan page, AR recognition boundary, redemption create, and reward reveal are wired; production device testing still needed |
 | App shell | Complete for Phase 1 | Consumer signup/signin, wallet, quest list, profile shell, and scan route exist |
-| Business dashboard | Complete for Phase 1 | Self-registration, venue/quest creation, marker creation, payment-gated publish flow |
+| Business dashboard | Complete for Phase 1 | Self-registration, venue/quest creation, marker creation, payment-gated publish flow. Rewards page built out 2026-09-04 (see below); Analytics and Settings remain honest `ComingSoon` placeholders |
 | Admin | Complete for Phase 1 | Separate login, sales-assisted business creation, verification/suspension, oversight views |
 | External services | Stubbed or credential-dependent | Stripe is a no-op without credentials; Redis and Neon require reachable external services |
 
@@ -50,6 +50,23 @@ Phase 3 (macro-quest + leaderboard) has started with the leaderboard slice:
 | Push notifications — delivery + app | **Complete** | Expo push delivery via `expo-server-sdk` (no credentials needed); web push via `web-push` (requires VAPID keys). App registers tokens on launch via `expo-notifications` + `expo-device`. Updated 2026-08-21 |
 
 Ranking + progress + wallet-union + favorites + notification-trigger logic unit-tested. Full apps/api suite: 42 passing.
+
+## Reward Inventory (Business Dashboard)
+
+Built 2026-09-04, replacing the `ComingSoon` placeholder at `/rewards`. No schema change — this is
+new API surface plus a page over the existing `Quest`/`Redemption` models.
+
+| Area | Status | Notes |
+|---|---|---|
+| Inventory endpoint | Implemented | `GET /businesses/me/rewards` (`RewardsModule`). Returns every reward across all of a business's venues plus a summary. Two SQL queries total regardless of quest count (one `quest.findMany` scoped by `venue.businessId`, one `redemption.groupBy` over quest × status), replacing the dashboard's old N+1 walk of venues → quests → per-quest stats |
+| Today's cap counts | Implemented | Reuses `RedemptionCapService.currentCount` — the same Redis counter `GET /quests/:id/stats` reads, so the two views cannot disagree. **Degrades rather than fails**: an unreachable Redis returns `redeemedToday: null` for that row (and for the summary) and the page renders "—", instead of 500-ing the whole inventory |
+| Reward edits | Implemented | `PATCH /quests/:questId` (`UpdateQuestDto`, all fields optional). Only keys present in the payload are written, so patching a cap cannot blank an expiry. `expiresAt: null` explicitly clears the expiry — hence `ValidateIf` rather than `IsOptional` alone. A lowered cap binds immediately, since `RedemptionsService` compares the live Redis count against `maxRedemptionsPerDay` on every scan |
+| Pause / resume | Implemented | `POST /quests/:questId/pause` and `/resume` — the first thing to ever set `QuestStatus.paused`, which had been unreachable. Enforced, not cosmetic: `RedemptionsService.create()` already rejects any scan whose quest is not `live`. Resume re-applies **both** publish gates (verified payment in the controller, a compiled marker in the service) so it cannot be used to route around them, and deliberately does *not* re-fire `notifyNewQuestAtVenue` — a resume is not a new quest |
+| Rewards page | Implemented | `/rewards`: summary tiles (rewards in circulation, redeemed today vs. cap, claimed all-time), search, and a table with per-reward cap-usage bars, tier/status badges, expiry, inline pause/resume, and an edit dialog. Warns before a cap is lowered below what today has already redeemed |
+
+16 unit tests across `RewardsService` and `QuestsService` (ownership, partial-patch semantics, null-expiry
+clearing, pause/resume state guards, Redis-down degradation, live-only cap headroom). Full apps/api
+suite: 58 passing.
 
 ## Soulbound Token Layer Status
 

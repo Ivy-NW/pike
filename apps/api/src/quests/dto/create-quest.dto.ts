@@ -1,7 +1,8 @@
 import { IsIn, IsInt, IsISO8601, IsOptional, IsString, Min, MinLength } from "class-validator";
 
-const REWARD_TYPES = ["discount", "merch", "vip_pass", "free_item"] as const;
-const REWARD_TIERS = ["low_stakes", "high_value"] as const;
+/** Shared with UpdateQuestDto so the two endpoints can never drift on what a valid reward is. */
+export const REWARD_TYPES = ["discount", "merch", "vip_pass", "free_item"] as const;
+export const REWARD_TIERS = ["low_stakes", "high_value"] as const;
 
 export class CreateQuestDto {
   @IsString()

@@ -7,6 +7,7 @@ import { AuthModule } from "./auth/auth.module";
 import { BusinessesModule } from "./businesses/businesses.module";
 import { VenuesModule } from "./venues/venues.module";
 import { QuestsModule } from "./quests/quests.module";
+import { RewardsModule } from "./rewards/rewards.module";
 import { MarkersModule } from "./markers/markers.module";
 import { RedemptionsModule } from "./redemptions/redemptions.module";
 import { UsersModule } from "./users/users.module";
@@ -32,6 +33,7 @@ import { TokensModule } from "./tokens/tokens.module";
     BusinessesModule,
     VenuesModule,
     QuestsModule,
+    RewardsModule,
     MarkersModule,
     RedemptionsModule,
     UsersModule,
