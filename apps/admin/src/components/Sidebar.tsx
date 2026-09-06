@@ -4,7 +4,7 @@ import { usePathname, useRouter } from "next/navigation";
 import { Logo } from "./Logo";
 import { ThemeToggle } from "./ThemeToggle";
 import { clearToken } from "@/lib/auth";
-import { BuildingIcon, CompassIcon, FlagIcon, GridIcon, SignOutIcon, UsersIcon } from "./icons";
+import { BuildingIcon, CompassIcon, FlagIcon, GridIcon, MailIcon, SignOutIcon, UsersIcon } from "./icons";
 
 const links = [
   { href: "/dashboard", label: "Dashboard", icon: GridIcon },
@@ -12,6 +12,7 @@ const links = [
   { href: "/venues", label: "Venues", icon: BuildingIcon },
   { href: "/quests", label: "Quests", icon: CompassIcon },
   { href: "/redemptions", label: "Redemptions", icon: FlagIcon },
+  { href: "/leads", label: "Free marker leads", icon: MailIcon },
 ];
 
 export function Sidebar() {

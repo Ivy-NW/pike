@@ -28,4 +28,6 @@ export const api = {
     request<{ valid: boolean }>("/admin-gate/verify", { method: "POST", body: JSON.stringify({ code }) }),
   joinWaitlist: (email: string, audience: "consumer" | "business") =>
     request<{ ok: true }>("/waitlist", { method: "POST", body: JSON.stringify({ email, audience }) }),
+  requestFreeMarker: (name: string, venueName: string, whatsapp: string, neighbourhood?: string) =>
+    request<{ ok: true }>("/free-marker", { method: "POST", body: JSON.stringify({ name, venueName, whatsapp, neighbourhood }) }),
 };

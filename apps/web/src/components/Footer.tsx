@@ -3,16 +3,15 @@ import { Wordmark } from "./Logo";
 import { AdminGateTrigger } from "./AdminGateTrigger";
 import styles from "./Footer.module.css";
 
-const soon = (topic: string) => `/coming-soon?topic=${encodeURIComponent(topic)}`;
+const DASHBOARD_URL = process.env.NEXT_PUBLIC_DASHBOARD_URL ?? "http://localhost:3001";
 
 export function Footer() {
   return (
     <footer className={styles.footer}>
       <div className={`container ${styles.top}`}>
-        <div className={styles.brand}><Wordmark size={20} /><p>Turning everyday venue visits into rewarding experiences worth coming back for.</p><span>Make the next visit happen.</span></div>
-        <FooterGroup title="Product" links={[["How it works","/#how-it-works"],["For players","/#for-players"],["For venues","/#for-venues"],["Player waitlist","/#player-waitlist"]]} />
-        <FooterGroup title="Company" links={[["About",soon("About")],["Contact","mailto:hello@pike.app"],["Careers",soon("Careers")],["Press",soon("Press")]]} />
-        <FooterGroup title="Legal & safety" links={[["Privacy Policy","/privacy"],["Terms of Service","/terms"],["Cookie Policy",soon("Cookie Policy")],["Acceptable Use",soon("Acceptable Use")],["Accessibility",soon("Accessibility")],["Data Requests",soon("Data Requests")]]} />
+        <div className={styles.brand}><Wordmark size={20} /><p>Browser-based quests that turn a venue visit into a reason to return.</p></div>
+        <nav className={styles.links} aria-label="Footer navigation"><a href="/#how-it-works">How it works</a><a href="/#for-venues">For venues</a><a href="/#quest-examples">Quest examples</a><a href={`${DASHBOARD_URL}/login`}>Business login</a><a href="mailto:hello@pike.app">Contact</a></nav>
+        <nav className={styles.legal} aria-label="Legal & safety"><Link href="/privacy">Privacy Policy</Link><Link href="/terms">Terms of Service</Link></nav>
       </div>
       <div className={`container ${styles.bottom}`}>
         <AdminGateTrigger><span className={styles.copyright}>© {new Date().getFullYear()} PIKE</span></AdminGateTrigger>
@@ -21,8 +20,4 @@ export function Footer() {
       </div>
     </footer>
   );
-}
-
-function FooterGroup({ title, links }: { title: string; links: string[][] }) {
-  return <nav className={styles.group} aria-label={title}><h2>{title}</h2><ul>{links.map(([label,href])=><li key={label}>{href.startsWith("mailto:") ? <a href={href}>{label}</a> : <Link href={href}>{label}</Link>}</li>)}</ul></nav>;
 }

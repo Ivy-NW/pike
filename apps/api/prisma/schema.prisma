@@ -308,6 +308,18 @@ model WaitlistSignup {
   @@map("waitlist_signups")
 }
 
+/// Captured from the venue landing page's "start a quest" free-marker request form.
+model FreeMarkerLead {
+  id            String   @id @default(uuid())
+  name          String
+  venueName     String
+  whatsapp      String
+  neighbourhood String?
+  createdAt     DateTime @default(now())
+
+  @@map("free_marker_leads")
+}
+
 enum MacroQuestStatus {
   draft
   live
