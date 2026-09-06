@@ -83,12 +83,13 @@ function toSpacingCssVars(spacing: SpacingScale): string {
 }
 
 /**
- * Generates the CSS variable block consumed by all three Next.js apps.
- * `:root` (and `[data-theme="light"]`) carries the light/corporate identity;
+ * Generates the CSS variable block consumed by all Next.js/Vite apps.
+ * `:root` (and `[data-theme="light"]`) carries the light identity;
  * `[data-theme="dark"]` and the `prefers-color-scheme: dark` media query
- * carry the dark/Vanguard identity — the viewer's theme toggle stamps
- * `data-theme` on <html>, matching the Artifact theming convention used
- * elsewhere in this project.
+ * carry the dark identity — the viewer's theme toggle stamps `data-theme`
+ * on <html>, matching the Artifact theming convention used elsewhere in
+ * this project. Both identities share one Orbitron/Inter font pairing and
+ * one Smoked Gold accent family, differing mainly in surface brightness.
  */
 export function generateThemeCss(): string {
   return `:root, [data-theme="light"] {
@@ -102,9 +103,9 @@ ${toCssVars(vanguardLight)}
   --radius-card: ${vanguardLightRadius.card}px;
 ${toSpacingCssVars(vanguardLightSpacing)}
 ${toTypeCssVars(vanguardLightType)}
-  --font-heading: "Geist", system-ui, sans-serif;
-  --font-body: "Geist", system-ui, sans-serif;
-  --font-mono: "Space Mono", ui-monospace, monospace;
+  --font-heading: "Orbitron", system-ui, sans-serif;
+  --font-body: "Inter", system-ui, sans-serif;
+  --font-mono: "Orbitron", system-ui, sans-serif;
 }
 
 @media (prefers-color-scheme: dark) {
@@ -119,9 +120,9 @@ ${toCssVars(vanguardDark)}
     --radius-card: ${vanguardDarkRadius.card}px;
 ${toSpacingCssVars(vanguardDarkSpacing)}
 ${toTypeCssVars(vanguardDarkType)}
-    --font-heading: "Space Grotesk", system-ui, sans-serif;
+    --font-heading: "Orbitron", system-ui, sans-serif;
     --font-body: "Inter", system-ui, sans-serif;
-    --font-mono: "Space Grotesk", system-ui, sans-serif;
+    --font-mono: "Orbitron", system-ui, sans-serif;
   }
 }
 
@@ -136,9 +137,9 @@ ${toCssVars(vanguardDark)}
   --radius-card: ${vanguardDarkRadius.card}px;
 ${toSpacingCssVars(vanguardDarkSpacing)}
 ${toTypeCssVars(vanguardDarkType)}
-  --font-heading: "Space Grotesk", system-ui, sans-serif;
+  --font-heading: "Orbitron", system-ui, sans-serif;
   --font-body: "Inter", system-ui, sans-serif;
-  --font-mono: "Space Grotesk", system-ui, sans-serif;
+  --font-mono: "Orbitron", system-ui, sans-serif;
 }
 `;
 }

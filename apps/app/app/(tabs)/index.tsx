@@ -54,27 +54,27 @@ export default function HomeScreen() {
   const isDark = theme.mode === "dark";
 
   const styles = StyleSheet.create({
-    container: { flex: 1, backgroundColor: isDark ? "#0c0c0e" : c.surface },
+    container: { flex: 1, backgroundColor: isDark ? "#000000" : c.surface },
     content: { padding: 16, paddingTop: 14, paddingBottom: 130 },
 
     // Welcome Banner
     welcomeSection: { marginBottom: 18 },
     welcomeTitle: { ...theme.font(theme.type.headlineLgMobile), color: c.onSurface, fontSize: 24, fontWeight: "700" },
-    welcomeGold: { color: isDark ? "#f59e0b" : "#d97706" },
+    welcomeGold: { color: isDark ? "#9C7C4A" : "#7E6030" },
     welcomeSub: { ...theme.font(theme.type.bodyMd), color: c.onSurfaceVariant, marginTop: 4 },
 
     // Streak Pill
     streakBadge: { flexDirection: "row", alignItems: "center", gap: 4, paddingHorizontal: 12, paddingVertical: 6, borderRadius: 16 },
-    streakCount: { ...theme.font(theme.type.labelCaps), color: isDark ? "#f59e0b" : "#d97706", fontSize: 11, fontWeight: "700" },
+    streakCount: { ...theme.font(theme.type.labelCaps), color: isDark ? "#9C7C4A" : "#7E6030", fontSize: 11, fontWeight: "700" },
 
     // XP Progress Card
     xpCard: { padding: 18, borderRadius: 24, marginBottom: 18 },
     tierRow: { flexDirection: "row", justifyContent: "space-between", alignItems: "flex-start", marginBottom: 12 },
     labelCaps: { ...theme.font(theme.type.labelCaps), color: c.onSurfaceVariant, letterSpacing: 1.2, fontWeight: "700" },
-    tierName: { ...theme.font(theme.type.headlineSm), color: isDark ? "#f59e0b" : "#d97706", fontSize: 18, fontWeight: "700", marginTop: 2 },
+    tierName: { ...theme.font(theme.type.headlineSm), color: isDark ? "#9C7C4A" : "#7E6030", fontSize: 18, fontWeight: "700", marginTop: 2 },
     xpValue: { ...theme.font(theme.type.headlineSm), color: c.onSurface, fontSize: 18, fontWeight: "700", marginTop: 2 },
     xpTrack: { width: "100%", height: 10, padding: 2, borderRadius: 5, overflow: "hidden" },
-    xpFill: { height: "100%", borderRadius: 3, backgroundColor: isDark ? "#f59e0b" : "#d97706" },
+    xpFill: { height: "100%", borderRadius: 3, backgroundColor: isDark ? "#9C7C4A" : "#7E6030" },
 
     // 2-Column Bento Modules
     moduleGrid: { flexDirection: "row", gap: 12, marginBottom: 18 },
@@ -90,9 +90,9 @@ export default function HomeScreen() {
     questItemWell: { flexDirection: "row", alignItems: "center", justifyContent: "space-between", padding: 14, borderRadius: 16, marginBottom: 10 },
     questName: { ...theme.font(theme.type.bodyMd), color: c.onSurface, fontWeight: "700" },
     questVenue: { ...theme.font(theme.type.labelSm), color: c.onSurfaceVariant, marginTop: 2, fontSize: 11 },
-    questXpTag: { ...theme.font(theme.type.labelCaps), color: isDark ? "#f59e0b" : "#d97706", fontWeight: "700" },
+    questXpTag: { ...theme.font(theme.type.labelCaps), color: isDark ? "#9C7C4A" : "#7E6030", fontWeight: "700" },
     viewAllButton: { flexDirection: "row", alignItems: "center", justifyContent: "center", gap: 8, paddingVertical: 12, borderRadius: 16, marginTop: 6 },
-    viewAllText: { ...theme.font(theme.type.labelCaps), color: isDark ? "#f59e0b" : "#d97706", fontSize: 11, fontWeight: "700" },
+    viewAllText: { ...theme.font(theme.type.labelCaps), color: isDark ? "#9C7C4A" : "#7E6030", fontSize: 11, fontWeight: "700" },
 
     // Macro Quest Card
     macroDots: { flexDirection: "row", gap: 6, marginTop: 14, flexWrap: "wrap" },
@@ -100,7 +100,7 @@ export default function HomeScreen() {
     macroDotLabel: { ...theme.font(theme.type.labelSm), color: c.onSurfaceVariant },
     macroHint: { ...theme.font(theme.type.labelSm), color: c.onSurfaceVariant, marginTop: 12 },
     rewardRow: { flexDirection: "row", alignItems: "center", gap: 6, marginTop: 12 },
-    rewardText: { ...theme.font(theme.type.labelSm), color: isDark ? "#f59e0b" : "#d97706", flex: 1, fontWeight: "700" },
+    rewardText: { ...theme.font(theme.type.labelSm), color: isDark ? "#9C7C4A" : "#7E6030", flex: 1, fontWeight: "700" },
 
     // Modals
     modalBackdrop: { flex: 1, backgroundColor: "rgba(0, 0, 0, 0.75)", justifyContent: "center", alignItems: "center", padding: 20 },
@@ -108,17 +108,17 @@ export default function HomeScreen() {
     modalPedestal: { width: 84, height: 84, borderRadius: 42, alignItems: "center", justifyContent: "center", alignSelf: "center", marginBottom: 16 },
     modalTitle: { ...theme.font(theme.type.headlineLgMobile), color: c.onSurface, fontSize: 22, fontWeight: "700", textAlign: "center", marginBottom: 6 },
     modalSub: { ...theme.font(theme.type.bodyMd), color: c.onSurfaceVariant, textAlign: "center", marginBottom: 18 },
-    statRow: { flexDirection: "row", justifyContent: "space-between", alignItems: "center", paddingVertical: 10, borderBottomWidth: 1, borderBottomColor: isDark ? "rgba(212,175,55,0.12)" : "rgba(217,119,6,0.12)" },
+    statRow: { flexDirection: "row", justifyContent: "space-between", alignItems: "center", paddingVertical: 10, borderBottomWidth: 1, borderBottomColor: isDark ? "rgba(156,124,74,0.12)" : "rgba(126,96,48,0.12)" },
     statLabel: { ...theme.font(theme.type.labelCaps), color: c.onSurfaceVariant, fontSize: 11, fontWeight: "600" },
-    statVal: { ...theme.font(theme.type.headlineSm), color: isDark ? "#f59e0b" : "#d97706", fontSize: 14, fontWeight: "700" },
+    statVal: { ...theme.font(theme.type.headlineSm), color: isDark ? "#9C7C4A" : "#7E6030", fontSize: 14, fontWeight: "700" },
     modalBtn: { width: "100%", paddingVertical: 14, borderRadius: 18, alignItems: "center", justifyContent: "center", marginTop: 20 },
-    modalBtnText: { ...theme.font(theme.type.labelCaps), color: isDark ? "#f59e0b" : "#d97706", fontSize: 12, letterSpacing: 1, fontWeight: "700" },
+    modalBtnText: { ...theme.font(theme.type.labelCaps), color: isDark ? "#9C7C4A" : "#7E6030", fontSize: 12, letterSpacing: 1, fontWeight: "700" },
   });
 
   const rightAction =
     me && me.currentStreak > 0 ? (
       <NeumorphicView variant="raised" glow="gold" radius={16} style={styles.streakBadge}>
-        <MaterialIcons name="local-fire-department" size={18} color={isDark ? "#f59e0b" : "#d97706"} />
+        <MaterialIcons name="local-fire-department" size={18} color={isDark ? "#9C7C4A" : "#7E6030"} />
         <Text style={styles.streakCount}>{me.currentStreak}d</Text>
       </NeumorphicView>
     ) : undefined;
@@ -135,8 +135,8 @@ export default function HomeScreen() {
           <RefreshControl
             refreshing={refreshing}
             onRefresh={onRefresh}
-            tintColor={isDark ? "#f59e0b" : "#d97706"}
-            colors={[isDark ? "#f59e0b" : "#d97706"]}
+            tintColor={isDark ? "#9C7C4A" : "#7E6030"}
+            colors={[isDark ? "#9C7C4A" : "#7E6030"]}
           />
         }
       >
@@ -169,7 +169,7 @@ export default function HomeScreen() {
         <View style={styles.moduleGrid}>
           <NeumorphicView variant="raised" glow="gold" radius={22} style={styles.moduleCard} onPress={() => setMobilityModalVisible(true)}>
             <NeumorphicView variant="inset" radius={28} style={styles.moduleWell}>
-              <MaterialIcons name="directions-run" size={28} color={isDark ? "#f59e0b" : "#d97706"} />
+              <MaterialIcons name="directions-run" size={28} color={isDark ? "#9C7C4A" : "#7E6030"} />
             </NeumorphicView>
             <View style={{ alignItems: "center" }}>
               <Text style={styles.moduleTitle}>Mobility</Text>
@@ -191,7 +191,7 @@ export default function HomeScreen() {
         {/* Active Quests Card */}
         <NeumorphicView variant="raised" radius={24} style={styles.questsCard}>
           <View style={styles.questsHeader}>
-            <MaterialIcons name="radar" size={20} color={isDark ? "#f59e0b" : "#d97706"} />
+            <MaterialIcons name="radar" size={20} color={isDark ? "#9C7C4A" : "#7E6030"} />
             <Text style={styles.questsTitle}>Active Quests</Text>
           </View>
 
@@ -229,7 +229,7 @@ export default function HomeScreen() {
             onPress={() => router.push("/(tabs)/quests")}
           >
             <Text style={styles.viewAllText}>VIEW ALL TRANSMISSIONS</Text>
-            <MaterialIcons name="arrow-forward" size={18} color={isDark ? "#f59e0b" : "#d97706"} />
+            <MaterialIcons name="arrow-forward" size={18} color={isDark ? "#9C7C4A" : "#7E6030"} />
           </NeumorphicView>
         </NeumorphicView>
 
@@ -250,14 +250,14 @@ export default function HomeScreen() {
                   <MaterialIcons
                     name={v.visited ? "check-circle" : "radio-button-unchecked"}
                     size={14}
-                    color={v.visited ? (isDark ? "#f59e0b" : "#10B981") : c.outline}
+                    color={v.visited ? (isDark ? "#9C7C4A" : "#10B981") : c.outline}
                   />
                   <Text style={styles.macroDotLabel}>{v.name}</Text>
                 </View>
               ))}
             </View>
             <View style={styles.rewardRow}>
-              <MaterialIcons name="card-giftcard" size={16} color={isDark ? "#f59e0b" : "#d97706"} />
+              <MaterialIcons name="card-giftcard" size={16} color={isDark ? "#9C7C4A" : "#7E6030"} />
               <Text style={styles.rewardText}>Reward: {macro.reward.description}</Text>
             </View>
           </NeumorphicView>
@@ -269,7 +269,7 @@ export default function HomeScreen() {
         <View style={styles.modalBackdrop}>
           <NeumorphicView variant="raised" glow="gold" radius={28} style={styles.modalCard}>
             <NeumorphicView variant="inset" radius={42} style={styles.modalPedestal}>
-              <MaterialIcons name="directions-run" size={44} color={isDark ? "#f59e0b" : "#d97706"} />
+              <MaterialIcons name="directions-run" size={44} color={isDark ? "#9C7C4A" : "#7E6030"} />
             </NeumorphicView>
 
             <Text style={styles.modalTitle}>Mobility Module</Text>

@@ -1,0 +1,42 @@
+
+> @pike/admin@0.1.0 dev
+> next dev -p 3002
+
+  ▲ Next.js 14.2.35
+  - Local:        http://localhost:3002
+  - Environments: .env.local
+
+ ✓ Starting...
+ ✓ Ready in 2.2s
+ ○ Compiling /login ...
+ ✓ Compiled /login in 3.2s (518 modules)
+ GET /login 200 in 3243ms
+ GET /login 200 in 3439ms
+ GET /login 200 in 26ms
+ GET /login 200 in 90ms
+ ✓ Compiled /dashboard in 435ms (531 modules)
+ GET /dashboard 200 in 357ms
+ GET /dashboard 200 in 75ms
+ ✓ Compiled in 199ms (502 modules)
+ ✓ Compiled in 122ms (502 modules)
+ ✓ Compiled in 153ms (517 modules)
+ ✓ Compiled in 153ms (238 modules)
+ ✓ Compiled in 90ms (238 modules)
+ ✓ Compiled / in 202ms (508 modules)
+ ✓ Compiled /_not-found in 183ms (511 modules)
+ ○ Compiling /_error ...
+ ✓ Compiled /_error in 713ms (738 modules)
+ GET / 404 in 1267ms
+ GET /login 500 in 88ms
+ ✓ Compiled /dashboard in 143ms (313 modules)
+ GET /dashboard 200 in 233ms
+ ✓ Compiled /businesses in 145ms (773 modules)
+ GET /businesses 200 in 247ms
+ ✓ Compiled /venues in 146ms (779 modules)
+ GET /venues 200 in 207ms
+ ✓ Compiled /quests in 135ms (785 modules)
+ GET /quests 200 in 219ms
+ ✓ Compiled /redemptions in 132ms (791 modules)
+ GET /redemptions 200 in 204ms
+ GET /login 500 in 20ms
+ GET / 200 in 63ms

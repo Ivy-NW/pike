@@ -47,8 +47,10 @@ export default function BusinessesPage() {
     <>
       <div className="page-header">
         <div>
+          <span className="page-eyebrow">Partner operations</span>
           <h1>Businesses</h1>
           <p>Every venue-owning account on the platform.</p>
+          <div className="page-meta"><span>{businesses === null ? "Loading accounts" : `${businesses.length} total accounts`}</span><span>{businesses?.filter((b) => b.paymentStatus !== "verified").length ?? "—"} awaiting verification</span></div>
         </div>
         <div className="search-field">
           <SearchIcon size={16} />
@@ -56,7 +58,7 @@ export default function BusinessesPage() {
         </div>
       </div>
 
-      {error && <p style={{ color: "var(--error)" }}>{error}</p>}
+      {error && <div className="state-alert" role="alert"><strong>Businesses could not be loaded.</strong><span>{error}</span></div>}
 
       <div className="card">
         <div className="card-title">Sales-assisted onboarding</div>
@@ -72,7 +74,7 @@ export default function BusinessesPage() {
         </form>
       </div>
 
-      <div className="card table-wrap">
+      <div className="card table-wrap responsive-table" aria-busy={filtered === null}>
         {filtered === null ? (
           <SkeletonRows />
         ) : filtered.length === 0 ? (

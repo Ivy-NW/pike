@@ -36,6 +36,7 @@ export function AdminGateModal({ onClose }: { onClose: () => void }) {
     <div
       role="dialog"
       aria-modal="true"
+      aria-labelledby="admin-gate-title"
       onClick={onClose}
       style={{
         position: "fixed",
@@ -50,13 +51,20 @@ export function AdminGateModal({ onClose }: { onClose: () => void }) {
       <div
         onClick={(e) => e.stopPropagation()}
         className="card"
-        style={{ width: 320 }}
+        style={{ width: "min(360px, calc(100vw - 32px))", padding: 24, background: "var(--surface-container-lowest)", border: "1px solid var(--border-strong)", borderTop: "4px solid var(--primary-container)", borderRadius: "var(--radius-card)", boxShadow: "0 24px 70px rgba(11,28,48,.28)" }}
       >
         <form onSubmit={submit} style={{ display: "flex", flexDirection: "column", gap: 12 }}>
+          <div>
+            <p style={{ margin: 0, color: "var(--primary)", fontFamily: "var(--font-mono)", fontSize: 11, fontWeight: 700, letterSpacing: ".1em", textTransform: "uppercase" }}>Restricted access</p>
+            <h2 id="admin-gate-title" style={{ margin: "8px 0 0", fontSize: 24 }}>Admin gate</h2>
+          </div>
+          <label htmlFor="admin-access-code" style={{ fontSize: 13, fontWeight: 700 }}>Access code</label>
           <input
+            id="admin-access-code"
             autoFocus
             type="password"
             placeholder="Access code"
+            autoComplete="current-password"
             value={code}
             onChange={(e) => setCode(e.target.value)}
             style={{

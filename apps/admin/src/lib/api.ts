@@ -45,4 +45,5 @@ export const api = {
   listQuests: () => request<any[]>("/admin/quests"),
   listRedemptions: (status?: "claimed" | "flagged" | "rejected") =>
     request<any[]>(`/admin/redemptions${status ? `?status=${status}` : ""}`),
+  listFreeMarkerLeads: () => request<any[]>("/admin/free-marker-leads"),
 };

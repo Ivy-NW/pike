@@ -5,6 +5,7 @@ import { VenuesService } from "../venues/venues.service";
 import { QuestsService } from "../quests/quests.service";
 import { PrismaService } from "../prisma/prisma.service";
 import { AdminGateService } from "../admin-gate/admin-gate.service";
+import { FreeMarkerService } from "../free-marker/free-marker.service";
 import { AdminCreateBusinessDto } from "./dto/admin-create-business.dto";
 import { SuspendBusinessDto } from "./dto/suspend-business.dto";
 
@@ -18,6 +19,7 @@ export class AdminController {
     private readonly quests: QuestsService,
     private readonly prisma: PrismaService,
     private readonly adminGate: AdminGateService,
+    private readonly freeMarker: FreeMarkerService,
   ) {}
 
   /** Sales-assisted onboarding — secondary path alongside business self-registration. */
@@ -67,5 +69,11 @@ export class AdminController {
   @Get("admin-gate-attempts")
   listAdminGateAttempts(@Query("success") success?: "true" | "false") {
     return this.adminGate.listAttempts(success === undefined ? undefined : success === "true");
+  }
+
+  /** Leads from the venue landing page's "start a quest" free-marker request form. */
+  @Get("free-marker-leads")
+  listFreeMarkerLeads() {
+    return this.freeMarker.listAll();
   }
 }

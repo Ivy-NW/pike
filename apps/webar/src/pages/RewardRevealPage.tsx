@@ -1,8 +1,14 @@
 import { useEffect, useState } from "react";
-import { useParams, useSearchParams } from "react-router-dom";
+import { useNavigate, useParams, useSearchParams } from "react-router-dom";
 import { api, ApiError } from "../lib/api";
 import { clearConsumerToken, getConsumerToken, setConsumerToken } from "../lib/auth";
-import type { ClaimRewardResponse } from "@pike/shared-types";
+import type { ClaimRewardResponse, UserQuestListItem } from "@pike/shared-types";
+
+/** The app isn't published to app stores yet (apps/app/app.json still has a placeholder EAS
+ * project id) — send "Get the app" to the marketing site's player waitlist instead of a store
+ * link that doesn't exist. One env var away from swapping in real store links once they do. */
+const APP_CTA_URL =
+  import.meta.env.VITE_APP_CTA_URL ?? "https://pike.app/play#player-waitlist";
 
 interface RedemptionDetail {
   id: string;
@@ -33,6 +39,7 @@ type Mode = "signin" | "signup";
  * guest on the same browser is auto-claimed with their stored token instead of signing in again.
  */
 export function RewardRevealPage() {
+  const navigate = useNavigate();
   const { redemptionId } = useParams<{ redemptionId: string }>();
   const [searchParams] = useSearchParams();
   const channel = searchParams.get("channel") === "app" ? "app" : "webar";
@@ -40,6 +47,7 @@ export function RewardRevealPage() {
   // PWA hand-off (channel=app on web): after claiming, "Back to your wallet" returns to the
   // app origin instead of leaving the user stranded on the webar flow.
   const returnUrl = searchParams.get("returnUrl");
+  const demoState = import.meta.env.DEV ? searchParams.get("demo") : null;
 
   const [redemption, setRedemption] = useState<RedemptionDetail | null>(null);
   const [claimed, setClaimed] = useState(false);
@@ -53,9 +61,27 @@ export function RewardRevealPage() {
   const [identifier, setIdentifier] = useState("");
   const [error, setError] = useState<string | null>(null);
   const [award, setAward] = useState<AwardInfo | null>(null);
+  const [moreQuests, setMoreQuests] = useState<UserQuestListItem[] | null>(null);
 
   useEffect(() => {
     if (!redemptionId) return;
+    if (demoState) {
+      if (demoState === "error") {
+        setError("We couldn’t find this reward. The link may have expired or already been used.");
+        return;
+      }
+      setRedemption({
+        id: "demo-reward-2026",
+        status: demoState === "rejected" ? "rejected" : "claimed",
+        quest: { name: "The Hidden Table", rewardDescription: "A treat for your next visit", rewardType: "voucher", expiresAt: "2026-12-31T23:59:59.000Z" },
+        marker: { venue: { name: "PIKE Demo Café" } },
+      });
+      if (demoState === "claimed") {
+        setClaimed(true);
+        setAward({ xpAwarded: 120, newBadges: [{ key: "first-find", name: "First Find", description: "Completed a first quest" }] });
+      }
+      return;
+    }
     api
       .getRedemption(redemptionId)
       .then(setRedemption as any)
@@ -63,7 +89,7 @@ export function RewardRevealPage() {
         const detail = err instanceof ApiError ? `${err.statusCode} ${err.message}` : err instanceof Error ? err.message : String(err);
         setError(`Could not load your reward — ${detail}`);
       });
-  }, [redemptionId]);
+  }, [redemptionId, demoState]);
 
   const claimNow = async () => {
     if (!redemptionId) return;
@@ -85,22 +111,41 @@ export function RewardRevealPage() {
     }
   };
 
+  // Once a web-only guest claims, show them what else is live — a concrete reason to get
+  // the app instead of a dead end. They just signed in/up, so the same consumer token that
+  // claimed the reward is enough to hit the authenticated quest list.
+  useEffect(() => {
+    if (channel !== "webar" || !claimed) return;
+    if (demoState === "claimed") {
+      setMoreQuests([
+        { id: "demo-2", name: "The Roasters' Trail", theme: "default", venueId: "demo-2", venueName: "Northside Coffee Co.", rewardDescription: "A free pour-over", completed: false, markerId: "demo-2" },
+        { id: "demo-3", name: "Golden Hour Special", theme: "default", venueId: "demo-3", venueName: "The Rooftop Bar", rewardDescription: "Half-price appetizer", completed: false, markerId: "demo-3" },
+      ]);
+      return;
+    }
+    if (!getConsumerToken()) return;
+    api
+      .listQuests()
+      .then((quests) => setMoreQuests(quests.filter((q) => !q.completed).slice(0, 3)))
+      .catch(() => setMoreQuests(null));
+  }, [channel, claimed, demoState]);
+
   // Authenticated in-app scan: store the app's token and claim automatically.
   useEffect(() => {
-    if (channel === "app" && appToken && redemption && redemption.status !== "rejected" && !claimed && !claiming) {
+    if (!demoState && channel === "app" && appToken && redemption && redemption.status !== "rejected" && !claimed && !claiming) {
       setConsumerToken(appToken);
       claimNow();
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [channel, appToken, redemption]);
+  }, [channel, appToken, redemption, demoState]);
 
   // Returning guest on this browser: skip the form, claim with the stored token.
   useEffect(() => {
-    if (channel === "webar" && getConsumerToken() && redemption && redemption.status !== "rejected" && !claimed && !claiming) {
+    if (!demoState && channel === "webar" && getConsumerToken() && redemption && redemption.status !== "rejected" && !claimed && !claiming) {
       claimNow();
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [channel, redemption]);
+  }, [channel, redemption, demoState]);
 
   const handleSignup = async () => {
     setClaiming(true);
@@ -129,22 +174,20 @@ export function RewardRevealPage() {
   };
 
   if (error && !redemption) {
-    return <div style={{ padding: 24, textAlign: "center" }}>{error}</div>;
+    return <div className="state-page"><section className="state-panel state-panel--error" role="alert" aria-labelledby="reward-error-title"><span className="material-symbols-outlined state-icon" aria-hidden="true">link_off</span><p className="state-kicker">Reward unavailable</p><h1 id="reward-error-title" className="state-title">We couldn’t open this reward.</h1><p className="state-copy">{error}</p><div className="state-actions"><button className="btn-primary" onClick={() => window.location.reload()}>Try again</button><button className="btn-outline" onClick={() => navigate("/scan/demo")}>Return to scan</button></div><p className="state-help">Still stuck? Show this screen to venue staff.</p></section></div>;
   }
   if (!redemption) {
-    return <div style={pageStyle}>Loading...</div>;
+    return <div className="state-page" aria-live="polite"><section className="state-panel"><span className="state-loader" aria-hidden="true" /><p className="state-kicker">PIKE · Reward vault</p><h1 className="state-title">Opening your reward…</h1><p className="state-copy">Securely checking your quest completion.</p></section></div>;
   }
 
   if (redemption.status === "rejected") {
     return (
-      <div style={{ ...pageStyle, justifyContent: "center", padding: 24, textAlign: "center" }}>
-        <p>This scan couldn&apos;t be verified as a new redemption right now. Please ask venue staff for help.</p>
-      </div>
+      <div className="state-page"><section className="state-panel state-panel--error" role="alert"><span className="material-symbols-outlined state-icon" aria-hidden="true">verified_user</span><p className="state-kicker">Verification needed</p><h1 className="state-title">This visit needs a second look.</h1><p className="state-copy">We couldn&apos;t verify this as a new redemption. Your reward has not been lost.</p><div className="state-actions"><button className="btn-outline" onClick={() => navigate("/scan/demo")}>Scan again</button></div><p className="state-help">Please ask venue staff for help if this keeps happening.</p></section></div>
     );
   }
 
   return (
-    <div style={pageStyle}>
+    <div style={pageStyle} className="reward-shell">
       <header style={headerStyle}>
         <span style={{ fontFamily: "var(--font-heading)", fontWeight: 700, fontSize: 18, color: "var(--primary)" }}>PIKE</span>
       </header>
@@ -206,22 +249,41 @@ export function RewardRevealPage() {
             )}
             {channel === "webar" && (
               <>
+                {moreQuests && moreQuests.length > 0 && (
+                  <div className="card" style={{ marginTop: 24, textAlign: "left" }}>
+                    <p style={{ fontFamily: "var(--font-mono)", fontSize: 12, letterSpacing: "0.05em", textTransform: "uppercase", color: "var(--primary)", marginBottom: 12 }}>
+                      {moreQuests.length} more quest{moreQuests.length > 1 ? "s" : ""} waiting
+                    </p>
+                    {moreQuests.map((q) => (
+                      <div key={q.id} style={{ display: "flex", justifyContent: "space-between", gap: 12, fontSize: 13, padding: "8px 0", borderTop: "1px solid var(--border-subtle)" }}>
+                        <span style={{ color: "var(--on-surface)" }}>
+                          {q.name} <span style={{ color: "var(--on-surface-variant)" }}>· {q.venueName}</span>
+                        </span>
+                        <span style={{ color: "var(--on-surface-variant)", whiteSpace: "nowrap" }}>{q.rewardDescription}</span>
+                      </div>
+                    ))}
+                  </div>
+                )}
                 <p style={{ color: "var(--on-surface-variant)", fontSize: 14, marginTop: 16 }}>
-                  Save your reward and start earning XP — get the PIKE app.
+                  {moreQuests && moreQuests.length > 0
+                    ? "Track them all, get notified when new quests open near you — only in the app."
+                    : "Save your reward and start earning XP — get the PIKE app."}
                 </p>
-                <button className="btn-text">Get the app →</button>
+                <a className="btn-text" href={APP_CTA_URL} target="_blank" rel="noreferrer">
+                  Get the app →
+                </a>
               </>
             )}
           </div>
-        ) : channel === "app" || getConsumerToken() ? (
+        ) : !demoState && (channel === "app" || getConsumerToken()) ? (
           <div style={{ textAlign: "center" }}>
             <p style={{ color: "var(--on-surface-variant)" }}>{claiming ? "Claiming your reward..." : "Preparing your claim..."}</p>
             {error && <p style={{ color: "var(--error)", fontSize: 13, marginTop: 8 }}>{error}</p>}
           </div>
         ) : mode === "signin" ? (
           <div>
-            <input value={identifier} onChange={(e) => setIdentifier(e.target.value)} placeholder="Username or email" />
-            <input value={password} onChange={(e) => setPassword(e.target.value)} placeholder="Password" type="password" />
+            <input aria-label="Username or email" autoComplete="username" value={identifier} onChange={(e) => setIdentifier(e.target.value)} placeholder="Username or email" />
+            <input aria-label="Password" autoComplete="current-password" value={password} onChange={(e) => setPassword(e.target.value)} placeholder="Password" type="password" />
             <button className="btn-primary" disabled={claiming || !identifier || !password} onClick={handleSignin}>
               {claiming ? "Signing in..." : "Sign in & claim"}
             </button>
@@ -232,11 +294,11 @@ export function RewardRevealPage() {
           </div>
         ) : (
           <div>
-            <input value={phone} onChange={(e) => setPhone(e.target.value)} placeholder="Phone number (e.g. +15551234567)" />
-            <input value={username} onChange={(e) => setUsername(e.target.value)} placeholder="Username" />
-            <input value={name} onChange={(e) => setName(e.target.value)} placeholder="Full name" />
-            <input value={email} onChange={(e) => setEmail(e.target.value)} placeholder="Email" type="email" />
-            <input value={password} onChange={(e) => setPassword(e.target.value)} placeholder="Password (min 8 characters)" type="password" />
+            <input aria-label="Phone number" autoComplete="tel" value={phone} onChange={(e) => setPhone(e.target.value)} placeholder="Phone number (e.g. +15551234567)" type="tel" />
+            <input aria-label="Username" autoComplete="username" value={username} onChange={(e) => setUsername(e.target.value)} placeholder="Username" />
+            <input aria-label="Full name" autoComplete="name" value={name} onChange={(e) => setName(e.target.value)} placeholder="Full name" />
+            <input aria-label="Email" autoComplete="email" value={email} onChange={(e) => setEmail(e.target.value)} placeholder="Email" type="email" />
+            <input aria-label="Password" autoComplete="new-password" value={password} onChange={(e) => setPassword(e.target.value)} placeholder="Password (min 8 characters)" type="password" />
             <button
               className="btn-primary"
               disabled={claiming || !phone || !username || !name || !email || password.length < 8}
@@ -249,7 +311,11 @@ export function RewardRevealPage() {
             </button>
             {error && <p style={{ color: "var(--error)", fontSize: 13, marginTop: 8 }}>{error}</p>}
             <p style={{ color: "var(--on-surface-variant)", fontSize: 12, marginTop: 20, textAlign: "center" }}>
-              Save your reward and start earning XP — get the PIKE app.
+              Save your reward and start earning XP —{" "}
+              <a href={APP_CTA_URL} target="_blank" rel="noreferrer" style={{ color: "var(--primary)" }}>
+                get the PIKE app
+              </a>
+              .
             </p>
           </div>
         )}

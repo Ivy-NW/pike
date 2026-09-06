@@ -168,7 +168,7 @@ export default function ProfileScreen() {
   const initial = (me?.name ?? me?.username ?? "A").charAt(0).toUpperCase();
 
   const styles = StyleSheet.create({
-    container: { flex: 1, backgroundColor: isDark ? "#0c0c0e" : c.surface },
+    container: { flex: 1, backgroundColor: isDark ? "#000000" : c.surface },
     content: { padding: 18, paddingBottom: 140 },
 
     // Avatar Section
@@ -191,7 +191,7 @@ export default function ProfileScreen() {
     },
     avatarText: {
       ...theme.font(theme.type.displayXl),
-      color: isDark ? "#f59e0b" : c.primary,
+      color: isDark ? "#9C7C4A" : c.primary,
       fontSize: 42,
       fontWeight: "700",
     },
@@ -206,12 +206,12 @@ export default function ProfileScreen() {
       justifyContent: "center",
     },
     nameText: { ...theme.font(theme.type.headlineLgMobile), color: c.onSurface, fontSize: 24, fontWeight: "700" },
-    handleText: { ...theme.font(theme.type.labelSm), color: isDark ? "#f59e0b" : c.primary, marginTop: 2, letterSpacing: 1, fontWeight: "700" },
+    handleText: { ...theme.font(theme.type.labelSm), color: isDark ? "#9C7C4A" : c.primary, marginTop: 2, letterSpacing: 1, fontWeight: "700" },
 
     // Actions Row
     actionsRow: { flexDirection: "row", alignItems: "center", gap: 12, marginTop: 14 },
     editBtn: { paddingHorizontal: 22, paddingVertical: 10, borderRadius: 18 },
-    editBtnText: { ...theme.font(theme.type.labelCaps), color: isDark ? "#f59e0b" : c.primary, fontSize: 11, letterSpacing: 1, fontWeight: "700" },
+    editBtnText: { ...theme.font(theme.type.labelCaps), color: isDark ? "#9C7C4A" : c.primary, fontSize: 11, letterSpacing: 1, fontWeight: "700" },
     gearBtn: { width: 42, height: 42, borderRadius: 21, alignItems: "center", justifyContent: "center" },
 
     // Bento Stats
@@ -222,7 +222,7 @@ export default function ProfileScreen() {
     xpValueRow: { flexDirection: "row", alignItems: "baseline", marginVertical: 6 },
     xpBig: { ...theme.font(theme.type.displayXl), color: c.onSurface, fontSize: 34, fontWeight: "700" },
     trackWell: { height: 8, width: "100%", borderRadius: 4, marginVertical: 8, overflow: "hidden" },
-    trackFill: { height: "100%", width: "74%", backgroundColor: isDark ? "#f59e0b" : c.primary, borderRadius: 4 },
+    trackFill: { height: "100%", width: "74%", backgroundColor: isDark ? "#9C7C4A" : c.primary, borderRadius: 4 },
     tierRow: { flexDirection: "row", justifyContent: "space-between" },
     tierText: { ...theme.font(theme.type.labelSm), color: c.onSurfaceVariant, fontSize: 11, fontWeight: "600" },
 
@@ -232,13 +232,13 @@ export default function ProfileScreen() {
     colHeaderRow: { flexDirection: "row", justifyContent: "space-between", alignItems: "center", marginBottom: 10 },
     colLabel: { ...theme.font(theme.type.labelCaps), color: c.onSurfaceVariant, fontSize: 10, fontWeight: "700" },
     colValueWell: { paddingVertical: 10, borderRadius: 14, alignItems: "center", justifyContent: "center" },
-    colValue: { ...theme.font(theme.type.headlineSm), color: isDark ? "#f59e0b" : c.primary, fontSize: 20, fontWeight: "700" },
+    colValue: { ...theme.font(theme.type.headlineSm), color: isDark ? "#9C7C4A" : c.primary, fontSize: 20, fontWeight: "700" },
 
     // Badges Shelf (Full 8 Badges Grid — No Blanks)
     shelfCard: { padding: 18, borderRadius: 24, marginBottom: 20 },
     shelfHeadingRow: { flexDirection: "row", justifyContent: "space-between", alignItems: "center", marginBottom: 14 },
     shelfHeading: { ...theme.font(theme.type.labelCaps), color: c.onSurfaceVariant, letterSpacing: 1.5, fontWeight: "700" },
-    shelfCountTag: { ...theme.font(theme.type.labelCaps), color: isDark ? "#f59e0b" : c.primary, fontSize: 10, fontWeight: "700" },
+    shelfCountTag: { ...theme.font(theme.type.labelCaps), color: isDark ? "#9C7C4A" : c.primary, fontSize: 10, fontWeight: "700" },
     badgeGrid: { flexDirection: "row", flexWrap: "wrap", justifyContent: "space-between", gap: 10 },
     badgeSlot: { width: "22%", alignItems: "center", gap: 4, marginBottom: 8 },
     badgeMoldCount: { width: 54, height: 54, borderRadius: 27, alignItems: "center", justifyContent: "center" },
@@ -270,7 +270,7 @@ export default function ProfileScreen() {
     statusChip: { alignSelf: "center", paddingHorizontal: 14, paddingVertical: 5, borderRadius: 12, marginBottom: 12 },
     statusChipText: { ...theme.font(theme.type.labelCaps), fontSize: 10, letterSpacing: 1, fontWeight: "700" },
     xpBoostCard: { padding: 12, borderRadius: 16, marginBottom: 16 },
-    xpBoostText: { ...theme.font(theme.type.headlineSm), color: isDark ? "#f59e0b" : c.primary, fontSize: 13, textAlign: "center", fontWeight: "700" },
+    xpBoostText: { ...theme.font(theme.type.headlineSm), color: isDark ? "#9C7C4A" : c.primary, fontSize: 13, textAlign: "center", fontWeight: "700" },
   });
 
   return (
@@ -284,8 +284,8 @@ export default function ProfileScreen() {
           <RefreshControl
             refreshing={refreshing}
             onRefresh={onRefresh}
-            tintColor={isDark ? "#f59e0b" : c.primary}
-            colors={[isDark ? "#f59e0b" : c.primary]}
+            tintColor={isDark ? "#9C7C4A" : c.primary}
+            colors={[isDark ? "#9C7C4A" : c.primary]}
           />
         }
       >
@@ -296,7 +296,7 @@ export default function ProfileScreen() {
               <Text style={styles.avatarText}>{initial}</Text>
             </NeumorphicView>
             <NeumorphicView variant="raised" glow="gold" radius={17} style={styles.streakBadge}>
-              <MaterialIcons name="local-fire-department" size={20} color={isDark ? "#f59e0b" : "#b45309"} />
+              <MaterialIcons name="local-fire-department" size={20} color={isDark ? "#9C7C4A" : "#8C6B34"} />
             </NeumorphicView>
           </NeumorphicView>
 
@@ -320,7 +320,7 @@ export default function ProfileScreen() {
               style={styles.gearBtn}
               onPress={() => router.push("/settings")}
             >
-              <MaterialIcons name="settings" size={20} color={isDark ? "#f59e0b" : c.primary} />
+              <MaterialIcons name="settings" size={20} color={isDark ? "#9C7C4A" : c.primary} />
             </NeumorphicView>
           </View>
         </View>
@@ -330,7 +330,7 @@ export default function ProfileScreen() {
           <View style={styles.xpHeaderRow}>
             <Text style={styles.xpLabel}>TOTAL XP</Text>
             <NeumorphicView variant="inset" radius={17} style={styles.starWell}>
-              <MaterialIcons name="star" size={18} color={isDark ? "#f59e0b" : "#b45309"} />
+              <MaterialIcons name="star" size={18} color={isDark ? "#9C7C4A" : "#8C6B34"} />
             </NeumorphicView>
           </View>
 
@@ -365,7 +365,7 @@ export default function ProfileScreen() {
           <NeumorphicView variant="raised" radius={22} style={styles.bentoCol}>
             <View style={styles.colHeaderRow}>
               <Text style={styles.colLabel}>STREAK</Text>
-              <MaterialIcons name="local-fire-department" size={16} color={isDark ? "#f59e0b" : "#b45309"} />
+              <MaterialIcons name="local-fire-department" size={16} color={isDark ? "#9C7C4A" : "#8C6B34"} />
             </View>
             <NeumorphicView variant="inset" radius={14} style={styles.colValueWell}>
               <Text style={styles.colValue}>{me?.currentStreak ?? 1} days</Text>
@@ -397,7 +397,7 @@ export default function ProfileScreen() {
                   <MaterialIcons
                     name={b.icon}
                     size={24}
-                    color={b.id === "crown" || b.id === "100k" ? "#f59e0b" : (isDark ? "#3b82f6" : "#1d4ed8")}
+                    color={b.id === "crown" || b.id === "100k" ? "#9C7C4A" : (isDark ? "#3b82f6" : "#1d4ed8")}
                   />
                 </NeumorphicView>
                 <Text style={styles.badgeName} numberOfLines={1}>
@@ -464,7 +464,7 @@ export default function ProfileScreen() {
                 style={styles.modalBtn}
                 onPress={handleSaveProfile}
               >
-                <Text style={[styles.modalBtnText, { color: isDark ? "#f59e0b" : c.primary }]}>SAVE</Text>
+                <Text style={[styles.modalBtnText, { color: isDark ? "#9C7C4A" : c.primary }]}>SAVE</Text>
               </NeumorphicView>
             </View>
           </NeumorphicView>
@@ -480,7 +480,7 @@ export default function ProfileScreen() {
                 <MaterialIcons
                   name={selectedBadge.icon}
                   size={46}
-                  color={selectedBadge.id === "crown" ? "#f59e0b" : (isDark ? "#3b82f6" : "#1d4ed8")}
+                  color={selectedBadge.id === "crown" ? "#9C7C4A" : (isDark ? "#3b82f6" : "#1d4ed8")}
                 />
               </NeumorphicView>
 
@@ -511,7 +511,7 @@ export default function ProfileScreen() {
                 style={[styles.modalBtn, { alignSelf: "center", width: "100%" }]}
                 onPress={() => setSelectedBadge(null)}
               >
-                <Text style={[styles.modalBtnText, { color: isDark ? "#f59e0b" : c.primary }]}>ACKNOWLEDGE</Text>
+                <Text style={[styles.modalBtnText, { color: isDark ? "#9C7C4A" : c.primary }]}>ACKNOWLEDGE</Text>
               </NeumorphicView>
             </NeumorphicView>
           )}

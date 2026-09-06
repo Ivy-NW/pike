@@ -35,7 +35,7 @@ export default function LeaderboardScreen() {
   }, []);
 
   const styles = StyleSheet.create({
-    container: { flex: 1, backgroundColor: isDark ? "#0c0c0e" : c.surface },
+    container: { flex: 1, backgroundColor: isDark ? "#000000" : c.surface },
     header: {
       flexDirection: "row",
       alignItems: "center",
@@ -43,22 +43,22 @@ export default function LeaderboardScreen() {
       paddingTop: topPadding,
       paddingBottom: 14,
       paddingHorizontal: 16,
-      backgroundColor: isDark ? "#0c0c0e" : c.surface,
+      backgroundColor: isDark ? "#000000" : c.surface,
       borderBottomWidth: 1,
-      borderBottomColor: isDark ? "rgba(212, 175, 55, 0.12)" : "rgba(15, 23, 42, 0.06)",
+      borderBottomColor: isDark ? "rgba(156, 124, 74, 0.12)" : "rgba(15, 23, 42, 0.06)",
       zIndex: 100,
     },
     headerLeft: { flexDirection: "row", alignItems: "center", gap: 12 },
     backBtn: { width: 38, height: 38, borderRadius: 19, alignItems: "center", justifyContent: "center" },
     headerTitle: { ...theme.font(theme.type.headlineLgMobile), color: c.onSurface, fontSize: 22, fontWeight: "700" },
-    headerSub: { ...theme.font(theme.type.labelSm), color: isDark ? "#f59e0b" : c.primary, marginTop: 1, fontWeight: "600" },
+    headerSub: { ...theme.font(theme.type.labelSm), color: isDark ? "#9C7C4A" : c.primary, marginTop: 1, fontWeight: "600" },
 
     content: { padding: 16, paddingBottom: 60 },
 
     // Filter Switcher
     filterRow: { flexDirection: "row", gap: 8, marginBottom: 18 },
     filterPill: { flex: 1, paddingVertical: 8, alignItems: "center", justifyContent: "center", borderRadius: 14 },
-    filterPillActiveText: { ...theme.font(theme.type.labelCaps), color: isDark ? "#f59e0b" : c.primary, fontSize: 11, fontWeight: "700" },
+    filterPillActiveText: { ...theme.font(theme.type.labelCaps), color: isDark ? "#9C7C4A" : c.primary, fontSize: 11, fontWeight: "700" },
     filterPillInactiveText: { ...theme.font(theme.type.labelCaps), color: c.onSurfaceVariant, fontSize: 11 },
 
     // Leaderboard Item Row
@@ -78,10 +78,10 @@ export default function LeaderboardScreen() {
       justifyContent: "center",
     },
     rankText: { ...theme.font(theme.type.headlineSm), color: c.onSurfaceVariant, fontSize: 16, fontWeight: "700" },
-    rankTop1: { color: "#f59e0b" },
-    rankTop2: { color: "#d4af37" },
+    rankTop1: { color: "#9C7C4A" },
+    rankTop2: { color: "#b79a5e" },
     rankTop3: { color: "#3b82f6" },
-    rankMe: { color: isDark ? "#f59e0b" : c.primary },
+    rankMe: { color: isDark ? "#9C7C4A" : c.primary },
 
     avatarInitial: {
       width: 36,
@@ -90,12 +90,12 @@ export default function LeaderboardScreen() {
       alignItems: "center",
       justifyContent: "center",
     },
-    avatarText: { ...theme.font(theme.type.headlineSm), color: isDark ? "#f59e0b" : c.primary, fontSize: 16, fontWeight: "700" },
+    avatarText: { ...theme.font(theme.type.headlineSm), color: isDark ? "#9C7C4A" : c.primary, fontSize: 16, fontWeight: "700" },
 
     name: { ...theme.font(theme.type.headlineSm), color: c.onSurface, fontSize: 16, fontWeight: "700" },
-    level: { ...theme.font(theme.type.labelSm), color: isDark ? "#f59e0b" : c.primary, marginTop: 2, fontWeight: "600" },
+    level: { ...theme.font(theme.type.labelSm), color: isDark ? "#9C7C4A" : c.primary, marginTop: 2, fontWeight: "600" },
     scoreWrap: { alignItems: "flex-end" },
-    score: { ...theme.font(theme.type.headlineSm), color: isDark ? "#f59e0b" : c.primary, fontSize: 17, fontWeight: "700" },
+    score: { ...theme.font(theme.type.headlineSm), color: isDark ? "#9C7C4A" : c.primary, fontSize: 17, fontWeight: "700" },
     scoreUnit: { ...theme.font(theme.type.labelCaps), color: c.onSurfaceVariant, fontSize: 10 },
 
     myRankCard: {
@@ -123,14 +123,14 @@ export default function LeaderboardScreen() {
       <View style={styles.header}>
         <View style={styles.headerLeft}>
           <NeumorphicView variant="raised" radius={19} style={styles.backBtn} onPress={() => router.back()}>
-            <MaterialIcons name="arrow-back" size={20} color={isDark ? "#f59e0b" : c.primary} />
+            <MaterialIcons name="arrow-back" size={20} color={isDark ? "#9C7C4A" : c.primary} />
           </NeumorphicView>
           <View>
             <Text style={styles.headerTitle}>Vanguard Ranks</Text>
             <Text style={styles.headerSub}>Nairobi Sector Leaderboard</Text>
           </View>
         </View>
-        <MaterialIcons name="leaderboard" size={22} color={isDark ? "#f59e0b" : c.primary} />
+        <MaterialIcons name="leaderboard" size={22} color={isDark ? "#9C7C4A" : c.primary} />
       </View>
 
       <FlatList

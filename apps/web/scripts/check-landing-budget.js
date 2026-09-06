@@ -1,0 +1,21 @@
+const fs = require("fs");
+const path = require("path");
+const zlib = require("zlib");
+const root = path.resolve(__dirname, "..");
+const next = path.join(root, ".next");
+const manifestPath = path.join(next, "app-build-manifest.json");
+if (!fs.existsSync(manifestPath)) throw new Error("Run the production build before check:landing-budget.");
+const manifest = JSON.parse(fs.readFileSync(manifestPath, "utf8"));
+const routeFiles = [...new Set(Object.entries(manifest.pages).filter(([key]) => key === "/page" || key === "/layout").flatMap(([, files]) => files))];
+const htmlCandidates = [path.join(next, "server", "app", "index.html"), path.join(next, "server", "app", "page.html")];
+const poster = path.join(root, "public", "images", "landing", "scan-poster.webp");
+const fontDir = path.join(next, "static", "media");
+const fontFiles = fs.existsSync(fontDir) ? fs.readdirSync(fontDir).filter(file => /\.(woff2?|ttf)$/.test(file)).map(file => path.join(fontDir, file)) : [];
+const categories = { html: htmlCandidates.filter(fs.existsSync), "route/shared JS and CSS": routeFiles.map(file => path.join(next, file)).filter(fs.existsSync), "above-fold fonts": fontFiles, poster: fs.existsSync(poster) ? [poster] : [] };
+const gzipSize = file => zlib.gzipSync(fs.readFileSync(file), { level: 9 }).length;
+let total = 0;
+for (const [name, files] of Object.entries(categories)) { const size = files.reduce((sum, file) => sum + gzipSize(file), 0); total += size; console.log(`${name.padEnd(26)} ${(size / 1024).toFixed(1)} KB gzip (${files.length} files)`); }
+const video = path.join(root, "public", "pike-webar-demo-1min.mp4");
+console.log(`deferred video             ${fs.existsSync(video) ? (fs.statSync(video).size / 1024).toFixed(1) : "0.0"} KB raw (excluded)`);
+console.log(`TOTAL                      ${(total / 1024).toFixed(1)} KB gzip / 500.0 KB`);
+if (total > 500 * 1024) process.exitCode = 1;

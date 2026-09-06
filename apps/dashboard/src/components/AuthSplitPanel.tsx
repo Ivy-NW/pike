@@ -77,7 +77,7 @@ export function AuthSplitPanel({ children }: { children: ReactNode }) {
                 gap: 14,
                 padding: 16,
                 border: "1px solid rgba(255,255,255,0.15)",
-                borderRadius: "var(--radius-md)",
+                borderRadius: "14px",
                 background: "rgba(255,255,255,0.04)",
               }}
             >

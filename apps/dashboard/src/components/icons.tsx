@@ -142,6 +142,15 @@ export function ShieldIcon({ size = 20, color = "currentColor" }: IconProps) {
   );
 }
 
+export function FlagIcon({ size = 20, color = "currentColor" }: IconProps) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 24 24" stroke={color} {...base}>
+      <path d="M5 21V4" />
+      <path d="M5 5h10.5l-1.8 3 1.8 3H5" />
+    </svg>
+  );
+}
+
 export function SunIcon({ size = 20, color = "currentColor" }: IconProps) {
   return (
     <svg width={size} height={size} viewBox="0 0 24 24" stroke={color} {...base}>

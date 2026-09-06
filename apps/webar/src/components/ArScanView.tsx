@@ -37,10 +37,34 @@ function loadEngineScript(): Promise<void> {
   });
 }
 
+type ThemeMode = "light" | "dark";
+
+function readTheme(): ThemeMode {
+  return document.documentElement.getAttribute("data-theme") === "light" ? "light" : "dark";
+}
+
+function SunIcon() {
+  return (
+    <svg width={18} height={18} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.8} strokeLinecap="round" strokeLinejoin="round">
+      <circle cx="12" cy="12" r="4.3" />
+      <path d="M12 2.8v2.6M12 18.6v2.6M21.2 12h-2.6M5.4 12H2.8M18 6l-1.9 1.9M7.9 16.1 6 18M18 18l-1.9-1.9M7.9 7.9 6 6" />
+    </svg>
+  );
+}
+
+function MoonIcon() {
+  return (
+    <svg width={18} height={18} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.8} strokeLinecap="round" strokeLinejoin="round">
+      <path d="M20.5 14.7A8.6 8.6 0 1 1 9.3 3.5a7 7 0 0 0 11.2 11.2Z" />
+    </svg>
+  );
+}
+
 export function ArScanView({ questName, imageTargetData, onRecognized }: Props) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const [engineError, setEngineError] = useState<string | null>(null);
   const [recognizing, setRecognizing] = useState(false);
+  const [theme, setTheme] = useState<ThemeMode>(() => (typeof document !== "undefined" ? readTheme() : "dark"));
   const recognizedRef = useRef(false);
 
   // Detect whether we are embedded inside the React Native App
@@ -53,13 +77,43 @@ export function ArScanView({ questName, imageTargetData, onRecognized }: Props) 
     setTimeout(onRecognized, 400);
   };
 
+  const toggleTheme = () => {
+    const next: ThemeMode = theme === "dark" ? "light" : "dark";
+    setTheme(next);
+    document.documentElement.setAttribute("data-theme", next);
+    try {
+      localStorage.setItem("pike-theme", next);
+    } catch {
+      // private browsing / storage disabled — theme just won't persist
+    }
+  };
+
   useEffect(() => {
     let cancelled = false;
+    let resizeCanvas = () => {};
 
     loadEngineScript()
       .then(() => {
         if (cancelled || !window.XR8 || !canvasRef.current) return;
         const XR8 = window.XR8;
+        const canvas = canvasRef.current;
+
+        // 8th Wall sizes its WebGL render target from the canvas's pixel-buffer
+        // dimensions at XR8.run() time and never revisits them on its own. Left at
+        // the browser's default (or a stale size from before layout/orientation
+        // settled), the camera texture gets drawn into a quad with the wrong aspect
+        // ratio — a warped/stretched feed that CSS object-fit can't correct, since
+        // the distortion happens inside the WebGL draw, not at the CSS layer. Keep
+        // the buffer's pixel size tracking the canvas's actual on-screen size.
+        resizeCanvas = () => {
+          const dpr = window.devicePixelRatio || 1;
+          const width = Math.round(canvas.clientWidth * dpr);
+          const height = Math.round(canvas.clientHeight * dpr);
+          if (width > 0 && height > 0 && (canvas.width !== width || canvas.height !== height)) {
+            canvas.width = width;
+            canvas.height = height;
+          }
+        };
 
         if (imageTargetData) {
           XR8.XrController.configure({
@@ -77,12 +131,27 @@ export function ArScanView({ questName, imageTargetData, onRecognized }: Props) 
           },
         ]);
 
-        XR8.run({ canvas: canvasRef.current, allowedDevices: XR8.XrConfig?.device?.().ANY });
+        const start = () => {
+          if (cancelled) return;
+          resizeCanvas();
+          if (canvas.width === 0 || canvas.height === 0) {
+            // Layout hasn't settled yet (e.g. first paint, or a webfont swap still
+            // pending) — wait a frame rather than handing 8th Wall a 0x0 buffer.
+            requestAnimationFrame(start);
+            return;
+          }
+          XR8.run({ canvas, allowedDevices: XR8.XrConfig?.device?.().ANY });
+          window.addEventListener("resize", resizeCanvas);
+          window.addEventListener("orientationchange", resizeCanvas);
+        };
+        start();
       })
       .catch((err: Error) => !cancelled && setEngineError(err.message));
 
     return () => {
       cancelled = true;
+      window.removeEventListener("resize", resizeCanvas);
+      window.removeEventListener("orientationchange", resizeCanvas);
       try {
         window.XR8?.stop?.();
       } catch {
@@ -93,138 +162,36 @@ export function ArScanView({ questName, imageTargetData, onRecognized }: Props) 
   }, [imageTargetData]);
 
   return (
-    <div
-      style={{
-        position: "fixed",
-        inset: 0,
-        background: "#0c0c0e",
-        display: "flex",
-        flexDirection: "column",
-        alignItems: "center",
-        justifyContent: "space-between",
-        padding: isEmbeddedApp ? "0px" : "24px 20px 36px 20px",
-        overflow: "hidden",
-        boxSizing: "border-box",
-      }}
-    >
-      <canvas
-        ref={canvasRef}
-        style={{ position: "absolute", inset: 0, width: "100%", height: "100%", objectFit: "cover" }}
-      />
-      <div
-        style={{
-          position: "absolute",
-          inset: 0,
-          background: recognizing ? "rgba(245, 158, 11, 0.25)" : "transparent",
-          transition: "background 0.3s ease",
-          pointerEvents: "none",
-        }}
-      />
+    <div className="scan-hud" style={isEmbeddedApp ? { padding: 0 } : undefined}>
+      <canvas ref={canvasRef} className="scan-canvas" />
+      <div aria-hidden="true" className="scan-flash" style={{ opacity: recognizing ? 1 : 0 }} />
 
       {/* When running in standalone Web browser (not inside React Native app), show standalone HUD */}
       {!isEmbeddedApp && (
         <>
-          {/* Top HUD Badge */}
-          <div
-            style={{
-              position: "relative",
-              zIndex: 10,
-              background: "rgba(12, 12, 14, 0.88)",
-              backdropFilter: "blur(16px)",
-              border: "1px solid rgba(245, 158, 11, 0.35)",
-              borderRadius: 18,
-              padding: "10px 20px",
-              color: "#f59e0b",
-              fontFamily: "Space Grotesk, sans-serif",
-              fontSize: 13,
-              fontWeight: 700,
-              letterSpacing: "0.1em",
-              boxShadow: "0 8px 24px rgba(0,0,0,0.7)",
-              display: "flex",
-              alignItems: "center",
-              gap: 8,
-            }}
-          >
-            <span style={{ width: 8, height: 8, borderRadius: "50%", background: "#f59e0b", display: "inline-block" }} />
-            OPTICAL SCANNER ACTIVE
+          <div className="scan-brand">PIKE</div>
+
+          <button type="button" className="scan-toggle" onClick={toggleTheme} aria-label="Switch to the other color theme">
+            {theme === "dark" ? <SunIcon /> : <MoonIcon />}
+          </button>
+
+          <p className="scan-status" data-state={recognizing ? "recognized" : "scanning"}>
+            {recognizing ? "Marker recognized" : `Scanning for ${questName}`}
+          </p>
+
+          <div className="scan-frame" data-state={recognizing ? "recognized" : "scanning"}>
+            <span className="scan-frame-dot" />
           </div>
 
-          {/* Central Reticle Target */}
-          <div
-            style={{
-              position: "relative",
-              zIndex: 10,
-              width: 240,
-              height: 240,
-              border: `2px solid ${recognizing ? "#f59e0b" : "rgba(245, 158, 11, 0.6)"}`,
-              borderRadius: 28,
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-              boxShadow: recognizing ? "0 0 35px rgba(245, 158, 11, 0.85)" : "0 0 16px rgba(245, 158, 11, 0.2)",
-              transition: "all 0.3s ease",
-              pointerEvents: "none",
-            }}
-          >
-            <div style={{ width: 12, height: 12, borderRadius: "50%", background: "#f59e0b", opacity: 0.8 }} />
-          </div>
-
-          {/* Bottom Control HUD */}
-          <div
-            style={{
-              position: "relative",
-              zIndex: 10,
-              width: "100%",
-              maxWidth: 380,
-              display: "flex",
-              flexDirection: "column",
-              alignItems: "center",
-              gap: 12,
-              background: "rgba(12, 12, 14, 0.88)",
-              backdropFilter: "blur(16px)",
-              padding: "16px 20px",
-              borderRadius: 24,
-              border: "1px solid rgba(245, 158, 11, 0.2)",
-              boxShadow: "0 8px 32px rgba(0,0,0,0.8)",
-            }}
-          >
-            <p
-              style={{
-                color: "#fbfaf8",
-                fontFamily: "Space Grotesk, system-ui, sans-serif",
-                fontSize: 13,
-                fontWeight: 600,
-                textAlign: "center",
-                margin: 0,
-              }}
-            >
+          <div className="scan-panel">
+            <p className="scan-instruction">
               {engineError
-                ? "AR Optical Engine ready. Align marker or tap verify below."
-                : `Point camera lens at the ${questName} marker`}
+                ? "Camera ready — align the marker, or tap verify below."
+                : `Point your camera at the ${questName} marker.`}
             </p>
 
-            <button
-              onClick={fireRecognized}
-              disabled={recognizing}
-              style={{
-                width: "100%",
-                padding: "16px 20px",
-                background: recognizing
-                  ? "#10B981"
-                  : "linear-gradient(135deg, #d97706 0%, #f59e0b 100%)",
-                color: "#0c0c0e",
-                fontFamily: "Space Grotesk, sans-serif",
-                fontSize: 14,
-                fontWeight: 800,
-                letterSpacing: "0.08em",
-                border: "none",
-                borderRadius: 18,
-                cursor: "pointer",
-                boxShadow: "0 6px 20px rgba(245, 158, 11, 0.4)",
-                transition: "transform 0.15s ease",
-              }}
-            >
-              {recognizing ? "CIPHER DECRYPTED!" : "VERIFY & CLAIM REWARD"}
+            <button type="button" className="scan-action" onClick={fireRecognized} disabled={recognizing}>
+              {recognizing ? "Marker verified" : "Verify & claim reward"}
             </button>
           </div>
         </>

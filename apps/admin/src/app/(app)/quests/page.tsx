@@ -24,8 +24,10 @@ export default function QuestsPage() {
     <>
       <div className="page-header">
         <div>
+          <span className="page-eyebrow">Quest lifecycle</span>
           <h1>Quests</h1>
           <p>Every quest created across the platform.</p>
+          <div className="page-meta"><span>{quests === null ? "Loading quests" : `${quests.length} total quests`}</span><span>{quests?.filter((q) => q.status === "live").length ?? "—"} live now</span></div>
         </div>
         <div className="search-field">
           <SearchIcon size={16} />
@@ -33,9 +35,9 @@ export default function QuestsPage() {
         </div>
       </div>
 
-      {error && <p style={{ color: "var(--error)" }}>{error}</p>}
+      {error && <div className="state-alert" role="alert"><strong>Quests could not be loaded.</strong><span>{error}</span></div>}
 
-      <div className="card table-wrap">
+      <div className="card table-wrap responsive-table" aria-busy={filtered === null}>
         {filtered === null ? (
           <SkeletonRows />
         ) : filtered.length === 0 ? (

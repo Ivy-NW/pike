@@ -8,5 +8,10 @@ export default function Index() {
   useEffect(() => {
     router.replace(getToken() ? "/home" : "/login");
   }, [router]);
-  return null;
+  return (
+    <main className="route-loading" aria-live="polite">
+      <span className="loading-mark" aria-hidden="true" />
+      <p>Opening your PIKE workspace&hellip;</p>
+    </main>
+  );
 }

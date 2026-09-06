@@ -27,7 +27,7 @@ export default function QuestDetailScreen() {
   ) + 8;
 
   const styles = StyleSheet.create({
-    container: { flex: 1, backgroundColor: isDark ? "#0c0c0e" : c.surface },
+    container: { flex: 1, backgroundColor: isDark ? "#000000" : c.surface },
     header: {
       flexDirection: "row",
       alignItems: "center",
@@ -35,9 +35,9 @@ export default function QuestDetailScreen() {
       paddingTop: topPadding,
       paddingBottom: 14,
       paddingHorizontal: 16,
-      backgroundColor: isDark ? "#0c0c0e" : c.surface,
+      backgroundColor: isDark ? "#000000" : c.surface,
       borderBottomWidth: 1,
-      borderBottomColor: isDark ? "rgba(212, 175, 55, 0.12)" : "rgba(15, 23, 42, 0.06)",
+      borderBottomColor: isDark ? "rgba(156, 124, 74, 0.12)" : "rgba(15, 23, 42, 0.06)",
       zIndex: 100,
     },
     headerLeft: { flexDirection: "row", alignItems: "center", gap: 12 },
@@ -63,22 +63,22 @@ export default function QuestDetailScreen() {
       justifyContent: "center",
       marginBottom: 8,
     },
-    heroSub: { ...theme.font(theme.type.labelCaps), color: isDark ? "#f59e0b" : c.primary, letterSpacing: 1.5, fontWeight: "700" },
+    heroSub: { ...theme.font(theme.type.labelCaps), color: isDark ? "#9C7C4A" : c.primary, letterSpacing: 1.5, fontWeight: "700" },
 
     // Chips Row
     chipRow: { flexDirection: "row", flexWrap: "wrap", gap: 10, marginBottom: 20 },
     chip: { flexDirection: "row", alignItems: "center", gap: 6, paddingHorizontal: 14, paddingVertical: 8, borderRadius: 14 },
     chipText: { ...theme.font(theme.type.labelCaps), color: c.onSurface, fontSize: 11, fontWeight: "600" },
-    chipGoldText: { ...theme.font(theme.type.labelCaps), color: isDark ? "#f59e0b" : "#b45309", fontSize: 11, fontWeight: "700" },
+    chipGoldText: { ...theme.font(theme.type.labelCaps), color: isDark ? "#9C7C4A" : "#8C6B34", fontSize: 11, fontWeight: "700" },
 
     // Brief Section
     section: { marginBottom: 24 },
     sectionHeader: { flexDirection: "row", justifyContent: "space-between", alignItems: "center", marginBottom: 12 },
     sectionTitle: { ...theme.font(theme.type.headlineSm), color: c.onSurface, fontSize: 18, fontWeight: "700" },
     activeBadge: { flexDirection: "row", alignItems: "center", gap: 6, paddingHorizontal: 10, paddingVertical: 4, borderRadius: 10 },
-    activeBadgeText: { ...theme.font(theme.type.labelCaps), color: isDark ? "#f59e0b" : c.primary, fontSize: 10, fontWeight: "700" },
+    activeBadgeText: { ...theme.font(theme.type.labelCaps), color: isDark ? "#9C7C4A" : c.primary, fontSize: 10, fontWeight: "700" },
     completedBadgeText: { ...theme.font(theme.type.labelCaps), color: "#10B981", fontSize: 10, fontWeight: "700" },
-    dot: { width: 6, height: 6, borderRadius: 3, backgroundColor: isDark ? "#f59e0b" : c.primary },
+    dot: { width: 6, height: 6, borderRadius: 3, backgroundColor: isDark ? "#9C7C4A" : c.primary },
     dotCompleted: { width: 6, height: 6, borderRadius: 3, backgroundColor: "#10B981" },
 
     briefCard: { padding: 18, borderRadius: 22 },
@@ -89,8 +89,8 @@ export default function QuestDetailScreen() {
     rewardCard: { padding: 18, borderRadius: 22, marginBottom: 24 },
     rewardRow: { flexDirection: "row", alignItems: "center", justifyContent: "space-between", marginBottom: 10 },
     rewardLabel: { ...theme.font(theme.type.labelCaps), color: c.onSurfaceVariant, fontWeight: "600" },
-    rewardValue: { ...theme.font(theme.type.headlineSm), color: isDark ? "#f59e0b" : "#b45309", fontSize: 16, fontWeight: "700" },
-    xpValue: { ...theme.font(theme.type.headlineSm), color: isDark ? "#f59e0b" : c.primary, fontSize: 16, fontWeight: "700" },
+    rewardValue: { ...theme.font(theme.type.headlineSm), color: isDark ? "#9C7C4A" : "#8C6B34", fontSize: 16, fontWeight: "700" },
+    xpValue: { ...theme.font(theme.type.headlineSm), color: isDark ? "#9C7C4A" : c.primary, fontSize: 16, fontWeight: "700" },
 
     // Action CTA
     ctaBtn: {
@@ -101,7 +101,7 @@ export default function QuestDetailScreen() {
       paddingVertical: 18,
       borderRadius: 24,
     },
-    ctaBtnText: { ...theme.font(theme.type.headlineSm), color: isDark ? "#f59e0b" : "#ffffff", fontSize: 15, letterSpacing: 1.5, fontWeight: "700" },
+    ctaBtnText: { ...theme.font(theme.type.headlineSm), color: isDark ? "#9C7C4A" : "#ffffff", fontSize: 15, letterSpacing: 1.5, fontWeight: "700" },
   });
 
   return (
@@ -110,7 +110,7 @@ export default function QuestDetailScreen() {
       <View style={styles.header}>
         <View style={styles.headerLeft}>
           <NeumorphicView variant="raised" radius={19} style={styles.backBtn} onPress={() => router.back()}>
-            <MaterialIcons name="arrow-back" size={20} color={isDark ? "#f59e0b" : c.primary} />
+            <MaterialIcons name="arrow-back" size={20} color={isDark ? "#9C7C4A" : c.primary} />
           </NeumorphicView>
           <Text style={styles.headerTitle}>Mission Intel</Text>
         </View>
@@ -124,7 +124,7 @@ export default function QuestDetailScreen() {
             <MaterialIcons
               name={completed ? "check-circle" : "view-in-ar"}
               size={42}
-              color={completed ? "#10B981" : (isDark ? "#f59e0b" : c.primary)}
+              color={completed ? "#10B981" : (isDark ? "#9C7C4A" : c.primary)}
             />
           </NeumorphicView>
           <Text style={styles.heroSub}>
@@ -135,12 +135,12 @@ export default function QuestDetailScreen() {
         {/* Metadata Chips */}
         <View style={styles.chipRow}>
           <NeumorphicView variant="inset" radius={14} style={styles.chip}>
-            <MaterialIcons name="place" size={16} color={isDark ? "#f59e0b" : c.primary} />
+            <MaterialIcons name="place" size={16} color={isDark ? "#9C7C4A" : c.primary} />
             <Text style={styles.chipText}>{params.venueName || "Nairobi Anchor Node"}</Text>
           </NeumorphicView>
 
           <NeumorphicView variant="inset" radius={14} style={styles.chip}>
-            <MaterialIcons name="military-tech" size={16} color={isDark ? "#f59e0b" : "#b45309"} />
+            <MaterialIcons name="military-tech" size={16} color={isDark ? "#9C7C4A" : "#8C6B34"} />
             <Text style={styles.chipGoldText}>Tier 1 Anomaly</Text>
           </NeumorphicView>
         </View>
@@ -194,7 +194,7 @@ export default function QuestDetailScreen() {
             style={styles.ctaBtn}
             onPress={() => router.push(`/scan/${params.markerId || params.id}`)}
           >
-            <MaterialIcons name="qr-code-scanner" size={22} color={isDark ? "#f59e0b" : "#ffffff"} />
+            <MaterialIcons name="qr-code-scanner" size={22} color={isDark ? "#9C7C4A" : "#ffffff"} />
             <Text style={styles.ctaBtnText}>ENGAGE OPTICAL SCANNER</Text>
           </NeumorphicView>
         ) : (

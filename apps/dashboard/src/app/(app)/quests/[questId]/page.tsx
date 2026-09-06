@@ -2,6 +2,7 @@
 import { useEffect, useState } from "react";
 import { useParams } from "next/navigation";
 import { api, ApiError } from "@/lib/api";
+import Link from "next/link";
 
 export default function QuestDetailPage() {
   const { questId } = useParams<{ questId: string }>();
@@ -31,8 +32,8 @@ export default function QuestDetailPage() {
     };
   }, [questId]);
 
-  if (error) return <p style={{ color: "var(--error)" }}>{error}</p>;
-  if (!quest) return <div className="skeleton-row" style={{ maxWidth: 640 }} />;
+  if (error) return <div className="state-page"><span className="eyebrow">Quest detail</span><h1>Quest unavailable</h1><div className="notice notice-error" role="alert"><strong>We could not load this quest</strong><span>{error}</span></div><Link href="/quests" className="secondary">Back to quests</Link></div>;
+  if (!quest) return <div className="state-page" aria-label="Loading quest"><span className="eyebrow">Quest detail</span><div className="skeleton-row skeleton-title" /><div className="card loading-stack"><div className="skeleton-row" /><div className="skeleton-row" /><div className="skeleton-row" /></div></div>;
 
   const marker = quest.markers?.[0];
   const capPct = stats && stats.capToday > 0 ? Math.min(100, Math.round((stats.redeemedToday / stats.capToday) * 100)) : 0;
@@ -41,9 +42,11 @@ export default function QuestDetailPage() {
     <>
       <div className="page-header">
         <div>
+          <span className="eyebrow">Quest detail</span>
           <h1>{quest.name}</h1>
-          <p><span className={`badge ${quest.status === "live" ? "badge-verified" : "badge-unverified"}`}>{quest.status}</span></p>
+          <p><span className={`badge ${quest.status === "live" ? "badge-verified" : "badge-unverified"}`}>{quest.status}</span> <span className="header-meta">Daily cap {quest.maxRedemptionsPerDay}</span></p>
         </div>
+        <Link href="/quests" className="secondary">All quests</Link>
       </div>
 
       <div className="card" style={{ maxWidth: 640, marginBottom: 16 }}>

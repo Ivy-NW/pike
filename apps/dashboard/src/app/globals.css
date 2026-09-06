@@ -5,26 +5,23 @@
 
 /* Fonts are self-hosted via next/font (see layout.tsx) rather than the generated
  * theme.css's literal family names — point the same tokens at those variables.
- * Geist has no next/font/google entry on this Next.js version, so it stays a
- * literal family name backed by the external stylesheet link in layout.tsx. */
-:root, [data-theme="light"] {
-  --font-heading: "Geist", system-ui, sans-serif;
-  --font-body: "Geist", system-ui, sans-serif;
-  --font-mono: var(--font-space-mono), ui-monospace, monospace;
-}
-
-[data-theme="dark"] {
-  --font-heading: var(--font-space-grotesk), system-ui, sans-serif;
-  --font-body: var(--font-inter), system-ui, sans-serif;
-  --font-mono: var(--font-space-grotesk), system-ui, sans-serif;
-}
-
-@media (prefers-color-scheme: dark) {
-  :root:not([data-theme="light"]) {
-    --font-heading: var(--font-space-grotesk), system-ui, sans-serif;
-    --font-body: var(--font-inter), system-ui, sans-serif;
-    --font-mono: var(--font-space-grotesk), system-ui, sans-serif;
-  }
+ * Light and dark share one Orbitron/Inter pairing (platform-wide unification).
+ * !important: theme.css's `@media (prefers-color-scheme: dark)` block targets
+ * `:root:not([data-theme="light"])`, which outranks a plain `:root` selector —
+ * without it, system-dark (no explicit toggle) falls back to theme.css's literal
+ * "Orbitron"/"Inter" strings, which aren't loaded font families, so the browser
+ * silently substitutes a system font. Same fix as apps/web/src/app/globals.css. */
+:root, [data-theme="light"], [data-theme="dark"] {
+  --font-heading: var(--font-orbitron), system-ui, sans-serif !important;
+  --font-body: var(--font-inter), system-ui, sans-serif !important;
+  --font-mono: var(--font-orbitron), system-ui, sans-serif !important;
+  /* Semantic action-color alias — mirrors apps/web's --landing-accent pattern.
+     Blue is the interactive/action color platform-wide; gold stays reserved
+     for reward-specific UI only (see docs/pike_ui_design.md). */
+  --action: var(--secondary);
+  --on-action: var(--on-secondary);
+  --action-container: var(--secondary-container);
+  --on-action-container: var(--on-secondary-container);
 }
 
 * {
@@ -40,7 +37,7 @@ body {
 }
 
 a {
-  color: var(--primary);
+  color: var(--action);
 }
 
 table {
@@ -68,7 +65,7 @@ th {
 input,
 select {
   padding: 10px 12px;
-  border-radius: var(--radius);
+  border-radius: 10px;
   border: 1px solid var(--border-strong);
   background: var(--surface-container-lowest);
   color: var(--on-surface);
@@ -80,15 +77,15 @@ select {
 input:focus,
 select:focus {
   outline: none;
-  border-color: var(--primary);
-  box-shadow: 0 0 0 2px color-mix(in srgb, var(--primary) 20%, transparent);
+  border-color: var(--action);
+  box-shadow: 0 0 0 2px color-mix(in srgb, var(--action) 20%, transparent);
 }
 
 button.primary {
-  background: var(--primary-container);
-  color: var(--on-primary-container);
+  background: var(--action-container);
+  color: var(--on-action-container);
   border: none;
-  border-radius: var(--radius-md);
+  border-radius: 10px;
   padding: 10px 18px;
   font-weight: 600;
   font-family: var(--font-body);
@@ -102,9 +99,9 @@ button.primary:disabled {
 
 button.secondary {
   background: var(--surface-container-lowest);
-  color: var(--primary);
-  border: 1px solid var(--primary);
-  border-radius: var(--radius-md);
+  color: var(--action);
+  border: 1px solid var(--action);
+  border-radius: 10px;
   padding: 10px 18px;
   font-family: var(--font-body);
   cursor: pointer;
@@ -114,7 +111,7 @@ button.danger {
   background: transparent;
   color: var(--error);
   border: 1px solid var(--error);
-  border-radius: var(--radius-md);
+  border-radius: 10px;
   padding: 8px 14px;
   font-family: var(--font-body);
   cursor: pointer;
@@ -161,10 +158,14 @@ button.icon {
 
 .card {
   background: var(--surface-container-lowest);
-  border-radius: var(--radius-md);
+  border-radius: 20px;
   padding: 20px;
   border: 1px solid var(--border-subtle);
-  transition: border-color .15s ease;
+  transition: border-color .15s ease, box-shadow .2s ease;
+}
+
+.card:hover {
+  box-shadow: 0 18px 36px -22px rgba(15,12,8,.35);
 }
 
 .card-title {
@@ -211,7 +212,7 @@ button.icon {
   align-items: center;
   gap: 8px;
   padding: 0 10px;
-  border-radius: var(--radius);
+  border-radius: 10px;
   border: 1px solid var(--border-strong);
   background: var(--surface-container-lowest);
   color: var(--on-surface-variant);
@@ -241,8 +242,13 @@ button.icon {
 .stat-card {
   background: var(--surface-container-lowest);
   border: 1px solid var(--border-subtle);
-  border-radius: var(--radius-md);
+  border-radius: 14px;
   padding: 18px 20px;
+  transition: border-color .15s ease, box-shadow .2s ease;
+}
+
+.stat-card:hover {
+  box-shadow: 0 18px 36px -22px rgba(15,12,8,.35);
 }
 
 .stat-card-top {
@@ -258,9 +264,9 @@ button.icon {
   justify-content: center;
   width: 32px;
   height: 32px;
-  border-radius: var(--radius);
-  background: color-mix(in srgb, var(--primary) 12%, transparent);
-  color: var(--primary);
+  border-radius: 10px;
+  background: color-mix(in srgb, var(--action) 12%, transparent);
+  color: var(--action);
 }
 
 .stat-label {
@@ -288,7 +294,7 @@ button.icon {
 .progress-bar > span {
   display: block;
   height: 100%;
-  background: var(--primary);
+  background: var(--action);
   border-radius: var(--radius-full);
 }
 
@@ -323,13 +329,13 @@ button.icon {
 /* Chip variants per docs/ui designs/pike_vanguard_light/DESIGN.md: gold = warning/pending,
    blue = info, slate = neutral. */
 .badge-warning {
-  background: color-mix(in srgb, var(--secondary-container) 22%, transparent);
-  color: var(--secondary);
+  background: color-mix(in srgb, var(--primary-container) 22%, transparent);
+  color: var(--primary);
 }
 
 .badge-info {
-  background: color-mix(in srgb, var(--primary) 14%, transparent);
-  color: var(--primary);
+  background: color-mix(in srgb, var(--action-container) 14%, transparent);
+  color: var(--action);
 }
 
 .badge-neutral {
@@ -392,7 +398,7 @@ button.icon {
   align-items: center;
   gap: 12px;
   padding: 10px 12px;
-  border-radius: var(--radius-md);
+  border-radius: 12px;
   color: var(--on-surface-variant);
   font-weight: 600;
   font-size: 14px;
@@ -405,8 +411,8 @@ button.icon {
 }
 
 .sidebar-link.active {
-  background: var(--primary-container);
-  color: var(--on-primary-container);
+  background: var(--action-container);
+  color: var(--on-action-container);
 }
 
 .sidebar-footer {
@@ -515,8 +521,10 @@ button.icon {
   flex: 0 0 auto;
   /* Fixed regardless of theme toggle — a stable brand-editorial panel, not tied to
      --inverse-surface (which flips light/dark with the app theme and would otherwise
-     invert this composition instead of just letting the form side respond). */
-  background: var(--slate-gray);
+     invert this composition instead of just letting the form side respond).
+     Deep Slate is hardcoded, not --slate-gray, which itself flips to white in
+     light mode and would wash this panel out. */
+  background: #111827;
   color: #fff;
   padding: 28px 24px;
   display: flex;
@@ -571,7 +579,7 @@ button.icon {
 .modal {
   background: var(--surface-container-lowest);
   border: 1px solid var(--border-strong);
-  border-radius: var(--radius-md);
+  border-radius: 20px;
   padding: 24px;
   width: 100%;
   max-width: 460px;
@@ -603,4 +611,73 @@ button.icon {
 .row-actions button {
   padding: 6px 12px;
   font-size: 13px;
+}
+
+/* Section eyebrow — matches apps/web's uppercase, letter-spaced label style. */
+.eyebrow {
+  display: block;
+  margin-bottom: 8px;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: .1em;
+  text-transform: uppercase;
+  color: var(--action);
+}
+
+/* Inline form/page error alert — same shape as apps/admin's .state-alert. */
+.notice {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  margin: 0 0 18px;
+  padding: 13px 15px;
+  border-radius: 10px;
+  font-size: 13px;
+}
+
+.notice-error {
+  color: var(--on-error-container);
+  background: var(--error-container);
+  border-left: 3px solid var(--error);
+}
+
+/* Small muted counter/label next to a section heading. */
+.section-meta {
+  font-size: 13px;
+  color: var(--on-surface-variant);
+}
+
+/* Wraps a run of .skeleton-row placeholders while data is loading. */
+.loading-stack {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+/* Centered empty-state card body (pairs with .card.empty-state). */
+.empty-state-panel {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 10px;
+}
+
+.empty-state-panel h2 {
+  font-family: var(--font-heading);
+  font-size: 18px;
+  margin: 0;
+}
+
+.empty-state-panel p {
+  color: var(--on-surface-variant);
+  margin: 0;
+  max-width: 46ch;
+}
+
+/* Muted inline placeholder line within a list (not a full empty-state card). */
+.inline-empty {
+  color: var(--on-surface-variant);
+  font-size: 13px;
+  font-style: italic;
 }

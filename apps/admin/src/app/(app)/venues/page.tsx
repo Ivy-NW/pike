@@ -23,8 +23,10 @@ export default function VenuesPage() {
     <>
       <div className="page-header">
         <div>
+          <span className="page-eyebrow">Location inventory</span>
           <h1>Venues</h1>
           <p>Physical locations registered across every business.</p>
+          <div className="page-meta"><span>{venues === null ? "Loading locations" : `${venues.length} registered locations`}</span><span>Platform-wide inventory</span></div>
         </div>
         <div className="search-field">
           <SearchIcon size={16} />
@@ -32,9 +34,9 @@ export default function VenuesPage() {
         </div>
       </div>
 
-      {error && <p style={{ color: "var(--error)" }}>{error}</p>}
+      {error && <div className="state-alert" role="alert"><strong>Venues could not be loaded.</strong><span>{error}</span></div>}
 
-      <div className="card table-wrap">
+      <div className="card table-wrap responsive-table" aria-busy={filtered === null}>
         {filtered === null ? (
           <SkeletonRows />
         ) : filtered.length === 0 ? (

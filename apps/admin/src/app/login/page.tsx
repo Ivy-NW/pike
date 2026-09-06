@@ -39,12 +39,13 @@ export default function AdminLoginPage() {
       className="admin-auth-grid"
     >
       {/* Fixed dark aside regardless of theme toggle — a stable brand-editorial panel,
-          same approach as apps/web's always-dark composition sections. */}
+          same approach as apps/web's always-dark composition sections. Deep Slate is
+          hardcoded (not --slate-gray, which flips to white in light mode). */}
       <aside
         style={{
           position: "relative",
           overflow: "hidden",
-          background: "var(--slate-gray)",
+          background: "#111827",
           color: "#fff",
           padding: "48px 44px",
           display: "flex",
@@ -85,7 +86,7 @@ export default function AdminLoginPage() {
             alignSelf: "flex-start",
             padding: "6px 12px",
             borderRadius: "var(--radius-full)",
-            background: "color-mix(in srgb, var(--primary) 35%, transparent)",
+            background: "color-mix(in srgb, var(--action) 35%, transparent)",
             color: "#fff",
             fontFamily: "var(--font-mono)",
             fontSize: 11,
@@ -116,6 +117,7 @@ export default function AdminLoginPage() {
             <Logo size={26} />
             <span style={{ fontFamily: "var(--font-heading)", fontWeight: 700, fontSize: 18 }}>PIKE</span>
           </div>
+          <span className="page-eyebrow">Restricted access</span>
           <h2 style={{ fontFamily: "var(--font-heading)", fontSize: 26, margin: "18px 0 4px" }}>Welcome back</h2>
           <p style={{ color: "var(--on-surface-variant)", fontSize: 14, marginBottom: 26 }}>Sign in to the global admin portal.</p>
 
@@ -159,7 +161,7 @@ export default function AdminLoginPage() {
             <button className="primary icon" disabled={loading} style={{ justifyContent: "center", padding: "11px 14px", marginTop: 6 }}>
               {loading ? "Signing in…" : "Enter admin portal"}
             </button>
-            {error && <p style={{ color: "var(--error)", fontSize: 13 }}>{error}</p>}
+            {error && <div className="state-alert" role="alert"><strong>Sign-in failed.</strong><span>{error}</span></div>}
           </form>
         </div>
       </div>
@@ -169,7 +171,7 @@ export default function AdminLoginPage() {
 
 function FeatureRow({ icon: Icon, title, body }: { icon: typeof ShieldIcon; title: string; body: string }) {
   return (
-    <div style={{ display: "flex", gap: 12, padding: 14, borderRadius: "var(--radius-md)", background: "rgba(255,255,255,0.06)" }}>
+    <div style={{ display: "flex", gap: 12, padding: 14, borderRadius: "14px", background: "rgba(255,255,255,0.06)" }}>
       <Icon size={18} />
       <div>
         <div style={{ fontWeight: 700, fontSize: 14 }}>{title}</div>

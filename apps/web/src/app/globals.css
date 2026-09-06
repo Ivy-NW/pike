@@ -1,27 +1,42 @@
 @import "./theme.css";
 
 :root {
-  --landing-paper: #f7f4ee;
-  --landing-soft: #f0ece4;
-  --landing-ink: #161c28;
-  --landing-muted: #625f59;
-  --landing-line: #d4cec3;
-  /* Landing keeps its own type identity (Space Grotesk/Inter) distinct from the app
-     shell's Geist — intentional, not a token-generation oversight. Fonts are self-hosted
-     via next/font (see layout.tsx), which exposes them as these CSS variables. */
-  --font-heading: var(--font-space-grotesk), sans-serif;
-  --font-body: var(--font-inter), sans-serif;
-  /* Accent tracks the shared design-token --primary instead of a hardcoded hex so the
-     landing page's brand blue stays in sync with admin/dashboard/webar. */
-  --landing-accent: var(--primary);
+  --landing-paper: var(--surface);
+  --landing-soft: var(--surface-container-low);
+  --landing-ink: var(--on-surface);
+  --landing-muted: var(--on-surface-variant);
+  --landing-line: var(--outline-variant);
+  /* Landing shares the platform-wide Orbitron/Inter pairing. Fonts are self-hosted
+     via next/font (see layout.tsx), which exposes them as these CSS variables.
+     !important: theme.css's dark-mode blocks redefine these at equal specificity,
+     and without it the winner flips to a system-font fallback in dark mode. */
+  --font-heading: var(--font-orbitron), sans-serif !important;
+  --font-body: var(--font-inter), sans-serif !important;
+  /* Blue is the interaction color. Gold stays exclusive to earned rewards. */
+  --landing-accent: var(--secondary);
+  --landing-accent-soft: var(--secondary-container);
+  --landing-accent-ink: var(--on-secondary);
+  --landing-action: var(--secondary);
+  --landing-action-hover: var(--on-secondary-container);
+  --landing-action-soft: var(--secondary-container);
+  --landing-action-ink: var(--on-secondary);
+  --landing-success: var(--success);
+  --landing-error: var(--error);
+  --landing-record: var(--inverse-surface);
+  --landing-record-ink: var(--inverse-on-surface);
+  --landing-record-muted: var(--outline-variant);
+  --landing-record-line: var(--outline);
+  --landing-record-accent: var(--secondary-container);
+  --landing-reward: var(--gold-deep);
+  --landing-slate: #111827;
 }
 
 html[data-theme="dark"] {
-  --landing-paper: #121926;
-  --landing-soft: #1b2432;
-  --landing-ink: #eef2f8;
-  --landing-muted: #aeb7c5;
-  --landing-line: #354052;
+  --landing-paper: var(--surface);
+  --landing-soft: var(--surface-container-low);
+  --landing-ink: var(--on-surface);
+  --landing-muted: var(--on-surface-variant);
+  --landing-line: var(--outline-variant);
 }
 
 * {
@@ -50,6 +65,8 @@ p {
   margin: 0;
 }
 
+.sr-only { position:absolute!important; width:1px!important; height:1px!important; padding:0!important; margin:-1px!important; overflow:hidden!important; clip:rect(0,0,0,0)!important; white-space:nowrap!important; border:0!important; }
+
 a {
   color: inherit;
   text-decoration: none;
@@ -70,9 +87,8 @@ button, input {
 }
 
 .section-eyebrow {
-  text-transform: uppercase;
-  letter-spacing: .14em;
-  font-size: 11px;
+  letter-spacing: .08em;
+  font-size: 12px;
   font-weight: 700;
   color: var(--landing-accent);
   margin-bottom: 18px;
@@ -128,7 +144,7 @@ button, input {
   min-height: 48px;
   padding: 13px 22px;
   border: 1px solid transparent;
-  border-radius: 10px;
+  border-radius: 6px;
   font-family: var(--font-body);
   font-size: 14px;
   font-weight: 700;
@@ -143,7 +159,7 @@ button, input {
 
 .btn-primary {
   background: var(--landing-accent);
-  color: var(--on-primary);
+  color: var(--landing-accent-ink);
 }
 
 .btn-primary:hover {
@@ -156,13 +172,13 @@ button, input {
   color: inherit;
 }
 
-.btn-link span {
-  transition: transform .18s ease;
+.btn-secondary {
+  border-color: var(--landing-line);
+  background: transparent;
+  color: var(--landing-ink);
 }
 
-.btn-link:hover span {
-  transform: translateY(3px);
-}
+.btn-secondary:hover { border-color: var(--landing-accent); color: var(--landing-accent); }
 
 .btn:disabled {
   opacity: .65;
@@ -192,12 +208,16 @@ a:focus-visible, button:focus-visible, input:focus-visible {
 }
 
 main#main-content {
-  padding-top: 82px;
+  padding-top: 76px;
 }
 
 section[id] {
   scroll-margin-top: 118px;
 }
+
+.legal-page { min-height: calc(100vh - 82px); padding-block: clamp(96px, 12vw, 156px); }
+.legal-page__panel { max-width: 760px; padding: clamp(28px, 5vw, 56px); background: var(--surface-container-lowest); border: 1px solid var(--landing-line); border-top: 4px solid var(--primary-container); border-radius: var(--radius-card); }
+.legal-page__meta { margin-bottom: 18px; color: var(--landing-accent); font-family: var(--font-mono); font-size: 11px; font-weight: 700; letter-spacing: .12em; text-transform: uppercase; }
 
 /* Progressive-enhancement scroll reveal: hidden state only applies once the blocking
    init script in layout.tsx has stamped `data-js` on <html>, so content stays visible
@@ -248,7 +268,7 @@ section[id] {
   }
 
   main#main-content {
-    padding-top: 70px;
+    padding-top: 68px;
   }
 }
 
@@ -270,4 +290,8 @@ section[id] {
     opacity: 1;
     transform: none;
   }
+}
+
+@media (max-height: 500px) and (orientation: landscape) {
+  main#main-content { padding-top: 58px; }
 }

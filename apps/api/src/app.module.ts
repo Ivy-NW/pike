@@ -16,6 +16,7 @@ import { PaymentsModule } from "./payments/payments.module";
 import { GamificationModule } from "./gamification/gamification.module";
 import { AdminGateModule } from "./admin-gate/admin-gate.module";
 import { WaitlistModule } from "./waitlist/waitlist.module";
+import { FreeMarkerModule } from "./free-marker/free-marker.module";
 import { AttestationModule } from "./attestation/attestation.module";
 import { LeaderboardModule } from "./leaderboard/leaderboard.module";
 import { MacroQuestModule } from "./macro-quest/macro-quest.module";
@@ -42,6 +43,7 @@ import { TokensModule } from "./tokens/tokens.module";
     GamificationModule,
     AdminGateModule,
     WaitlistModule,
+    FreeMarkerModule,
     AttestationModule,
     TokensModule,
     LeaderboardModule,

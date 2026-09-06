@@ -32,8 +32,9 @@ export default function QuestsPage() {
     <>
       <div className="page-header">
         <div>
+          <span className="eyebrow">Campaigns</span>
           <h1>Quests</h1>
-          <p>Every quest across all of your venues.</p>
+          <p>Manage every live, draft, and completed quest across your venues.</p>
         </div>
         <div style={{ display: "flex", gap: 10 }}>
           <div className="search-field">
@@ -47,13 +48,18 @@ export default function QuestsPage() {
         </div>
       </div>
 
-      {error && <p style={{ color: "var(--error)" }}>{error}</p>}
+      {error && <div className="notice notice-error" role="alert"><strong>Quests could not be loaded</strong><span>{error}</span></div>}
 
       <div className="card table-wrap">
         {filtered === null ? (
-          <div className="skeleton-row" />
+          <div className="loading-stack" aria-label="Loading quests"><div className="skeleton-row" /><div className="skeleton-row" /><div className="skeleton-row" /></div>
         ) : filtered.length === 0 ? (
-          <div className="empty-state">{quests?.length ? "No quests match that search." : "No quests yet — create your first one."}</div>
+          <div className="empty-state empty-state-panel">
+            <span className="badge badge-neutral">{quests?.length ? "No results" : "No quests"}</span>
+            <h2>{quests?.length ? "Try a different search" : "Create your first quest"}</h2>
+            <p>{quests?.length ? "Search by quest or venue name." : "Build a campaign, choose its reward, and publish it to a venue."}</p>
+            {!quests?.length && <Link href="/quests/new" className="primary">Create quest</Link>}
+          </div>
         ) : (
           <table>
             <thead>
@@ -68,15 +74,15 @@ export default function QuestsPage() {
             <tbody>
               {filtered.map((q) => (
                 <tr key={q.id}>
-                  <td>
+                  <td data-label="Quest">
                     <Link href={`/quests/${q.id}`} style={{ fontWeight: 600 }}>{q.name}</Link>
                   </td>
-                  <td>{q.venueName}</td>
-                  <td>{q.rewardDescription}</td>
-                  <td>
+                  <td data-label="Venue">{q.venueName}</td>
+                  <td data-label="Reward">{q.rewardDescription}</td>
+                  <td data-label="Status">
                     <span className={`badge ${q.status === "live" ? "badge-verified" : "badge-neutral"}`}>{q.status}</span>
                   </td>
-                  <td>{q.maxRedemptionsPerDay}</td>
+                  <td data-label="Cap / day">{q.maxRedemptionsPerDay}</td>
                 </tr>
               ))}
             </tbody>

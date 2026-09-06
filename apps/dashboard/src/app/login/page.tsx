@@ -32,6 +32,7 @@ export default function LoginPage() {
 
   return (
     <AuthSplitPanel>
+      <span className="eyebrow">Business portal</span>
       <h2 style={{ fontFamily: "var(--font-heading)", fontSize: 26, marginBottom: 6 }}>Welcome back</h2>
       <p style={{ color: "var(--on-surface-variant)", marginBottom: 32 }}>Log in to your venue dashboard.</p>
       <form onSubmit={submit} style={{ display: "flex", flexDirection: "column", gap: 16 }}>
@@ -46,7 +47,7 @@ export default function LoginPage() {
             <span style={{ fontFamily: "var(--font-mono)", fontSize: 11, letterSpacing: "0.05em", textTransform: "uppercase", color: "var(--on-surface-variant)" }}>
               Password
             </span>
-            <Link href="/forgot-password" style={{ fontSize: 12, color: "var(--primary)" }}>
+            <Link href="/forgot-password" style={{ fontSize: 12, color: "var(--action)" }}>
               Forgot?
             </Link>
           </div>
@@ -71,10 +72,10 @@ export default function LoginPage() {
         <button className="primary" style={{ marginTop: 8 }} disabled={loading}>
           {loading ? "Logging in..." : "Log in"}
         </button>
-        {error && <p style={{ color: "var(--error)" }}>{error}</p>}
+        {error && <div className="notice notice-error" role="alert"><strong>Login failed</strong><span>{error}</span></div>}
       </form>
       <p style={{ marginTop: 24, fontSize: 14, color: "var(--on-surface-variant)" }}>
-        New to PIKE? <Link href="/register" style={{ color: "var(--primary)", fontWeight: 600 }}>Create a business account</Link>
+        New to PIKE? <Link href="/register" style={{ color: "var(--action)", fontWeight: 600 }}>Create a business account</Link>
       </p>
     </AuthSplitPanel>
   );

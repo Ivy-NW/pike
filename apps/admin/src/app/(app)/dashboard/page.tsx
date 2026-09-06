@@ -27,12 +27,14 @@ export default function DashboardOverviewPage() {
     <>
       <div className="page-header">
         <div>
+          <span className="page-eyebrow">Operations overview</span>
           <h1>Dashboard</h1>
           <p>Platform-wide status at a glance.</p>
+          <div className="page-meta"><span>Live operational view</span><span>{flagged === null ? "Checking risk queue" : `${flagged.length} flagged for review`}</span></div>
         </div>
       </div>
 
-      {error && <p style={{ color: "var(--error)" }}>{error}</p>}
+      {error && <div className="state-alert" role="alert"><strong>Some operational data is unavailable.</strong><span>{error}</span></div>}
 
       <div className="stat-grid">
         <StatCard icon={UsersIcon} label="Total businesses" value={businesses?.length} />
@@ -41,7 +43,7 @@ export default function DashboardOverviewPage() {
         <StatCard icon={FlagIcon} label="Flagged redemptions" value={flagged?.length} tone={flagged && flagged.length > 0 ? "warning" : undefined} />
       </div>
 
-      <div style={{ display: "grid", gridTemplateColumns: "1.6fr 1fr", gap: 20, alignItems: "start" }}>
+      <div className="operational-grid">
         <div className="card" style={{ margin: 0 }}>
           <div className="card-title">
             <FlagIcon size={18} />
@@ -77,7 +79,7 @@ export default function DashboardOverviewPage() {
             )}
           </div>
           {flagged && flagged.length > 8 && (
-            <Link href="/redemptions" style={{ color: "var(--primary)", fontSize: 13, fontWeight: 600 }}>
+            <Link href="/redemptions" style={{ color: "var(--action)", fontSize: 13, fontWeight: 600 }}>
               View all {flagged.length} →
             </Link>
           )}
@@ -118,7 +120,7 @@ function StatCard({ icon: Icon, label, value, tone }: { icon: typeof UsersIcon; 
   return (
     <div className="stat-card">
       <div className="stat-card-top">
-        <span className="stat-icon" style={tone === "warning" ? { background: "color-mix(in srgb, var(--secondary-container) 25%, transparent)", color: "var(--secondary)" } : undefined}>
+        <span className="stat-icon" style={tone === "warning" ? { background: "color-mix(in srgb, var(--primary-container) 25%, transparent)", color: "var(--primary)" } : undefined}>
           <Icon size={16} />
         </span>
       </div>

@@ -39,8 +39,8 @@ function CustomTabBar({ state, descriptors, navigation }: any) {
       alignItems: "center",
       justifyContent: "space-around",
       borderWidth: 1,
-      borderColor: isDark ? "rgba(212, 175, 55, 0.2)" : "rgba(217, 119, 6, 0.2)",
-      shadowColor: isDark ? "#000000" : "#0f172a",
+      borderColor: isDark ? "rgba(156, 124, 74, 0.2)" : "rgba(126, 96, 48, 0.2)",
+      shadowColor: isDark ? "#000000" : "#1F1A14",
       shadowOffset: { width: 0, height: 6 },
       shadowOpacity: isDark ? 0.75 : 0.12,
       shadowRadius: 14,
@@ -107,7 +107,7 @@ function CustomTabBar({ state, descriptors, navigation }: any) {
                 <MaterialIcons
                   name={tab.icon}
                   size={24}
-                  color={isDark ? "#f59e0b" : "#d97706"}
+                  color={isDark ? "#9C7C4A" : "#7E6030"}
                 />
               </NeumorphicView>
             ) : (
@@ -115,7 +115,7 @@ function CustomTabBar({ state, descriptors, navigation }: any) {
                 <MaterialIcons
                   name={tab.icon}
                   size={24}
-                  color={isDark ? "#71717a" : "#64748b"}
+                  color={isDark ? "#5c5449" : "#8A8171"}
                 />
               </View>
             )}

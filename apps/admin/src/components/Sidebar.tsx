@@ -4,7 +4,7 @@ import { usePathname, useRouter } from "next/navigation";
 import { Logo } from "./Logo";
 import { ThemeToggle } from "./ThemeToggle";
 import { clearToken } from "@/lib/auth";
-import { BuildingIcon, CompassIcon, FlagIcon, GridIcon, SignOutIcon, UsersIcon } from "./icons";
+import { BuildingIcon, CompassIcon, FlagIcon, GridIcon, MailIcon, SignOutIcon, UsersIcon } from "./icons";
 
 const links = [
   { href: "/dashboard", label: "Dashboard", icon: GridIcon },
@@ -12,6 +12,7 @@ const links = [
   { href: "/venues", label: "Venues", icon: BuildingIcon },
   { href: "/quests", label: "Quests", icon: CompassIcon },
   { href: "/redemptions", label: "Redemptions", icon: FlagIcon },
+  { href: "/leads", label: "Free marker leads", icon: MailIcon },
 ];
 
 export function Sidebar() {
@@ -23,14 +24,14 @@ export function Sidebar() {
       <div className="sidebar-brand">
         <Logo size={26} />
         <div>
-          <div style={{ fontFamily: "var(--font-heading)", fontWeight: 700, fontSize: 16, color: "var(--primary)", lineHeight: 1 }}>PIKE</div>
+          <div style={{ fontFamily: "var(--font-heading)", fontWeight: 700, fontSize: 16, lineHeight: 1 }}>PIKE</div>
           <div className="sidebar-brand-label">Global Admin Portal</div>
         </div>
         <div style={{ marginLeft: "auto" }}>
           <ThemeToggle />
         </div>
       </div>
-      <nav className="sidebar-nav">
+      <nav className="sidebar-nav" aria-label="Admin portal">
         {links.map(({ href, label, icon: Icon }) => {
           const active = pathname === href || pathname.startsWith(`${href}/`);
           return (
