@@ -6,6 +6,7 @@ import type {
   CreateRedemptionResponse,
   SigninConsumerRequest,
   SignupConsumerRequest,
+  UserQuestListItem,
 } from "@pike/shared-types";
 
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL ?? "http://localhost:4000";
@@ -48,4 +49,5 @@ export const api = {
     request<ConsumerAuthResponse>(`/auth/consumer/signup`, { method: "POST", body: JSON.stringify(body) }),
   signinConsumer: (body: SigninConsumerRequest) =>
     request<ConsumerAuthResponse>(`/auth/consumer/signin`, { method: "POST", body: JSON.stringify(body) }),
+  listQuests: () => request<UserQuestListItem[]>(`/users/me/quests`),
 };

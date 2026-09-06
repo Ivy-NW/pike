@@ -14,6 +14,20 @@
       rel="stylesheet"
     />
     <link rel="icon" href="/favicon.png" />
+    <!-- Mirrors packages/design-tokens's themeInitScript (apps/web/src/app/layout.tsx inlines the
+         same logic) so a stored theme choice applies before first paint, avoiding a flash of the
+         wrong theme. Keep in sync if that source ever changes. -->
+    <script>
+      (function () {
+        try {
+          var t = localStorage.getItem("pike-theme");
+          if (t !== "light" && t !== "dark") {
+            t = window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
+          }
+          document.documentElement.setAttribute("data-theme", t);
+        } catch (e) {}
+      })();
+    </script>
   </head>
   <body>
     <div id="root"></div>

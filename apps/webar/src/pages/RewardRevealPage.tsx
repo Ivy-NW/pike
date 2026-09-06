@@ -2,7 +2,13 @@ import { useEffect, useState } from "react";
 import { useNavigate, useParams, useSearchParams } from "react-router-dom";
 import { api, ApiError } from "../lib/api";
 import { clearConsumerToken, getConsumerToken, setConsumerToken } from "../lib/auth";
-import type { ClaimRewardResponse } from "@pike/shared-types";
+import type { ClaimRewardResponse, UserQuestListItem } from "@pike/shared-types";
+
+/** The app isn't published to app stores yet (apps/app/app.json still has a placeholder EAS
+ * project id) — send "Get the app" to the marketing site's player waitlist instead of a store
+ * link that doesn't exist. One env var away from swapping in real store links once they do. */
+const APP_CTA_URL =
+  import.meta.env.VITE_APP_CTA_URL ?? "https://pike.app/play#player-waitlist";
 
 interface RedemptionDetail {
   id: string;
@@ -41,6 +47,7 @@ export function RewardRevealPage() {
   // PWA hand-off (channel=app on web): after claiming, "Back to your wallet" returns to the
   // app origin instead of leaving the user stranded on the webar flow.
   const returnUrl = searchParams.get("returnUrl");
+  const demoState = import.meta.env.DEV ? searchParams.get("demo") : null;
 
   const [redemption, setRedemption] = useState<RedemptionDetail | null>(null);
   const [claimed, setClaimed] = useState(false);
@@ -54,6 +61,7 @@ export function RewardRevealPage() {
   const [identifier, setIdentifier] = useState("");
   const [error, setError] = useState<string | null>(null);
   const [award, setAward] = useState<AwardInfo | null>(null);
+  const [moreQuests, setMoreQuests] = useState<UserQuestListItem[] | null>(null);
 
   useEffect(() => {
     if (!redemptionId) return;
@@ -102,6 +110,25 @@ export function RewardRevealPage() {
       setClaiming(false);
     }
   };
+
+  // Once a web-only guest claims, show them what else is live — a concrete reason to get
+  // the app instead of a dead end. They just signed in/up, so the same consumer token that
+  // claimed the reward is enough to hit the authenticated quest list.
+  useEffect(() => {
+    if (channel !== "webar" || !claimed) return;
+    if (demoState === "claimed") {
+      setMoreQuests([
+        { id: "demo-2", name: "The Roasters' Trail", theme: "default", venueId: "demo-2", venueName: "Northside Coffee Co.", rewardDescription: "A free pour-over", completed: false, markerId: "demo-2" },
+        { id: "demo-3", name: "Golden Hour Special", theme: "default", venueId: "demo-3", venueName: "The Rooftop Bar", rewardDescription: "Half-price appetizer", completed: false, markerId: "demo-3" },
+      ]);
+      return;
+    }
+    if (!getConsumerToken()) return;
+    api
+      .listQuests()
+      .then((quests) => setMoreQuests(quests.filter((q) => !q.completed).slice(0, 3)))
+      .catch(() => setMoreQuests(null));
+  }, [channel, claimed, demoState]);
 
   // Authenticated in-app scan: store the app's token and claim automatically.
   useEffect(() => {
@@ -222,10 +249,29 @@ export function RewardRevealPage() {
             )}
             {channel === "webar" && (
               <>
+                {moreQuests && moreQuests.length > 0 && (
+                  <div className="card" style={{ marginTop: 24, textAlign: "left" }}>
+                    <p style={{ fontFamily: "var(--font-mono)", fontSize: 12, letterSpacing: "0.05em", textTransform: "uppercase", color: "var(--primary)", marginBottom: 12 }}>
+                      {moreQuests.length} more quest{moreQuests.length > 1 ? "s" : ""} waiting
+                    </p>
+                    {moreQuests.map((q) => (
+                      <div key={q.id} style={{ display: "flex", justifyContent: "space-between", gap: 12, fontSize: 13, padding: "8px 0", borderTop: "1px solid var(--border-subtle)" }}>
+                        <span style={{ color: "var(--on-surface)" }}>
+                          {q.name} <span style={{ color: "var(--on-surface-variant)" }}>· {q.venueName}</span>
+                        </span>
+                        <span style={{ color: "var(--on-surface-variant)", whiteSpace: "nowrap" }}>{q.rewardDescription}</span>
+                      </div>
+                    ))}
+                  </div>
+                )}
                 <p style={{ color: "var(--on-surface-variant)", fontSize: 14, marginTop: 16 }}>
-                  Save your reward and start earning XP — get the PIKE app.
+                  {moreQuests && moreQuests.length > 0
+                    ? "Track them all, get notified when new quests open near you — only in the app."
+                    : "Save your reward and start earning XP — get the PIKE app."}
                 </p>
-                <button className="btn-text">Get the app →</button>
+                <a className="btn-text" href={APP_CTA_URL} target="_blank" rel="noreferrer">
+                  Get the app →
+                </a>
               </>
             )}
           </div>
@@ -265,7 +311,11 @@ export function RewardRevealPage() {
             </button>
             {error && <p style={{ color: "var(--error)", fontSize: 13, marginTop: 8 }}>{error}</p>}
             <p style={{ color: "var(--on-surface-variant)", fontSize: 12, marginTop: 20, textAlign: "center" }}>
-              Save your reward and start earning XP — get the PIKE app.
+              Save your reward and start earning XP —{" "}
+              <a href={APP_CTA_URL} target="_blank" rel="noreferrer" style={{ color: "var(--primary)" }}>
+                get the PIKE app
+              </a>
+              .
             </p>
           </div>
         )}

@@ -89,7 +89,7 @@ h3 {
  * This page IS that moment, so it's the one screen where reward-accent is expected
  * to appear prominently rather than sparingly. */
 .reward-accent {
-  color: var(--secondary-container);
+  color: var(--primary);
 }
 
 .btn-primary {
@@ -172,6 +172,8 @@ h3 {
   align-items: center;
   justify-content: center;
   overflow: hidden;
+  /* Black is a camera-loading backdrop, not a themed surface — the canvas covers it
+   * entirely once the feed starts, so it intentionally doesn't follow data-theme. */
   background: #000;
   color: #fff;
 }
@@ -184,6 +186,22 @@ h3 {
   background: repeating-linear-gradient(0deg, transparent 0 4px, rgba(180,197,255,.025) 4px 5px);
 }
 
+.scan-canvas {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.scan-flash {
+  position: absolute;
+  inset: 0;
+  background: color-mix(in srgb, var(--primary) 22%, transparent);
+  transition: opacity .3s ease;
+  pointer-events: none;
+}
+
 .scan-brand {
   position: absolute;
   z-index: 2;
@@ -194,6 +212,7 @@ h3 {
   gap: 8px;
   font: 700 13px/1 var(--font-heading);
   letter-spacing: .08em;
+  color: #fff;
 }
 
 .scan-brand::before {
@@ -205,14 +224,67 @@ h3 {
   box-shadow: 0 0 16px var(--primary);
 }
 
+/* Overlay chrome that sits on its own translucent, theme-aware card — unlike bare text
+ * over the live camera feed, a card supplies its own contrast so it can safely follow
+ * the user's light/dark choice. */
+.scan-toggle {
+  position: absolute;
+  z-index: 10;
+  top: max(20px, env(safe-area-inset-top));
+  right: 20px;
+  display: grid;
+  place-items: center;
+  width: 40px;
+  height: 40px;
+  border: 1px solid var(--border-subtle);
+  border-radius: 50%;
+  background: color-mix(in srgb, var(--surface-container-lowest) 82%, transparent);
+  backdrop-filter: blur(16px);
+  color: var(--on-surface);
+  cursor: pointer;
+}
+
+.scan-status {
+  position: absolute;
+  z-index: 10;
+  top: max(72px, calc(env(safe-area-inset-top) + 52px));
+  left: 50%;
+  transform: translateX(-50%);
+  margin: 0;
+  padding: 8px 18px;
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-full);
+  background: color-mix(in srgb, var(--surface-container-lowest) 82%, transparent);
+  backdrop-filter: blur(16px);
+  color: var(--on-surface);
+  white-space: nowrap;
+  transition: border-color .3s ease;
+}
+
+.scan-status[data-state="recognized"] {
+  border-color: color-mix(in srgb, var(--primary) 55%, var(--border-subtle));
+}
+
+/* Blue while actively scanning (matches the landing page's own scan/viewfinder
+ * motif — .viewfinder/.radarSweep/.pingRing in Landing.module.css), gold once a
+ * marker is recognized — gold stays reserved for the reward moment, see .reward-accent. */
 .scan-frame {
+  --scan-accent: var(--secondary);
   position: relative;
   z-index: 2;
   width: min(62vw, 240px);
   aspect-ratio: 1;
+  display: grid;
+  place-items: center;
   border: 1px solid rgba(255,255,255,.25);
   border-radius: var(--radius-lg);
   box-shadow: inset 0 0 0 1px rgba(255,255,255,.08), 0 0 40px rgba(0,0,0,.28);
+  transition: box-shadow .3s ease;
+}
+
+.scan-frame[data-state="recognized"] {
+  --scan-accent: var(--primary);
+  box-shadow: inset 0 0 0 1px rgba(255,255,255,.08), 0 0 40px color-mix(in srgb, var(--scan-accent) 55%, transparent);
 }
 
 .scan-frame::before,
@@ -222,27 +294,63 @@ h3 {
   inset: -2px;
   border: 3px solid transparent;
   pointer-events: none;
+  transition: border-color .3s ease;
 }
 
-.scan-frame::before { border-top-color: var(--primary); border-left-color: var(--primary); border-radius: var(--radius-lg) 0 0; clip-path: polygon(0 0, 42% 0, 42% 3px, 3px 3px, 3px 42%, 0 42%); }
-.scan-frame::after { border-right-color: var(--primary); border-bottom-color: var(--primary); border-radius: 0 0 var(--radius-lg); clip-path: polygon(100% 58%, 100% 100%, 58% 100%, 58% calc(100% - 3px), calc(100% - 3px) calc(100% - 3px), calc(100% - 3px) 58%); }
+.scan-frame::before { border-top-color: var(--scan-accent); border-left-color: var(--scan-accent); border-radius: var(--radius-lg) 0 0; clip-path: polygon(0 0, 42% 0, 42% 3px, 3px 3px, 3px 42%, 0 42%); }
+.scan-frame::after { border-right-color: var(--scan-accent); border-bottom-color: var(--scan-accent); border-radius: 0 0 var(--radius-lg); clip-path: polygon(100% 58%, 100% 100%, 58% 100%, 58% calc(100% - 3px), calc(100% - 3px) calc(100% - 3px), calc(100% - 3px) 58%); }
+
+.scan-frame-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: var(--scan-accent);
+  opacity: .85;
+  transition: background-color .3s ease;
+}
+
+.scan-panel {
+  position: absolute;
+  z-index: 10;
+  bottom: max(28px, env(safe-area-inset-bottom));
+  width: min(86%, 380px);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 14px;
+  padding: 18px 20px;
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-xl);
+  background: color-mix(in srgb, var(--surface-container-lowest) 90%, transparent);
+  backdrop-filter: blur(16px);
+}
 
 .scan-instruction {
-  position: relative;
-  z-index: 2;
-  max-width: 340px;
-  margin: 22px 24px 0;
-  color: #fff;
+  margin: 0;
+  color: var(--on-surface);
   font: 500 14px/1.5 var(--font-body);
   text-align: center;
 }
 
-.scan-dev-action {
-  position: absolute;
-  z-index: 3;
-  bottom: max(32px, calc(env(safe-area-inset-bottom) + 20px));
-  width: min(84%, 340px);
+.scan-action {
+  width: 100%;
+  min-height: 52px;
+  padding: 14px 20px;
+  border: none;
+  border-radius: var(--radius-full);
+  background: var(--primary-container);
+  color: var(--on-primary-container);
+  font-family: var(--font-mono);
+  font-weight: 700;
+  font-size: 13px;
+  letter-spacing: .06em;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: transform .15s ease, opacity .15s ease;
 }
+
+.scan-action:active:not(:disabled) { transform: translateY(1px); }
+.scan-action:disabled { opacity: .7; cursor: default; }
 
 input {
   width: 100%;
