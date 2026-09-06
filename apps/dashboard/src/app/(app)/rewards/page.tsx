@@ -111,7 +111,7 @@ export default function RewardsPage() {
       <div className="stat-grid">
         <div className="stat-card">
           <div className="stat-card-top">
-            <span className="stat-icon"><GiftIcon size={16} /></span>
+            <span className="stat-icon" style={{ background: "color-mix(in srgb, var(--primary) 12%, transparent)", color: "var(--primary)" }}><GiftIcon size={16} /></span>
           </div>
           <div className="stat-label">Rewards in circulation</div>
           <div className="stat-value">
@@ -148,7 +148,7 @@ export default function RewardsPage() {
 
         <div className="stat-card">
           <div className="stat-card-top">
-            <span className="stat-icon"><GiftIcon size={16} /></span>
+            <span className="stat-icon" style={{ background: "color-mix(in srgb, var(--primary) 12%, transparent)", color: "var(--primary)" }}><GiftIcon size={16} /></span>
           </div>
           <div className="stat-label">Claimed all time</div>
           <div className="stat-value">

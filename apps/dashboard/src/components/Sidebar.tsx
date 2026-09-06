@@ -23,7 +23,7 @@ export function Sidebar({ businessName }: { businessName?: string }) {
       <div className="sidebar-brand">
         <Logo size={26} />
         <div>
-          <div style={{ fontFamily: "var(--font-heading)", fontWeight: 700, fontSize: 16, color: "var(--primary)", lineHeight: 1 }}>PIKE</div>
+          <div style={{ fontFamily: "var(--font-heading)", fontWeight: 700, fontSize: 16, lineHeight: 1 }}>PIKE</div>
           <div className="sidebar-brand-label">Business Portal</div>
         </div>
         <div style={{ marginLeft: "auto" }}>

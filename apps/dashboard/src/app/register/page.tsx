@@ -36,7 +36,7 @@ export default function RegisterPage() {
         <h2 style={{ fontFamily: "var(--font-heading)", fontSize: 26 }}>Check your email</h2>
         <p style={{ color: "var(--on-surface-variant)", marginTop: 12 }}>
           We sent a verification link (logged server-side in dev — no email provider configured yet). Verify, then{" "}
-          <Link href="/login" style={{ color: "var(--primary)", fontWeight: 600 }}>log in</Link>.
+          <Link href="/login" style={{ color: "var(--action)", fontWeight: 600 }}>log in</Link>.
         </p>
       </AuthSplitPanel>
     );
@@ -89,7 +89,7 @@ export default function RegisterPage() {
         {error && <div className="notice notice-error" role="alert"><strong>Account was not created</strong><span>{error}</span></div>}
       </form>
       <p style={{ marginTop: 24, fontSize: 14, color: "var(--on-surface-variant)" }}>
-        Already have an account? <Link href="/login" style={{ color: "var(--primary)", fontWeight: 600 }}>Log in</Link>
+        Already have an account? <Link href="/login" style={{ color: "var(--action)", fontWeight: 600 }}>Log in</Link>
       </p>
     </AuthSplitPanel>
   );

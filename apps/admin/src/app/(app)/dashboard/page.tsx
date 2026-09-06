@@ -79,7 +79,7 @@ export default function DashboardOverviewPage() {
             )}
           </div>
           {flagged && flagged.length > 8 && (
-            <Link href="/redemptions" style={{ color: "var(--primary)", fontSize: 13, fontWeight: 600 }}>
+            <Link href="/redemptions" style={{ color: "var(--action)", fontSize: 13, fontWeight: 600 }}>
               View all {flagged.length} →
             </Link>
           )}
@@ -120,7 +120,7 @@ function StatCard({ icon: Icon, label, value, tone }: { icon: typeof UsersIcon; 
   return (
     <div className="stat-card">
       <div className="stat-card-top">
-        <span className="stat-icon" style={tone === "warning" ? { background: "color-mix(in srgb, var(--secondary-container) 25%, transparent)", color: "var(--secondary)" } : undefined}>
+        <span className="stat-icon" style={tone === "warning" ? { background: "color-mix(in srgb, var(--primary-container) 25%, transparent)", color: "var(--primary)" } : undefined}>
           <Icon size={16} />
         </span>
       </div>

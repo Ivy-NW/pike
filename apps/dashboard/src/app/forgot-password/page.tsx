@@ -23,7 +23,7 @@ export default function ForgotPasswordPage() {
         Email support@pike.app
       </a>
       <p style={{ marginTop: 24, fontSize: 14, color: "var(--on-surface-variant)" }}>
-        <Link href="/login" style={{ color: "var(--primary)", fontWeight: 600 }}>Back to login</Link>
+        <Link href="/login" style={{ color: "var(--action)", fontWeight: 600 }}>Back to login</Link>
       </p>
     </AuthSplitPanel>
   );

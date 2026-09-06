@@ -47,7 +47,7 @@ export default function LoginPage() {
             <span style={{ fontFamily: "var(--font-mono)", fontSize: 11, letterSpacing: "0.05em", textTransform: "uppercase", color: "var(--on-surface-variant)" }}>
               Password
             </span>
-            <Link href="/forgot-password" style={{ fontSize: 12, color: "var(--primary)" }}>
+            <Link href="/forgot-password" style={{ fontSize: 12, color: "var(--action)" }}>
               Forgot?
             </Link>
           </div>
@@ -75,7 +75,7 @@ export default function LoginPage() {
         {error && <div className="notice notice-error" role="alert"><strong>Login failed</strong><span>{error}</span></div>}
       </form>
       <p style={{ marginTop: 24, fontSize: 14, color: "var(--on-surface-variant)" }}>
-        New to PIKE? <Link href="/register" style={{ color: "var(--primary)", fontWeight: 600 }}>Create a business account</Link>
+        New to PIKE? <Link href="/register" style={{ color: "var(--action)", fontWeight: 600 }}>Create a business account</Link>
       </p>
     </AuthSplitPanel>
   );
