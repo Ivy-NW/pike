@@ -3,25 +3,30 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 import { api } from "@/lib/api";
 import { BuildingIcon, CompassIcon, FlagIcon, ShieldIcon, UsersIcon } from "@/components/icons";
+import { useToast } from "@/components/Toast";
 
 export default function DashboardOverviewPage() {
-  const [businesses, setBusinesses] = useState<any[] | null>(null);
-  const [venues, setVenues] = useState<any[] | null>(null);
-  const [quests, setQuests] = useState<any[] | null>(null);
+  const { showToast } = useToast();
+  const [stats, setStats] = useState<{ businesses: number; venues: number; activeQuests: number; flaggedRedemptions: number } | null>(null);
+  const [pendingBusinesses, setPendingBusinesses] = useState<any[] | null>(null);
   const [flagged, setFlagged] = useState<any[] | null>(null);
   const [error, setError] = useState<string | null>(null);
 
-  const refreshBusinesses = () => api.listBusinesses().then(setBusinesses).catch((e) => setError(e.message));
+  const refreshPending = () =>
+    api
+      .listBusinesses({ limit: 50 })
+      .then((page) => setPendingBusinesses(page.items.filter((b) => b.paymentStatus !== "verified" && !b.suspended)))
+      .catch((e) => setError(e.message));
 
   useEffect(() => {
-    refreshBusinesses();
-    api.listVenues().then(setVenues).catch((e) => setError(e.message));
-    api.listQuests().then(setQuests).catch((e) => setError(e.message));
-    api.listRedemptions("flagged").then(setFlagged).catch((e) => setError(e.message));
+    api.getStats().then(setStats).catch((e) => setError(e.message));
+    refreshPending();
+    api
+      .listRedemptions("flagged", { limit: 20 })
+      .then((page) => setFlagged(page.items))
+      .catch((e) => setError(e.message));
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
-
-  const activeQuests = quests?.filter((q) => q.status === "live").length ?? null;
-  const pendingBusinesses = businesses?.filter((b) => b.paymentStatus !== "verified" && !b.suspended) ?? [];
 
   return (
     <>
@@ -30,17 +35,17 @@ export default function DashboardOverviewPage() {
           <span className="page-eyebrow">Operations overview</span>
           <h1>Dashboard</h1>
           <p>Platform-wide status at a glance.</p>
-          <div className="page-meta"><span>Live operational view</span><span>{flagged === null ? "Checking risk queue" : `${flagged.length} flagged for review`}</span></div>
+          <div className="page-meta"><span>Live operational view</span><span>{stats === null ? "Checking risk queue" : `${stats.flaggedRedemptions} flagged for review`}</span></div>
         </div>
       </div>
 
       {error && <div className="state-alert" role="alert"><strong>Some operational data is unavailable.</strong><span>{error}</span></div>}
 
       <div className="stat-grid">
-        <StatCard icon={UsersIcon} label="Total businesses" value={businesses?.length} />
-        <StatCard icon={BuildingIcon} label="Total venues" value={venues?.length} />
-        <StatCard icon={CompassIcon} label="Active quests" value={activeQuests} />
-        <StatCard icon={FlagIcon} label="Flagged redemptions" value={flagged?.length} tone={flagged && flagged.length > 0 ? "warning" : undefined} />
+        <StatCard icon={UsersIcon} label="Total businesses" value={stats?.businesses} />
+        <StatCard icon={BuildingIcon} label="Total venues" value={stats?.venues} />
+        <StatCard icon={CompassIcon} label="Active quests" value={stats?.activeQuests} />
+        <StatCard icon={FlagIcon} label="Flagged redemptions" value={stats?.flaggedRedemptions} tone={stats && stats.flaggedRedemptions > 0 ? "warning" : undefined} />
       </div>
 
       <div className="operational-grid">
@@ -78,9 +83,9 @@ export default function DashboardOverviewPage() {
               </table>
             )}
           </div>
-          {flagged && flagged.length > 8 && (
+          {stats && stats.flaggedRedemptions > 8 && (
             <Link href="/redemptions" style={{ color: "var(--action)", fontSize: 13, fontWeight: 600 }}>
-              View all {flagged.length} →
+              View all {stats.flaggedRedemptions} →
             </Link>
           )}
         </div>
@@ -91,7 +96,7 @@ export default function DashboardOverviewPage() {
             Pending verification
           </div>
           <p className="card-subtext">Businesses awaiting payment verification.</p>
-          {pendingBusinesses === null || businesses === null ? (
+          {pendingBusinesses === null ? (
             <SkeletonRows />
           ) : pendingBusinesses.length === 0 ? (
             <div className="empty-state">Nothing pending.</div>
@@ -103,7 +108,18 @@ export default function DashboardOverviewPage() {
                     <div style={{ fontWeight: 600, fontSize: 14 }}>{b.name}</div>
                     <div style={{ fontSize: 12, color: "var(--on-surface-variant)" }}>{b.email}</div>
                   </div>
-                  <button className="primary" onClick={() => api.verifyBusiness(b.id).then(refreshBusinesses)}>
+                  <button
+                    className="secondary"
+                    onClick={() =>
+                      api
+                        .verifyBusiness(b.id)
+                        .then(() => {
+                          showToast(`${b.name} marked verified.`);
+                          refreshPending();
+                        })
+                        .catch(() => showToast("Could not verify business", "error"))
+                    }
+                  >
                     Approve
                   </button>
                 </div>
@@ -120,7 +136,7 @@ function StatCard({ icon: Icon, label, value, tone }: { icon: typeof UsersIcon; 
   return (
     <div className="stat-card">
       <div className="stat-card-top">
-        <span className="stat-icon" style={tone === "warning" ? { background: "color-mix(in srgb, var(--primary-container) 25%, transparent)", color: "var(--primary)" } : undefined}>
+        <span className="stat-icon" style={tone === "warning" ? { background: "color-mix(in srgb, var(--error) 16%, transparent)", color: "var(--error)" } : undefined}>
           <Icon size={16} />
         </span>
       </div>

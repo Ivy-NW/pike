@@ -6,13 +6,36 @@ type StatusFilter = "" | "claimed" | "flagged" | "rejected";
 
 export default function RedemptionsPage() {
   const [redemptions, setRedemptions] = useState<any[] | null>(null);
+  const [nextCursor, setNextCursor] = useState<string | null>(null);
+  const [loadingMore, setLoadingMore] = useState(false);
   const [filter, setFilter] = useState<StatusFilter>("");
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     setRedemptions(null);
-    api.listRedemptions(filter || undefined).then(setRedemptions).catch((e) => setError(e.message));
+    setNextCursor(null);
+    api
+      .listRedemptions(filter || undefined)
+      .then((page) => {
+        setRedemptions(page.items);
+        setNextCursor(page.nextCursor);
+      })
+      .catch((e) => setError(e.message));
   }, [filter]);
+
+  const loadMore = async () => {
+    if (!nextCursor) return;
+    setLoadingMore(true);
+    try {
+      const page = await api.listRedemptions(filter || undefined, { cursor: nextCursor });
+      setRedemptions((prev) => [...(prev ?? []), ...page.items]);
+      setNextCursor(page.nextCursor);
+    } catch (e: any) {
+      setError(e.message);
+    } finally {
+      setLoadingMore(false);
+    }
+  };
 
   return (
     <>
@@ -21,7 +44,7 @@ export default function RedemptionsPage() {
           <span className="page-eyebrow">Trust &amp; safety</span>
           <h1>Redemptions</h1>
           <p>Flagged completions surface FR-13&apos;s anti-gaming signal for manual review.</p>
-          <div className="page-meta"><span>{redemptions === null ? "Loading review queue" : `${redemptions.length} ${filter || "total"}`}</span><span>{filter === "flagged" ? "Manual review queue" : "Redemption ledger"}</span></div>
+          <div className="page-meta"><span>{redemptions === null ? "Loading review queue" : `${redemptions.length} loaded`}</span><span>{filter === "flagged" ? "Manual review queue" : "Redemption ledger"}</span></div>
         </div>
         <div className="tab-bar">
           {(["", "claimed", "flagged", "rejected"] as const).map((s) => (
@@ -66,6 +89,14 @@ export default function RedemptionsPage() {
           </table>
         )}
       </div>
+
+      {nextCursor && (
+        <div style={{ display: "flex", justifyContent: "center", marginTop: -8, marginBottom: 20 }}>
+          <button className="secondary" onClick={loadMore} disabled={loadingMore}>
+            {loadingMore ? "Loading…" : "Load more"}
+          </button>
+        </div>
+      )}
     </>
   );
 }

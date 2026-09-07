@@ -1,3 +1,4 @@
+import type { Business, PaymentStatus } from "@pike/shared-types";
 import { getToken } from "./auth";
 
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL ?? "http://localhost:4000";
@@ -71,6 +72,11 @@ export interface QuestPatch {
   expiresAt?: string | null;
 }
 
+export interface AnalyticsTrends {
+  days: { date: string; total: number; claimed: number; flagged: number; rejected: number }[];
+  byVenue: { venueId: string; venueName: string; total: number }[];
+}
+
 export const api = {
   registerBusiness: (name: string, email: string, password: string) =>
     request("/auth/business/register", { method: "POST", body: JSON.stringify({ name, email, password }) }),
@@ -79,9 +85,21 @@ export const api = {
       method: "POST",
       body: JSON.stringify({ email, password }),
     }),
-  me: () => request<any>("/businesses/me"),
+  verifyBusinessEmail: (token: string) =>
+    request<{ business: any }>("/auth/business/verify-email", { method: "POST", body: JSON.stringify({ token }) }),
+  resendVerification: (email: string) =>
+    request<{ ok: boolean }>("/auth/business/resend-verification", { method: "POST", body: JSON.stringify({ email }) }),
+  forgotPassword: (email: string) =>
+    request<{ ok: boolean }>("/auth/business/forgot-password", { method: "POST", body: JSON.stringify({ email }) }),
+  resetPassword: (token: string, password: string) =>
+    request<{ ok: boolean }>("/auth/business/reset-password", { method: "POST", body: JSON.stringify({ token, password }) }),
+  me: () => request<Business>("/businesses/me"),
+  updateBusinessProfile: (patch: { name?: string; phone?: string; address?: string }) =>
+    request<Business>("/businesses/me", { method: "PATCH", body: JSON.stringify(patch) }),
+  getAnalyticsTrends: (days: 7 | 30, questId?: string) =>
+    request<AnalyticsTrends>(`/businesses/me/analytics/trends?days=${days}${questId ? `&questId=${questId}` : ""}`),
   attachPaymentMethod: (stripePaymentMethodId: string) =>
-    request<{ paymentStatus: string }>("/businesses/me/payment-method", {
+    request<{ paymentStatus: PaymentStatus }>("/businesses/me/payment-method", {
       method: "POST",
       body: JSON.stringify({ stripePaymentMethodId }),
     }),

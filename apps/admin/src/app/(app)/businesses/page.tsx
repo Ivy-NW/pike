@@ -1,10 +1,18 @@
 "use client";
 import { useEffect, useMemo, useState } from "react";
 import { api, ApiError } from "@/lib/api";
+import { getAdminRole } from "@/lib/auth";
 import { SearchIcon } from "@/components/icons";
+import { useToast } from "@/components/Toast";
+import { ConfirmDialog } from "@/components/ConfirmDialog";
 
 export default function BusinessesPage() {
+  const { showToast } = useToast();
+  const isSuperAdmin = getAdminRole() === "super_admin";
+
   const [businesses, setBusinesses] = useState<any[] | null>(null);
+  const [nextCursor, setNextCursor] = useState<string | null>(null);
+  const [loadingMore, setLoadingMore] = useState(false);
   const [query, setQuery] = useState("");
   const [error, setError] = useState<string | null>(null);
 
@@ -13,12 +21,36 @@ export default function BusinessesPage() {
   const [newComp, setNewComp] = useState(true);
   const [creating, setCreating] = useState(false);
 
-  const refresh = () => api.listBusinesses().then(setBusinesses).catch((e) => setError(e.message));
+  const [suspendTarget, setSuspendTarget] = useState<{ id: string; name: string; suspended: boolean } | null>(null);
+  const [suspending, setSuspending] = useState(false);
+
+  const refresh = () =>
+    api
+      .listBusinesses()
+      .then((page) => {
+        setBusinesses(page.items);
+        setNextCursor(page.nextCursor);
+      })
+      .catch((e) => setError(e.message));
 
   useEffect(() => {
     refresh();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
+  const loadMore = async () => {
+    if (!nextCursor) return;
+    setLoadingMore(true);
+    try {
+      const page = await api.listBusinesses({ cursor: nextCursor });
+      setBusinesses((prev) => [...(prev ?? []), ...page.items]);
+      setNextCursor(page.nextCursor);
+    } catch (e) {
+      showToast(e instanceof ApiError ? e.message : "Could not load more businesses", "error");
+    } finally {
+      setLoadingMore(false);
+    }
+  };
 
   const filtered = useMemo(() => {
     if (!businesses) return null;
@@ -35,11 +67,39 @@ export default function BusinessesPage() {
       await api.createBusiness(newName, newEmail, newComp);
       setNewName("");
       setNewEmail("");
+      showToast(`${newName} was added as a business.`);
       refresh();
     } catch (err) {
-      setError(err instanceof ApiError ? err.message : "Could not create business");
+      const message = err instanceof ApiError ? err.message : "Could not create business";
+      setError(message);
+      showToast(message, "error");
     } finally {
       setCreating(false);
+    }
+  };
+
+  const verify = async (id: string, name: string) => {
+    try {
+      await api.verifyBusiness(id);
+      showToast(`${name} marked verified.`);
+      refresh();
+    } catch (e) {
+      showToast(e instanceof ApiError ? e.message : "Could not verify business", "error");
+    }
+  };
+
+  const confirmSuspend = async () => {
+    if (!suspendTarget) return;
+    setSuspending(true);
+    try {
+      await api.suspendBusiness(suspendTarget.id, !suspendTarget.suspended);
+      showToast(`${suspendTarget.name} ${suspendTarget.suspended ? "unsuspended" : "suspended"}.`);
+      setSuspendTarget(null);
+      refresh();
+    } catch (e) {
+      showToast(e instanceof ApiError ? e.message : "Could not update suspension", "error");
+    } finally {
+      setSuspending(false);
     }
   };
 
@@ -50,7 +110,7 @@ export default function BusinessesPage() {
           <span className="page-eyebrow">Partner operations</span>
           <h1>Businesses</h1>
           <p>Every venue-owning account on the platform.</p>
-          <div className="page-meta"><span>{businesses === null ? "Loading accounts" : `${businesses.length} total accounts`}</span><span>{businesses?.filter((b) => b.paymentStatus !== "verified").length ?? "—"} awaiting verification</span></div>
+          <div className="page-meta"><span>{businesses === null ? "Loading accounts" : `${businesses.length} loaded`}</span><span>{businesses?.filter((b) => b.paymentStatus !== "verified").length ?? "—"} awaiting verification</span></div>
         </div>
         <div className="search-field">
           <SearchIcon size={16} />
@@ -103,11 +163,16 @@ export default function BusinessesPage() {
                   <td>{b.suspended ? <span className="badge badge-flagged">Suspended</span> : "Active"}</td>
                   <td style={{ display: "flex", gap: 6 }}>
                     {b.paymentStatus !== "verified" && (
-                      <button className="primary" onClick={() => api.verifyBusiness(b.id).then(refresh)}>
+                      <button className="secondary" onClick={() => verify(b.id, b.name)}>
                         Mark verified
                       </button>
                     )}
-                    <button className="danger" onClick={() => api.suspendBusiness(b.id, !b.suspended).then(refresh)}>
+                    <button
+                      className="danger"
+                      disabled={!isSuperAdmin}
+                      title={isSuperAdmin ? undefined : "Only super admins can suspend a business"}
+                      onClick={() => setSuspendTarget({ id: b.id, name: b.name, suspended: b.suspended })}
+                    >
                       {b.suspended ? "Unsuspend" : "Suspend"}
                     </button>
                   </td>
@@ -117,6 +182,30 @@ export default function BusinessesPage() {
           </table>
         )}
       </div>
+
+      {nextCursor && (
+        <div style={{ display: "flex", justifyContent: "center", marginTop: -8, marginBottom: 20 }}>
+          <button className="secondary" onClick={loadMore} disabled={loadingMore}>
+            {loadingMore ? "Loading…" : "Load more"}
+          </button>
+        </div>
+      )}
+
+      {suspendTarget && (
+        <ConfirmDialog
+          title={suspendTarget.suspended ? "Unsuspend business?" : "Suspend business?"}
+          body={
+            suspendTarget.suspended
+              ? `${suspendTarget.name} will regain access immediately.`
+              : `${suspendTarget.name} will immediately lose access to the dashboard and all quests will stop accepting redemptions.`
+          }
+          confirmLabel={suspendTarget.suspended ? "Unsuspend" : "Suspend"}
+          danger={!suspendTarget.suspended}
+          busy={suspending}
+          onConfirm={confirmSuspend}
+          onCancel={() => setSuspendTarget(null)}
+        />
+      )}
     </>
   );
 }

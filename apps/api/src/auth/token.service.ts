@@ -10,6 +10,9 @@ export interface BusinessTokenPayload {
 export interface AdminTokenPayload {
   adminId: string;
   role: "admin";
+  /** The admin's actual RBAC tier — distinct from the `role` field above, which is
+   * just this JWT's fixed type discriminator (business/admin/consumer). */
+  adminRole: "super_admin" | "admin";
 }
 
 export interface ConsumerTokenPayload {
@@ -39,8 +42,8 @@ export class TokenService {
     });
   }
 
-  signAdminToken(adminId: string): string {
-    const payload: AdminTokenPayload = { adminId, role: "admin" };
+  signAdminToken(adminId: string, adminRole: "super_admin" | "admin"): string {
+    const payload: AdminTokenPayload = { adminId, role: "admin", adminRole };
     return this.jwt.sign(payload, {
       secret: this.config.get<string>("ADMIN_JWT_SECRET"),
       expiresIn: "12h",

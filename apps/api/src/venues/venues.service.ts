@@ -1,5 +1,6 @@
 import { ForbiddenException, Injectable, NotFoundException } from "@nestjs/common";
 import { PrismaService } from "../prisma/prisma.service";
+import { paginate } from "../common/pagination.dto";
 
 @Injectable()
 export class VenuesService {
@@ -13,8 +14,12 @@ export class VenuesService {
     return this.prisma.venue.findMany({ where: { businessId }, orderBy: { createdAt: "desc" } });
   }
 
-  listAll() {
-    return this.prisma.venue.findMany({ orderBy: { createdAt: "desc" } });
+  listAll({ cursor, limit }: { cursor?: string; limit?: number }) {
+    return paginate(
+      (args) => this.prisma.venue.findMany({ ...args, orderBy: { createdAt: "desc" } }),
+      { cursor, limit },
+      100,
+    );
   }
 
   async findOwnedOrThrow(venueId: string, businessId: string) {

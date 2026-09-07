@@ -21,13 +21,17 @@ The design has to work across two very different surfaces at once — a zero-ins
 
 | Color | Hex | Usage |
 |---|---|---|
-| Pike Blue | `#2563EB` | Primary interface color — navigation, maps, core UI |
-| Pike Gold (Smoked Gold) | `#9C7C4A` dark / `#7E6030` light | Reserved for rewards only — coins, achievements, VIP, XP. Never used as a primary UI color. A desaturated brass pulled from the logo's mid-tone, deliberately restrained rather than a bright amber |
-| Deep Slate | `#111827` | Main dark color, dark-mode text |
-| Off-White | `#F6F4EF` | Cards, backgrounds, spacing (warm, not blue-tinted) |
-| Success | `#10B981` | Quest completed, reward unlocked |
-| Danger | `#EF4444` | Expired, failed, warnings |
+| Pike Blue | `#2563EB` light / `#3b82f6` dark | Primary interface color — navigation, maps, core UI |
+| Pike Gold (Smoked Gold) | `#7E6030` light / `#9C7C4A` dark | Reserved for rewards only — coins, achievements, VIP, XP. Never used as a primary UI color. A desaturated brass pulled from the logo's mid-tone, deliberately restrained rather than a bright amber |
+| Dark-mode background | `#000000` (true black) | The dark theme's surface color — see Section 6; not a slate/navy dark, full black with gold and blue glow |
+| Off-White | `#F6F4EF` | Light-mode cards, backgrounds, spacing (warm, not blue-tinted) |
+| Success | `#059669` light / `#10B981` dark | Quest completed, reward unlocked |
+| Danger | `#dc2626` light / `#f87171` dark | Expired, failed, warnings |
 | Purple Accent | `#7C3AED` | Reserved for AR interactions and special/legendary events |
+
+(Source of truth for all hex values: `packages/design-tokens/src/palette.ts`, shared by every app in the monorepo. This table previously listed a `#111827` "Deep Slate" dark background and a `#EF4444` danger color that matched neither theme's actual token — corrected above; Section 6 already had the true-black dark background right, this table just hadn't caught up to it.)
+
+**On CSS variable names**: each app (`apps/web`, `apps/dashboard`, `apps/admin`) layers its own semantic variable aliases over this one shared palette — e.g. the landing page uses `--landing-action`, the dashboard uses `--action`, both resolving to the same Pike Blue hex per theme. This is intentional per-surface naming, not drift: it lets each app name its tokens for its own component vocabulary while staying pinned to one canonical color source. If a value ever needs to change, it changes once in `palette.ts`.
 
 **The single most important discipline in this palette: keep gold exclusive to rewards.** The moment gold appears anywhere else in the interface — a button, a nav icon, a section header — it stops signaling "you've earned something" and the entire reward system loses its visual punch. This isn't a style-guide suggestion; it should be enforced at the component level (e.g. a `<RewardAccent>` wrapper that's the only place gold is allowed to render), so it can't quietly leak into a future screen someone builds without reading this doc.
 
@@ -121,7 +125,7 @@ Both modes share the same warm-neutral (non-blue) gray ramp and the same Smoked 
 ### 7.4 Reward
 **Purpose**: the payoff moment — deliberately the highest-contrast, most gold-forward screen in the app.
 
-- Dark slate card (`#111827`) hosting the reward, per the dark-mode reward-moment note in section 6.
+- Dark elevated card (Section 6's dark-mode card range, `#0d0d0d`–`#292929`) hosting the reward, per the dark-mode reward-moment note in section 6.
 - Gold coin/reward icon, reward name in gold, expiry date in muted gray.
 - Badge-earned row (if applicable) in Purple Accent.
 - Single primary CTA: "Claim reward" (Pike Blue).
@@ -136,6 +140,57 @@ Both modes share the same warm-neutral (non-blue) gray ramp and the same Smoked 
 - Favorited venues list (drives push notification triggers).
 - Account settings, including the in-app account deletion path required for App Store compliance.
 
+### 7.6 Business Dashboard (`apps/dashboard`)
+
+Unlike 7.1–7.5 above, this is a desktop web app for venue owners/operators, not a screen in the consumer mobile app — a denser, internal-tool surface (own `--radius-md`, no bottom nav, no XP/streak chrome). It shares the same Orbitron/Inter type system and color tokens as every other surface, and borrows several presentation patterns directly from the marketing landing page (`apps/web`) rather than inventing its own — documented here so they don't drift apart again.
+
+**Sidebar identity.** The wordmark next to the logo is just "Business Portal" — the standalone "PIKE" line was dropped since the logo mark already carries that identity, and one line reads cleaner than two of uneven weight. Account identity (business name) and the theme toggle live together at the bottom of the rail as a small grouped chip (`.sidebar-footer-identity`, a `surface-container-low` background pill), not as plain small text in the corner — both were easy to miss at the old size/contrast.
+
+**One primary action per screen.** Section 4's restraint rule applies here exactly as written. The sidebar's persistent "Create quest" link is global chrome, not a page-level primary — it gets its own tonal treatment (`color-mix(in srgb, var(--action) 12%, transparent)` fill, not a filled `.primary`) so it never competes with a page's own single primary:
+
+| Page | The one primary action |
+|---|---|
+| Home | none (overview only) — "Add venue" is `.secondary`; per-venue quest creation moved to each venue's own detail page (see below) |
+| Home, zero venues | "Add venue" (empty state) |
+| Venue detail (`/venues/[venueId]`) | "Create quest", scoped to that venue |
+| Quests list | "Create quest" — shown once, either in the header (once quests exist) or the empty state (before that), never both |
+| Settings | Payment-method save (gates quest publishing) — the profile-save button is `.secondary` |
+| Rewards / Analytics / new-quest / new-venue | Each already has exactly one primary |
+
+**Patterns adopted from the landing page** (`apps/web/src/components/landing/Landing.module.css`) — the *patterns* were ported, not the CSS Modules or `--landing-*` variable names; dashboard keeps its own token aliases (`--action`, `--border-subtle`, `--surface-container-lowest`, etc.):
+
+- **Metrics strip** (a hybrid of `.ledger`, the Attribution section's `3px` accent-top-border framing and bold heading-font numbers, and `.factStrip`, a row of stats divided by vertical rules): three metrics side by side in one bordered container rather than a stack of rows or three disconnected boxes — Home's "Active quests / Venues / Total quests" row.
+- **Corner icon badge** (from `.stepCard`/`.stepIcon`): a filled, circular/rounded icon badge overlapping a card's top edge (`top: -16px`), used on Home's venue cards. Cards sit in a responsive grid (`repeat(auto-fill, minmax(300px,1fr))`) with a deliberately larger row-gap than column-gap (`32px`/`20px`) — the badge pokes 16px above its own card, so anything tighter causes it to overlap the card in the row above.
+- **Tighter heading type**: page titles use `font-weight: 600` (not browser-default bold) with `letter-spacing: -0.02em` and a responsive `clamp()`, echoing (at a smaller, denser scale) the landing page's heading treatment (`font-weight:500`, `letter-spacing:-.035em` to `-.045em`).
+- **Always-on soft card shadow**: cards previously only gained a shadow on `:hover`; a much quieter version now applies at rest too, the same warm-black, negative-spread shadow shape used throughout the landing page, scaled down for a denser tool.
+
+**Venue drill-down.** Each Home venue card is a full `<Link>` to `/venues/[venueId]`, previewing only its first 3 quests (with a "+N more" line beneath) rather than the full list — the per-venue detail page shows every quest in the same table layout as the main Quests list, scoped to that venue, with "Create quest" as its one primary action.
+
+**Gold stays reward-only here too** — this app's only uses of the gold/`--primary` token are the reward-tier badge and two reward-icon accents on the Rewards page; the discipline from Section 2 applies to this surface exactly as it does everywhere else.
+
+### 7.7 Admin Dashboard (`apps/admin`)
+
+Platform-oversight tool for PIKE staff, not for businesses or consumers — there is no self-registration; the only path in is the marketing site's obscured secret-code gate (`apps/web`'s admin-gate flow), followed by this app's own email/password login. Unindexed (`noindex, nofollow`) and never linked publicly. Six operational pages (Dashboard, Businesses, Venues, Quests, Redemptions, Free marker leads) plus three added alongside this section (Attestations, Gate log, Audit log — see `docs/admin_dashboard_review.md`).
+
+**Shares one interaction layer with the Business Dashboard.** Same token system, same Orbitron/Inter pairing, same hand-rolled icon set, and — since both apps kept drifting apart before this pass reconciled them — the identical sidebar (theme-aware, collapsible, identity-chip footer), toast, and modal/confirm-dialog patterns documented in §7.6. Treat the two internal tools as one component vocabulary going forward: a pattern added to one belongs in the other unless there's a content reason it doesn't apply (see below). The admin sidebar previously stayed permanently dark (`#111827`) regardless of the theme toggle; it's now the same translucent, theme-following rail as the Business Dashboard, with the account chip showing the signed-in admin's email instead of a business name.
+
+**Where it differs from the Business Dashboard, deliberately:**
+- No persistent "Create X" sidebar CTA — admin has no single dominant creation action the way "Create quest" is for a business (its only create flow, sales-assisted business onboarding, lives inline on the Businesses page instead).
+- No metrics-ledger or corner-icon-badge card patterns — admin's content is list/table-first (six of nine pages are just filterable tables), not a card gallery, so those patterns have nothing to attach to here.
+- **No gold anywhere.** This surface has zero reward-tier UI, so `--primary` (gold) never appears — not even for a "warning" accent, which used gold before this pass and has been moved to `--error` to stop implying "you've earned something" on a flagged-redemption stat card. The `.badge-warning` utility class still exists in admin's globals.css using gold and is currently unused; if a future page adopts it, restyle it off gold first.
+
+**One primary action per page:**
+
+| Page | The one primary action |
+|---|---|
+| Dashboard | none — overview only; row-level "Approve" actions are `.secondary` |
+| Businesses | "Create" (sales-assisted onboarding form) — per-row "Mark verified"/"Suspend" are `.secondary`/`.danger`, not `.primary` (this page previously rendered a second filled-primary button per matching row, competing with the page's real primary — fixed) |
+| Venues, Quests, Redemptions, Gate log, Audit log | none — read-only tables |
+| Attestations | "Save changes" (batch config), gated behind a confirm dialog since it affects production attestation timing |
+| Leads | none — read-only |
+
+**Destructive/high-consequence actions get a confirm dialog and are logged.** Suspending a business and editing attestation batch config now go through a `ConfirmDialog` (the shared `.modal` pattern) before submitting, and both are recorded to an admin audit log (`docs/admin_dashboard_review.md` C1b) with which admin did it and when. Suspending a business and editing batch config are also restricted to the `super_admin` role tier (`docs/admin_dashboard_review.md` C1a) — every other admin action stays open to any admin account.
+
 ---
 
 ## 8. Companion Visuals
@@ -147,3 +202,5 @@ Interactive mockups for the Home and Reward screens, and the end-to-end user-jou
 - Mock up the Quest/AR Scan and Map screens to match this spec.
 - Produce one Experience Themes reskin (e.g. pirate theme) of the Home screen to visually prove "navigation stays PIKE, flavor changes."
 - Define the badge grid's locked-state visual treatment (grayscale vs. outline-only vs. silhouette).
+- Admin's Venues, Quests, and Gate log pages fetch a single higher-limit page (100) rather than a "Load more" control — fine at current row counts, but Businesses and Redemptions already needed pagination first and the other three will eventually need the same treatment (see `docs/admin_dashboard_review.md` C1c).
+- The unused `.badge-warning` utility in `apps/admin/src/app/globals.css` still styles itself with gold; restyle it off `--primary` before any page adopts it, to keep this app's "no gold" rule intact.

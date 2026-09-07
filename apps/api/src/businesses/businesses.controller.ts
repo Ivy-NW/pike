@@ -1,7 +1,8 @@
-import { Body, Controller, Get, Post, Req, UseGuards } from "@nestjs/common";
+import { Body, Controller, Get, Patch, Post, Query, Req, UseGuards } from "@nestjs/common";
 import { BusinessAuthGuard } from "../auth/guards/business-auth.guard";
 import { BusinessesService } from "./businesses.service";
 import { AttachPaymentMethodDto } from "./dto/attach-payment-method.dto";
+import { UpdateBusinessDto } from "./dto/update-business.dto";
 
 @Controller("businesses")
 export class BusinessesController {
@@ -10,7 +11,7 @@ export class BusinessesController {
   @Get("me")
   @UseGuards(BusinessAuthGuard)
   async me(@Req() req: any) {
-    return this.businesses.findByIdOrThrow(req.businessId);
+    return this.businesses.getPublicProfile(req.businessId);
   }
 
   /**
@@ -25,5 +26,19 @@ export class BusinessesController {
       dto.stripePaymentMethodId,
     );
     return { paymentStatus: business.paymentStatus };
+  }
+
+  @Patch("me")
+  @UseGuards(BusinessAuthGuard)
+  async updateProfile(@Req() req: any, @Body() dto: UpdateBusinessDto) {
+    return this.businesses.updateProfile(req.businessId, dto);
+  }
+
+  @Get("me/analytics/trends")
+  @UseGuards(BusinessAuthGuard)
+  async analyticsTrends(@Req() req: any, @Query("days") days?: string, @Query("questId") questId?: string) {
+    const parsed = Number(days);
+    const rangeDays = parsed === 30 ? 30 : 7;
+    return this.businesses.redemptionTrends(req.businessId, rangeDays, questId);
   }
 }

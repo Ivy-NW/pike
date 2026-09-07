@@ -18,14 +18,18 @@ async function main() {
 
   const passwordHash = await bcrypt.hash(password, 10);
 
+  // The seeded account is always super_admin: there must be at least one account
+  // able to perform the platform's highest-consequence actions (suspend a business,
+  // edit attestation batch config). Further admins are created as plain "admin" role
+  // and can be promoted by an existing super_admin.
   const admin = await prisma.admin.upsert({
     where: { email },
-    update: { passwordHash },
-    create: { email, passwordHash },
+    update: { passwordHash, role: "super_admin" },
+    create: { email, passwordHash, role: "super_admin" },
   });
 
   // eslint-disable-next-line no-console
-  console.log(`Seeded admin: ${admin.email}`);
+  console.log(`Seeded admin: ${admin.email} (${admin.role})`);
   await prisma.$disconnect();
 }
 

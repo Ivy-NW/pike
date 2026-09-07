@@ -10,7 +10,10 @@ export default function QuestsPage() {
   const [expandedId, setExpandedId] = useState<string | null>(null);
 
   useEffect(() => {
-    api.listQuests().then(setQuests).catch((e) => setError(e.message));
+    api
+      .listQuests({ limit: 100 })
+      .then((page) => setQuests(page.items))
+      .catch((e) => setError(e.message));
   }, []);
 
   const filtered = useMemo(() => {

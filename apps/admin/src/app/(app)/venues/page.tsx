@@ -9,7 +9,10 @@ export default function VenuesPage() {
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    api.listVenues().then(setVenues).catch((e) => setError(e.message));
+    api
+      .listVenues({ limit: 100 })
+      .then((page) => setVenues(page.items))
+      .catch((e) => setError(e.message));
   }, []);
 
   const filtered = useMemo(() => {

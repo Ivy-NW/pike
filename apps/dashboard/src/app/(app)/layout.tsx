@@ -2,6 +2,7 @@
 import { useEffect, useState, type ReactNode } from "react";
 import { useRouter } from "next/navigation";
 import { Sidebar } from "@/components/Sidebar";
+import { ToastProvider } from "@/components/Toast";
 import { api } from "@/lib/api";
 import { getToken } from "@/lib/auth";
 
@@ -27,9 +28,11 @@ export default function AppLayout({ children }: { children: ReactNode }) {
   );
 
   return (
-    <div className="app-shell">
-      <Sidebar businessName={businessName} />
-      <main className="app-content">{children}</main>
-    </div>
+    <ToastProvider>
+      <div className="app-shell">
+        <Sidebar businessName={businessName} />
+        <main className="app-content">{children}</main>
+      </div>
+    </ToastProvider>
   );
 }
