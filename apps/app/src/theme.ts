@@ -2,7 +2,16 @@ import React, { createContext, useContext, useState, useEffect } from "react";
 import { useColorScheme } from "react-native";
 import { useFonts as useOrbitron, Orbitron_400Regular, Orbitron_500Medium, Orbitron_600SemiBold, Orbitron_700Bold } from "@expo-google-fonts/orbitron";
 import { useFonts as useInter, Inter_400Regular, Inter_500Medium, Inter_600SemiBold, Inter_700Bold } from "@expo-google-fonts/inter";
-import { darkTheme, lightTheme, type Theme, type TypeStyle } from "@pike/design-tokens";
+import { darkTheme, lightTheme, brand, type Theme, type TypeStyle } from "@pike/design-tokens";
+
+/**
+ * PIKE_UI_Design_Doc §4: a consistent 20px corner radius on buttons, cards,
+ * bottom sheets, and map elements, in BOTH light and dark mode. This is
+ * intentionally a local constant rather than `theme.radius.card` — that
+ * shared token is mode-dependent (`shape.ts`'s light scale is the sharp,
+ * low-radius style built for the landing page/dashboard, not this app).
+ */
+export const RADIUS_CARD = 20;
 
 export type { Theme, TypeStyle };
 
@@ -70,4 +79,37 @@ export function useTheme(): Theme & { font: (s: TypeStyle) => ReturnType<typeof 
   const { mode, toggleTheme } = useThemeMode();
   const baseTheme = mode === "light" ? lightTheme : darkTheme;
   return { ...baseTheme, mode, font: rnFont, toggleTheme };
+}
+
+/**
+ * Semantic color layer for apps/app only (docs/pike_ui_design.md §2/§4).
+ *
+ * `packages/design-tokens/src/palette.ts` names the gold ramp `primary` and
+ * the blue ramp `secondary` -- the opposite of what those names suggest, and
+ * the source of the gold-as-default-UI-color bug this hook exists to
+ * prevent. Screens in this app should reach for `action`/`reward`/`arGlow`
+ * below instead of `theme.colors.primary`/`secondary` directly, so the
+ * *meaning* of the color is explicit at every call site.
+ *
+ * - `action` -- Pike Blue. The one interactive/primary UI color. Max one
+ *   filled action button per screen (see `MAX_PRIMARY_BUTTONS_PER_SCREEN`).
+ * - `reward` -- Pike Gold. Reserved exclusively for reward/XP/badge/VIP
+ *   moments -- never navigation, chrome, or a default active/selected state.
+ * - `arGlow` -- Purple Accent. The AR-recognition moment and badge-earned
+ *   rows only (doc §7.2/§7.4).
+ */
+export function useSemanticColors() {
+  const theme = useTheme();
+  const c = theme.colors;
+  return {
+    action: c.secondary,
+    onAction: c.onSecondary,
+    actionContainer: c.secondaryContainer,
+    onActionContainer: c.onSecondaryContainer,
+    reward: c.primary,
+    onReward: c.onPrimary,
+    rewardContainer: c.primaryContainer,
+    onRewardContainer: c.onPrimaryContainer,
+    arGlow: brand.purpleAccent,
+  };
 }

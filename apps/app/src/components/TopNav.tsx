@@ -2,7 +2,7 @@ import React from "react";
 import { View, Text, StyleSheet, Platform, StatusBar } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { MaterialIcons } from "@expo/vector-icons";
-import { useTheme } from "@/theme";
+import { useTheme, useSemanticColors } from "@/theme";
 import { Logo } from "./Logo";
 import { NeumorphicView } from "./NeumorphicView";
 
@@ -21,6 +21,7 @@ export function TopNav({
   const insets = useSafeAreaInsets();
   const c = theme.colors;
   const isDark = theme.mode === "dark";
+  const semantic = useSemanticColors();
 
   // Dynamic safe area inset preventing status bar & camera notch collisions on Android / iOS
   const topInset = Math.max(
@@ -53,7 +54,7 @@ export function TopNav({
     },
     subtitle: {
       ...theme.font(theme.type.labelCaps),
-      color: isDark ? "#9C7C4A" : "#7E6030",
+      color: c.onSurfaceVariant,
       fontSize: 10,
       letterSpacing: 1.2,
       fontWeight: "700",
@@ -89,15 +90,14 @@ export function TopNav({
         {/* Day / Night Mode Quantum Neumorphic Toggle */}
         <NeumorphicView
           variant="raised"
-          glow="gold"
-          radius={20}
+          accent="action"
           style={styles.themeToggleBtn}
           onPress={theme.toggleTheme}
         >
           <MaterialIcons
             name={isDark ? "wb-sunny" : "nightlight-round"}
             size={20}
-            color={isDark ? "#9C7C4A" : "#7E6030"}
+            color={semantic.action}
           />
         </NeumorphicView>
       </View>

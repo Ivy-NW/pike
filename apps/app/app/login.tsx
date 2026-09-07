@@ -5,7 +5,7 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { Ionicons } from "@expo/vector-icons";
 import { setIdentityToken } from "@/lib/auth";
 import { api } from "@/lib/api";
-import { useTheme } from "@/theme";
+import { useTheme, useSemanticColors, RADIUS_CARD } from "@/theme";
 import { Logo } from "@/components/Logo";
 import { NeumorphicView } from "@/components/NeumorphicView";
 
@@ -13,7 +13,6 @@ type Mode = "signin" | "signup";
 
 /**
  * FR-1: onboards with the same PIKE account used to claim a WebAR reward.
- * Upgraded with PIKE Imperial Gold & Sapphire Blue theme.
  */
 export default function LoginScreen() {
   const theme = useTheme();
@@ -47,12 +46,7 @@ export default function LoginScreen() {
       const { token } = await api.signinConsumer({ identifier: cleanIdentifier, password });
       await finishLogin(token);
     } catch (e: any) {
-      console.warn("[signin] remote failed, falling back to local session", e?.message ?? e);
-      if (identifier.toLowerCase().includes("demo") || password.length >= 4) {
-        await finishLogin("demo-vanguard-token-" + Date.now());
-      } else {
-        setError(e?.message ?? "Invalid credentials. Enter 'demoexplorer' / 'pike1234' to explore offline.");
-      }
+      setError(e?.message ?? "Could not sign in. Check your details and try again.");
     } finally {
       setLoading(false);
     }
@@ -71,8 +65,7 @@ export default function LoginScreen() {
       });
       await finishLogin(token);
     } catch (e: any) {
-      console.warn("[signup] remote failed, fallback token", e?.message ?? e);
-      await finishLogin("demo-vanguard-token-" + Date.now());
+      setError(e?.message ?? "Could not create your account. Please try again.");
     } finally {
       setLoading(false);
     }
@@ -80,6 +73,7 @@ export default function LoginScreen() {
 
   const c = theme.colors;
   const isDark = theme.mode === "dark";
+  const semantic = useSemanticColors();
 
   const styles = StyleSheet.create({
     container: {
@@ -114,7 +108,7 @@ export default function LoginScreen() {
       fontWeight: "600",
     },
     modeToggleTextActive: {
-      color: isDark ? "#9C7C4A" : c.primary,
+      color: semantic.action,
       fontWeight: "700",
     },
     inputWrapper: {
@@ -149,16 +143,16 @@ export default function LoginScreen() {
       padding: 16,
       alignItems: "center",
       marginTop: 8,
-      borderRadius: 20,
+      borderRadius: RADIUS_CARD,
     },
     primaryButtonText: {
       ...theme.font(theme.type.headlineSm),
-      color: isDark ? "#9C7C4A" : "#ffffff",
+      color: semantic.onAction,
       letterSpacing: 1,
       fontWeight: "700",
     },
-    link: { ...theme.font(theme.type.bodyMd), color: isDark ? "#9C7C4A" : c.primary, textAlign: "center", marginTop: 20, fontWeight: "600" },
-    error: { ...theme.font(theme.type.bodyMd), color: isDark ? "#ffb4ab" : c.error, marginTop: 14, textAlign: "center", fontWeight: "600" },
+    link: { ...theme.font(theme.type.bodyMd), color: semantic.action, textAlign: "center", marginTop: 20, fontWeight: "600" },
+    error: { ...theme.font(theme.type.bodyMd), color: c.error, marginTop: 14, textAlign: "center", fontWeight: "600" },
   });
 
   return (
@@ -168,17 +162,17 @@ export default function LoginScreen() {
         <Text style={styles.title}>PIKE</Text>
       </View>
       <Text style={styles.subtitle}>
-        {mode === "signin" ? "Sign in to your PIKE Vanguard operative account." : "Create your PIKE account to explore and claim rewards."}
+        {mode === "signin" ? "Sign in to your PIKE account." : "Create your PIKE account to explore and claim rewards."}
       </Text>
 
       {/* Segmented Neumorphic Toggle */}
-      <NeumorphicView variant="inset" radius={24} style={styles.modeToggleTrack}>
+      <NeumorphicView variant="inset" radius={RADIUS_CARD} style={styles.modeToggleTrack}>
         <TouchableOpacity
           style={styles.modeToggleItem}
           onPress={() => { setMode("signin"); setError(null); }}
         >
           {mode === "signin" ? (
-            <NeumorphicView variant="raised" glow={isDark ? "gold" : "blue"} radius={20} style={{ width: "100%", height: "100%", justifyContent: "center", alignItems: "center" }}>
+            <NeumorphicView variant="raised" accent="action" radius={RADIUS_CARD} style={{ width: "100%", height: "100%", justifyContent: "center", alignItems: "center" }}>
               <Text style={[styles.modeToggleText, styles.modeToggleTextActive]}>SIGN IN</Text>
             </NeumorphicView>
           ) : (
@@ -190,7 +184,7 @@ export default function LoginScreen() {
           onPress={() => { setMode("signup"); setError(null); }}
         >
           {mode === "signup" ? (
-            <NeumorphicView variant="raised" glow={isDark ? "gold" : "blue"} radius={20} style={{ width: "100%", height: "100%", justifyContent: "center", alignItems: "center" }}>
+            <NeumorphicView variant="raised" accent="action" radius={RADIUS_CARD} style={{ width: "100%", height: "100%", justifyContent: "center", alignItems: "center" }}>
               <Text style={[styles.modeToggleText, styles.modeToggleTextActive]}>CREATE ACCOUNT</Text>
             </NeumorphicView>
           ) : (
@@ -201,7 +195,7 @@ export default function LoginScreen() {
 
       {mode === "signin" ? (
         <>
-          <NeumorphicView variant="inset" radius={16} style={styles.inputWrapper}>
+          <NeumorphicView variant="inset" radius={RADIUS_CARD} style={styles.inputWrapper}>
             <TextInput
               style={styles.input}
               placeholder="Username or email"
@@ -212,7 +206,7 @@ export default function LoginScreen() {
             />
           </NeumorphicView>
 
-          <NeumorphicView variant="inset" radius={16} style={styles.passwordContainer}>
+          <NeumorphicView variant="inset" radius={RADIUS_CARD} style={styles.passwordContainer}>
             <TextInput
               style={styles.passwordInput}
               placeholder="Password"
@@ -237,11 +231,11 @@ export default function LoginScreen() {
 
           <NeumorphicView
             variant="raised"
-            glow={isDark ? "gold" : "blue"}
-            radius={20}
+            accent="action"
+            radius={RADIUS_CARD}
             style={[
               styles.primaryButton,
-              !isDark && { backgroundColor: c.primary },
+              !isDark && { backgroundColor: semantic.action },
               (loading || !identifier || !password) && { opacity: 0.6 },
             ]}
             onPress={loading || !identifier || !password ? undefined : handleSignin}
@@ -255,7 +249,7 @@ export default function LoginScreen() {
         </>
       ) : (
         <>
-          <NeumorphicView variant="inset" radius={16} style={styles.inputWrapper}>
+          <NeumorphicView variant="inset" radius={RADIUS_CARD} style={styles.inputWrapper}>
             <TextInput
               style={styles.input}
               placeholder="Phone number (e.g. +254700000000)"
@@ -265,13 +259,13 @@ export default function LoginScreen() {
               keyboardType="phone-pad"
             />
           </NeumorphicView>
-          <NeumorphicView variant="inset" radius={16} style={styles.inputWrapper}>
+          <NeumorphicView variant="inset" radius={RADIUS_CARD} style={styles.inputWrapper}>
             <TextInput style={styles.input} placeholder="Username" placeholderTextColor={c.onSurfaceVariant} value={username} onChangeText={setUsername} autoCapitalize="none" />
           </NeumorphicView>
-          <NeumorphicView variant="inset" radius={16} style={styles.inputWrapper}>
+          <NeumorphicView variant="inset" radius={RADIUS_CARD} style={styles.inputWrapper}>
             <TextInput style={styles.input} placeholder="Full name" placeholderTextColor={c.onSurfaceVariant} value={name} onChangeText={setName} />
           </NeumorphicView>
-          <NeumorphicView variant="inset" radius={16} style={styles.inputWrapper}>
+          <NeumorphicView variant="inset" radius={RADIUS_CARD} style={styles.inputWrapper}>
             <TextInput
               style={styles.input}
               placeholder="Email"
@@ -283,7 +277,7 @@ export default function LoginScreen() {
             />
           </NeumorphicView>
 
-          <NeumorphicView variant="inset" radius={16} style={styles.passwordContainer}>
+          <NeumorphicView variant="inset" radius={RADIUS_CARD} style={styles.passwordContainer}>
             <TextInput
               style={styles.passwordInput}
               placeholder="Password (min 8 chars)"
@@ -308,11 +302,11 @@ export default function LoginScreen() {
 
           <NeumorphicView
             variant="raised"
-            glow={isDark ? "gold" : "blue"}
-            radius={20}
+            accent="action"
+            radius={RADIUS_CARD}
             style={[
               styles.primaryButton,
-              !isDark && { backgroundColor: c.primary },
+              !isDark && { backgroundColor: semantic.action },
               (loading || !username || !password || !phone) && { opacity: 0.6 },
             ]}
             onPress={loading || !username || !password || !phone ? undefined : handleSignup}
@@ -327,7 +321,6 @@ export default function LoginScreen() {
         )}
 
         {error && <Text style={styles.error}>{error}</Text>}
-      </View>
     </ScrollView>
   );
 }

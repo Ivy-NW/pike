@@ -68,7 +68,8 @@ export function ArScanView({ questName, imageTargetData, onRecognized }: Props) 
   const recognizedRef = useRef(false);
 
   // Detect whether we are embedded inside the React Native App
-  const isEmbeddedApp = typeof window !== "undefined" && window.location.search.includes("channel=app");
+  const isEmbeddedApp =
+    typeof window !== "undefined" && new URLSearchParams(window.location.search).get("channel") === "app";
 
   const fireRecognized = () => {
     if (recognizedRef.current) return;

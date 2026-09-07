@@ -197,7 +197,9 @@ h3 {
 .scan-flash {
   position: absolute;
   inset: 0;
-  background: color-mix(in srgb, var(--primary) 22%, transparent);
+  /* Purple Accent (design doc §7.2) marks the AR-recognition moment — gold is
+   * reserved for the reward moment, see .reward-accent. */
+  background: color-mix(in srgb, #7C3AED 22%, transparent);
   transition: opacity .3s ease;
   pointer-events: none;
 }
@@ -266,8 +268,9 @@ h3 {
 }
 
 /* Blue while actively scanning (matches the landing page's own scan/viewfinder
- * motif — .viewfinder/.radarSweep/.pingRing in Landing.module.css), gold once a
- * marker is recognized — gold stays reserved for the reward moment, see .reward-accent. */
+ * motif — .viewfinder/.radarSweep/.pingRing in Landing.module.css), Purple Accent
+ * once a marker is recognized (design doc §7.2) — gold stays reserved for the
+ * reward moment, see .reward-accent. */
 .scan-frame {
   --scan-accent: var(--secondary);
   position: relative;
@@ -283,7 +286,7 @@ h3 {
 }
 
 .scan-frame[data-state="recognized"] {
-  --scan-accent: var(--primary);
+  --scan-accent: #7C3AED;
   box-shadow: inset 0 0 0 1px rgba(255,255,255,.08), 0 0 40px color-mix(in srgb, var(--scan-accent) 55%, transparent);
 }
 

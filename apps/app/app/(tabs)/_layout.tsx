@@ -3,7 +3,7 @@ import { View, TouchableOpacity, StyleSheet } from "react-native";
 import { Redirect, Tabs } from "expo-router";
 import { MaterialIcons } from "@expo/vector-icons";
 import { getIdentityToken } from "@/lib/auth";
-import { useTheme } from "@/theme";
+import { useTheme, useSemanticColors, RADIUS_CARD } from "@/theme";
 import { NeumorphicView } from "@/components/NeumorphicView";
 
 interface TabConfig {
@@ -24,6 +24,7 @@ function CustomTabBar({ state, descriptors, navigation }: any) {
   const theme = useTheme();
   const isDark = theme.mode === "dark";
   const c = theme.colors;
+  const semantic = useSemanticColors();
 
   const styles = StyleSheet.create({
     container: {
@@ -55,14 +56,14 @@ function CustomTabBar({ state, descriptors, navigation }: any) {
     activeWell: {
       width: 48,
       height: 48,
-      borderRadius: 16,
+      borderRadius: RADIUS_CARD,
       alignItems: "center",
       justifyContent: "center",
     },
     inactiveContainer: {
       width: 48,
       height: 48,
-      borderRadius: 16,
+      borderRadius: RADIUS_CARD,
       alignItems: "center",
       justifyContent: "center",
     },
@@ -100,14 +101,13 @@ function CustomTabBar({ state, descriptors, navigation }: any) {
             {isFocused ? (
               <NeumorphicView
                 variant="inset"
-                glow="gold"
-                radius={16}
+                accent="action"
                 style={styles.activeWell}
               >
                 <MaterialIcons
                   name={tab.icon}
                   size={24}
-                  color={isDark ? "#9C7C4A" : "#7E6030"}
+                  color={semantic.action}
                 />
               </NeumorphicView>
             ) : (
@@ -115,7 +115,7 @@ function CustomTabBar({ state, descriptors, navigation }: any) {
                 <MaterialIcons
                   name={tab.icon}
                   size={24}
-                  color={isDark ? "#5c5449" : "#8A8171"}
+                  color={c.onSurfaceVariant}
                 />
               </View>
             )}

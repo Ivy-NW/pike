@@ -5,32 +5,36 @@ import {
   StyleSheet,
   Platform,
   ActivityIndicator,
-  Alert,
-  TouchableOpacity,
   StatusBar,
 } from "react-native";
 import { router, useLocalSearchParams } from "expo-router";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { WebView } from "react-native-webview";
 import { MaterialIcons } from "@expo/vector-icons";
-import { api } from "@/lib/api";
 import { getIdentityToken } from "@/lib/auth";
-import { useTheme } from "@/theme";
+import { useTheme, useSemanticColors } from "@/theme";
 import { NeumorphicView } from "@/components/NeumorphicView";
 
 const WEBAR_BASE_URL = process.env.EXPO_PUBLIC_WEBAR_BASE_URL ?? "http://localhost:3000";
 
+// Best-guess expo-router deep link for the Rewards tab (app/(tabs)/rewards.tsx).
+// expo-router route groups like "(tabs)" are not part of the resolved URL, so
+// the external deep link should be "pike://rewards", not "pike://(tabs)/rewards"
+// -- NEEDS CONFIRMATION against this app's actual linking config before relying
+// on it in production.
+const REWARDS_RETURN_URL = "pike://rewards";
+
 /**
- * Stitch PIKE AR Scanner:
- * Embedded 8th Wall WebAR engine inside a GPU-accelerated WebView with
- * Neumorphic HUD Reticle and Tactical Claims.
+ * PIKE AR Scanner: embeds the 8th Wall WebAR engine (apps/webar) inside a
+ * WebView. The WebView owns the entire scan-and-claim flow; this screen is
+ * camera-first chrome only -- a header and a decorative reticle overlay.
  */
 export default function ScanScreen() {
   const { markerId } = useLocalSearchParams<{ markerId: string }>();
   const theme = useTheme();
+  const semantic = useSemanticColors();
   const insets = useSafeAreaInsets();
   const [token, setToken] = useState<string | null>(null);
-  const [claiming, setClaiming] = useState(false);
 
   useEffect(() => {
     getIdentityToken().then(setToken);
@@ -41,55 +45,7 @@ export default function ScanScreen() {
     Platform.OS === "android" ? (StatusBar.currentHeight ?? 24) : 16
   ) + 8;
 
-  const bottomPadding = Math.max(insets.bottom, 16) + 12;
-
-  const webArUrl = `${WEBAR_BASE_URL}/scan/${markerId ?? "demo-kicc-marker"}?channel=app&appToken=${encodeURIComponent(token ?? "")}`;
-
-  const handleSimulateRecognize = async () => {
-    if (!markerId) return;
-    setClaiming(true);
-    try {
-      const sess = "sess-app-" + Date.now();
-      const res = await api.createRedemption(markerId, sess);
-      if (res?.redemption?.id) {
-        await api.claimReward(res.redemption.id, {});
-        Alert.alert(
-          "Cipher Decrypted!",
-          "AR Marker successfully deciphered. Reward added to your Vault.",
-          [
-            {
-              text: "Open Vault",
-              onPress: () => router.replace("/(tabs)/rewards"),
-            },
-          ]
-        );
-      } else {
-        Alert.alert(
-          "Cipher Decrypted!",
-          "Sample quest marker recorded. Reward is ready in your Vault.",
-          [
-            {
-              text: "Open Vault",
-              onPress: () => router.replace("/(tabs)/rewards"),
-            },
-          ]
-        );
-      }
-    } catch (e: any) {
-      Alert.alert(
-        "Scan Result",
-        e?.message ?? "Marker processed or already claimed.",
-        [
-          {
-            text: "View Vault",
-            onPress: () => router.replace("/(tabs)/rewards"),
-          },
-        ]
-      );
-    } finally {
-      setClaiming(false);
-    }
-  };
+  const webArUrl = `${WEBAR_BASE_URL}/scan/${markerId ?? "demo-kicc-marker"}?channel=app&appToken=${encodeURIComponent(token ?? "")}&returnUrl=${encodeURIComponent(REWARDS_RETURN_URL)}`;
 
   const styles = StyleSheet.create({
     container: { flex: 1, backgroundColor: "#000000" },
@@ -109,12 +65,11 @@ export default function ScanScreen() {
       paddingHorizontal: 16,
       backgroundColor: "rgba(12, 12, 14, 0.94)",
       borderBottomWidth: 1,
-      borderBottomColor: "rgba(156, 124, 74, 0.2)",
+      borderBottomColor: "rgba(59, 130, 246, 0.2)",
     },
     headerLeft: { flexDirection: "row", alignItems: "center", gap: 12 },
     backBtn: { width: 38, height: 38, borderRadius: 19, alignItems: "center", justifyContent: "center" },
-    headerTitle: { ...theme.font(theme.type.headlineLgMobile), color: "#9C7C4A", fontSize: 20, fontWeight: "700" },
-    headerSub: { ...theme.font(theme.type.labelSm), color: "#b79a5e", fontSize: 10, fontWeight: "600" },
+    headerTitle: { ...theme.font(theme.type.headlineLgMobile), color: semantic.action, fontSize: 20, fontWeight: "700" },
 
     // Central Reticle Box
     centerOverlay: {
@@ -133,7 +88,7 @@ export default function ScanScreen() {
       height: 240,
       borderRadius: 28,
       borderWidth: 2,
-      borderColor: "rgba(156, 124, 74, 0.6)",
+      borderColor: "rgba(59, 130, 246, 0.6)",
       alignItems: "center",
       justifyContent: "center",
       backgroundColor: "rgba(12, 12, 14, 0.15)",
@@ -142,8 +97,8 @@ export default function ScanScreen() {
       width: 14,
       height: 14,
       borderRadius: 7,
-      backgroundColor: "#9C7C4A",
-      shadowColor: "#9C7C4A",
+      backgroundColor: "#3b82f6",
+      shadowColor: "#3b82f6",
       shadowOffset: { width: 0, height: 0 },
       shadowOpacity: 0.9,
       shadowRadius: 10,
@@ -155,7 +110,7 @@ export default function ScanScreen() {
       borderRadius: 12,
       backgroundColor: "rgba(12, 12, 14, 0.85)",
       borderWidth: 1,
-      borderColor: "rgba(156, 124, 74, 0.3)",
+      borderColor: "rgba(59, 130, 246, 0.3)",
     },
     reticleInstructionText: {
       ...theme.font(theme.type.labelCaps),
@@ -165,57 +120,8 @@ export default function ScanScreen() {
       letterSpacing: 1,
     },
 
-    // Bottom Tactical HUD (Non-overlapping)
-    bottomHud: {
-      position: "absolute",
-      bottom: bottomPadding,
-      left: 16,
-      right: 16,
-      zIndex: 100,
-      alignItems: "center",
-      backgroundColor: "rgba(18, 18, 21, 0.95)",
-      borderRadius: 24,
-      padding: 16,
-      borderWidth: 1,
-      borderColor: "rgba(156, 124, 74, 0.3)",
-      shadowColor: "#000000",
-      shadowOffset: { width: 0, height: 8 },
-      shadowOpacity: 0.8,
-      shadowRadius: 16,
-      elevation: 12,
-      gap: 10,
-    },
-    hudPrompt: {
-      ...theme.font(theme.type.bodyMd),
-      color: "#8f867a",
-      fontSize: 12,
-      textAlign: "center",
-    },
-    simBtn: {
-      width: "100%",
-      paddingVertical: 14,
-      borderRadius: 18,
-      backgroundColor: "#9C7C4A",
-      flexDirection: "row",
-      alignItems: "center",
-      justifyContent: "center",
-      gap: 8,
-      shadowColor: "#9C7C4A",
-      shadowOffset: { width: 0, height: 4 },
-      shadowOpacity: 0.4,
-      shadowRadius: 10,
-      elevation: 6,
-    },
-    simBtnText: {
-      ...theme.font(theme.type.labelCaps),
-      color: "#14100a",
-      fontSize: 13,
-      letterSpacing: 1.2,
-      fontWeight: "800",
-    },
-
     loading: { flex: 1, alignItems: "center", justifyContent: "center", backgroundColor: "#000000", gap: 12 },
-    loadingText: { ...theme.font(theme.type.labelCaps), color: "#9C7C4A", letterSpacing: 1.5, fontWeight: "700" },
+    loadingText: { ...theme.font(theme.type.labelCaps), color: semantic.action, letterSpacing: 1.5, fontWeight: "700" },
   });
 
   return (
@@ -225,19 +131,16 @@ export default function ScanScreen() {
         <View style={styles.headerLeft}>
           <NeumorphicView
             variant="raised"
-            glow="gold"
+            accent="action"
             radius={19}
             style={styles.backBtn}
             onPress={() => router.back()}
           >
-            <MaterialIcons name="arrow-back" size={20} color="#9C7C4A" />
+            <MaterialIcons name="arrow-back" size={20} color={semantic.action} />
           </NeumorphicView>
-          <View>
-            <Text style={styles.headerTitle}>Optical Scanner</Text>
-            <Text style={styles.headerSub}>8th Wall WebAR • 6-DOF Spatial Engine</Text>
-          </View>
+          <Text style={styles.headerTitle}>AR Scanner</Text>
         </View>
-        <MaterialIcons name="view-in-ar" size={24} color="#9C7C4A" />
+        <MaterialIcons name="view-in-ar" size={24} color={semantic.action} />
       </View>
 
       {/* Embedded WebAR Camera Feed with Hardware Acceleration */}
@@ -253,42 +156,21 @@ export default function ScanScreen() {
         startInLoadingState
         renderLoading={() => (
           <View style={styles.loading}>
-            <ActivityIndicator size="large" color="#9C7C4A" />
-            <Text style={styles.loadingText}>INITIALIZING AR OPTICS...</Text>
+            <ActivityIndicator size="large" color={semantic.action} />
+            <Text style={styles.loadingText}>Starting camera…</Text>
           </View>
         )}
       />
 
-      {/* Center Reticle Overlay */}
+      {/* Center Reticle Overlay (decorative -- the WebView's 8th Wall engine owns
+          actual marker recognition and claiming) */}
       <View style={styles.centerOverlay}>
         <View style={styles.reticleFrame}>
           <View style={styles.reticleCenterDot} />
         </View>
         <View style={styles.reticleInstruction}>
-          <Text style={styles.reticleInstructionText}>TARGET ANOMALY NODE</Text>
+          <Text style={styles.reticleInstructionText}>Align the marker in frame</Text>
         </View>
-      </View>
-
-      {/* Floating Tactical Bottom HUD */}
-      <View style={styles.bottomHud}>
-        <Text style={styles.hudPrompt}>
-          Point camera lens at the physical marker, or verify below:
-        </Text>
-        <TouchableOpacity
-          style={styles.simBtn}
-          activeOpacity={0.85}
-          onPress={handleSimulateRecognize}
-          disabled={claiming}
-        >
-          {claiming ? (
-            <ActivityIndicator size="small" color="#14100a" />
-          ) : (
-            <>
-              <MaterialIcons name="auto-awesome" size={20} color="#14100a" />
-              <Text style={styles.simBtnText}>VERIFY & CLAIM REWARD</Text>
-            </>
-          )}
-        </TouchableOpacity>
       </View>
     </View>
   );

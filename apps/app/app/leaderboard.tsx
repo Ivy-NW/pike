@@ -5,8 +5,9 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { MaterialIcons } from "@expo/vector-icons";
 import type { LeaderboardEntry, LeaderboardResponse } from "@pike/shared-types";
 import { api } from "@/lib/api";
-import { useTheme } from "@/theme";
+import { useTheme, useSemanticColors, RADIUS_CARD } from "@/theme";
 import { NeumorphicView } from "@/components/NeumorphicView";
+import { useRewardColor } from "@/components/RewardAccent";
 
 /** Stitch Neumorphic Reputational Leaderboard */
 export default function LeaderboardScreen() {
@@ -14,6 +15,8 @@ export default function LeaderboardScreen() {
   const insets = useSafeAreaInsets();
   const c = theme.colors;
   const isDark = theme.mode === "dark";
+  const semantic = useSemanticColors();
+  const rewardColor = useRewardColor();
   const [data, setData] = useState<LeaderboardResponse | null>(null);
   const [error, setError] = useState(false);
   const [timeFilter, setTimeFilter] = useState<"all" | "month" | "week">("all");
@@ -51,14 +54,14 @@ export default function LeaderboardScreen() {
     headerLeft: { flexDirection: "row", alignItems: "center", gap: 12 },
     backBtn: { width: 38, height: 38, borderRadius: 19, alignItems: "center", justifyContent: "center" },
     headerTitle: { ...theme.font(theme.type.headlineLgMobile), color: c.onSurface, fontSize: 22, fontWeight: "700" },
-    headerSub: { ...theme.font(theme.type.labelSm), color: isDark ? "#9C7C4A" : c.primary, marginTop: 1, fontWeight: "600" },
+    headerSub: { ...theme.font(theme.type.labelSm), color: semantic.action, marginTop: 1, fontWeight: "600" },
 
     content: { padding: 16, paddingBottom: 60 },
 
     // Filter Switcher
     filterRow: { flexDirection: "row", gap: 8, marginBottom: 18 },
-    filterPill: { flex: 1, paddingVertical: 8, alignItems: "center", justifyContent: "center", borderRadius: 14 },
-    filterPillActiveText: { ...theme.font(theme.type.labelCaps), color: isDark ? "#9C7C4A" : c.primary, fontSize: 11, fontWeight: "700" },
+    filterPill: { flex: 1, paddingVertical: 8, alignItems: "center", justifyContent: "center", borderRadius: RADIUS_CARD },
+    filterPillActiveText: { ...theme.font(theme.type.labelCaps), color: semantic.action, fontSize: 11, fontWeight: "700" },
     filterPillInactiveText: { ...theme.font(theme.type.labelCaps), color: c.onSurfaceVariant, fontSize: 11 },
 
     // Leaderboard Item Row
@@ -67,7 +70,7 @@ export default function LeaderboardScreen() {
       alignItems: "center",
       gap: 12,
       padding: 14,
-      borderRadius: 20,
+      borderRadius: RADIUS_CARD,
       marginBottom: 10,
     },
     rankWell: {
@@ -78,10 +81,10 @@ export default function LeaderboardScreen() {
       justifyContent: "center",
     },
     rankText: { ...theme.font(theme.type.headlineSm), color: c.onSurfaceVariant, fontSize: 16, fontWeight: "700" },
-    rankTop1: { color: "#9C7C4A" },
+    rankTop1: { color: rewardColor },
     rankTop2: { color: "#b79a5e" },
     rankTop3: { color: "#3b82f6" },
-    rankMe: { color: isDark ? "#9C7C4A" : c.primary },
+    rankMe: { color: semantic.action },
 
     avatarInitial: {
       width: 36,
@@ -90,55 +93,51 @@ export default function LeaderboardScreen() {
       alignItems: "center",
       justifyContent: "center",
     },
-    avatarText: { ...theme.font(theme.type.headlineSm), color: isDark ? "#9C7C4A" : c.primary, fontSize: 16, fontWeight: "700" },
+    avatarText: { ...theme.font(theme.type.headlineSm), color: semantic.action, fontSize: 16, fontWeight: "700" },
 
     name: { ...theme.font(theme.type.headlineSm), color: c.onSurface, fontSize: 16, fontWeight: "700" },
-    level: { ...theme.font(theme.type.labelSm), color: isDark ? "#9C7C4A" : c.primary, marginTop: 2, fontWeight: "600" },
+    level: { ...theme.font(theme.type.labelSm), color: semantic.action, marginTop: 2, fontWeight: "600" },
     scoreWrap: { alignItems: "flex-end" },
-    score: { ...theme.font(theme.type.headlineSm), color: isDark ? "#9C7C4A" : c.primary, fontSize: 17, fontWeight: "700" },
+    score: { ...theme.font(theme.type.headlineSm), color: semantic.action, fontSize: 17, fontWeight: "700" },
     scoreUnit: { ...theme.font(theme.type.labelCaps), color: c.onSurfaceVariant, fontSize: 10 },
 
     myRankCard: {
       marginTop: 12,
       padding: 16,
-      borderRadius: 22,
+      borderRadius: RADIUS_CARD,
     },
     myRankLabel: { ...theme.font(theme.type.labelCaps), color: c.onSurfaceVariant, letterSpacing: 1, marginBottom: 8, fontWeight: "700" },
+    emptyText: { ...theme.font(theme.type.bodyMd), color: c.onSurfaceVariant, textAlign: "center", marginTop: 32 },
   });
 
-  const sampleLeaderboard: LeaderboardEntry[] = data?.entries?.length
-    ? data.entries
-    : [
-        { rank: 1, userId: "u1", username: "nairobi_ghost", level: 9, score: 84500, isMe: false },
-        { rank: 2, userId: "u2", username: "vanguard_prime", level: 7, score: 62000, isMe: false },
-        { rank: 3, userId: "u3", username: "optic_stalker", level: 6, score: 48900, isMe: false },
-        { rank: 4, userId: "u4", username: "demoexplorer", level: 4, score: 12450, isMe: true },
-        { rank: 5, userId: "u5", username: "sarit_runner", level: 3, score: 9800, isMe: false },
-      ];
-
-  const currentUserEntry = sampleLeaderboard.find((e) => e.isMe);
+  const entries: LeaderboardEntry[] = data?.entries ?? [];
+  const currentUserEntry = entries.find((e) => e.isMe);
 
   return (
     <View style={styles.container}>
       <View style={styles.header}>
         <View style={styles.headerLeft}>
           <NeumorphicView variant="raised" radius={19} style={styles.backBtn} onPress={() => router.back()}>
-            <MaterialIcons name="arrow-back" size={20} color={isDark ? "#9C7C4A" : c.primary} />
+            <MaterialIcons name="arrow-back" size={20} color={semantic.action} />
           </NeumorphicView>
           <View>
-            <Text style={styles.headerTitle}>Vanguard Ranks</Text>
-            <Text style={styles.headerSub}>Nairobi Sector Leaderboard</Text>
+            <Text style={styles.headerTitle}>Leaderboard</Text>
+            <Text style={styles.headerSub}>Nairobi Leaderboard</Text>
           </View>
         </View>
-        <MaterialIcons name="leaderboard" size={22} color={isDark ? "#9C7C4A" : c.primary} />
+        <MaterialIcons name="leaderboard" size={22} color={semantic.action} />
       </View>
 
       <FlatList
-        data={sampleLeaderboard}
+        data={entries}
         keyExtractor={(item) => item.userId}
         contentContainerStyle={styles.content}
         showsVerticalScrollIndicator={false}
+        ListEmptyComponent={
+          data ? <Text style={styles.emptyText}>No leaderboard data yet — be the first to play!</Text> : null
+        }
         ListHeaderComponent={
+          entries.length === 0 ? null : (
           <>
             {/* Filter Pills */}
             <View style={styles.filterRow}>
@@ -148,8 +147,8 @@ export default function LeaderboardScreen() {
                   <NeumorphicView
                     key={filter}
                     variant={active ? "inset" : "raised"}
-                    glow={active ? "gold" : "none"}
-                    radius={14}
+                    accent={active ? "action" : "none"}
+                    radius={RADIUS_CARD}
                     style={styles.filterPill}
                     onPress={() => setTimeFilter(filter)}
                   >
@@ -163,8 +162,8 @@ export default function LeaderboardScreen() {
 
             {/* Current User Standings Card */}
             {currentUserEntry && (
-              <NeumorphicView variant="raised" glow="gold" radius={22} style={styles.myRankCard}>
-                <Text style={styles.myRankLabel}>YOUR OPERATIVE STANDING</Text>
+              <NeumorphicView variant="raised" accent="action" radius={RADIUS_CARD} style={styles.myRankCard}>
+                <Text style={styles.myRankLabel}>YOUR STANDING</Text>
                 <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "space-between" }}>
                   <View style={{ flexDirection: "row", alignItems: "center", gap: 12 }}>
                     <NeumorphicView variant="inset" radius={12} style={styles.rankWell}>
@@ -172,7 +171,7 @@ export default function LeaderboardScreen() {
                     </NeumorphicView>
                     <View>
                       <Text style={styles.name}>@{currentUserEntry.username}</Text>
-                      <Text style={styles.level}>Level {currentUserEntry.level} Operative</Text>
+                      <Text style={styles.level}>Level {currentUserEntry.level} Player</Text>
                     </View>
                   </View>
                   <View style={styles.scoreWrap}>
@@ -185,6 +184,7 @@ export default function LeaderboardScreen() {
 
             <View style={{ height: 16 }} />
           </>
+          )
         }
         renderItem={({ item }) => {
           const isTop1 = item.rank === 1;
@@ -193,8 +193,8 @@ export default function LeaderboardScreen() {
           return (
             <NeumorphicView
               variant="raised"
-              glow={item.isMe ? "gold" : isTop1 ? "gold" : "none"}
-              radius={20}
+              accent={isTop1 ? "reward" : item.isMe ? "action" : "none"}
+              radius={RADIUS_CARD}
               style={styles.row}
             >
               <NeumorphicView variant="inset" radius={12} style={styles.rankWell}>
@@ -217,7 +217,7 @@ export default function LeaderboardScreen() {
 
               <View style={{ flex: 1 }}>
                 <Text style={styles.name}>@{item.username}</Text>
-                <Text style={styles.level}>Level {item.level} Operative</Text>
+                <Text style={styles.level}>Level {item.level} Player</Text>
               </View>
 
               <View style={styles.scoreWrap}>
