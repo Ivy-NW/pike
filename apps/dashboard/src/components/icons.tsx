@@ -176,3 +176,76 @@ export function ClockIcon({ size = 20, color = "currentColor" }: IconProps) {
     </svg>
   );
 }
+
+export function CardIcon({ size = 20, color = "currentColor" }: IconProps) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 24 24" stroke={color} {...base}>
+      <rect x="3" y="5.5" width="18" height="13" rx="1.8" />
+      <path d="M3 9.5h18" />
+      <path d="M6.5 14.5h4" />
+    </svg>
+  );
+}
+
+export function PhoneIcon({ size = 20, color = "currentColor" }: IconProps) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 24 24" stroke={color} {...base}>
+      <rect x="6.5" y="2.5" width="11" height="19" rx="1.8" />
+      <path d="M11 18.5h2" />
+    </svg>
+  );
+}
+
+export function BankIcon({ size = 20, color = "currentColor" }: IconProps) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 24 24" stroke={color} {...base}>
+      <path d="M3.5 9.5 12 4l8.5 5.5" />
+      <path d="M4.5 9.5v9M9 9.5v9M15 9.5v9M19.5 9.5v9" />
+      <path d="M3 19h18" />
+    </svg>
+  );
+}
+
+export function DotsIcon({ size = 20, color = "currentColor" }: IconProps) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 24 24" stroke={color} {...base}>
+      <circle cx="5" cy="12" r="1.3" fill={color} />
+      <circle cx="12" cy="12" r="1.3" fill={color} />
+      <circle cx="19" cy="12" r="1.3" fill={color} />
+    </svg>
+  );
+}
+
+export function ChevronLeftIcon({ size = 20, color = "currentColor" }: IconProps) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 24 24" stroke={color} {...base}>
+      <path d="M15 5.5 8.5 12l6.5 6.5" />
+    </svg>
+  );
+}
+
+export function ChevronRightIcon({ size = 20, color = "currentColor" }: IconProps) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 24 24" stroke={color} {...base}>
+      <path d="M9 5.5 15.5 12 9 18.5" />
+    </svg>
+  );
+}
+
+export function DownloadIcon({ size = 20, color = "currentColor" }: IconProps) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 24 24" stroke={color} {...base}>
+      <path d="M12 3.5v11.5M8 11.5l4 4 4-4" />
+      <path d="M4.5 17v2A1.5 1.5 0 0 0 6 20.5h12A1.5 1.5 0 0 0 19.5 19v-2" />
+    </svg>
+  );
+}
+
+export function CheckCircleIcon({ size = 20, color = "currentColor" }: IconProps) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 24 24" stroke={color} {...base}>
+      <circle cx="12" cy="12" r="8.5" />
+      <path d="m8.3 12.3 2.5 2.5 5-5.4" />
+    </svg>
+  );
+}

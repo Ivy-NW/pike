@@ -14,11 +14,15 @@ export default function LoginPage() {
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
+  const [resendState, setResendState] = useState<"idle" | "sending" | "sent">("idle");
+
+  const needsVerification = error?.toLowerCase().includes("verify your email") ?? false;
 
   const submit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
     setError(null);
+    setResendState("idle");
     try {
       const { token } = await api.loginBusiness(email, password);
       setToken(token);
@@ -27,6 +31,15 @@ export default function LoginPage() {
       setError(err instanceof ApiError ? err.message : "Login failed");
     } finally {
       setLoading(false);
+    }
+  };
+
+  const resendVerification = async () => {
+    setResendState("sending");
+    try {
+      await api.resendVerification(email);
+    } finally {
+      setResendState("sent");
     }
   };
 
@@ -72,7 +85,27 @@ export default function LoginPage() {
         <button className="primary" style={{ marginTop: 8 }} disabled={loading}>
           {loading ? "Logging in..." : "Log in"}
         </button>
-        {error && <div className="notice notice-error" role="alert"><strong>Login failed</strong><span>{error}</span></div>}
+        {error && (
+          <div className="notice notice-error" role="alert">
+            <strong>Login failed</strong>
+            <span>{error}</span>
+            {needsVerification && (
+              resendState === "sent" ? (
+                <span style={{ marginTop: 6 }}>Verification link sent — check your email.</span>
+              ) : (
+                <button
+                  type="button"
+                  className="secondary"
+                  style={{ marginTop: 8, padding: "6px 12px", fontSize: 13 }}
+                  onClick={() => void resendVerification()}
+                  disabled={resendState === "sending"}
+                >
+                  {resendState === "sending" ? "Sending…" : "Resend verification email"}
+                </button>
+              )
+            )}
+          </div>
+        )}
       </form>
       <p style={{ marginTop: 24, fontSize: 14, color: "var(--on-surface-variant)" }}>
         New to PIKE? <Link href="/register" style={{ color: "var(--action)", fontWeight: 600 }}>Create a business account</Link>

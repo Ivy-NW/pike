@@ -41,10 +41,14 @@ export default function QuestsPage() {
             <SearchIcon size={16} />
             <input placeholder="Search quests…" value={query} onChange={(e) => setQuery(e.target.value)} />
           </div>
-          <Link href="/quests/new" className="primary icon">
-            <PlusIcon size={16} />
-            Create quest
-          </Link>
+          {/* Only shown once quests exist — the empty-state panel below is the sole "Create
+              quest" primary when the account has none, avoiding two visible at once. */}
+          {!!quests?.length && (
+            <Link href="/quests/new" className="primary icon">
+              <PlusIcon size={16} />
+              Create quest
+            </Link>
+          )}
         </div>
       </div>
 

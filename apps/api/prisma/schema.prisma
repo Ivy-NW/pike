@@ -68,19 +68,23 @@ enum BatchStatus {
 }
 
 model Business {
-  id                    String        @id @default(uuid())
-  name                  String
-  email                 String        @unique
-  passwordHash          String?
-  emailVerificationToken String?      @unique
-  paymentStatus         PaymentStatus @default(unverified)
-  stripeCustomerId      String?
-  stripePaymentMethodId String?
-  createdByAdmin        Boolean       @default(false)
-  emailVerified         Boolean       @default(false)
-  suspended             Boolean       @default(false)
-  createdAt             DateTime      @default(now())
-  updatedAt             DateTime      @updatedAt
+  id                     String        @id @default(uuid())
+  name                   String
+  email                  String        @unique
+  phone                  String?
+  address                String?
+  passwordHash           String?
+  emailVerificationToken String?       @unique
+  passwordResetToken     String?       @unique
+  passwordResetExpiresAt DateTime?
+  paymentStatus          PaymentStatus @default(unverified)
+  stripeCustomerId       String?
+  stripePaymentMethodId  String?
+  createdByAdmin         Boolean       @default(false)
+  emailVerified          Boolean       @default(false)
+  suspended              Boolean       @default(false)
+  createdAt              DateTime      @default(now())
+  updatedAt              DateTime      @updatedAt
 
   venues Venue[]
 
@@ -270,13 +274,39 @@ model UserBadge {
   @@map("user_badges")
 }
 
+enum AdminRole {
+  super_admin
+  admin
+}
+
 model Admin {
-  id           String   @id @default(uuid())
-  email        String   @unique
-  passwordHash String
-  createdAt    DateTime @default(now())
+  id                     String    @id @default(uuid())
+  email                  String    @unique
+  passwordHash           String
+  role                   AdminRole @default(admin)
+  passwordResetToken     String?   @unique
+  passwordResetExpiresAt DateTime?
+  createdAt              DateTime  @default(now())
+
+  auditLogs AdminAuditLog[]
 
   @@map("admins")
+}
+
+/// Records who did what and when for admin actions with platform-wide consequence
+/// (verify/suspend a business, edit attestation batch config, etc).
+model AdminAuditLog {
+  id         String   @id @default(uuid())
+  adminId    String
+  admin      Admin    @relation(fields: [adminId], references: [id])
+  action     String
+  targetType String?
+  targetId   String?
+  metadata   Json?
+  createdAt  DateTime @default(now())
+
+  @@index([createdAt])
+  @@map("admin_audit_logs")
 }
 
 /// Marketing-site admin code gate (obscurity layer only -- the real security boundary is

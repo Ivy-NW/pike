@@ -2,6 +2,7 @@ import { createHash, timingSafeEqual } from "node:crypto";
 import { HttpException, HttpStatus, Injectable } from "@nestjs/common";
 import { PrismaService } from "../prisma/prisma.service";
 import { RedisService } from "../redis/redis.service";
+import { paginate } from "../common/pagination.dto";
 
 const MAX_ATTEMPTS_PER_HOUR = 5;
 
@@ -52,11 +53,16 @@ export class AdminGateService {
   }
 
   /** Surfaced to admins via AdminController -- repeated failures are a signal worth reviewing. */
-  listAttempts(success?: boolean) {
-    return this.prisma.adminGateAttempt.findMany({
-      where: success === undefined ? undefined : { success },
-      orderBy: { createdAt: "desc" },
-      take: 500,
-    });
+  listAttempts(success: boolean | undefined, page: { cursor?: string; limit?: number }) {
+    return paginate(
+      (args) =>
+        this.prisma.adminGateAttempt.findMany({
+          ...args,
+          where: success === undefined ? undefined : { success },
+          orderBy: { createdAt: "desc" },
+        }),
+      page,
+      100,
+    );
   }
 }

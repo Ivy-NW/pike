@@ -63,7 +63,8 @@ th {
 }
 
 input,
-select {
+select,
+textarea {
   padding: 10px 12px;
   border-radius: 10px;
   border: 1px solid var(--border-strong);
@@ -75,13 +76,26 @@ select {
 }
 
 input:focus,
-select:focus {
+select:focus,
+textarea:focus {
   outline: none;
   border-color: var(--action);
   box-shadow: 0 0 0 2px color-mix(in srgb, var(--action) 20%, transparent);
 }
 
-button.primary {
+/* Generic (not tag-qualified) so a <Link className="primary"> renders identically to a
+   <button className="primary"> — previously these only matched button.primary/.secondary/
+   .danger, so every Link-based CTA (Sidebar's Create quest, "Add venue", "New quest", etc.)
+   silently rendered as bare underlined text with no button styling at all. */
+.primary, .secondary, .danger {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.primary {
   background: var(--action-container);
   color: var(--on-action-container);
   border: none;
@@ -89,35 +103,32 @@ button.primary {
   padding: 10px 18px;
   font-weight: 600;
   font-family: var(--font-body);
-  cursor: pointer;
 }
 
-button.primary:disabled {
+.primary:disabled {
   opacity: 0.5;
   cursor: not-allowed;
 }
 
-button.secondary {
+.secondary {
   background: var(--surface-container-lowest);
   color: var(--action);
   border: 1px solid var(--action);
   border-radius: 10px;
   padding: 10px 18px;
   font-family: var(--font-body);
-  cursor: pointer;
 }
 
-button.danger {
+.danger {
   background: transparent;
   color: var(--error);
   border: 1px solid var(--error);
   border-radius: 10px;
   padding: 8px 14px;
   font-family: var(--font-body);
-  cursor: pointer;
 }
 
-button.icon {
+.icon {
   display: inline-flex;
   align-items: center;
   gap: 8px;
@@ -161,6 +172,10 @@ button.icon {
   border-radius: 20px;
   padding: 20px;
   border: 1px solid var(--border-subtle);
+  /* Quiet always-on lift, not just on hover — a scaled-down echo of the landing page's
+     layered card shadows (Landing.module.css .stepCard/.formCard), toned way down for a
+     denser internal tool. */
+  box-shadow: 0 1px 2px rgba(15,12,8,.04), 0 14px 28px -22px rgba(15,12,8,.2);
   transition: border-color .15s ease, box-shadow .2s ease;
 }
 
@@ -244,6 +259,7 @@ button.icon {
   border: 1px solid var(--border-subtle);
   border-radius: 14px;
   padding: 18px 20px;
+  box-shadow: 0 1px 2px rgba(15,12,8,.04), 0 14px 28px -22px rgba(15,12,8,.2);
   transition: border-color .15s ease, box-shadow .2s ease;
 }
 
@@ -370,21 +386,56 @@ button.icon {
   padding: 6px 10px 18px;
 }
 
+.sidebar-brand-text {
+  min-width: 0;
+}
+
+.sidebar-brand-actions {
+  margin-left: auto;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+/* Now the sole brand text next to the logo (the "PIKE" wordmark was dropped, the logo mark
+   already carries that identity) — styled as a real heading rather than the small muted
+   caption it used to sit under. */
 .sidebar-brand-label {
-  font-family: var(--font-mono);
-  font-size: 10px;
-  letter-spacing: .12em;
-  text-transform: uppercase;
-  color: var(--outline);
+  font-family: var(--font-heading);
+  font-size: 15px;
+  font-weight: 700;
+  letter-spacing: 0;
+  text-transform: none;
+  color: var(--on-surface);
   margin-top: 1px;
 }
 
+/* Tonal, not filled — this CTA is persistent global chrome across every page, so if it were
+   a full .primary it would compete with each page's own single primary action (the doc's
+   "at most one filled primary per screen" rule). Distinct enough to read as always-available
+   without claiming the page-level hierarchy slot. */
 .sidebar-create {
   display: flex;
   align-items: center;
   justify-content: center;
   gap: 8px;
   margin: 0 2px 16px;
+  padding: 10px 18px;
+  border-radius: 10px;
+  font-weight: 600;
+  font-family: var(--font-body);
+  background: color-mix(in srgb, var(--action) 12%, transparent);
+  color: var(--action);
+  border: 1px solid color-mix(in srgb, var(--action) 35%, transparent);
+}
+
+.sidebar-create:hover {
+  background: color-mix(in srgb, var(--action) 20%, transparent);
+}
+
+.sidebar-create-fab {
+  background: var(--action);
+  color: var(--on-action);
 }
 
 .sidebar-nav {
@@ -424,10 +475,25 @@ button.icon {
   gap: 8px;
 }
 
+/* Business name + theme toggle, grouped and given real contrast (previously a tiny muted
+   caption easy to miss) — a small identity chip rather than plain text in the corner. */
+.sidebar-footer-identity {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  padding: 8px 10px;
+  border-radius: 10px;
+  background: var(--surface-container-low);
+}
+
 .sidebar-business {
-  font-size: 13px;
-  color: var(--on-surface-variant);
-  padding: 0 10px;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--on-surface);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .app-content {
@@ -443,11 +509,15 @@ button.icon {
   gap: 20px;
   flex-wrap: wrap;
   margin-bottom: 24px;
+  padding-bottom: 20px;
+  border-bottom: 1px solid var(--border-subtle);
 }
 
 .page-header h1 {
   font-family: var(--font-heading);
-  font-size: 26px;
+  font-size: clamp(24px, 2.4vw, 30px);
+  font-weight: 600;
+  letter-spacing: -0.02em;
   margin: 0;
 }
 
@@ -500,7 +570,32 @@ button.icon {
   }
 
   .app-content {
-    padding: 22px 18px;
+    padding: 22px 18px 90px;
+  }
+}
+
+/* Reachable "Create quest" CTA on mobile (the sidebar's own create-quest link is hidden
+   there — see .sidebar-create above). Rendered as a sibling of .sidebar rather than inside
+   it: .sidebar has backdrop-filter, which creates a new containing block for `position:
+   fixed` descendants, so a fixed element nested inside it positions against the sidebar's
+   own (short, on mobile) box instead of the viewport. */
+.mobile-fab {
+  display: none;
+}
+
+@media (max-width: 860px) {
+  .mobile-fab {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: fixed;
+    bottom: 18px;
+    right: 18px;
+    z-index: 150;
+    width: 52px;
+    height: 52px;
+    border-radius: 50%;
+    box-shadow: 0 12px 28px -10px rgba(15, 12, 8, 0.5);
   }
 }
 
@@ -680,4 +775,441 @@ button.icon {
   color: var(--on-surface-variant);
   font-size: 13px;
   font-style: italic;
+}
+
+/* --- Analytics: range toggle + trend chart + ranked lists ------------------ */
+.range-toggle {
+  display: inline-flex;
+  padding: 3px;
+  border-radius: 10px;
+  background: var(--surface-container-high);
+  gap: 2px;
+}
+
+.range-toggle button {
+  border: 0;
+  background: transparent;
+  color: var(--on-surface-variant);
+  font-family: var(--font-mono);
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.03em;
+  padding: 6px 14px;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+.range-toggle button.active {
+  background: var(--surface-container-lowest);
+  color: var(--on-surface);
+  box-shadow: 0 1px 4px rgba(15, 12, 8, 0.15);
+}
+
+.chart-legend {
+  display: flex;
+  gap: 16px;
+  font-size: 12px;
+  color: var(--on-surface-variant);
+}
+
+.chart-legend-item {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.chart-legend-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+}
+
+.rank-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.rank-row {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 96px 40px;
+  align-items: center;
+  gap: 10px;
+  text-decoration: none;
+  color: inherit;
+}
+
+.rank-row-copy {
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.rank-row-copy strong {
+  font-size: 13px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.rank-row-copy span {
+  font-size: 12px;
+  color: var(--on-surface-variant);
+}
+
+.rank-track {
+  height: 6px;
+  border-radius: var(--radius-full);
+  background: var(--surface-container-high);
+  overflow: hidden;
+}
+
+.rank-track > span {
+  display: block;
+  height: 100%;
+  background: var(--action);
+  border-radius: var(--radius-full);
+}
+
+.rank-number {
+  font-family: var(--font-heading);
+  font-size: 13px;
+  font-weight: 700;
+  text-align: right;
+}
+
+.analytics-grid {
+  display: grid;
+  grid-template-columns: 2fr 1fr;
+  gap: 16px;
+  align-items: start;
+}
+
+@media (max-width: 900px) {
+  .analytics-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* --- Toast notifications ---------------------------------------------------- */
+.toast-stack {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  z-index: 200;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  max-width: 360px;
+}
+
+.toast {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 12px 14px;
+  border-radius: 10px;
+  background: var(--surface-container-lowest);
+  border: 1px solid var(--border-subtle);
+  box-shadow: 0 18px 36px -18px rgba(15, 12, 8, 0.45);
+  font-size: 13px;
+  animation: toastIn 0.18s ease;
+}
+
+.toast-success {
+  border-left: 3px solid var(--success);
+}
+
+.toast-error {
+  border-left: 3px solid var(--error);
+}
+
+@keyframes toastIn {
+  from { opacity: 0; transform: translateY(6px); }
+  to { opacity: 1; transform: none; }
+}
+
+/* --- Settings: payment method tabs ------------------------------------------ */
+.method-tabs {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin-bottom: 18px;
+}
+
+.method-tab {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 14px;
+  border-radius: 10px;
+  border: 1px solid var(--border-subtle);
+  background: var(--surface-container-lowest);
+  color: var(--on-surface-variant);
+  cursor: pointer;
+  font-size: 13px;
+  font-weight: 500;
+}
+
+.method-tab.active {
+  border-color: var(--action);
+  color: var(--action);
+  background: color-mix(in srgb, var(--action) 8%, transparent);
+}
+
+.mock-badge {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: var(--on-surface-variant);
+  background: var(--surface-container-high);
+  padding: 2px 8px;
+  border-radius: var(--radius-full);
+}
+
+.card-number-input {
+  font-variant-numeric: tabular-nums;
+  letter-spacing: 0.04em;
+}
+
+/* --- Sidebar collapse (desktop rail only — the toggle itself is hidden below 860px,
+   but this guards against a collapsed desktop window simply being resized narrower). --- */
+@media (min-width: 861px) {
+  .sidebar.collapsed {
+    width: 76px;
+  }
+
+  .sidebar.collapsed .sidebar-brand {
+    flex-direction: column;
+    gap: 12px;
+    padding: 6px 0 18px;
+  }
+
+  .sidebar.collapsed .sidebar-brand-text,
+  .sidebar.collapsed .sidebar-business,
+  .sidebar.collapsed .sidebar-link span,
+  .sidebar.collapsed .sidebar-create span,
+  .sidebar.collapsed .sidebar-nav-label {
+    display: none;
+  }
+
+  .sidebar.collapsed .sidebar-brand-actions {
+    margin-left: 0;
+  }
+
+  .sidebar.collapsed .sidebar-link,
+  .sidebar.collapsed .sidebar-create,
+  .sidebar.collapsed .sidebar-footer button {
+    justify-content: center;
+  }
+
+  .sidebar.collapsed .sidebar-footer-identity {
+    justify-content: center;
+  }
+}
+
+.sidebar-collapse-toggle {
+  border: 1px solid var(--border-subtle);
+  background: var(--surface-container-lowest);
+  color: var(--on-surface-variant);
+  border-radius: 8px;
+  width: 28px;
+  height: 28px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+}
+
+/* The rail-collapse toggle only makes sense on the docked desktop sidebar — on mobile the
+   sidebar is already a horizontal top bar, so hide it there (must come after the base rule
+   above, since equal-specificity CSS resolves by source order, not media-query nesting). */
+@media (max-width: 860px) {
+  .sidebar-collapse-toggle {
+    display: none;
+  }
+}
+
+/* --- Breadcrumb --------------------------------------------------------------- */
+.breadcrumb {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 13px;
+  color: var(--on-surface-variant);
+  margin-bottom: 8px;
+}
+
+.breadcrumb a {
+  color: var(--on-surface-variant);
+}
+
+.breadcrumb a:hover {
+  color: var(--action);
+}
+
+/* --- Metrics strip — a hybrid of two landing-page patterns (Landing.module.css): the
+   Attribution section's .ledger (3px accent top-border framing, bold heading-font numbers)
+   and .factStrip (a row of stats divided by vertical rules). Three metrics side by side in
+   one bordered strip, not a stack of rows and not three disconnected boxes. Used on the Home
+   overview in place of .stat-grid, which stays defined/used elsewhere (Analytics, Rewards). */
+.metrics-ledger {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  border-top: 3px solid var(--action);
+  background: var(--surface-container-lowest);
+  border-radius: var(--radius-md);
+  margin-bottom: 24px;
+  overflow: hidden;
+}
+
+.metric-row {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding: 20px;
+  border-right: 1px solid var(--border-subtle);
+  transition: background-color .15s ease;
+}
+
+.metric-row:last-child {
+  border-right: 0;
+}
+
+.metric-row:hover {
+  background: var(--surface-container-low);
+}
+
+.metric-label {
+  color: var(--on-surface-variant);
+  font-size: 14px;
+}
+
+.metric-value {
+  font-family: var(--font-heading);
+  font-size: 32px;
+  font-weight: 700;
+  line-height: 1;
+}
+
+@media (max-width: 640px) {
+  .metrics-ledger {
+    grid-template-columns: 1fr;
+  }
+
+  .metric-row {
+    border-right: 0;
+    border-bottom: 1px solid var(--border-subtle);
+  }
+
+  .metric-row:last-child {
+    border-bottom: 0;
+  }
+}
+
+/* --- Venue grid + cards — corner badge ported from the landing page's .stepCard/.stepIcon
+   (a filled icon breaking out of the card's top edge), plus a nested surface for its quest
+   preview so quests read as belonging to the venue instead of a flat stack. Each card is a
+   full <Link> to that venue's own quest-listing page, so the whole tile is clickable. --- */
+.venue-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  /* Row-gap is deliberately larger than column-gap: the badge pokes 16px above its own
+     card (see .venue-card-badge's top offset) — anything less here and it overlaps the
+     card above it in the grid, which is exactly the bug this gap size fixes. */
+  gap: 32px 20px;
+  /* Same reasoning applies above the grid's first row: .section-heading (the "Your venues"
+     row just before this) has no margin-bottom of its own, so without this the first row's
+     badges poke straight up into it. Matches the 32px row-gap above exactly, for the same
+     16px of real clearance (32 - 16px badge protrusion) as between two grid rows — the
+     previous 20px here was arithmetic error (20 - 16 = 4px, visibly cramped). */
+  margin-top: 32px;
+}
+
+.venue-card {
+  position: relative;
+  display: block;
+  padding-top: 28px;
+  text-decoration: none;
+  color: inherit;
+}
+
+.venue-card-badge {
+  position: absolute;
+  top: -16px;
+  left: 20px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  border-radius: 12px;
+  background: var(--action);
+  color: var(--on-action);
+  box-shadow: 0 12px 24px -10px rgba(15,12,8,.4);
+}
+
+.venue-card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 12px;
+}
+
+.venue-quest-list {
+  margin-top: 14px;
+  padding: 2px 14px;
+  border-radius: 12px;
+  background: var(--surface-container-low);
+}
+
+.venue-quest-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 0;
+  border-top: 1px solid var(--border-subtle);
+}
+
+.venue-quest-row:first-child {
+  border-top: 0;
+}
+
+.venue-quest-row span:first-child {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.venue-quest-more {
+  padding: 10px 0;
+  border-top: 1px solid var(--border-subtle);
+  font-size: 13px;
+  color: var(--on-surface-variant);
+}
+
+/* --- Spacing rhythm utilities (named, not Tailwind-style atoms — matches this file's
+   existing convention of semantic classes like .card-subtext/.section-meta). ------------- */
+.row-between {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.form-stack {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.form-submit {
+  align-self: flex-start;
+}
+
+.section-block {
+  margin-top: 28px;
 }

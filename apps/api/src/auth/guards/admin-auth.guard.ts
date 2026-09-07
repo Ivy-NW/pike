@@ -1,22 +1,11 @@
-import { CanActivate, ExecutionContext, Injectable, UnauthorizedException } from "@nestjs/common";
-import { TokenService } from "../token.service";
+import { Injectable } from "@nestjs/common";
+import { createTokenAuthGuard } from "./token-auth.guard";
+import type { AdminTokenPayload } from "../token.service";
 
 @Injectable()
-export class AdminAuthGuard implements CanActivate {
-  constructor(private readonly tokens: TokenService) {}
-
-  canActivate(context: ExecutionContext): boolean {
-    const req = context.switchToHttp().getRequest();
-    const header: string | undefined = req.headers.authorization;
-    if (!header?.startsWith("Bearer ")) {
-      throw new UnauthorizedException("Missing admin session token");
-    }
-    try {
-      const payload = this.tokens.verifyAdminToken(header.slice("Bearer ".length));
-      req.adminId = payload.adminId;
-      return true;
-    } catch {
-      throw new UnauthorizedException("Invalid or expired admin session");
-    }
-  }
-}
+export class AdminAuthGuard extends createTokenAuthGuard<AdminTokenPayload>({
+  verify: (tokens, token) => tokens.verifyAdminToken(token),
+  requestKeys: { adminId: "adminId", adminRole: "adminRole" },
+  missingTokenMessage: "Missing admin session token",
+  invalidTokenMessage: "Invalid or expired admin session",
+}) {}

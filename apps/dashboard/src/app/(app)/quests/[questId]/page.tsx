@@ -1,13 +1,16 @@
 "use client";
 import { useEffect, useState } from "react";
 import { useParams } from "next/navigation";
-import { api, ApiError } from "@/lib/api";
+import { Area, AreaChart, ResponsiveContainer, Tooltip } from "recharts";
+import { api, ApiError, type AnalyticsTrends } from "@/lib/api";
+import { ChevronRightIcon } from "@/components/icons";
 import Link from "next/link";
 
 export default function QuestDetailPage() {
   const { questId } = useParams<{ questId: string }>();
   const [quest, setQuest] = useState<any>(null);
   const [stats, setStats] = useState<any>(null);
+  const [trends, setTrends] = useState<AnalyticsTrends | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [statsError, setStatsError] = useState<string | null>(null);
 
@@ -27,6 +30,8 @@ export default function QuestDetailPage() {
       .then((s) => { if (!cancelled) setStats(s); })
       .catch((err) => { if (!cancelled) setStatsError(err instanceof ApiError ? err.message : "Could not load redemption stats"); });
 
+    api.getAnalyticsTrends(30, questId).then((t) => { if (!cancelled) setTrends(t); }).catch(() => {});
+
     return () => {
       cancelled = true;
     };
@@ -40,6 +45,11 @@ export default function QuestDetailPage() {
 
   return (
     <>
+      <nav className="breadcrumb" aria-label="Breadcrumb">
+        <Link href="/quests">Quests</Link>
+        <ChevronRightIcon size={12} />
+        <span>{quest.name}</span>
+      </nav>
       <div className="page-header">
         <div>
           <span className="eyebrow">Quest detail</span>
@@ -64,7 +74,7 @@ export default function QuestDetailPage() {
       {stats && (
         <div className="card" style={{ maxWidth: 640, marginBottom: 16 }}>
           <div className="card-title">Redemptions</div>
-          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline", marginBottom: 8 }}>
+          <div className="row-between" style={{ marginBottom: 8 }}>
             <span style={{ fontFamily: "var(--font-heading)", fontSize: 24, fontWeight: 700 }}>
               {stats.redeemedToday} <span style={{ fontSize: 15, fontWeight: 400, color: "var(--on-surface-variant)" }}>/ {stats.capToday} today</span>
             </span>
@@ -73,6 +83,27 @@ export default function QuestDetailPage() {
           <div className="progress-bar" style={{ marginBottom: 20 }}>
             <span style={{ width: `${capPct}%` }} />
           </div>
+
+          {trends && trends.days.length > 1 && (
+            <div style={{ width: "100%", height: 60, marginBottom: 20 }}>
+              <ResponsiveContainer>
+                <AreaChart data={trends.days} margin={{ top: 2, right: 0, left: 0, bottom: 0 }}>
+                  <defs>
+                    <linearGradient id="questSparkFill" x1="0" y1="0" x2="0" y2="1">
+                      <stop offset="0%" stopColor="var(--action)" stopOpacity={0.3} />
+                      <stop offset="100%" stopColor="var(--action)" stopOpacity={0} />
+                    </linearGradient>
+                  </defs>
+                  <Tooltip
+                    contentStyle={{ background: "var(--surface-container-lowest)", border: "1px solid var(--border-subtle)", borderRadius: 8, fontSize: 11 }}
+                    labelFormatter={(label) => new Date(label).toLocaleDateString(undefined, { month: "short", day: "numeric" })}
+                  />
+                  <Area type="monotone" dataKey="total" stroke="var(--action)" fill="url(#questSparkFill)" strokeWidth={1.5} />
+                </AreaChart>
+              </ResponsiveContainer>
+            </div>
+          )}
+
           <div className="stat-grid" style={{ marginBottom: 0 }}>
             <div className="stat-card">
               <div className="stat-label">Total redemptions</div>

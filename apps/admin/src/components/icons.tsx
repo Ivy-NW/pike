@@ -102,6 +102,32 @@ export function ChevronRightIcon({ size = 18, color = "currentColor" }: IconProp
   );
 }
 
+export function ChevronLeftIcon({ size = 18, color = "currentColor" }: IconProps) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 24 24" stroke={color} {...base}>
+      <path d="m15 5-7 7 7 7" />
+    </svg>
+  );
+}
+
+export function ClockIcon({ size = 20, color = "currentColor" }: IconProps) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 24 24" stroke={color} {...base}>
+      <circle cx="12" cy="12" r="8.5" />
+      <path d="M12 7.5V12l3 2" />
+    </svg>
+  );
+}
+
+export function KeyIcon({ size = 20, color = "currentColor" }: IconProps) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 24 24" stroke={color} {...base}>
+      <circle cx="8" cy="15" r="4" />
+      <path d="M11 12 19 4M19 4h-3.5M19 4v3.5" />
+    </svg>
+  );
+}
+
 export function MailIcon({ size = 20, color = "currentColor" }: IconProps) {
   return (
     <svg width={size} height={size} viewBox="0 0 24 24" stroke={color} {...base}>

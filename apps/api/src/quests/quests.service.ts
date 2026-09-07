@@ -3,6 +3,7 @@ import type { Prisma } from "@prisma/client";
 import { PrismaService } from "../prisma/prisma.service";
 import { RedemptionCapService } from "../redis/redemption-cap.service";
 import { NotificationsService } from "../notifications/notifications.service";
+import { paginate } from "../common/pagination.dto";
 import { CreateQuestDto } from "./dto/create-quest.dto";
 import { UpdateQuestDto } from "./dto/update-quest.dto";
 
@@ -33,8 +34,12 @@ export class QuestsService {
     return this.prisma.quest.findMany({ where: { venueId }, orderBy: { createdAt: "desc" } });
   }
 
-  listAll() {
-    return this.prisma.quest.findMany({ orderBy: { createdAt: "desc" } });
+  listAll({ cursor, limit }: { cursor?: string; limit?: number }) {
+    return paginate(
+      (args) => this.prisma.quest.findMany({ ...args, orderBy: { createdAt: "desc" } }),
+      { cursor, limit },
+      100,
+    );
   }
 
   async findOrThrow(questId: string) {

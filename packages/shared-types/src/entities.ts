@@ -24,6 +24,8 @@ export interface Business {
   id: string;
   name: string;
   email: string;
+  phone: string | null;
+  address: string | null;
   paymentStatus: PaymentStatus;
   stripeCustomerId: string | null;
   stripePaymentMethodId: string | null;

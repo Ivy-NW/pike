@@ -1,10 +1,21 @@
 "use client";
+import { useEffect, useState } from "react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { Logo } from "./Logo";
 import { ThemeToggle } from "./ThemeToggle";
 import { clearToken } from "@/lib/auth";
-import { ChartIcon, CompassIcon, GearIcon, GiftIcon, GridIcon, PlusIcon, SignOutIcon } from "./icons";
+import {
+  ChartIcon,
+  ChevronLeftIcon,
+  ChevronRightIcon,
+  CompassIcon,
+  GearIcon,
+  GiftIcon,
+  GridIcon,
+  PlusIcon,
+  SignOutIcon,
+} from "./icons";
 
 const links = [
   { href: "/home", label: "Dashboard", icon: GridIcon },
@@ -14,42 +25,68 @@ const links = [
   { href: "/settings", label: "Settings", icon: GearIcon },
 ];
 
+const COLLAPSE_KEY = "pike-dashboard-sidebar-collapsed";
+
 export function Sidebar({ businessName }: { businessName?: string }) {
   const pathname = usePathname();
   const router = useRouter();
+  const [collapsed, setCollapsed] = useState(false);
+
+  useEffect(() => {
+    setCollapsed(localStorage.getItem(COLLAPSE_KEY) === "1");
+  }, []);
+
+  const toggleCollapsed = () => {
+    setCollapsed((prev) => {
+      const next = !prev;
+      localStorage.setItem(COLLAPSE_KEY, next ? "1" : "0");
+      return next;
+    });
+  };
 
   return (
-    <aside className="sidebar">
+    <>
+    <aside className={`sidebar${collapsed ? " collapsed" : ""}`}>
       <div className="sidebar-brand">
         <Logo size={26} />
-        <div>
-          <div style={{ fontFamily: "var(--font-heading)", fontWeight: 700, fontSize: 16, lineHeight: 1 }}>PIKE</div>
+        <div className="sidebar-brand-text">
           <div className="sidebar-brand-label">Business Portal</div>
         </div>
-        <div style={{ marginLeft: "auto" }}>
-          <ThemeToggle />
+        <div className="sidebar-brand-actions">
+          <button
+            type="button"
+            className="sidebar-collapse-toggle"
+            onClick={toggleCollapsed}
+            aria-label={collapsed ? "Expand sidebar" : "Collapse sidebar"}
+            title={collapsed ? "Expand sidebar" : "Collapse sidebar"}
+          >
+            {collapsed ? <ChevronRightIcon size={14} /> : <ChevronLeftIcon size={14} />}
+          </button>
         </div>
       </div>
 
-      <Link href="/quests/new" className="primary icon sidebar-create">
+      <Link href="/quests/new" className="icon sidebar-create" title="Create quest">
         <PlusIcon size={16} />
-        Create quest
+        <span>Create quest</span>
       </Link>
 
       <nav className="sidebar-nav" aria-label="Business portal">
         {links.map(({ href, label, icon: Icon }) => {
           const active = pathname === href || pathname.startsWith(`${href}/`);
           return (
-            <Link key={href} href={href} className={`sidebar-link${active ? " active" : ""}`}>
+            <Link key={href} href={href} className={`sidebar-link${active ? " active" : ""}`} title={label}>
               <Icon size={18} />
-              {label}
+              <span>{label}</span>
             </Link>
           );
         })}
       </nav>
 
       <div className="sidebar-footer">
-        {businessName && <span className="sidebar-business">{businessName}</span>}
+        <div className="sidebar-footer-identity">
+          {businessName && <span className="sidebar-business">{businessName}</span>}
+          <ThemeToggle />
+        </div>
         <button
           className="secondary icon"
           onClick={() => {
@@ -58,9 +95,13 @@ export function Sidebar({ businessName }: { businessName?: string }) {
           }}
         >
           <SignOutIcon size={16} />
-          Log out
+          <span className="sidebar-nav-label">Log out</span>
         </button>
       </div>
     </aside>
+    <Link href="/quests/new" className="sidebar-create-fab mobile-fab" aria-label="Create quest" title="Create quest">
+      <PlusIcon size={20} />
+    </Link>
+    </>
   );
 }
