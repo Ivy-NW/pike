@@ -5,35 +5,28 @@ import { WebView } from "react-native-webview";
 import { MaterialIcons } from "@expo/vector-icons";
 import type { UserQuestListItem } from "@pike/shared-types";
 import { api } from "@/lib/api";
-import { useTheme } from "@/theme";
+import { useTheme, useSemanticColors, RADIUS_CARD } from "@/theme";
 import { TopNav } from "@/components/TopNav";
 import { NeumorphicView } from "@/components/NeumorphicView";
 
-// Nairobi Sector Anchor Coordinates (100% Kenya Nairobi Grid)
-const NAIROBI_VENUES = [
-  { name: "KICC Sky Deck", lat: -1.2885, lng: 36.8233, sector: "CBD Central" },
-  { name: "Nairobi National Museum", lat: -1.2740, lng: 36.8140, sector: "Museum Hill" },
-  { name: "Upper Hill Cyber Hub", lat: -1.2980, lng: 36.8150, sector: "Upper Hill" },
-  { name: "Sarit Tech Expo", lat: -1.2615, lng: 36.8040, sector: "Westlands" },
-  { name: "Kilimani Node Terminal", lat: -1.2921, lng: 36.7865, sector: "Kilimani" },
-  { name: "The Hub Cyber Plaza", lat: -1.3190, lng: 36.7060, sector: "Karen" },
-  { name: "Village Market Portal", lat: -1.2290, lng: 36.8040, sector: "Gigiri" },
-];
-
-function getVenueCoordinate(venueId: string, index: number) {
-  const spot = NAIROBI_VENUES[index % NAIROBI_VENUES.length];
-  return {
-    lat: spot.lat,
-    lng: spot.lng,
-    sector: spot.sector,
-  };
+/**
+ * `@pike/shared-types`' `UserQuestListItem` (and the `Venue`/`Quest` entities
+ * it's built from) don't carry a real lat/lng today — see
+ * packages/shared-types/src/api.ts and entities.ts. Rather than fabricate a
+ * position, this returns null so the caller can skip the pin; wire the real
+ * field in here once the API exposes one instead of guessing at a shape that
+ * doesn't exist yet.
+ */
+function venueCoordinate(_item: UserQuestListItem): { lat: number; lng: number } | null {
+  return null;
 }
 
 export default function MapScreen() {
   const theme = useTheme();
+  const semantic = useSemanticColors();
   const [quests, setQuests] = useState<UserQuestListItem[]>([]);
   const [favorites, setFavorites] = useState<Set<string>>(new Set());
-  const [nodeFilter, setNodeFilter] = useState<"all" | "high" | "exploration">("all");
+  const [questFilter, setQuestFilter] = useState<"all" | "high" | "exploration">("all");
   const webViewRef = useRef<WebView>(null);
 
   useEffect(() => {
@@ -61,22 +54,26 @@ export default function MapScreen() {
 
   const c = theme.colors;
   const isDark = theme.mode === "dark";
+  const actionColor = semantic.action;
+  const mutedColor = c.onSurfaceVariant;
 
-  // Build markers JSON for Nairobi locations
-  const markersData = quests.map((q, i) => {
-    const coords = getVenueCoordinate(q.venueId, i);
-    return {
-      id: q.id,
-      venueId: q.venueId,
-      name: q.venueName,
-      questName: q.name,
-      reward: q.rewardDescription,
-      completed: q.completed,
-      lat: coords.lat,
-      lng: coords.lng,
-      sector: coords.sector,
-    };
-  });
+  // Only quests with a real venue coordinate get a pin — see venueCoordinate() above.
+  const markersData = quests
+    .map((q) => {
+      const coords = venueCoordinate(q);
+      if (!coords) return null;
+      return {
+        id: q.id,
+        venueId: q.venueId,
+        name: q.venueName,
+        questName: q.name,
+        reward: q.rewardDescription,
+        completed: q.completed,
+        lat: coords.lat,
+        lng: coords.lng,
+      };
+    })
+    .filter((m): m is NonNullable<typeof m> => m !== null);
 
   // 100% Free OpenStreetMap Pure Implementation (Zero Tokens, Zero API Keys, Pure OSM)
   const mapHtml = `
@@ -92,7 +89,7 @@ export default function MapScreen() {
         * { box-sizing: border-box; margin: 0; padding: 0; }
         body, html { width: 100%; height: 100%; background: ${isDark ? "#000000" : "#F6F4EF"}; overflow: hidden; font-family: -apple-system, BlinkMacSystemFont, "Orbitron", sans-serif; }
         #map { width: 100%; height: 100%; }
-        
+
         /* Dark Theme OSM Tile Filter — Gives OpenStreetMap a rich dark titanium aesthetic without any external API keys! */
         ${
           isDark
@@ -103,8 +100,8 @@ export default function MapScreen() {
         `
             : ""
         }
-        
-        /* Neumorphic Gold / Sapphire Glow Pins matching PIKE Logo */
+
+        /* Neumorphic pins matching PIKE Blue: available quests in Pike Blue, visited/completed venues in muted gray */
         .pin-wrapper {
           display: flex;
           align-items: center;
@@ -112,8 +109,8 @@ export default function MapScreen() {
         }
         .custom-pin {
           background: ${isDark ? "#0d0d0d" : "#ffffff"};
-          color: ${isDark ? "#9C7C4A" : "#1d4ed8"};
-          border: 2.5px solid ${isDark ? "#9C7C4A" : "#1d4ed8"};
+          color: ${actionColor};
+          border: 2.5px solid ${actionColor};
           border-radius: 50%;
           width: 38px;
           height: 38px;
@@ -122,7 +119,7 @@ export default function MapScreen() {
           justify-content: center;
           font-size: 16px;
           font-weight: bold;
-          box-shadow: 0 4px 14px ${isDark ? "rgba(156, 124, 74, 0.6)" : "rgba(29, 78, 216, 0.35)"};
+          box-shadow: 0 4px 14px ${isDark ? "rgba(59, 130, 246, 0.5)" : "rgba(37, 99, 235, 0.35)"};
           transition: transform 0.2s ease;
           cursor: pointer;
         }
@@ -130,18 +127,18 @@ export default function MapScreen() {
           transform: scale(1.15);
         }
         .custom-pin.completed {
-          color: #10B981;
-          border-color: #10B981;
-          box-shadow: 0 4px 14px rgba(16, 185, 129, 0.5);
+          color: ${mutedColor};
+          border-color: ${mutedColor};
+          box-shadow: 0 4px 14px rgba(0, 0, 0, 0.2);
         }
-        
+
         /* Popup Styling */
         .leaflet-popup-content-wrapper {
           background: ${isDark ? "rgba(20, 20, 24, 0.95)" : "rgba(255, 255, 255, 0.98)"};
           backdrop-filter: blur(12px);
           -webkit-backdrop-filter: blur(12px);
           color: ${isDark ? "#ece7df" : "#1F1A14"};
-          border: 1.5px solid ${isDark ? "rgba(156, 124, 74, 0.4)" : "rgba(29, 78, 216, 0.25)"};
+          border: 1.5px solid ${isDark ? "rgba(59, 130, 246, 0.35)" : "rgba(37, 99, 235, 0.25)"};
           border-radius: 18px;
           box-shadow: 0 16px 36px rgba(0,0,0,0.3);
           padding: 8px 6px;
@@ -152,7 +149,7 @@ export default function MapScreen() {
         .popup-title {
           font-size: 14px;
           font-weight: 700;
-          color: ${isDark ? "#9C7C4A" : "#1d4ed8"};
+          color: ${actionColor};
           margin-bottom: 2px;
         }
         .popup-quest {
@@ -163,10 +160,24 @@ export default function MapScreen() {
         .popup-reward {
           font-size: 11px;
           font-weight: 700;
-          color: #9C7C4A;
+          color: ${c.primary};
           display: flex;
           align-items: center;
           gap: 4px;
+        }
+        .map-hint {
+          position: absolute;
+          top: 12px;
+          left: 12px;
+          right: 12px;
+          z-index: 1000;
+          background: ${isDark ? "rgba(20, 20, 24, 0.9)" : "rgba(255, 255, 255, 0.92)"};
+          color: ${isDark ? "#8f867a" : "#6B6255"};
+          font-size: 11px;
+          text-align: center;
+          padding: 8px 10px;
+          border-radius: 12px;
+          border: 1px solid ${isDark ? "rgba(255,255,255,0.08)" : "rgba(15, 23, 42, 0.08)"};
         }
         .leaflet-control-attribution {
           background: ${isDark ? "rgba(12, 12, 14, 0.8)" : "rgba(255, 255, 255, 0.8)"} !important;
@@ -177,9 +188,10 @@ export default function MapScreen() {
     </head>
     <body>
       <div id="map"></div>
+      ${markersData.length === 0 ? `<div class="map-hint">Pin locations are coming soon — browse quests in the list below</div>` : ""}
       <script>
         var map = L.map('map', {
-          center: [-1.286389, 36.817223], // Nairobi CBD Anchor Hub
+          center: [-1.286389, 36.817223], // Nairobi CBD
           zoom: 13,
           zoomControl: false,
           attributionControl: true
@@ -237,7 +249,7 @@ export default function MapScreen() {
       width: "100%",
       backgroundColor: isDark ? "#000000" : "#E8E4DA",
       borderBottomWidth: 1,
-      borderBottomColor: isDark ? "rgba(156, 124, 74, 0.15)" : "rgba(15, 23, 42, 0.08)",
+      borderBottomColor: isDark ? "rgba(59, 130, 246, 0.15)" : "rgba(15, 23, 42, 0.08)",
       overflow: "hidden",
     },
     sheet: {
@@ -249,7 +261,7 @@ export default function MapScreen() {
       paddingHorizontal: 16,
       marginTop: -20,
       borderTopWidth: 1,
-      borderTopColor: isDark ? "rgba(156, 124, 74, 0.18)" : "rgba(15, 23, 42, 0.08)",
+      borderTopColor: isDark ? "rgba(59, 130, 246, 0.18)" : "rgba(15, 23, 42, 0.08)",
       shadowColor: isDark ? "#000000" : "#0f172a",
       shadowOffset: { width: 0, height: -4 },
       shadowOpacity: isDark ? 0.75 : 0.08,
@@ -263,10 +275,10 @@ export default function MapScreen() {
       marginBottom: 10,
     },
     sheetTitle: { ...theme.font(theme.type.labelCaps), color: c.onSurfaceVariant, letterSpacing: 1.5, fontSize: 11, fontWeight: "700" },
-    sheetCount: { ...theme.font(theme.type.bodyLg), color: isDark ? "#9C7C4A" : c.primary, fontWeight: "700" },
+    sheetCount: { ...theme.font(theme.type.bodyLg), color: actionColor, fontWeight: "700" },
     filterRow: { flexDirection: "row", gap: 8, marginBottom: 14 },
-    filterPill: { paddingHorizontal: 14, paddingVertical: 8, borderRadius: 14 },
-    filterPillActiveText: { ...theme.font(theme.type.labelCaps), color: isDark ? "#9C7C4A" : c.primary, fontSize: 11, fontWeight: "700" },
+    filterPill: { paddingHorizontal: 14, paddingVertical: 8, borderRadius: RADIUS_CARD },
+    filterPillActiveText: { ...theme.font(theme.type.labelCaps), color: actionColor, fontSize: 11, fontWeight: "700" },
     filterPillInactiveText: { ...theme.font(theme.type.labelCaps), color: c.onSurfaceVariant, fontSize: 11 },
     card: {
       padding: 16,
@@ -280,13 +292,13 @@ export default function MapScreen() {
     cardTitle: { ...theme.font(theme.type.headlineSm), color: c.onSurface, fontSize: 16, fontWeight: "700" },
     cardSub: { ...theme.font(theme.type.bodyMd), color: c.onSurfaceVariant, marginTop: 2, fontSize: 13 },
     distanceTag: { flexDirection: "row", alignItems: "center", gap: 4, paddingHorizontal: 10, paddingVertical: 4, marginTop: 6, alignSelf: "flex-start", borderRadius: 8 },
-    distanceText: { ...theme.font(theme.type.labelCaps), color: isDark ? "#9C7C4A" : c.primary, fontSize: 10, fontWeight: "700" },
+    distanceText: { ...theme.font(theme.type.labelCaps), color: actionColor, fontSize: 10, fontWeight: "700" },
     empty: { ...theme.font(theme.type.bodyMd), color: c.onSurfaceVariant, textAlign: "center", marginTop: 24 },
   });
 
   return (
     <View style={styles.container}>
-      <TopNav title="Explore" showLogo={false} subtitle="Nairobi Sector Nodes" />
+      <TopNav title="Explore" showLogo={false} subtitle="Nairobi Quests" />
       <View style={styles.mapContainer}>
         {Platform.OS === "web" ? (
           <iframe
@@ -305,57 +317,56 @@ export default function MapScreen() {
       </View>
       <View style={styles.sheet}>
         <View style={styles.sheetHeaderRow}>
-          <Text style={styles.sheetTitle}>DETECTED NODES (NAIROBI)</Text>
+          <Text style={styles.sheetTitle}>NEARBY QUESTS</Text>
           <Text style={styles.sheetCount}>{quests.length} active</Text>
         </View>
 
         {/* Quick Filter Pills */}
         <View style={styles.filterRow}>
           <NeumorphicView
-            variant={nodeFilter === "all" ? "inset" : "raised"}
-            glow={nodeFilter === "all" ? (isDark ? "gold" : "blue") : "none"}
-            radius={14}
+            variant={questFilter === "all" ? "inset" : "raised"}
+            accent={questFilter === "all" ? "action" : "none"}
+            radius={RADIUS_CARD}
             style={styles.filterPill}
-            onPress={() => setNodeFilter("all")}
+            onPress={() => setQuestFilter("all")}
           >
-            <Text style={nodeFilter === "all" ? styles.filterPillActiveText : styles.filterPillInactiveText}>● ALL NODES</Text>
+            <Text style={questFilter === "all" ? styles.filterPillActiveText : styles.filterPillInactiveText}>● ALL QUESTS</Text>
           </NeumorphicView>
           <NeumorphicView
-            variant={nodeFilter === "high" ? "inset" : "raised"}
-            glow={nodeFilter === "high" ? (isDark ? "gold" : "blue") : "none"}
-            radius={14}
+            variant={questFilter === "high" ? "inset" : "raised"}
+            accent={questFilter === "high" ? "action" : "none"}
+            radius={RADIUS_CARD}
             style={styles.filterPill}
-            onPress={() => setNodeFilter("high")}
+            onPress={() => setQuestFilter("high")}
           >
-            <Text style={nodeFilter === "high" ? styles.filterPillActiveText : styles.filterPillInactiveText}>HIGH YIELD</Text>
+            <Text style={questFilter === "high" ? styles.filterPillActiveText : styles.filterPillInactiveText}>HIGH YIELD</Text>
           </NeumorphicView>
           <NeumorphicView
-            variant={nodeFilter === "exploration" ? "inset" : "raised"}
-            glow={nodeFilter === "exploration" ? (isDark ? "gold" : "blue") : "none"}
-            radius={14}
+            variant={questFilter === "exploration" ? "inset" : "raised"}
+            accent={questFilter === "exploration" ? "action" : "none"}
+            radius={RADIUS_CARD}
             style={styles.filterPill}
-            onPress={() => setNodeFilter("exploration")}
+            onPress={() => setQuestFilter("exploration")}
           >
-            <Text style={nodeFilter === "exploration" ? styles.filterPillActiveText : styles.filterPillInactiveText}>EXPLORATION</Text>
+            <Text style={questFilter === "exploration" ? styles.filterPillActiveText : styles.filterPillInactiveText}>EXPLORATION</Text>
           </NeumorphicView>
         </View>
 
         <FlatList
           data={quests.filter((q) => {
-            if (nodeFilter === "high") return q.rewardDescription.toLowerCase().includes("off") || q.rewardDescription.toLowerCase().includes("free");
-            if (nodeFilter === "exploration") return !q.completed;
+            if (questFilter === "high") return q.rewardDescription.toLowerCase().includes("off") || q.rewardDescription.toLowerCase().includes("free");
+            if (questFilter === "exploration") return !q.completed;
             return true;
           })}
           keyExtractor={(q) => q.id}
           contentContainerStyle={{ paddingBottom: 130 }}
           showsVerticalScrollIndicator={false}
-          ListEmptyComponent={<Text style={styles.empty}>No nodes detected in this filter category.</Text>}
-          renderItem={({ item, index }) => {
-            const coords = getVenueCoordinate(item.venueId, index);
+          ListEmptyComponent={<Text style={styles.empty}>No quests found in this category.</Text>}
+          renderItem={({ item }) => {
             return (
               <NeumorphicView
                 variant="raised"
-                radius={20}
+                radius={RADIUS_CARD}
                 style={styles.card}
                 onPress={() =>
                   router.push({
@@ -372,13 +383,13 @@ export default function MapScreen() {
                 }
               >
                 <NeumorphicView variant="inset" radius={14} style={styles.nodeIconWell}>
-                  <MaterialIcons name={item.completed ? "military-tech" : "explore"} size={22} color={item.completed ? "#10B981" : (isDark ? "#9C7C4A" : c.primary)} />
+                  <MaterialIcons name={item.completed ? "military-tech" : "explore"} size={22} color={item.completed ? "#10B981" : actionColor} />
                 </NeumorphicView>
                 <View style={{ flex: 1 }}>
                   <Text style={styles.cardTitle}>{item.venueName}</Text>
                   <Text style={styles.cardSub} numberOfLines={1}>{item.name}</Text>
                   <NeumorphicView variant="inset" radius={8} style={styles.distanceTag}>
-                    <Text style={styles.distanceText}>{coords.sector} • +150 XP</Text>
+                    <Text style={styles.distanceText} numberOfLines={1}>{item.rewardDescription}</Text>
                   </NeumorphicView>
                 </View>
                 <TouchableOpacity onPress={() => toggleFavorite(item.venueId)} hitSlop={8} style={styles.favBtn}>

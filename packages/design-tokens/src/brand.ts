@@ -19,13 +19,24 @@ export const brand = {
  * and must only be used for reward/achievement/VIP/XP moments — never as a
  * general UI color. Components should route through a RewardAccent-style
  * wrapper rather than referencing these directly.
+ *
+ * NOTE: in packages/design-tokens/src/palette.ts the gold ramp lives under
+ * the `primary`/`primaryContainer`/`onPrimaryContainer` keys (and the
+ * "Champagne" gold variant under `tertiary`/`tertiaryContainer`) — `secondary`
+ * is actually Pike BLUE, the primary interactive color, not gold. This list
+ * previously named the blue keys by mistake; corrected to the actual gold-
+ * valued keys below.
  */
 export const REWARD_ONLY_COLOR_KEYS = [
-  "secondary",
-  "secondaryContainer",
-  "onSecondaryContainer",
-  "secondaryFixed",
-  "secondaryFixedDim",
+  "primary",
+  "onPrimary",
+  "primaryContainer",
+  "onPrimaryContainer",
+  "inversePrimary",
+  "tertiary",
+  "onTertiary",
+  "tertiaryContainer",
+  "onTertiaryContainer",
   "goldDeep",
 ] as const;
 

@@ -1,9 +1,11 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { View, Text, StyleSheet, FlatList, Platform, StatusBar } from "react-native";
 import { router } from "expo-router";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { MaterialIcons } from "@expo/vector-icons";
-import { useTheme } from "@/theme";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import { useTheme, useSemanticColors, RADIUS_CARD } from "@/theme";
+import { useRewardColor } from "@/components/RewardAccent";
 import { NeumorphicView } from "@/components/NeumorphicView";
 
 interface NotificationItem {
@@ -15,11 +17,14 @@ interface NotificationItem {
   read: boolean;
 }
 
+// Locally-persisted placeholder notifications until a real notifications API endpoint exists.
+const NOTIFICATIONS_STORAGE_KEY = "pike_notifications_state_v1";
+
 const INITIAL_NOTIFICATIONS: NotificationItem[] = [
   {
     id: "1",
-    title: "New Sector Node Activated",
-    body: "A high-yield anomaly has been detected near KICC Sky Deck in Nairobi CBD.",
+    title: "New Quest Nearby",
+    body: "A high-yield quest is available near KICC Sky Deck in Nairobi CBD.",
     time: "10m ago",
     type: "quest",
     read: false,
@@ -42,8 +47,8 @@ const INITIAL_NOTIFICATIONS: NotificationItem[] = [
   },
   {
     id: "4",
-    title: "Sector Relay Online",
-    body: "Telemetry grid synchronized with Nairobi National Museum anchor.",
+    title: "Map Sync Complete",
+    body: "Map data for the Nairobi National Museum area has been updated.",
     time: "1d ago",
     type: "system",
     read: true,
@@ -55,6 +60,8 @@ export default function NotificationsScreen() {
   const theme = useTheme();
   const insets = useSafeAreaInsets();
   const c = theme.colors;
+  const sc = useSemanticColors();
+  const rewardColor = useRewardColor();
   const isDark = theme.mode === "dark";
   const [notifications, setNotifications] = useState<NotificationItem[]>(INITIAL_NOTIFICATIONS);
 
@@ -63,24 +70,52 @@ export default function NotificationsScreen() {
     Platform.OS === "android" ? (StatusBar.currentHeight ?? 24) : 16
   ) + 8;
 
+  // Restore persisted read/cleared state, reconciled against the current seed content by id.
+  useEffect(() => {
+    (async () => {
+      try {
+        const raw = await AsyncStorage.getItem(NOTIFICATIONS_STORAGE_KEY);
+        if (raw) {
+          const stored: { ids: string[]; readIds: string[] } = JSON.parse(raw);
+          setNotifications(
+            INITIAL_NOTIFICATIONS.filter((n) => stored.ids.includes(n.id)).map((n) => ({
+              ...n,
+              read: stored.readIds.includes(n.id),
+            }))
+          );
+        }
+      } catch {}
+    })();
+  }, []);
+
+  const persist = (list: NotificationItem[]) => {
+    const state = { ids: list.map((n) => n.id), readIds: list.filter((n) => n.read).map((n) => n.id) };
+    AsyncStorage.setItem(NOTIFICATIONS_STORAGE_KEY, JSON.stringify(state)).catch(() => {});
+  };
+
   const markAllRead = () => {
-    setNotifications((prev) => prev.map((n) => ({ ...n, read: true })));
+    setNotifications((prev) => {
+      const next = prev.map((n) => ({ ...n, read: true }));
+      persist(next);
+      return next;
+    });
   };
 
   const clearAll = () => {
     setNotifications([]);
+    persist([]);
   };
 
   const getIcon = (type: NotificationItem["type"]) => {
     switch (type) {
       case "quest":
-        return { name: "radar" as const, color: isDark ? "#9C7C4A" : c.primary };
+        return { name: "radar" as const, color: sc.action };
       case "reward":
-        return { name: "emoji-events" as const, color: "#9C7C4A" };
+        return { name: "emoji-events" as const, color: rewardColor };
       case "streak":
-        return { name: "local-fire-department" as const, color: "#9C7C4A" };
+        return { name: "local-fire-department" as const, color: sc.action };
       case "system":
-        return { name: "memory" as const, color: isDark ? "#3b82f6" : "#1d4ed8" };
+        return { name: "memory" as const, color: sc.action };
     }
   };
 
@@ -104,11 +139,11 @@ export default function NotificationsScreen() {
     content: { padding: 18, paddingBottom: 60 },
 
     actionsRow: { flexDirection: "row", justifyContent: "flex-end", gap: 12, marginBottom: 16 },
-    actionText: { ...theme.font(theme.type.labelCaps), color: isDark ? "#9C7C4A" : c.primary, fontSize: 11, fontWeight: "700" },
+    actionText: { ...theme.font(theme.type.labelCaps), color: sc.action, fontSize: 11, fontWeight: "700" },
 
     card: {
       padding: 16,
-      borderRadius: 22,
+      borderRadius: RADIUS_CARD,
       marginBottom: 12,
       flexDirection: "row",
       alignItems: "flex-start",
@@ -119,7 +154,7 @@ export default function NotificationsScreen() {
     notifTitle: { ...theme.font(theme.type.bodyMd), color: c.onSurface, fontWeight: "700" },
     notifTime: { ...theme.font(theme.type.labelSm), color: c.onSurfaceVariant, fontSize: 11 },
     notifBody: { ...theme.font(theme.type.bodyMd), color: c.onSurfaceVariant, fontSize: 13, lineHeight: 18 },
-    unreadDot: { width: 8, height: 8, borderRadius: 4, backgroundColor: isDark ? "#9C7C4A" : c.primary, marginLeft: 6 },
+    unreadDot: { width: 8, height: 8, borderRadius: 4, backgroundColor: sc.action, marginLeft: 6 },
     emptyText: { ...theme.font(theme.type.bodyMd), color: c.onSurfaceVariant, textAlign: "center", marginTop: 40 },
   });
 
@@ -128,11 +163,11 @@ export default function NotificationsScreen() {
       <View style={styles.header}>
         <View style={styles.headerLeft}>
           <NeumorphicView variant="raised" radius={19} style={styles.backBtn} onPress={() => router.back()}>
-            <MaterialIcons name="arrow-back" size={20} color={isDark ? "#9C7C4A" : c.primary} />
+            <MaterialIcons name="arrow-back" size={20} color={sc.action} />
           </NeumorphicView>
-          <Text style={styles.headerTitle}>Transmissions</Text>
+          <Text style={styles.headerTitle}>Notifications</Text>
         </View>
-        <MaterialIcons name="cell-tower" size={22} color={isDark ? "#9C7C4A" : c.primary} />
+        <MaterialIcons name="notifications" size={22} color={sc.action} />
       </View>
 
       <FlatList
@@ -152,11 +187,12 @@ export default function NotificationsScreen() {
             </View>
           ) : null
         }
-        ListEmptyComponent={<Text style={styles.emptyText}>No transmissions in your sector inbox.</Text>}
+        ListEmptyComponent={<Text style={styles.emptyText}>No notifications yet.</Text>}
         renderItem={({ item }) => {
           const icon = getIcon(item.type);
+          const cardAccent = item.read ? "none" : item.type === "reward" ? "reward" : "action";
           return (
-            <NeumorphicView variant={item.read ? "flat" : "raised"} glow={item.read ? "none" : "gold"} radius={22} style={styles.card}>
+            <NeumorphicView variant={item.read ? "flat" : "raised"} accent={cardAccent} style={styles.card}>
               <NeumorphicView variant="inset" radius={16} style={styles.iconWell}>
                 <MaterialIcons name={icon.name} size={22} color={icon.color} />
               </NeumorphicView>

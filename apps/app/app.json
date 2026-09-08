@@ -31,15 +31,12 @@
     },
     "android": {
       "package": "com.pike.app",
-      "permissions": ["CAMERA"],
+      "permissions": [
+        "CAMERA"
+      ],
       "adaptiveIcon": {
         "foregroundImage": "./assets/logo.png",
         "backgroundColor": "#0F172A"
-      }
-    },
-    "extra": {
-      "eas": {
-        "projectId": "your-expo-project-id"
       }
     },
     "web": {
@@ -53,6 +50,13 @@
       "orientation": "portrait",
       "startUrl": "/",
       "lang": "en"
-    }
+    },
+    "extra": {
+      "router": {},
+      "eas": {
+        "projectId": "94198fa1-0f6b-4a28-aeb6-7778a731cce8"
+      }
+    },
+    "owner": "ivyiris"
   }
 }

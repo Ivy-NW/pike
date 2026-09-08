@@ -216,8 +216,35 @@ section[id] {
 }
 
 .legal-page { min-height: calc(100vh - 82px); padding-block: clamp(96px, 12vw, 156px); }
-.legal-page__panel { max-width: 760px; padding: clamp(28px, 5vw, 56px); background: var(--surface-container-lowest); border: 1px solid var(--landing-line); border-top: 4px solid var(--primary-container); border-radius: var(--radius-card); }
+.legal-page__panel { max-width: 760px; margin-inline: auto; padding: clamp(28px, 5vw, 56px); background: var(--surface-container-lowest); border: 1px solid var(--landing-line); border-top: 4px solid var(--primary-container); border-radius: var(--radius-card); }
 .legal-page__meta { margin-bottom: 18px; color: var(--landing-accent); font-family: var(--font-mono); font-size: 11px; font-weight: 700; letter-spacing: .12em; text-transform: uppercase; }
+
+.legal-content__updated { margin-top: 10px; color: var(--landing-muted); font-size: 13px; }
+.legal-content__lede { margin-top: 20px; font-size: 17px; line-height: 1.6; color: var(--landing-muted); }
+.legal-content h2 { font-family: var(--font-heading); font-size: clamp(19px, 2.4vw, 24px); letter-spacing: -.01em; margin-top: 40px; margin-bottom: 12px; }
+.legal-content h2:first-of-type { margin-top: 32px; }
+.legal-content h3 { font-family: var(--font-heading); font-size: 15px; margin-top: 26px; margin-bottom: 10px; }
+.legal-content p { margin: 0 0 14px; line-height: 1.65; }
+.legal-content ul, .legal-content ol { margin: 0 0 14px; padding-left: 22px; line-height: 1.65; }
+.legal-content li { margin-bottom: 6px; }
+.legal-content li:last-child { margin-bottom: 0; }
+.legal-content a { color: var(--landing-accent); text-decoration: underline; text-underline-offset: 3px; }
+.legal-content a:hover { color: var(--landing-accent-ink); }
+.legal-content strong { font-weight: 700; }
+.legal-content hr { border: none; border-top: 1px solid var(--landing-line); margin: 36px 0; }
+.legal-content__table-wrap { overflow-x: auto; margin: 0 0 20px; }
+.legal-content table { width: 100%; min-width: 420px; border-collapse: collapse; font-size: 14px; }
+.legal-content th, .legal-content td { text-align: left; padding: 10px 14px 10px 0; border-bottom: 1px solid var(--landing-line); vertical-align: top; }
+.legal-content th { font-family: var(--font-heading); font-size: 11px; text-transform: uppercase; letter-spacing: .06em; color: var(--landing-muted); font-weight: 700; }
+.legal-content__callout { margin: 0 0 20px; padding: 16px 18px; background: var(--landing-soft); border: 1px solid var(--landing-line); border-radius: var(--radius-card); }
+.legal-content__callout p:last-child { margin-bottom: 0; }
+.legal-content__todo { margin: 0 0 14px; padding: 12px 14px; background: color-mix(in srgb, var(--landing-error) 10%, transparent); border: 1px dashed var(--landing-error); border-radius: 8px; font-size: 13px; color: var(--landing-ink); }
+.legal-content__index-list { list-style: none; margin: 0 0 14px; padding: 0; }
+.legal-content__index-list li { display: flex; flex-wrap: wrap; align-items: baseline; gap: 8px; padding: 12px 0; border-bottom: 1px solid var(--landing-line); margin-bottom: 0; }
+.legal-content__index-list li:last-child { border-bottom: none; }
+.legal-content__index-list a { font-weight: 600; text-decoration: none; }
+.legal-content__index-list a:hover { text-decoration: underline; }
+.legal-content__index-date { margin-left: auto; color: var(--landing-muted); font-size: 12px; white-space: nowrap; }
 
 /* Progressive-enhancement scroll reveal: hidden state only applies once the blocking
    init script in layout.tsx has stamped `data-js` on <html>, so content stays visible

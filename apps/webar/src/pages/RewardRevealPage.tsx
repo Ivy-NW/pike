@@ -236,7 +236,8 @@ export function RewardRevealPage() {
               <p className="reward-accent" style={{ fontWeight: 600, marginBottom: 8 }}>+{award.xpAwarded} XP</p>
             )}
             {award && award.newBadges.length > 0 && (
-              <p style={{ color: "var(--tertiary)", fontSize: 13, marginBottom: 8 }}>
+              // Purple Accent (design doc §7.4) — gold stays reserved for the XP line above, see .reward-accent.
+              <p style={{ color: "#7C3AED", fontSize: 13, marginBottom: 8 }}>
                 New badge{award.newBadges.length > 1 ? "s" : ""}: {award.newBadges.map((b) => b.name).join(", ")}
               </p>
             )}

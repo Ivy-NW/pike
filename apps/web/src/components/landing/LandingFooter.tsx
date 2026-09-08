@@ -16,6 +16,13 @@ export function LandingFooter() {
         <a href="/play">Player guide</a>
         <a href="/privacy">Privacy</a>
         <a href="/terms">Terms</a>
+        <a href="/cookies">Cookies</a>
+        <a href="/acceptable-use">Acceptable Use</a>
+        <a href="/security">Security</a>
+        <a href="/accessibility">Accessibility</a>
+        <a href="/contact">Contact</a>
+        <a href="/devices">Supported devices</a>
+        <a href="/complaints">Report a problem</a>
         {landingContent.whatsApp.href && <a href={landingContent.whatsApp.href} rel="noreferrer">WhatsApp</a>}
       </nav>
     </div>
