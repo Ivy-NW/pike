@@ -33,7 +33,8 @@
     "start:webar": "npm run preview --workspace apps/webar",
     "start:web": "npm run start --workspace apps/web",
     "start:dashboard": "npm run start --workspace apps/dashboard",
-    "start:admin": "npm run start --workspace apps/admin"
+    "start:admin": "npm run start --workspace apps/admin",
+    "eas-build-post-install": "npm run build:shared-types && npm run build:design-tokens"
   },
   "devDependencies": {
     "typescript": "^5.5.4"

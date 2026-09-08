@@ -167,7 +167,9 @@ export function ArScanView({ questName, imageTargetData, onRecognized }: Props) 
       <canvas ref={canvasRef} className="scan-canvas" />
       <div aria-hidden="true" className="scan-flash" style={{ opacity: recognizing ? 1 : 0 }} />
 
-      {/* When running in standalone Web browser (not inside React Native app), show standalone HUD */}
+      {/* Standalone-only chrome: hidden when embedded in the app, since the native
+          screen already has its own header and decorative reticle covering the
+          same ground (see apps/app/app/scan/[markerId].tsx). */}
       {!isEmbeddedApp && (
         <>
           <div className="scan-brand">PIKE</div>
@@ -183,20 +185,24 @@ export function ArScanView({ questName, imageTargetData, onRecognized }: Props) 
           <div className="scan-frame" data-state={recognizing ? "recognized" : "scanning"}>
             <span className="scan-frame-dot" />
           </div>
-
-          <div className="scan-panel">
-            <p className="scan-instruction">
-              {engineError
-                ? "Camera ready — align the marker, or tap verify below."
-                : `Point your camera at the ${questName} marker.`}
-            </p>
-
-            <button type="button" className="scan-action" onClick={fireRecognized} disabled={recognizing}>
-              {recognizing ? "Marker verified" : "Verify & claim reward"}
-            </button>
-          </div>
         </>
       )}
+
+      {/* The manual fallback is the essential recovery path when the camera can't
+          start (no camera permission, insecure origin, or automatic marker
+          recognition never fires) -- this must stay visible in BOTH standalone
+          and embedded-in-app contexts, since there is no other way to proceed. */}
+      <div className="scan-panel">
+        <p className="scan-instruction">
+          {engineError
+            ? "We couldn't start the camera. You can still verify your visit manually below."
+            : `Point your camera at the ${questName} marker.`}
+        </p>
+
+        <button type="button" className="scan-action" onClick={fireRecognized} disabled={recognizing}>
+          {recognizing ? "Marker verified" : "Verify & claim reward"}
+        </button>
+      </div>
     </div>
   );
 }

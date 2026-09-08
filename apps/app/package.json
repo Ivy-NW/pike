@@ -7,7 +7,8 @@
     "start": "cross-env EXPO_OFFLINE=1 REACT_NATIVE_PACKAGER_HOSTNAME=192.168.1.10 expo start",
     "android": "cross-env EXPO_OFFLINE=1 REACT_NATIVE_PACKAGER_HOSTNAME=192.168.1.10 expo start --android",
     "ios": "cross-env EXPO_OFFLINE=1 REACT_NATIVE_PACKAGER_HOSTNAME=192.168.1.10 expo start --ios",
-    "web": "cross-env EXPO_OFFLINE=1 REACT_NATIVE_PACKAGER_HOSTNAME=192.168.1.10 expo start --web"
+    "web": "cross-env EXPO_OFFLINE=1 REACT_NATIVE_PACKAGER_HOSTNAME=192.168.1.10 expo start --web",
+    "postinstall": "cd ../.. && npm run build:shared-types && npm run build:design-tokens"
   },
   "dependencies": {
     "@expo-google-fonts/inter": "^0.4.2",
